@@ -63,6 +63,18 @@ async function handleCheckoutOrder(payload) {
   const now = new Date();
   const sendAt = new Date(now.getTime() + REVIEW_REQUEST_DELAY_DAYS * 24 * 60 * 60 * 1000);
 
+  const rawStatus = String(data['payment-status'] || '').toLowerCase().trim();
+  // Treat anything that is not an explicit successful paid/succeeded status as
+  // pending. Payment enforcement rule: no order is treated as completed/paid
+  // unless the payment provider confirmed success server-side (Stripe success,
+  // or Amber manually marking a Venmo/Cash App transfer as received).
+  const isPaid = rawStatus === 'paid' || rawStatus === 'succeeded';
+  const normalizedStatus = isPaid ? 'paid' : (rawStatus || 'pending-payment');
+  const orderStatus = isPaid ? 'paid' : 'pending-payment';
+  const provider = normalizedStatus.startsWith('pending-payment-')
+    ? normalizedStatus.replace('pending-payment-', '')
+    : '';
+
   const order = {
     orderId,
     customerName: data['customer-name'],
@@ -73,7 +85,10 @@ async function handleCheckoutOrder(payload) {
     quantity: data['quantity'],
     notes: data['order-notes'],
     transactionId: data['transaction-id'],
-    paymentStatus: data['payment-status'],
+    paymentStatus: normalizedStatus,
+    paymentProvider: provider || (isPaid ? 'stripe' : ''),
+    orderStatus,
+    fulfillmentStatus: isPaid ? 'ready-to-fulfill' : 'hold-awaiting-payment',
     orderTotal: data['order-total'],
     submittedAt: payload.created_at || now.toISOString(),
   };
@@ -81,7 +96,10 @@ async function handleCheckoutOrder(payload) {
   const orders = getStore('orders');
   await orders.setJSON(orderId, order);
 
-  if (email) {
+  // Only queue the 10-day post-purchase review request for paid orders —
+  // unpaid/pending orders must not trigger any post-purchase automation
+  // until payment has been verified.
+  if (email && isPaid) {
     const reviewRequests = getStore('review-requests');
     await reviewRequests.setJSON(orderId, {
       orderId,
@@ -97,10 +115,19 @@ async function handleCheckoutOrder(payload) {
     });
   }
 
-  // Admin notification — dual delivery enforced by the shared helper.
-  const adminSubject = `New Order \u2014 ${order.customerName || email || orderId} (${orderId})`;
+  // Admin notification — dual delivery enforced by the shared helper. Subject
+  // line signals whether admin needs to verify payment before fulfilling.
+  const providerLabel = provider === 'venmo' ? 'Venmo' : provider === 'cashapp' ? 'Cash App' : '';
+  const adminSubjectPrefix = isPaid
+    ? '[PAID] New Order'
+    : (providerLabel ? `[AWAITING PAYMENT via ${providerLabel}] New Order` : '[AWAITING PAYMENT] New Order');
+  const adminSubject = `${adminSubjectPrefix} \u2014 ${order.customerName || email || orderId} (${orderId})`;
+  const adminActionLine = isPaid
+    ? 'Payment confirmed by the payment provider. This order is cleared for fulfillment.'
+    : `Payment is <strong>not yet confirmed</strong>. Do not ship until you have verified receipt of payment${providerLabel ? ` in ${providerLabel}` : ''}. Once the transfer is in your account, update the order record in the <code>orders</code> blob store to set <code>paymentStatus=paid</code> and <code>fulfillmentStatus=ready-to-fulfill</code>.`;
   const adminHtml = `<!doctype html><html><body style="font-family:Georgia,serif;color:#222;line-height:1.5;">
-    <h2 style="margin:0 0 8px;">New Order Received</h2>
+    <h2 style="margin:0 0 8px;">${isPaid ? 'New Paid Order' : 'New Order — Awaiting Payment Verification'}</h2>
+    <p style="margin:0 0 12px;padding:10px 12px;background:${isPaid ? '#e8f6e8' : '#fff6e0'};border-left:4px solid ${isPaid ? '#2e7d32' : '#c2872b'};border-radius:4px;">${adminActionLine}</p>
     <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;">
       <tr><td><strong>Order ID</strong></td><td>${escapeHtml(orderId)}</td></tr>
       <tr><td><strong>Customer</strong></td><td>${escapeHtml(order.customerName || '\u2014')}</td></tr>
@@ -110,14 +137,17 @@ async function handleCheckoutOrder(payload) {
       <tr><td><strong>Product</strong></td><td><pre style="white-space:pre-wrap;margin:0;font-family:inherit;">${escapeHtml(order.product || '')}</pre></td></tr>
       <tr><td><strong>Quantity</strong></td><td>${escapeHtml(order.quantity || '\u2014')}</td></tr>
       <tr><td><strong>Order total</strong></td><td>${escapeHtml(order.orderTotal || '\u2014')}</td></tr>
-      <tr><td><strong>Payment status</strong></td><td>${escapeHtml(order.paymentStatus || '\u2014')}</td></tr>
+      <tr><td><strong>Payment status</strong></td><td><strong>${escapeHtml(order.paymentStatus || '\u2014')}</strong></td></tr>
+      <tr><td><strong>Order status</strong></td><td>${escapeHtml(order.orderStatus)}</td></tr>
+      <tr><td><strong>Fulfillment</strong></td><td>${escapeHtml(order.fulfillmentStatus)}</td></tr>
       <tr><td><strong>Transaction ID</strong></td><td>${escapeHtml(order.transactionId || '\u2014')}</td></tr>
       <tr><td><strong>Notes</strong></td><td><pre style="white-space:pre-wrap;margin:0;font-family:inherit;">${escapeHtml(order.notes || '')}</pre></td></tr>
       <tr><td><strong>Submitted</strong></td><td>${escapeHtml(order.submittedAt)}</td></tr>
     </table>
   </body></html>`;
   const adminText = [
-    `New Order Received`,
+    isPaid ? `New Paid Order` : `New Order — AWAITING PAYMENT VERIFICATION`,
+    isPaid ? '' : `ACTION: Do not fulfill until payment is verified${providerLabel ? ' in ' + providerLabel : ''}.`,
     `Order ID: ${orderId}`,
     `Customer: ${order.customerName || ''}`,
     `Email: ${email}`,
@@ -127,37 +157,52 @@ async function handleCheckoutOrder(payload) {
     `Quantity: ${order.quantity || ''}`,
     `Order total: ${order.orderTotal || ''}`,
     `Payment status: ${order.paymentStatus || ''}`,
+    `Order status: ${order.orderStatus}`,
+    `Fulfillment: ${order.fulfillmentStatus}`,
     `Transaction ID: ${order.transactionId || ''}`,
     `Notes: ${order.notes || ''}`,
     `Submitted: ${order.submittedAt}`
-  ].join('\n');
+  ].filter(Boolean).join('\n');
 
   const sends = [
     sendAdminNotification({
       subject: adminSubject,
       html: adminHtml,
       text: adminText,
-      flow: 'checkout-order',
+      flow: isPaid ? 'checkout-order-paid' : 'checkout-order-pending-payment',
       orderId
     })
   ];
 
   if (email) {
-    const customerSubject = `Your order is confirmed \u2728 (${orderId})`;
+    const customerSubject = isPaid
+      ? `Your order is confirmed \u2728 (${orderId})`
+      : `Order received \u2014 awaiting payment confirmation (${orderId})`;
+    const payInstructions = !isPaid ? `
+              <p style="line-height:1.6;text-align:left;">To complete your order, please send <strong>${escapeHtml(order.orderTotal || 'your total')}</strong> to either:</p>
+              <ul style="line-height:1.7;text-align:left;padding-left:18px;">
+                <li><strong>Venmo:</strong> <a href="https://venmo.com/AmberLynnPatten">@AmberLynnPatten</a></li>
+                <li><strong>Cash App:</strong> <a href="https://cash.app/$AmberAlchemy">$AmberAlchemy</a></li>
+              </ul>
+              <p style="line-height:1.6;text-align:left;">Please include order ID <strong>${escapeHtml(orderId)}</strong> in the payment note so Amber can match it quickly. You\u2019ll receive a paid confirmation email as soon as your payment is received and verified. Your order will not ship until then.</p>` : '';
     const customerHtml = `<!doctype html><html><body style="margin:0;padding:0;background:#f7f1ea;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f7f1ea;padding:28px 12px;">
         <tr><td align="center">
           <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;box-shadow:0 10px 30px rgba(60,30,110,0.12);overflow:hidden;">
             <tr><td style="padding:28px;text-align:center;font-family:Georgia,serif;color:#3b2a5e;">
-              <div style="font-family:'Cinzel',Georgia,serif;letter-spacing:0.18em;font-size:12px;color:#6b4f9b;text-transform:uppercase;">\u2726 Order Confirmation</div>
-              <h1 style="font-family:'Cinzel',Georgia,serif;font-size:22px;margin:10px 0 12px;">${escapeHtml(order.customerName || 'Friend')}, your order is confirmed.</h1>
+              <div style="font-family:'Cinzel',Georgia,serif;letter-spacing:0.18em;font-size:12px;color:#6b4f9b;text-transform:uppercase;">\u2726 ${isPaid ? 'Order Confirmation' : 'Order Received \u2014 Awaiting Payment'}</div>
+              <h1 style="font-family:'Cinzel',Georgia,serif;font-size:22px;margin:10px 0 12px;">${escapeHtml(order.customerName || 'Friend')}, ${isPaid ? 'your order is confirmed.' : 'your order is awaiting payment.'}</h1>
               <p style="line-height:1.6;text-align:left;">Order ID: <strong>${escapeHtml(orderId)}</strong></p>
-              <p style="line-height:1.6;text-align:left;">Thank you for your order. Amber will prepare and ship your items with care. You\u2019ll receive a shipment update once your package is on its way.</p>
+              ${isPaid
+                ? '<p style="line-height:1.6;text-align:left;">Thank you for your order. Amber will prepare and ship your items with care. You\u2019ll receive a shipment update once your package is on its way.</p>'
+                : '<p style="line-height:1.6;text-align:left;">Your order has been received and is awaiting payment confirmation. Once your payment is received through Venmo or Cash App, your order will be confirmed.</p>' + payInstructions}
             </td></tr>
           </table>
         </td></tr>
       </table></body></html>`;
-    const customerText = `${order.customerName || 'Friend'}, your order (${orderId}) is confirmed. Amber will ship soon.`;
+    const customerText = isPaid
+      ? `${order.customerName || 'Friend'}, your order (${orderId}) is confirmed. Amber will ship soon.`
+      : `${order.customerName || 'Friend'}, your order (${orderId}) has been received and is awaiting payment confirmation. Please send ${order.orderTotal || 'your total'} via Venmo (@AmberLynnPatten) or Cash App ($AmberAlchemy) and include order ID ${orderId} in the note. Your order will be confirmed once payment is received and verified.`;
     sends.push(sendViaResend({ to: email, subject: customerSubject, html: customerHtml, text: customerText }));
   }
 

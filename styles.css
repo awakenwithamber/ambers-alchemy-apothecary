@@ -985,6 +985,13 @@ footer { border-top: 1px solid var(--border); padding: 50px 24px 30px; text-alig
 }
 .checkout-pay-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+.checkout-external-pay { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0 6px; }
+.checkout-external-pay .checkout-external-pay-btn { display: block; text-align: center; padding: 14px 16px; font-family: var(--font-display); letter-spacing: 0.06em; font-size: 15px; border-radius: var(--radius); text-decoration: none; }
+.checkout-external-pay-status { font-family: var(--font-body); font-size: 13px; color: var(--text-muted); margin: 6px 0 0; line-height: 1.55; min-height: 18px; }
+.checkout-external-pay-status[data-state="pending"] { color: var(--amethyst-lt, #c5a6db); }
+.checkout-external-pay-status[data-state="error"] { color: #e74c3c; }
+@media (max-width: 560px) { .checkout-external-pay { grid-template-columns: 1fr; } }
+
 .checkout-spinner {
   width: 18px; height: 18px; border: 2px solid rgba(243,235,221,0.3);
   border-top-color: var(--parchment); border-radius: 50%;

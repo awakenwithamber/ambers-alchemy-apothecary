@@ -3007,8 +3007,19 @@
 
         <div class="checkout-divider"></div>
 
-        <h3>Pay with Card</h3>
-        <p class="checkout-secure-note">Your card information is processed securely by Stripe. No card data is stored on our servers.</p>
+        <h3>Pay with Venmo or Cash App</h3>
+        <p class="checkout-secure-note">Your order stays <strong>Pending Payment</strong> until we receive and verify your payment. Amber will email you once it's confirmed — nothing ships before payment is verified. Venmo and Cash App both accept Visa, Mastercard, and debit cards through their own checkout.</p>
+
+        <div class="checkout-external-pay">
+          <a id="checkoutVenmoBtn" href="https://venmo.com/AmberLynnPatten" target="_blank" rel="noopener" class="pay-btn venmo-btn checkout-external-pay-btn" data-provider="venmo">💜 Pay with Venmo</a>
+          <a id="checkoutCashAppBtn" href="https://cash.app/$AmberAlchemy" target="_blank" rel="noopener" class="pay-btn cashapp-btn checkout-external-pay-btn" data-provider="cashapp">💚 Pay with Cash App</a>
+        </div>
+        <p id="checkoutExternalPayStatus" class="checkout-external-pay-status" role="status" aria-live="polite"></p>
+
+        <div class="checkout-divider"></div>
+
+        <h3>Or Pay with Card</h3>
+        <p class="checkout-secure-note">Card payments are processed securely by Stripe when enabled. Card data never touches our servers.</p>
         <div class="checkout-trust-badges">
           <span class="trust-badge-item">🔒 SSL Encrypted</span>
           <span class="trust-badge-item">💳 Visa</span>
@@ -3027,6 +3038,7 @@
           <span id="payBtnText">Pay Now</span>
           <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
         </button>
+        <p class="checkout-secure-note" style="margin-top:8px;">If the card form is unavailable, please complete your order using the Venmo or Cash App buttons above — your order will be saved as Pending Payment until Amber verifies receipt.</p>
 
         <div class="checkout-trust-badges">
           <span>🔒 SSL Encrypted</span>
@@ -3041,8 +3053,8 @@
   <div id="checkoutConfirmation" class="checkout-confirmation" style="display:none;">
     <div class="checkout-confirm-inner card">
       <div class="checkout-confirm-icon">✦</div>
-      <h2>Thank You! Your Order Has Been Received</h2>
-      <p>Confirmation has been sent to your email. Amber will begin preparing your order right away.</p>
+      <h2 id="checkoutConfirmHeadline">Thank You! Your Order Has Been Received</h2>
+      <p id="checkoutConfirmBody">Confirmation has been sent to your email. Amber will begin preparing your order right away.</p>
       <div id="confirmationDetails" class="checkout-confirm-details"></div>
       <div class="rv-cta-row" style="justify-content:center;margin:20px 0 8px;">
         <button type="button" class="btn-primary" data-rv-open data-rv-open-type="site" data-rv-name="My order experience">✦ Review Your Experience</button>
