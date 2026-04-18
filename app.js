@@ -397,17 +397,30 @@ function getOrderNote() {
 document.getElementById('venmoPayBtn').addEventListener('click', function(e) {
   const { total } = calcCartTotals();
   if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  const note = getOrderNote();
-  this.href = `https://venmo.com/AmberLynnPatten?txn=pay&amount=${total.toFixed(2)}&note=${encodeURIComponent(note)}`;
+  // Venmo code link does not support amount prefill — surface the amount via toast.
+  this.href = 'https://venmo.com/code?user_id=3573264899114195665&created=1776543987';
+  showToast(`Amount to send: $${total.toFixed(2)} — please include your name in the Venmo note.`);
 });
 document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
   const { total } = calcCartTotals();
   if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  this.href = `https://cash.app/$AmberAlchemy/${total.toFixed(2)}`;
+  this.href = `https://cash.app/$AmberPatten92/${total.toFixed(2)}`;
 });
 
-// ---- SECURE CHECKOUT (Stripe) ----
-let stripe, cardElement, stripeReady = false;
+// ---- SECURE CHECKOUT (Pending Payment via Cash App / Venmo) ----
+// Previous Stripe-based flow was removed because it left customers with a
+// permanently disabled "Pay Now" button when Stripe keys were unavailable.
+// The checkout now always saves the order as Pending Payment and redirects
+// the customer to Cash App (amount prefilled) or Venmo to complete payment.
+let stripe = null, cardElement = null, stripeReady = false;
+
+function generateOrderId() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, '0');
+  const stamp = `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+  const rand = Math.floor(1000 + Math.random() * 9000);
+  return `AAA-${stamp}-${rand}`;
+}
 
 function renderCheckoutSummary() {
   const el = document.getElementById('checkoutItems');
@@ -431,57 +444,63 @@ function renderCheckoutSummary() {
   document.getElementById('checkoutTax').textContent = formatPrice(tax);
   document.getElementById('checkoutTotal').textContent = formatPrice(total);
   document.getElementById('orderTotalField').value = formatPrice(total);
+
+  // Prominent pending-payment block
+  const amtDisplay = document.getElementById('checkoutAmountDueDisplay');
+  if (amtDisplay) amtDisplay.textContent = formatPrice(total);
+
+  // Generate order ID if not set yet for this checkout session
+  const idField = document.getElementById('checkoutOrderId');
+  const idDisplay = document.getElementById('checkoutOrderIdDisplay');
+  if (idField && !idField.value) {
+    idField.value = generateOrderId();
+  }
+  if (idDisplay && idField) idDisplay.textContent = idField.value;
 }
 
-async function initStripe() {
-  if (stripeReady) return;
+// Preserve existing call site — now a no-op. Stripe is not used.
+async function initStripe() { stripeReady = false; }
 
-  // Try meta tag first, then fetch from API
-  let pk = '';
-  const stripeKey = document.querySelector('meta[name="stripe-key"]');
-  if (stripeKey && stripeKey.content) {
-    pk = stripeKey.content;
+// Copy-to-clipboard helpers for order # and amount
+function copyToClipboard(text, successMsg) {
+  const fallback = () => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'absolute';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(fallback);
   } else {
-    try {
-      const res = await fetch('/api/stripe-config');
-      const data = await res.json();
-      pk = data.publishableKey || '';
-    } catch (e) { /* ignore */ }
+    fallback();
   }
-
-  if (!pk) {
-    document.getElementById('card-errors').textContent = 'Card payments are being set up. You may also use Venmo or Cash App from the cart.';
-    document.getElementById('checkoutPayBtn').disabled = false;
-    document.getElementById('payBtnText').textContent = 'Submit Order';
-    return;
-  }
-  try {
-    stripe = Stripe(pk);
-    const elements = stripe.elements();
-    cardElement = elements.create('card', {
-      style: {
-        base: {
-          color: '#F3EBDD',
-          fontFamily: 'Lora, Georgia, serif',
-          fontSize: '15px',
-          '::placeholder': { color: '#B8A898' },
-        },
-        invalid: { color: '#e74c3c' },
-      },
-    });
-    cardElement.mount('#card-element');
-    cardElement.on('change', function(event) {
-      const errEl = document.getElementById('card-errors');
-      errEl.textContent = event.error ? event.error.message : '';
-      document.getElementById('checkoutPayBtn').disabled = !event.complete;
-    });
-    stripeReady = true;
-  } catch (e) {
-    document.getElementById('card-errors').textContent = 'Could not initialize payment form.';
-  }
+  showToast(successMsg || `Copied: ${text}`);
 }
 
-// Handle checkout form submission
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.checkout-copy-btn');
+  if (!btn) return;
+  const targetId = btn.getAttribute('data-copy-target');
+  let value = '';
+  if (targetId) {
+    const el = document.getElementById(targetId);
+    value = el ? (el.textContent || '').trim() : '';
+  } else if (btn.id === 'copyOrderIdBtn') {
+    value = (document.getElementById('checkoutOrderId') || {}).value || '';
+  } else if (btn.id === 'copyAmountBtn') {
+    const raw = (document.getElementById('checkoutAmountDueDisplay') || {}).textContent || '';
+    value = raw.replace(/[^0-9.]/g, '');
+  }
+  if (!value) return;
+  copyToClipboard(value, 'Copied to clipboard');
+});
+
+// Handle checkout form submission — always saves as Pending Payment
 document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
@@ -501,78 +520,52 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
   }
   if (cart.length === 0) { errEl.textContent = 'Your cart is empty.'; return; }
 
-  // Calculate total in cents for Stripe
+  // Calculate total
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const shipping = subtotal >= 75 ? 0 : 6.99;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
-  const amountCents = Math.round(total * 100);
 
-  // Ensure order total is set on hidden field
+  // Ensure order total and order id hidden fields are set
   document.getElementById('orderTotalField').value = formatPrice(total);
+  const orderIdField = document.getElementById('checkoutOrderId');
+  if (!orderIdField.value) orderIdField.value = generateOrderId();
+  const orderId = orderIdField.value;
+
+  // Record chosen payment method (cashapp | venmo)
+  const chosen = document.querySelector('input[name="payment-choice"]:checked');
+  const paymentMethod = chosen ? chosen.value : 'cashapp';
+  document.getElementById('checkoutPaymentMethod').value = paymentMethod;
+
+  // Capture the full item list into the submitted form
+  document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+
+  // Always Pending Payment — the order is only marked paid after manual verification
+  document.getElementById('transactionId').value = orderId;
+  document.getElementById('paymentStatus').value = 'pending-payment';
 
   payBtn.disabled = true;
-  btnText.textContent = 'Processing...';
+  btnText.textContent = 'Saving Order...';
   spinner.style.display = 'inline-block';
   errEl.textContent = '';
 
   try {
-    // If Stripe is not initialized, submit form as order (payment via Venmo/CashApp)
-    if (!stripe || !cardElement) {
-      document.getElementById('transactionId').value = 'PENDING-' + Date.now();
-      document.getElementById('paymentStatus').value = 'pending-external-payment';
-      document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-      await submitNetlifyForm();
-      showConfirmation('PENDING — Complete payment via Venmo or Cash App in the cart', 'pending');
-      return;
-    }
-
-    // Create PaymentIntent on server
-    const piResponse = await fetch('/api/create-payment-intent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: amountCents,
-        currency: 'usd',
-        description: `Order from ${name} — Amber's Alchemy Apothecary`,
-        metadata: {
-          customer_name: name,
-          email: email,
-          items: cart.map(i => `${i.name} x${i.qty}`).join(', ').substring(0, 500),
-        },
-      }),
-    });
-
-    const piData = await piResponse.json();
-    if (piData.error) { throw new Error(piData.error); }
-
-    // Confirm payment with Stripe
-    const { error, paymentIntent } = await stripe.confirmCardPayment(piData.clientSecret, {
-      payment_method: {
-        card: cardElement,
-        billing_details: {
-          name: name,
-          email: email,
-          address: { postal_code: cityZip.split(/\s+/).pop() || '' },
-        },
-      },
-    });
-
-    if (error) { throw new Error(error.message); }
-
-    if (paymentIntent.status === 'succeeded') {
-      // Set transaction info and submit Netlify Form
-      document.getElementById('transactionId').value = paymentIntent.id;
-      document.getElementById('paymentStatus').value = 'paid';
-      await submitNetlifyForm();
-      showConfirmation(paymentIntent.id, 'paid');
-    }
+    await submitNetlifyForm();
   } catch (err) {
-    errEl.textContent = err.message || 'Payment failed. Please try again.';
-    payBtn.disabled = false;
-    btnText.textContent = 'Pay Now';
-    spinner.style.display = 'none';
+    // Even if the form POST fails, proceed to show payment instructions.
+    // The customer can re-submit later; we do not want to block payment.
+    console.error('Order submit error:', err);
   }
+
+  try { window.AAA && window.AAA.purchase && window.AAA.purchase(orderId, total, cart); } catch (e) {}
+
+  // Open the correct payment destination in a new tab with amount where supported
+  const cashAppUrl = `https://cash.app/$AmberPatten92/${total.toFixed(2)}`;
+  const venmoUrl = 'https://venmo.com/code?user_id=3573264899114195665&created=1776543987';
+  const payUrl = paymentMethod === 'venmo' ? venmoUrl : cashAppUrl;
+  try { window.open(payUrl, '_blank', 'noopener'); } catch (e) {}
+
+  showConfirmation(orderId, 'pending-payment', total, paymentMethod);
 });
 
 async function submitNetlifyForm() {
@@ -585,31 +578,47 @@ async function submitNetlifyForm() {
   });
 }
 
-function showConfirmation(transactionId, status) {
+function showConfirmation(orderId, status, totalOverride, paymentMethod) {
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const shipping = subtotal >= 75 ? 0 : 6.99;
   const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  const total = typeof totalOverride === 'number' ? totalOverride : (subtotal + shipping + tax);
   const name = document.getElementById('checkoutCustomerName').value.trim();
   const email = document.getElementById('checkoutEmail').value.trim();
+
+  const itemsList = cart.length
+    ? cart.map(i => `${i.name} x${i.qty}`).join(', ')
+    : (document.getElementById('checkoutProduct').value || '—');
+
+  // Truthful confirmation — always Pending until payment is verified manually.
+  const confirmOrderIdEl = document.getElementById('confirmOrderId');
+  const confirmAmountEl = document.getElementById('confirmAmountDue');
+  if (confirmOrderIdEl) confirmOrderIdEl.textContent = orderId;
+  if (confirmAmountEl) confirmAmountEl.textContent = formatPrice(total);
+
+  const cashAppBtn = document.getElementById('confirmCashAppBtn');
+  const venmoBtn = document.getElementById('confirmVenmoBtn');
+  if (cashAppBtn) cashAppBtn.href = `https://cash.app/$AmberPatten92/${total.toFixed(2)}`;
+  if (venmoBtn) venmoBtn.href = 'https://venmo.com/code?user_id=3573264899114195665&created=1776543987';
+
+  const methodLabel = paymentMethod === 'venmo' ? 'Venmo' : 'Cash App';
 
   document.getElementById('confirmationDetails').innerHTML = `
     <p><strong>Order for:</strong> ${name}</p>
     <p><strong>Email:</strong> ${email}</p>
-    <p><strong>Items:</strong> ${cart.map(i => `${i.name} x${i.qty}`).join(', ')}</p>
-    <p><strong>Total:</strong> ${formatPrice(total)}</p>
-    <p><strong>Transaction ID:</strong> ${transactionId}</p>
-    <p><strong>Status:</strong> ${status === 'paid' ? 'Payment Confirmed' : 'Awaiting Payment'}</p>
+    <p><strong>Items:</strong> ${itemsList}</p>
+    <p><strong>Amount Due:</strong> ${formatPrice(total)}</p>
+    <p><strong>Order Number:</strong> ${orderId}</p>
+    <p><strong>Selected Payment Method:</strong> ${methodLabel}</p>
+    <p><strong>Status:</strong> Pending Payment</p>
   `;
 
-  // Show confirmation, hide form
   document.querySelector('.checkout-container').style.display = 'none';
   document.getElementById('checkoutConfirmation').style.display = 'block';
 
-  // Clear cart
   cart = [];
   renderCart();
-  showToast('Order submitted successfully!');
+  showToast('Order saved — please complete payment to confirm.');
 }
 
 // ---- RENDER PRODUCTS (with category filter) ----

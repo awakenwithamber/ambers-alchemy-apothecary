@@ -616,7 +616,7 @@
           <span class="card-badge">💳 Debit</span>
           <span class="card-badge">📱 Venmo Balance</span>
         </div>
-        <a id="venmoPayBtn" href="https://venmo.com/AmberLynnPatten" target="_blank" rel="noopener" class="pay-btn venmo-btn">Pay with Venmo</a>
+        <a id="venmoPayBtn" href="https://venmo.com/code?user_id=3573264899114195665&created=1776543987" target="_blank" rel="noopener" class="pay-btn venmo-btn">Pay with Venmo</a>
       </div>
 
       <div class="payment-method-card" id="payMethodCashApp">
@@ -628,7 +628,7 @@
           <span class="card-badge">💳 Debit</span>
           <span class="card-badge">📱 Cash App Balance</span>
         </div>
-        <a id="cashAppPayBtn" href="https://cash.app/$AmberAlchemy" target="_blank" rel="noopener" class="pay-btn cashapp-btn">Pay with Cash App</a>
+        <a id="cashAppPayBtn" href="https://cash.app/$AmberPatten92" target="_blank" rel="noopener" class="pay-btn cashapp-btn">Pay with Cash App</a>
       </div>
     </div>
 
@@ -2930,32 +2930,50 @@
 
         <div class="checkout-divider"></div>
 
-        <h3>Pay with Card</h3>
-        <p class="checkout-secure-note">Your card information is processed securely by Stripe. No card data is stored on our servers.</p>
-        <div class="checkout-trust-badges">
-          <span class="trust-badge-item">🔒 SSL Encrypted</span>
-          <span class="trust-badge-item">💳 Visa</span>
-          <span class="trust-badge-item">💳 Mastercard</span>
-          <span class="trust-badge-item">💳 Amex</span>
-          <span class="trust-badge-item">🛡️ Secure Checkout</span>
+        <h3>Choose a Payment Method</h3>
+        <p class="checkout-secure-note">Pay with Cash App or Venmo. Your order will be saved as <strong>Pending Payment</strong> and confirmed by Amber once your payment is received.</p>
+
+        <input type="hidden" name="order-id" id="checkoutOrderId" value="" />
+        <input type="hidden" name="payment-method" id="checkoutPaymentMethod" value="" />
+
+        <div class="checkout-pending-panel">
+          <div class="checkout-pending-row">
+            <span class="checkout-pending-label">Order Number</span>
+            <span class="checkout-pending-value" id="checkoutOrderIdDisplay">—</span>
+            <button type="button" class="checkout-copy-btn" id="copyOrderIdBtn" aria-label="Copy order number">Copy</button>
+          </div>
+          <div class="checkout-pending-row">
+            <span class="checkout-pending-label">Amount Due</span>
+            <span class="checkout-pending-value" id="checkoutAmountDueDisplay">$0.00</span>
+            <button type="button" class="checkout-copy-btn" id="copyAmountBtn" aria-label="Copy amount due">Copy</button>
+          </div>
         </div>
 
-        <div class="checkout-field">
-          <label for="card-element">Card Details</label>
-          <div id="card-element" class="stripe-card-element"></div>
-          <div id="card-errors" class="checkout-card-errors" role="alert"></div>
+        <p class="checkout-pay-instructions">Select your preferred payment method — the amount is pre-filled for Cash App. Please include your order number in the Venmo note.</p>
+
+        <div class="checkout-pay-options" role="group" aria-label="Select payment method">
+          <label class="checkout-pay-option">
+            <input type="radio" name="payment-choice" value="cashapp" checked />
+            <span class="checkout-pay-option-icon">💚</span>
+            <span class="checkout-pay-option-label">Cash App</span>
+            <span class="checkout-pay-option-sub">Amount is pre-filled</span>
+          </label>
+          <label class="checkout-pay-option">
+            <input type="radio" name="payment-choice" value="venmo" />
+            <span class="checkout-pay-option-icon">💜</span>
+            <span class="checkout-pay-option-label">Venmo</span>
+            <span class="checkout-pay-option-sub">Enter amount in app</span>
+          </label>
         </div>
 
-        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn" disabled>
-          <span id="payBtnText">Pay Now</span>
+        <div id="card-errors" class="checkout-card-errors" role="alert"></div>
+
+        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn">
+          <span id="payBtnText">Submit Order &amp; Continue to Payment</span>
           <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
         </button>
 
-        <div class="checkout-trust-badges">
-          <span>🔒 SSL Encrypted</span>
-          <span>💳 Visa, Mastercard, Amex</span>
-          <span>✦ PCI Compliant</span>
-        </div>
+        <p class="checkout-pay-fineprint">By submitting, your order is saved with <strong>Pending Payment</strong> status. Amber will confirm it once payment is received.</p>
       </form>
     </div>
   </div>
@@ -2964,14 +2982,35 @@
   <div id="checkoutConfirmation" class="checkout-confirmation" style="display:none;">
     <div class="checkout-confirm-inner card">
       <div class="checkout-confirm-icon">✦</div>
-      <h2>Thank You! Your Order Has Been Received</h2>
-      <p>Confirmation has been sent to your email. Amber will begin preparing your order right away.</p>
+      <h2 id="confirmationHeading">Your Order Has Been Received — Awaiting Payment</h2>
+      <p id="confirmationLead">Your order has been received and is awaiting payment confirmation. Please complete payment using Cash App or Venmo below. Your order will be confirmed once payment is received.</p>
+
+      <div id="confirmationPendingBlock" class="checkout-pending-panel" style="margin:18px auto;max-width:520px;">
+        <div class="checkout-pending-row">
+          <span class="checkout-pending-label">Order Number</span>
+          <span class="checkout-pending-value" id="confirmOrderId">—</span>
+          <button type="button" class="checkout-copy-btn" data-copy-target="confirmOrderId">Copy</button>
+        </div>
+        <div class="checkout-pending-row">
+          <span class="checkout-pending-label">Amount Due</span>
+          <span class="checkout-pending-value" id="confirmAmountDue">$0.00</span>
+          <button type="button" class="checkout-copy-btn" data-copy-target="confirmAmountDue">Copy</button>
+        </div>
+      </div>
+
+      <div class="payment-method-grid" id="confirmationPayButtons" style="max-width:520px;margin:10px auto 18px;">
+        <a id="confirmCashAppBtn" href="https://cash.app/$AmberPatten92" target="_blank" rel="noopener" class="pay-btn cashapp-btn">💚 Pay with Cash App</a>
+        <a id="confirmVenmoBtn" href="https://venmo.com/code?user_id=3573264899114195665&created=1776543987" target="_blank" rel="noopener" class="pay-btn venmo-btn">💜 Pay with Venmo</a>
+      </div>
+
+      <p class="checkout-pay-fineprint" style="max-width:560px;margin:0 auto 12px;">Please include your <strong>Order Number</strong> in the Cash App or Venmo note so Amber can match your payment to your order.</p>
+
       <div id="confirmationDetails" class="checkout-confirm-details"></div>
       <div class="rv-cta-row" style="justify-content:center;margin:20px 0 8px;">
         <button type="button" class="btn-primary" data-rv-open data-rv-open-type="site" data-rv-name="My order experience">✦ Review Your Experience</button>
         <a class="rv-google-link" data-rv-google target="_blank" rel="noopener">Leave a Review on Google ↗</a>
       </div>
-      <p style="color:var(--text-muted);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.95rem;margin:0 auto 14px;max-width:540px;">We'll also check in by email in about ten days so you can review the products once you've had time to notice how they feel.</p>
+      <p style="color:var(--text-muted);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.95rem;margin:0 auto 14px;max-width:540px;">Once payment is received, Amber will send a confirmation email and begin preparing your order.</p>
       <button class="btn-primary" onclick="showSection('shop')">Continue Shopping</button>
     </div>
   </div>
