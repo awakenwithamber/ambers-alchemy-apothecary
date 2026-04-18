@@ -5562,3 +5562,311 @@ html, body {
   }
 }
 
+
+/* ============================================================
+   BUILD YOUR OWN SOAP REMEDY — variant picker (new product)
+   Styling inherits the site's mystical apothecary palette.
+   ============================================================ */
+.soap-remedy-variants {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0.75rem 0 0.5rem;
+}
+.soap-remedy-variant {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid rgba(107, 79, 155, 0.25);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.45);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.95rem;
+  color: var(--text, #3b2a5e);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.soap-remedy-variant:hover {
+  background: rgba(212, 168, 67, 0.08);
+  border-color: rgba(212, 168, 67, 0.45);
+}
+.soap-remedy-variant input[type="radio"] {
+  accent-color: var(--brass, #d4a843);
+  margin: 0;
+}
+
+/* ============================================================
+   PERSONAL WELLNESS BUNDLE — optional upgrade offer
+   Reused by quiz results + custom remedy builder.
+   ============================================================ */
+.wbundle-offer {
+  margin: 22px 0 8px;
+  padding: 0;
+  text-align: left;
+}
+.wbundle-offer .wbundle-inner {
+  border-radius: var(--radius-lg, 14px);
+  padding: 22px 22px 20px;
+  background: linear-gradient(160deg, rgba(75, 46, 89, 0.75), rgba(30, 17, 40, 0.85));
+  border: 1px solid rgba(184, 148, 90, 0.45);
+  box-shadow: 0 14px 40px rgba(30, 17, 40, 0.45);
+  color: var(--text-body, #EDE4D8);
+}
+.wbundle-eyebrow {
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  color: var(--brass-lt, #B8945A);
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+.wbundle-title {
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+  color: var(--parchment, #F3EBDD);
+  margin: 0 0 10px;
+  line-height: 1.3;
+}
+.wbundle-lede {
+  color: var(--text-body, #EDE4D8);
+  font-size: 0.98rem;
+  line-height: 1.55;
+  margin: 0 0 8px;
+}
+.wbundle-sublede {
+  color: var(--text-muted, #B8A898);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+.wbundle-allies {
+  margin: 0 0 14px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(243, 235, 221, 0.06);
+  border: 1px dashed rgba(184, 148, 90, 0.4);
+  color: var(--parchment-dk, #E0D0B8);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.wbundle-allies-label {
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brass-lt, #B8945A);
+  margin-right: 6px;
+}
+.wbundle-bundle-card {
+  margin: 4px 0 14px;
+  padding: 14px 16px 12px;
+  border-radius: 12px;
+  background: rgba(30, 17, 40, 0.55);
+  border: 1px solid rgba(243, 235, 221, 0.1);
+}
+.wbundle-bundle-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.wbundle-bundle-name {
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 1.05rem;
+  color: var(--parchment, #F3EBDD);
+  letter-spacing: 0.04em;
+}
+.wbundle-price-row {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.wbundle-price-old {
+  color: var(--text-muted, #B8A898);
+  text-decoration: line-through;
+  font-size: 0.95rem;
+}
+.wbundle-price-new {
+  color: var(--brass-lt, #B8945A);
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.wbundle-savings-badge {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(122, 139, 111, 0.22);
+  color: #C9D7BA;
+  border: 1px solid rgba(122, 139, 111, 0.55);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.wbundle-bundle-sub {
+  color: var(--text-muted, #B8A898);
+  font-size: 0.85rem;
+  margin: 0 0 10px;
+}
+.wbundle-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.wbundle-items li {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 8px;
+  align-items: start;
+  color: var(--text-body, #EDE4D8);
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+.wbundle-item-mark {
+  color: var(--brass-lt, #B8945A);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.wbundle-items li strong {
+  color: var(--parchment, #F3EBDD);
+  font-weight: 600;
+}
+.wbundle-savings-detail {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(30, 17, 40, 0.6);
+  border: 1px solid rgba(184, 148, 90, 0.3);
+}
+.wbundle-savings-detail h5 {
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 0.9rem;
+  color: var(--brass-lt, #B8945A);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+.wbundle-savings-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+.wbundle-savings-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-body, #EDE4D8);
+  font-size: 0.92rem;
+}
+.wbundle-savings-list li.wbundle-savings-subtotal {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(184, 148, 90, 0.3);
+  color: var(--text-muted, #B8A898);
+}
+.wbundle-savings-list li.wbundle-savings-total {
+  font-family: var(--font-display, 'Cinzel', serif);
+  color: var(--parchment, #F3EBDD);
+  font-size: 1rem;
+  padding-top: 2px;
+}
+.wbundle-savings-list li.wbundle-savings-you-save {
+  color: #C9D7BA;
+  font-weight: 600;
+}
+.wbundle-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 4px;
+}
+.wbundle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  min-height: 44px;
+  border-radius: 10px;
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 0.92rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform var(--transition, 0.22s ease), background var(--transition, 0.22s ease), border-color var(--transition, 0.22s ease), color var(--transition, 0.22s ease);
+  line-height: 1.1;
+}
+.wbundle-btn-primary {
+  background: linear-gradient(135deg, #B8945A, #8C6A3B);
+  color: #1E1128;
+  border-color: rgba(243, 235, 221, 0.3);
+  box-shadow: 0 6px 18px rgba(140, 106, 59, 0.35);
+}
+.wbundle-btn-primary:hover,
+.wbundle-btn-primary:focus-visible {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, #D0A969, #A17F48);
+}
+.wbundle-btn-ghost {
+  background: transparent;
+  color: var(--parchment, #F3EBDD);
+  border-color: rgba(243, 235, 221, 0.35);
+}
+.wbundle-btn-ghost:hover,
+.wbundle-btn-ghost:focus-visible {
+  background: rgba(243, 235, 221, 0.08);
+  border-color: var(--brass-lt, #B8945A);
+  color: var(--brass-lt, #B8945A);
+}
+.wbundle-btn-link {
+  background: transparent;
+  color: var(--brass-lt, #B8945A);
+  border-color: transparent;
+  padding: 10px 6px;
+  text-transform: none;
+  letter-spacing: 0.04em;
+  font-family: var(--font-body, 'Lora', Georgia, serif);
+  font-size: 0.92rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.wbundle-btn-link:hover,
+.wbundle-btn-link:focus-visible {
+  color: var(--parchment, #F3EBDD);
+}
+.wbundle-fineprint {
+  margin: 12px 0 0;
+  color: var(--text-muted, #B8A898);
+  font-size: 0.82rem;
+  font-style: italic;
+}
+.wbundle-resolved .wbundle-inner {
+  border-color: rgba(122, 139, 111, 0.55);
+  background: linear-gradient(160deg, rgba(122, 139, 111, 0.18), rgba(30, 17, 40, 0.85));
+}
+.wbundle-resolved-msg {
+  margin: 0;
+  color: #C9D7BA;
+  font-size: 0.95rem;
+  font-family: var(--font-body, 'Lora', Georgia, serif);
+}
+
+@media (max-width: 640px) {
+  .wbundle-offer .wbundle-inner { padding: 18px 16px; }
+  .wbundle-bundle-head { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .wbundle-price-new { font-size: 1.15rem; }
+  .wbundle-actions { flex-direction: column; align-items: stretch; }
+  .wbundle-btn { width: 100%; }
+  .wbundle-btn-link { padding: 8px 0; text-align: left; }
+}
+

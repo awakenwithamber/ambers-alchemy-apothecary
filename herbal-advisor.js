@@ -170,6 +170,12 @@ function updateAdvisorContent(onStepChange) {
   if (reassure && ADVISOR_REASSURANCE[advisorState.step]) {
     reassure.innerHTML = '\u2726 ' + ADVISOR_REASSURANCE[advisorState.step];
   }
+  if (advisorState.step === 6) {
+    var synthFormKey = advisorState.preferredFormat && advisorState.preferredFormat !== 'no-preference'
+      ? mapPreferredFormatToKey(advisorState.preferredFormat)
+      : (advisorState.patterns && advisorState.patterns[0] && advisorState.patterns[0].pattern.preferredForm) || 'capsule';
+    mountSynthWellnessBundleOffer(synthFormKey, advisorState.allies || []);
+  }
   if (onStepChange) {
     if (modal) modal.scrollTop = 0;
   } else if (modal) {
@@ -666,7 +672,58 @@ function renderFinalRemedyCTA(formKey, allies) {
       '<button type="button" class="synth-cta-primary synth-cta-xl" id="synth-cta-custom">\u2728 Add My Custom Remedy to Cart</button>' +
       '<p class="synth-final-fineprint">One quiz session \u00b7 one custom remedy \u00b7 crafted to your answers</p>' +
     '</div>' +
+    '<div id="synth-wbundle-mount"></div>' +
   '</section>';
+}
+
+// Mount the optional Personal Wellness Bundle upgrade card after the primary
+// CTA is in the DOM. Uses the same matched herbal allies from the quiz.
+function mountSynthWellnessBundleOffer(formKey, allies) {
+  if (!window.WellnessBundle || typeof window.WellnessBundle.mount !== 'function') return;
+  var mountEl = document.getElementById('synth-wbundle-mount');
+  if (!mountEl || mountEl.getAttribute('data-wbundle-ready') === '1') return;
+
+  var formPrices = {
+    'tea-bags': 12.99, 'loose-tea': 9.99, 'tincture': 24.99, 'balm': 18.99,
+    'salve': 16.99, 'serum': 22.99, 'poultice': 14.99, 'capsule': 28.99
+  };
+  var formLabels = {
+    'tea-bags': 'Handmade Tea Bags', 'loose-tea': 'Loose Leaf Custom Blend', 'tincture': 'Herbal Tincture',
+    'balm': 'Herbal Balm', 'salve': 'Herbal Salve', 'serum': 'Botanical Serum',
+    'poultice': 'Herbal Poultice', 'capsule': 'Herbal Capsules'
+  };
+  var formUnits = {
+    'tea-bags': '20 Count', 'loose-tea': '1 oz', 'tincture': '1oz Tincture',
+    'balm': '1oz Balm', 'salve': '1oz Salve', 'serum': '1oz Serum',
+    'poultice': '2oz Poultice', 'capsule': '30 Capsules'
+  };
+  var basePrice = formPrices[formKey] || 14.99;
+  var herbCost = (allies || []).reduce(function(sum, a) {
+    var h = (typeof BOTANICALS !== 'undefined') ? BOTANICALS.find(function(b) { return b.id === a.id; }) : null;
+    return sum + ((h && h.price) || 0.23);
+  }, 0);
+  var primaryPrice = basePrice + herbCost;
+  var patternName = advisorState.patterns && advisorState.patterns[0]
+    ? advisorState.patterns[0].pattern.name
+    : 'Custom Wellness Blend';
+  var allyNames = (allies || []).map(function(a) {
+    var h = (typeof BOTANICALS !== 'undefined') ? BOTANICALS.find(function(b) { return b.id === a.id; }) : null;
+    return h ? h.name : '';
+  }).filter(Boolean);
+
+  window.WellnessBundle.mount(mountEl, {
+    patternName: patternName,
+    primaryName: 'Custom ' + (formLabels[formKey] || 'Remedy'),
+    primaryForm: formLabels[formKey] || 'Custom Remedy',
+    primarySize: formUnits[formKey] || '',
+    primaryPrice: primaryPrice,
+    allies: allyNames,
+    source: 'quiz',
+    onKeepRemedy: function() {
+      try { synthAddCustomToCart(); } catch (e) {}
+    }
+  });
+  mountEl.setAttribute('data-wbundle-ready', '1');
 }
 
 // ============================================================

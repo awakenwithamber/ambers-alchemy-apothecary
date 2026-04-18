@@ -694,6 +694,7 @@
     actionsDiv.style.marginTop = '16px';
     actionsDiv.innerHTML =
       '<div style="text-align:center; color:#8fb87a; font-size:0.95rem; margin-bottom:10px">\u2726 Remedy added to cart!</div>' +
+      '<div class="cc-wellness-bundle-mount" id="ccWellnessBundleMount"></div>' +
       '<button class="rf-action-btn primary" onclick="if(typeof startGuidedExperience===\'function\') startGuidedExperience()">Build Another Remedy</button>' +
       '<button class="rf-action-btn" onclick="if(typeof showSection===\'function\') showSection(\'herb-index\')">Explore More Herbs</button>' +
       '<button class="rf-action-btn" onclick="if(typeof startNewRemedy===\'function\') startNewRemedy()">Start Fresh</button>' +
@@ -704,6 +705,47 @@
     } else {
       step3.appendChild(actionsDiv);
     }
+    mountBuilderWellnessBundle();
+  }
+
+  // Optional Personal Wellness Bundle upgrade — offered after a builder add-to-cart.
+  // Uses the SAME matched herbal allies the visitor just built with. Adds the
+  // bundle as an additional cart line (primary remedy is left untouched).
+  function mountBuilderWellnessBundle() {
+    if (!window.WellnessBundle || typeof window.WellnessBundle.mount !== 'function') return;
+    var mountEl = document.getElementById('ccWellnessBundleMount');
+    if (!mountEl || mountEl.getAttribute('data-wbundle-ready') === '1') return;
+
+    var flowState = window.RemedyFlow ? window.RemedyFlow.getState() : {};
+    var symptoms = flowState.symptoms || [];
+    var goalLabels = {};
+    if (typeof ADVISOR_DATA !== 'undefined') {
+      ADVISOR_DATA.goals.forEach(function(g) { goalLabels[g.id] = g.label; });
+    }
+    var patternName = symptoms.length
+      ? symptoms.map(function(s) { return goalLabels[s] || s; }).join(' + ')
+      : ((document.getElementById('ccIntention') || {}).value || 'Your Custom Blend');
+
+    var typeName = document.querySelector('.cc-type-btn[data-type="' + ccType + '"] .cc-type-name');
+    var typeLabel = typeName ? typeName.textContent : (ccType || 'Custom Remedy');
+
+    var allyNames = ccSelected.map(function(h) { return h.name; }).filter(Boolean);
+    var finalPrice = ccBasePrice + ccSelected.reduce(function(s, h) { return s + getHerbPrice(h); }, 0);
+
+    window.WellnessBundle.mount(mountEl, {
+      patternName: patternName,
+      primaryName: 'Custom ' + typeLabel,
+      primaryForm: typeLabel,
+      primarySize: ccUnit || '',
+      primaryPrice: finalPrice,
+      allies: allyNames,
+      source: 'builder',
+      addOnMode: true,
+      onKeepRemedy: null
+    }, {
+      showPrimaryCta: false
+    });
+    mountEl.setAttribute('data-wbundle-ready', '1');
   }
 
   function addSeparateRemedies(symptoms, goalLabels, typeLabel, creationName, intention, notes, recommendedHerbs) {
@@ -786,17 +828,46 @@
       var allergies = (document.getElementById('formulaAllergies') || {}).value || 'None';
       var fnotes = (document.getElementById('formulaNotes') || {}).value || '';
 
-      var subject = encodeURIComponent('Custom Herbal Consultation Request from ' + name);
-      var body = encodeURIComponent(
-        'Name: ' + name + '\nEmail: ' + email + '\n\nSymptoms / Goals:\n' + symptoms +
-        '\n\nRemedy Type: ' + type +
-        '\nCurrent Medications: ' + meds +
-        '\nCurrent Supplements: ' + supplements +
-        '\nPregnancy / Breastfeeding: ' + pregnancy +
-        '\nAllergies: ' + allergies +
-        '\n\nAdditional Notes:\n' + fnotes
-      );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
+      var origLabel = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+      fetch('/.netlify/functions/contact-form', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          kind: 'formula',
+          name: name,
+          email: email,
+          subject: 'Custom Herbal Consultation Request from ' + name,
+          message: symptoms + (fnotes ? '\n\nAdditional Notes:\n' + fnotes : ''),
+          details: {
+            remedyType: type,
+            currentMedications: meds,
+            currentSupplements: supplements,
+            pregnancyBreastfeeding: pregnancy,
+            allergies: allergies
+          }
+        })
+      })
+        .then(function(res) {
+          if (!res.ok) throw new Error('bad-response');
+          submitBtn.textContent = '✓ Request Sent!';
+          if (typeof showToast === 'function') {
+            showToast('✦ Your consultation request has been sent to Amber.');
+          } else {
+            alert('Your consultation request has been sent to Amber.');
+          }
+          setTimeout(function() { submitBtn.textContent = origLabel; submitBtn.disabled = false; }, 3000);
+        })
+        .catch(function() {
+          submitBtn.textContent = origLabel;
+          submitBtn.disabled = false;
+          if (typeof showToast === 'function') {
+            showToast('Could not reach our server. Please email awaken@consultant.com directly.');
+          } else {
+            alert('Could not reach our server. Please email awaken@consultant.com directly.');
+          }
+        });
     });
   }
 

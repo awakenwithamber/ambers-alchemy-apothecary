@@ -1515,6 +1515,36 @@
       </div>
     </div>
 
+    <!-- Build Your Own Soap Remedy — new personalized soap product -->
+    <div class="soap-card" id="soap-remedy-card">
+      <div class="soap-img-wrap">
+        <img src="images/soap-rose-clay.png" alt="Build Your Own Soap Remedy" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🧼</div>'" />
+        <div class="soap-img-badge">New</div>
+      </div>
+      <div class="soap-info">
+        <h3 class="soap-name">Build Your Own Soap Remedy</h3>
+        <p class="soap-latin">Personalized Botanical Bar · Your Shape · Your Scent</p>
+        <p class="soap-desc">Create a handcrafted botanical soap made your way. Choose your shape, scent, botanicals, colors, and nourishing base for a personalized self-care bar.</p>
+        <ul class="soap-benefits">
+          <li>✦ Handmade in small batches with castor oil, vegetable glycerin, shea butter, goat milk</li>
+          <li>✦ Real botanicals and pure doTERRA essential oils</li>
+          <li>✦ Plant-based natural coloring</li>
+        </ul>
+        <div class="soap-scent-note">✨ <strong>Ingredients:</strong> Castor oil · vegetable glycerin · shea butter · goat milk · real botanicals · doTERRA essential oils · plant-based coloring</div>
+        <div class="soap-remedy-variants" role="radiogroup" aria-label="Choose a soap variant">
+          <label class="soap-remedy-variant"><input type="radio" name="soapRemedyVariant" value="Rectangular with Waves|12.99|4 oz" checked> <span>Rectangular with Waves · 4 oz · $12.99</span></label>
+          <label class="soap-remedy-variant"><input type="radio" name="soapRemedyVariant" value="Round with Flowers|12.99|4 oz"> <span>Round with Flowers · 4 oz · $12.99</span></label>
+          <label class="soap-remedy-variant"><input type="radio" name="soapRemedyVariant" value="Big Rose|8.99|3 oz"> <span>Big Rose · 3 oz · $8.99</span></label>
+          <label class="soap-remedy-variant"><input type="radio" name="soapRemedyVariant" value="Small Rose|5.99|2 oz"> <span>Small Rose · 2 oz · $5.99</span></label>
+        </div>
+        <div class="soap-price-row">
+          <span class="soap-price" id="soapRemedyPrice">$12.99</span>
+          <span class="soap-size" id="soapRemedySize">4 oz bar</span>
+        </div>
+        <button class="btn-primary soap-order-btn" id="soapRemedyCustomizeBtn" type="button">Customize & Add to Cart ✦</button>
+      </div>
+    </div>
+
   </div>
 
   <!-- Collection Banner -->
@@ -1525,6 +1555,8 @@
       <p>All nine signature bars. One for every mood, intention, and season.</p>
       <button class="btn-secondary" onclick="addSoapToCart('Full Soap Collection (All 9 Bars)', 99.99, this)">Get All 9 Bars — $99.99 ✦</button>
       <button class="btn-secondary" style="margin-top:0.5rem;" onclick="addSoapToCart('9 Custom Soaps Collection', 109.99, this)">9 Custom Soaps — $109.99 ✦</button>
+      <p style="margin-top:0.6rem;font-style:italic;color:var(--text-muted,#7a6a95);">Your Custom Soaps Bundle can now include the new <strong>Build Your Own Soap Remedy</strong> — configure yours below.</p>
+      <button class="btn-secondary" style="margin-top:0.5rem;" type="button" onclick="if(typeof openSoapRemedy==='function') openSoapRemedy();">Add Build Your Own Soap Remedy ✦</button>
       <a href="/soap-menu" class="btn-secondary" style="margin-top:0.5rem;display:inline-block;text-decoration:none;">View the Botanical Soap Atelier Menu ✦</a>
     </div>
   </div>
@@ -1679,6 +1711,54 @@
       <button class="btn-secondary" id="sbStartNewBtn" onclick="sbStartNew()">Start New</button>
       <button class="btn-primary" id="sbAddCartBtn" onclick="sbAddToCart()">Add to Cart</button>
       <button class="btn-primary" id="sbNextBtn" onclick="sbNextStep()">Next Step ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- BUILD YOUR OWN SOAP REMEDY — Customization modal -->
+<div id="soapRemedyModal" class="soap-builder-overlay" style="display:none;" role="dialog" aria-labelledby="soapRemedyTitle">
+  <div class="soap-builder-modal">
+    <button class="soap-builder-close" type="button" id="soapRemedyCloseBtn" aria-label="Close">&times;</button>
+    <div class="soap-builder-header">
+      <div class="section-ornament">✦ ─── ✦</div>
+      <h2 id="soapRemedyTitle">Build Your Own Soap Remedy</h2>
+      <p>Handmade in small batches with castor oil, vegetable glycerin, shea butter, goat milk, real botanicals, pure doTERRA essential oils, and plant-based coloring.</p>
+    </div>
+
+    <div class="soap-builder-body">
+      <div class="sb-step active">
+        <h3>Variant</h3>
+        <p class="sb-step-desc" id="soapRemedyVariantLabel">Rectangular with Waves · 4 oz · $12.99</p>
+
+        <h3 style="margin-top:1.25rem;">Base Style</h3>
+        <p class="sb-step-desc">Choose how your bar is built.</p>
+        <div class="sb-options-grid" id="soapRemedyBaseOptions"></div>
+
+        <div id="soapRemedyLayerDetail" style="margin-top:1rem;">
+          <h3>Bar Composition</h3>
+          <p class="sb-step-desc" id="soapRemedyLayerHint">For a Layered Bar: top uses castor oil + vegetable glycerin + your chosen botanical color; bottom uses shea butter + goat milk.</p>
+          <div class="sb-options-grid" id="soapRemedyFullChoice" style="display:none;"></div>
+        </div>
+
+        <h3 style="margin-top:1.25rem;">Scent (optional)</h3>
+        <div class="sb-options-grid" id="soapRemedyScentOptions"></div>
+
+        <h3 style="margin-top:1.25rem;">Botanicals (optional)</h3>
+        <div class="sb-options-grid" id="soapRemedyBotanicalOptions"></div>
+
+        <h3 style="margin-top:1.25rem;">Natural Color (optional)</h3>
+        <div class="sb-options-grid" id="soapRemedyColorOptions"></div>
+
+        <div class="sb-live-summary" style="margin-top:1rem;">
+          <div id="soapRemedySummary"></div>
+          <div style="text-align:right;margin-top:0.5rem;"><strong>Total: <span id="soapRemedyTotal">$12.99</span></strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="soap-builder-actions">
+      <button class="btn-secondary" type="button" id="soapRemedyCancelBtn">Cancel</button>
+      <button class="btn-primary" type="button" id="soapRemedyAddBtn">Add to Cart ✦</button>
     </div>
   </div>
 </div>
@@ -3033,6 +3113,7 @@
 <script src="products-updated.js"></script>
 <script src="app.js"></script>
 <script src="grimoire.js"></script>
+<script src="wellness-bundle.js"></script>
 <script src="custom-creations.js"></script>
   <script src="botanical-cards.js"></script>
     <script src="grimoire-seo.js"></script>
@@ -3085,6 +3166,7 @@
 </script>
 
 <script src="soap-builder.js"></script>
+<script src="soap-remedy.js"></script>
 <script src="herbal-wisdom.js"></script>
 <script src="navigation-history.js"></script>
 <script src="reviews.js"></script>
