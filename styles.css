@@ -907,6 +907,38 @@ footer { border-top: 1px solid var(--border); padding: 50px 24px 30px; text-alig
 
 .checkout-proceed-btn { width: 100%; font-size: 15px; padding: 14px; letter-spacing: 0.06em; }
 
+/* Payment method chooser + external-pay panel (Venmo / Cash App) */
+.checkout-pay-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin: 10px 0 16px;
+}
+.checkout-pay-method {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: rgba(30,17,40,0.45); cursor: pointer;
+  font-family: var(--font-body); color: var(--parchment);
+  transition: border-color var(--transition), background var(--transition);
+}
+.checkout-pay-method:hover { border-color: var(--amethyst); }
+.checkout-pay-method input[type="radio"] { accent-color: var(--amethyst); }
+.checkout-pay-method:has(input:checked) {
+  border-color: var(--brass);
+  background: rgba(140,106,59,0.14);
+}
+.checkout-pay-method-label { font-size: 14px; letter-spacing: 0.02em; }
+
+.checkout-pay-panel { margin-top: 6px; }
+
+.checkout-external-steps li { margin-bottom: 4px; }
+.checkout-external-open {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 12px 18px; text-decoration: none;
+}
+.checkout-external-actions { margin: 10px 0 6px; }
+.checkout-external-confirm input[type="checkbox"] { accent-color: var(--amethyst); width: 18px; height: 18px; }
+
 /* Checkout Confirmation */
 .checkout-confirmation { max-width: 600px; margin: 0 auto; text-align: center; }
 .checkout-confirm-inner { padding: 40px 30px; }

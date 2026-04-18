@@ -406,8 +406,9 @@ document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
   this.href = `https://cash.app/$AmberAlchemy/${total.toFixed(2)}`;
 });
 
-// ---- SECURE CHECKOUT (Stripe) ----
+// ---- SECURE CHECKOUT (Stripe card + Venmo/Cash App manual-verify) ----
 let stripe, cardElement, stripeReady = false;
+let selectedPayMethod = 'stripe'; // 'stripe' | 'venmo' | 'cashapp'
 
 function renderCheckoutSummary() {
   const el = document.getElementById('checkoutItems');
@@ -431,7 +432,88 @@ function renderCheckoutSummary() {
   document.getElementById('checkoutTax').textContent = formatPrice(tax);
   document.getElementById('checkoutTotal').textContent = formatPrice(total);
   document.getElementById('orderTotalField').value = formatPrice(total);
+  updateExternalPayUI(total);
 }
+
+function updateExternalPayUI(totalNumber) {
+  const amountEl = document.getElementById('externalPayAmount');
+  const linkEl = document.getElementById('externalPayLink');
+  const appNameEl = document.getElementById('externalPayAppName');
+  const handleEl = document.getElementById('externalPayHandle');
+  const confirmLabelEl = document.getElementById('externalPayConfirmLabel');
+  if (!amountEl || !linkEl) return;
+
+  const name = (document.getElementById('checkoutCustomerName') || {}).value || '';
+  const items = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+  const note = [`Amber's Alchemy Order`, name ? `- ${name}` : '', items ? `| ${items}` : '']
+    .filter(Boolean).join(' ');
+  const amt = (totalNumber || 0).toFixed(2);
+
+  amountEl.textContent = `Amount: $${amt}`;
+
+  if (selectedPayMethod === 'cashapp') {
+    if (appNameEl) appNameEl.textContent = 'Cash App';
+    if (handleEl) handleEl.textContent = '$AmberAlchemy';
+    if (confirmLabelEl) confirmLabelEl.textContent = 'Cash App';
+    linkEl.textContent = 'Open Cash App to Pay';
+    linkEl.href = `https://cash.app/$AmberAlchemy/${amt}`;
+  } else {
+    if (appNameEl) appNameEl.textContent = 'Venmo';
+    if (handleEl) handleEl.textContent = '@AmberLynnPatten';
+    if (confirmLabelEl) confirmLabelEl.textContent = 'Venmo';
+    linkEl.textContent = 'Open Venmo to Pay';
+    linkEl.href = `https://venmo.com/AmberLynnPatten?txn=pay&amount=${amt}&note=${encodeURIComponent(note)}`;
+  }
+}
+
+function setPayMethod(method) {
+  selectedPayMethod = method === 'cashapp' ? 'cashapp' : (method === 'venmo' ? 'venmo' : 'stripe');
+  const stripePanel = document.getElementById('payPanelStripe');
+  const extPanel = document.getElementById('payPanelExternal');
+  if (!stripePanel || !extPanel) return;
+  if (selectedPayMethod === 'stripe') {
+    stripePanel.style.display = '';
+    extPanel.style.display = 'none';
+  } else {
+    stripePanel.style.display = 'none';
+    extPanel.style.display = '';
+    // Reset attestation whenever switching methods or opening panel.
+    const box = document.getElementById('externalPayConfirmBox');
+    const btn = document.getElementById('submitPendingOrderBtn');
+    if (box) box.checked = false;
+    if (btn) btn.disabled = true;
+    const errEl = document.getElementById('externalPayError');
+    if (errEl) errEl.textContent = '';
+  }
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const shipping = subtotal >= 75 ? 0 : 6.99;
+  const tax = subtotal * 0.08;
+  updateExternalPayUI(subtotal + shipping + tax);
+}
+
+// Wire up method radios, attestation checkbox, and the pending-submit button.
+(function wireCheckoutPaymentUI() {
+  function wire() {
+    document.querySelectorAll('input[name="pay-method-select"]').forEach(r => {
+      r.addEventListener('change', function() { setPayMethod(this.value); });
+    });
+    const confirmBox = document.getElementById('externalPayConfirmBox');
+    const pendingBtn = document.getElementById('submitPendingOrderBtn');
+    if (confirmBox && pendingBtn) {
+      confirmBox.addEventListener('change', function() {
+        pendingBtn.disabled = !this.checked;
+      });
+    }
+    if (pendingBtn) {
+      pendingBtn.addEventListener('click', submitPendingExternalOrder);
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wire);
+  } else {
+    wire();
+  }
+})();
 
 async function initStripe() {
   if (stripeReady) return;
@@ -450,9 +532,18 @@ async function initStripe() {
   }
 
   if (!pk) {
-    document.getElementById('card-errors').textContent = 'Card payments are being set up. You may also use Venmo or Cash App from the cart.';
-    document.getElementById('checkoutPayBtn').disabled = false;
-    document.getElementById('payBtnText').textContent = 'Submit Order';
+    // Card payments are not available. Force customer to an external method
+    // so there is no path that submits the order without real payment.
+    document.getElementById('card-errors').textContent = 'Card payments are temporarily unavailable. Please choose Venmo or Cash App above to complete your order.';
+    const payBtn = document.getElementById('checkoutPayBtn');
+    if (payBtn) {
+      payBtn.disabled = true;
+      const payTxt = document.getElementById('payBtnText');
+      if (payTxt) payTxt.textContent = 'Card unavailable';
+    }
+    // Switch UI to the Venmo panel so customer can see how to pay.
+    const venmoRadio = document.querySelector('input[name="pay-method-select"][value="venmo"]');
+    if (venmoRadio) { venmoRadio.checked = true; setPayMethod('venmo'); }
     return;
   }
   try {
@@ -473,15 +564,35 @@ async function initStripe() {
     cardElement.on('change', function(event) {
       const errEl = document.getElementById('card-errors');
       errEl.textContent = event.error ? event.error.message : '';
-      document.getElementById('checkoutPayBtn').disabled = !event.complete;
+      // Only enable card submit if the card is complete AND stripe method is selected.
+      document.getElementById('checkoutPayBtn').disabled = !event.complete || selectedPayMethod !== 'stripe';
     });
     stripeReady = true;
   } catch (e) {
-    document.getElementById('card-errors').textContent = 'Could not initialize payment form.';
+    document.getElementById('card-errors').textContent = 'Could not initialize payment form. Please choose Venmo or Cash App above.';
+    const payBtn = document.getElementById('checkoutPayBtn');
+    if (payBtn) payBtn.disabled = true;
   }
 }
 
-// Handle checkout form submission
+function validateCheckoutFields(errEl) {
+  const name = document.getElementById('checkoutCustomerName').value.trim();
+  const email = document.getElementById('checkoutEmail').value.trim();
+  const address = document.getElementById('checkoutAddress').value.trim();
+  const cityZip = document.getElementById('checkoutCityStateZip').value.trim();
+  if (!name || !email || !address || !cityZip) {
+    if (errEl) errEl.textContent = 'Please fill in all required fields above (name, email, shipping address, city/state/ZIP).';
+    return null;
+  }
+  if (cart.length === 0) {
+    if (errEl) errEl.textContent = 'Your cart is empty.';
+    return null;
+  }
+  return { name, email, address, cityZip };
+}
+
+// Handle checkout form submission — CARD PATH ONLY.
+// This handler never submits a paid-looking order without a succeeded Stripe PaymentIntent.
 document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
@@ -490,16 +601,20 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
   const spinner = document.getElementById('payBtnSpinner');
   const errEl = document.getElementById('card-errors');
 
-  // Validate required fields
-  const name = document.getElementById('checkoutCustomerName').value.trim();
-  const email = document.getElementById('checkoutEmail').value.trim();
-  const address = document.getElementById('checkoutAddress').value.trim();
-  const cityZip = document.getElementById('checkoutCityStateZip').value.trim();
-  if (!name || !email || !address || !cityZip) {
-    errEl.textContent = 'Please fill in all required fields.';
+  // Hard guard: only the stripe panel path may submit via this handler.
+  if (selectedPayMethod !== 'stripe') {
+    errEl.textContent = 'Please use the "I have sent my payment" button below after completing your Venmo or Cash App payment.';
     return;
   }
-  if (cart.length === 0) { errEl.textContent = 'Your cart is empty.'; return; }
+
+  const fields = validateCheckoutFields(errEl);
+  if (!fields) return;
+
+  // Hard guard: Stripe must be ready before any submit can happen.
+  if (!stripe || !cardElement || !stripeReady) {
+    errEl.textContent = 'Card payments are unavailable right now. Please choose Venmo or Cash App above.';
+    return;
+  }
 
   // Calculate total in cents for Stripe
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
@@ -508,7 +623,6 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
   const total = subtotal + shipping + tax;
   const amountCents = Math.round(total * 100);
 
-  // Ensure order total is set on hidden field
   document.getElementById('orderTotalField').value = formatPrice(total);
 
   payBtn.disabled = true;
@@ -517,16 +631,6 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
   errEl.textContent = '';
 
   try {
-    // If Stripe is not initialized, submit form as order (payment via Venmo/CashApp)
-    if (!stripe || !cardElement) {
-      document.getElementById('transactionId').value = 'PENDING-' + Date.now();
-      document.getElementById('paymentStatus').value = 'pending-external-payment';
-      document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-      await submitNetlifyForm();
-      showConfirmation('PENDING — Complete payment via Venmo or Cash App in the cart', 'pending');
-      return;
-    }
-
     // Create PaymentIntent on server
     const piResponse = await fetch('/api/create-payment-intent', {
       method: 'POST',
@@ -534,10 +638,10 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
       body: JSON.stringify({
         amount: amountCents,
         currency: 'usd',
-        description: `Order from ${name} — Amber's Alchemy Apothecary`,
+        description: `Order from ${fields.name} — Amber's Alchemy Apothecary`,
         metadata: {
-          customer_name: name,
-          email: email,
+          customer_name: fields.name,
+          email: fields.email,
           items: cart.map(i => `${i.name} x${i.qty}`).join(', ').substring(0, 500),
         },
       }),
@@ -551,22 +655,28 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
       payment_method: {
         card: cardElement,
         billing_details: {
-          name: name,
-          email: email,
-          address: { postal_code: cityZip.split(/\s+/).pop() || '' },
+          name: fields.name,
+          email: fields.email,
+          address: { postal_code: fields.cityZip.split(/\s+/).pop() || '' },
         },
       },
     });
 
     if (error) { throw new Error(error.message); }
 
-    if (paymentIntent.status === 'succeeded') {
-      // Set transaction info and submit Netlify Form
+    if (paymentIntent && paymentIntent.status === 'succeeded') {
+      // Payment is actually succeeded — now safe to submit form record.
       document.getElementById('transactionId').value = paymentIntent.id;
       document.getElementById('paymentStatus').value = 'paid';
+      document.getElementById('paymentMethodField').value = 'stripe';
+      document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
       await submitNetlifyForm();
       showConfirmation(paymentIntent.id, 'paid');
+      return;
     }
+
+    // Any non-succeeded status is treated as a failure.
+    throw new Error('Payment did not complete. Please try again or use Venmo / Cash App.');
   } catch (err) {
     errEl.textContent = err.message || 'Payment failed. Please try again.';
     payBtn.disabled = false;
@@ -574,6 +684,55 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
     spinner.style.display = 'none';
   }
 });
+
+// VENMO / CASH APP pending-order submission. This creates an order record with
+// status "pending-payment" only after the customer has attested they sent
+// payment externally. The server additionally never treats this as paid until
+// Amber marks it verified.
+async function submitPendingExternalOrder() {
+  const errEl = document.getElementById('externalPayError');
+  if (errEl) errEl.textContent = '';
+
+  const fields = validateCheckoutFields(errEl);
+  if (!fields) return;
+
+  const confirmBox = document.getElementById('externalPayConfirmBox');
+  if (!confirmBox || !confirmBox.checked) {
+    if (errEl) errEl.textContent = 'Please check the confirmation box once you have sent your payment.';
+    return;
+  }
+
+  const btn = document.getElementById('submitPendingOrderBtn');
+  const btnText = document.getElementById('submitPendingBtnText');
+  const spinner = document.getElementById('submitPendingBtnSpinner');
+
+  btn.disabled = true;
+  if (btnText) btnText.textContent = 'Submitting…';
+  if (spinner) spinner.style.display = 'inline-block';
+
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const shipping = subtotal >= 75 ? 0 : 6.99;
+  const tax = subtotal * 0.08;
+  const total = subtotal + shipping + tax;
+  const methodPrefix = selectedPayMethod === 'cashapp' ? 'CASHAPP' : 'VENMO';
+  const txnId = `${methodPrefix}-${Date.now()}`;
+
+  document.getElementById('transactionId').value = txnId;
+  document.getElementById('paymentStatus').value = 'pending-payment';
+  document.getElementById('paymentMethodField').value = selectedPayMethod;
+  document.getElementById('orderTotalField').value = formatPrice(total);
+  document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+
+  try {
+    await submitNetlifyForm();
+    showConfirmation(txnId, 'pending-payment');
+  } catch (err) {
+    if (errEl) errEl.textContent = 'Could not submit your order. Please try again or email Amber directly.';
+    btn.disabled = false;
+    if (btnText) btnText.textContent = 'I have sent my payment — Submit order for verification';
+    if (spinner) spinner.style.display = 'none';
+  }
+}
 
 async function submitNetlifyForm() {
   const form = document.getElementById('checkoutForm');
@@ -592,24 +751,55 @@ function showConfirmation(transactionId, status) {
   const total = subtotal + shipping + tax;
   const name = document.getElementById('checkoutCustomerName').value.trim();
   const email = document.getElementById('checkoutEmail').value.trim();
+  const isPaid = status === 'paid';
+
+  const methodLabel = selectedPayMethod === 'cashapp' ? 'Cash App'
+    : selectedPayMethod === 'venmo' ? 'Venmo' : 'Card';
+  const statusLabel = isPaid
+    ? 'Payment Confirmed'
+    : `Awaiting Payment Confirmation (${methodLabel})`;
+
+  const headline = document.getElementById('checkoutConfirmHeadline');
+  const subhead = document.getElementById('checkoutConfirmSubhead');
+  const reviewCta = document.getElementById('checkoutConfirmReviewCta');
+  const reviewNote = document.getElementById('checkoutConfirmReviewNote');
+  if (headline) {
+    headline.textContent = isPaid
+      ? 'Thank You! Your Payment Has Been Received'
+      : 'Order Received — Awaiting Payment Confirmation';
+  }
+  if (subhead) {
+    subhead.textContent = isPaid
+      ? 'Payment confirmed. Amber will begin preparing your order right away.'
+      : `Your order has been received and is awaiting payment confirmation. Once your payment is received through ${methodLabel}, your order will be confirmed and Amber will begin preparing it. You'll get a confirmation email the moment your payment is matched.`;
+  }
+  // Hide "review your experience" CTA until the order is actually paid.
+  if (reviewCta) reviewCta.style.display = isPaid ? '' : 'none';
+  if (reviewNote) reviewNote.style.display = isPaid ? '' : 'none';
 
   document.getElementById('confirmationDetails').innerHTML = `
     <p><strong>Order for:</strong> ${name}</p>
     <p><strong>Email:</strong> ${email}</p>
     <p><strong>Items:</strong> ${cart.map(i => `${i.name} x${i.qty}`).join(', ')}</p>
     <p><strong>Total:</strong> ${formatPrice(total)}</p>
-    <p><strong>Transaction ID:</strong> ${transactionId}</p>
-    <p><strong>Status:</strong> ${status === 'paid' ? 'Payment Confirmed' : 'Awaiting Payment'}</p>
+    <p><strong>Reference:</strong> ${transactionId}</p>
+    <p><strong>Status:</strong> ${statusLabel}</p>
   `;
 
   // Show confirmation, hide form
   document.querySelector('.checkout-container').style.display = 'none';
   document.getElementById('checkoutConfirmation').style.display = 'block';
 
-  // Clear cart
-  cart = [];
-  renderCart();
-  showToast('Order submitted successfully!');
+  // Only clear the cart once payment is actually confirmed. If it's pending,
+  // keep the cart so the customer still sees what they ordered and can retry
+  // without losing items if something went wrong with the external payment.
+  if (isPaid) {
+    cart = [];
+    renderCart();
+    showToast('Order submitted successfully!');
+  } else {
+    showToast('Order submitted — awaiting payment verification');
+  }
 }
 
 // ---- RENDER PRODUCTS (with category filter) ----
