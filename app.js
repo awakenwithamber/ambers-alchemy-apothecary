@@ -938,10 +938,27 @@ document.getElementById('contactSubmitBtn').addEventListener('click', () => {
   const subject = document.getElementById('contactSubject').value;
   const message = document.getElementById('contactMessage').value.trim();
   if (!name || !email || !message) { showToast('Please fill in all fields.'); return; }
-  const body = encodeURIComponent(`From: ${name} (${email})\n\n${message}`);
   try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
-  showToast('Opening email client...');
+  const btn = document.getElementById('contactSubmitBtn');
+  const origLabel = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+  fetch('/.netlify/functions/contact-form', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ kind: 'contact', name, email, subject, message })
+  })
+    .then(async (res) => {
+      if (!res.ok) throw new Error('bad-response');
+      showToast('✦ Thank you — your message has been sent to Amber.');
+      document.getElementById('contactName').value = '';
+      document.getElementById('contactEmail').value = '';
+      document.getElementById('contactMessage').value = '';
+      if (btn) { btn.textContent = '✓ Sent'; setTimeout(() => { btn.textContent = origLabel; btn.disabled = false; }, 2500); }
+    })
+    .catch(() => {
+      if (btn) { btn.textContent = origLabel; btn.disabled = false; }
+      showToast('Could not reach our server. Please email awaken@consultant.com directly.');
+    });
 });
 
 // ---- NEWSLETTER FORM ----
@@ -949,16 +966,26 @@ document.getElementById('nlSubmitBtn').addEventListener('click', () => {
   const name = document.getElementById('nlName').value.trim();
   const email = document.getElementById('nlEmail').value.trim();
   if (!email) { showToast('Please enter your email address.'); return; }
-  const body = encodeURIComponent(
-    `New Newsletter Subscriber — Amber's Alchemy Apothecary\n\n` +
-    `Name: ${name || 'Not provided'}\nEmail: ${email}\n\n` +
-    `Please add this subscriber to the mailing list and send the Free Herbal Healing Guide.`
-  );
   try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?subject=${encodeURIComponent('New Subscriber — ' + (name || email))}&body=${body}`;
-  showToast('✦ Thank you! Check your email for the Herbal Healing Guide.');
-  document.getElementById('nlName').value = '';
-  document.getElementById('nlEmail').value = '';
+  const btn = document.getElementById('nlSubmitBtn');
+  const origLabel = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+  fetch('/.netlify/functions/contact-form', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ kind: 'newsletter', name, email, subject: 'Herbal Healing Guide Request' })
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error('bad-response');
+      showToast('✦ Thank you! Check your email for the Herbal Healing Guide.');
+      document.getElementById('nlName').value = '';
+      document.getElementById('nlEmail').value = '';
+      if (btn) { btn.textContent = '✓ Sent'; setTimeout(() => { btn.textContent = origLabel; btn.disabled = false; }, 2500); }
+    })
+    .catch(() => {
+      if (btn) { btn.textContent = origLabel; btn.disabled = false; }
+      showToast('Could not reach our server. Please try again in a moment.');
+    });
 });
 
 // ---- FAQS ----
@@ -1319,22 +1346,36 @@ window.addSoapToCart = addSoapToCart;
       const botanical = (document.getElementById('soapBotanical') || {}).value || 'Not specified';
       const quantity = (document.getElementById('soapQuantity') || {}).value || 'Not specified';
       const notes = (document.getElementById('soapNotes') || {}).value?.trim() || '';
-      const subject = encodeURIComponent('Custom Soap Order from ' + name);
-      const body = encodeURIComponent(
-        'Custom Soap Order Request\n\n' +
-        'Name: ' + name + '\n' +
-        'Email: ' + email + '\n' +
-        'Scent: ' + scent + '\n' +
-        'Color: ' + color + '\n' +
-        'Shape: ' + shape + '\n' +
-        'Botanical: ' + botanical + '\n' +
-        'Quantity: ' + quantity + '\n' +
-        'Notes: ' + notes
-      );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
-      showToast('✦ Opening email to send your custom soap request...');
-      soapSubmitBtn.textContent = '✓ Request Sent!';
-      setTimeout(() => { soapSubmitBtn.textContent = 'Send My Custom Soap Request ✦'; }, 3000);
+
+      const origLabel = soapSubmitBtn.textContent;
+      soapSubmitBtn.disabled = true;
+      soapSubmitBtn.textContent = 'Sending…';
+      fetch('/.netlify/functions/contact-form', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          kind: 'custom-soap',
+          name,
+          email,
+          subject: 'Custom Soap Order from ' + name,
+          message: notes,
+          details: { scent, color, shape, botanical, quantity }
+        })
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error('bad-response');
+          showToast('✦ Your custom soap request has been sent to Amber.');
+          soapSubmitBtn.textContent = '✓ Request Sent!';
+          setTimeout(() => {
+            soapSubmitBtn.textContent = origLabel;
+            soapSubmitBtn.disabled = false;
+          }, 3000);
+        })
+        .catch(() => {
+          soapSubmitBtn.textContent = origLabel;
+          soapSubmitBtn.disabled = false;
+          showToast('Could not reach our server. Please email awaken@consultant.com directly.');
+        });
     });
   }
   if (document.readyState === 'loading') {

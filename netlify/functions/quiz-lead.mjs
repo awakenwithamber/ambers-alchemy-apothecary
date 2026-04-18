@@ -11,7 +11,7 @@
 import { getStore } from "@netlify/blobs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const ADMIN_NOTIFY_TO = 'awaken@consultant.com';
+const ADMIN_NOTIFY_TO = ['awaken@consultant.com', 'perfectlyme347@gmail.com'];
 const GUEST_FROM = process.env.QUIZ_LEAD_FROM_EMAIL || 'Amber\u2019s Alchemy Apothecary <hello@awakenagain.com>';
 const EXTENDED_DEDUPE_WINDOW_MS = 6 * 60 * 60 * 1000; // 6 hours
 
@@ -269,6 +269,30 @@ export default async (req) => {
         });
       } else {
         console.log('quiz-lead: extended-results dedupe hit for', email);
+      }
+    } else if (intent === 'quiz-lead') {
+      // Initial lead capture during the quiz flow: notify admins immediately
+      // so they know a quiz was started/completed, even if the guest does not
+      // request the extended personalized email afterward. De-dupe admin
+      // notifications per-email within the same dedupe window.
+      const leadIndex = getStore('quiz-lead-notify-index');
+      const lastNotify = await leadIndex.get(email, { type: 'json' }).catch(() => null);
+      const lastTs = lastNotify && lastNotify.sentAt ? Date.parse(lastNotify.sentAt) : 0;
+      const withinWindow = lastTs && (now.getTime() - lastTs) < EXTENDED_DEDUPE_WINDOW_MS;
+
+      if (!withinWindow) {
+        const admin = buildAdminEmail({ firstName, email, record });
+        const adminSend = await sendViaResend({
+          to: ADMIN_NOTIFY_TO,
+          subject: `New Quiz Lead \u2014 ${firstName || 'Guest'} (${email})`,
+          html: admin.html,
+          text: admin.text
+        });
+        await leadIndex.setJSON(email, {
+          lastKey: key,
+          sentAt: now.toISOString(),
+          adminSend
+        });
       }
     }
   } catch (err) {
