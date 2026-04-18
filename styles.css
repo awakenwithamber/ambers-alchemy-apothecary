@@ -494,6 +494,43 @@ button { cursor: pointer; font-family: var(--font-body); }
 }
 .nl-form input::placeholder { color: var(--text-muted); }
 .nl-form input:focus { outline: none; border-color: var(--amethyst); }
+.newsletter-form {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.newsletter-form input[type="text"],
+.newsletter-form input[type="email"] {
+  flex: 1 1 200px;
+  min-width: 180px;
+  padding: 12px 18px;
+  border-radius: 30px;
+  border: 1px solid var(--border);
+  background: rgba(46,28,56,0.7);
+  color: var(--parchment);
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+.newsletter-form input::placeholder { color: var(--text-muted); }
+.newsletter-form input:focus { outline: none; border-color: var(--amethyst); }
+.nl-feedback {
+  flex-basis: 100%;
+  margin-top: 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  min-height: 1.2em;
+  text-align: center;
+}
+.nl-feedback[data-state="success"] { color: var(--sage, #7A8B6F); }
+.nl-feedback[data-state="error"] { color: #c98b8b; }
+.newsletter-form button[disabled] {
+  opacity: 0.7;
+  cursor: progress;
+}
 
 /* ---- SECTION PAGES ---- */
 .section-page { padding: 50px 24px 80px; max-width: 1200px; margin: 0 auto; }
@@ -542,6 +579,22 @@ button { cursor: pointer; font-family: var(--font-body); }
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  align-items: stretch;
+}
+@media (max-width: 480px) {
+  .herb-chips-row {
+    gap: 6px;
+  }
+  .herb-chip {
+    min-width: 56px;
+    max-width: 68px;
+    padding: 5px 6px;
+  }
+  .herb-chip img,
+  .herb-chip .herb-chip-fallback {
+    width: 40px;
+    height: 40px;
+  }
 }
 .herb-chip {
   display: flex;
@@ -594,6 +647,20 @@ button { cursor: pointer; font-family: var(--font-body); }
   border-radius: 8px;
   object-fit: cover;
   border: 1px solid rgba(140,106,59,0.2);
+}
+.herb-chip .herb-chip-fallback {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid rgba(140,106,59,0.2);
+  background: radial-gradient(circle at 50% 50%, rgba(122,139,111,0.35) 0%, rgba(46,28,56,0.85) 75%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+  max-width: 44px;
+  overflow: hidden;
 }
 .herb-chip span {
   font-family: var(--font-body);
@@ -732,11 +799,34 @@ button { cursor: pointer; font-family: var(--font-body); }
 .formula-form { background: rgba(46,28,56,0.5); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; margin-bottom: 24px; }
 .formula-form label { display: block; font-family: var(--font-display); font-size: 13px; letter-spacing: 0.06em; color: var(--brass); margin-bottom: 6px; text-transform: uppercase; }
 .formula-form input, .formula-form textarea, .formula-form select {
-  width: 100%; padding: 11px 16px; border-radius: var(--radius); border: 1px solid var(--border);
-  background: rgba(30,17,40,0.65); color: var(--parchment); font-family: var(--font-body); font-size: 14px; margin-bottom: 16px;
+    width: 100%; padding: 12px 16px; margin-bottom: 14px; background: rgba(30,17,40,0.6); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--parchment); font-family: var(--font-body); font-size: 14px;
 }
 .formula-form input:focus, .formula-form textarea:focus, .formula-form select:focus { outline: none; border-color: var(--amethyst); }
 .formula-form textarea { min-height: 100px; resize: vertical; }
+.formula-feedback {
+  margin-top: 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  min-height: 1.2em;
+  text-align: center;
+  padding: 0 4px;
+}
+.formula-feedback[data-state="success"] { color: var(--sage, #7A8B6F); }
+.formula-feedback[data-state="error"] { color: #c98b8b; }
+.soap-feedback {
+  margin-top: 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  min-height: 1.2em;
+  text-align: center;
+  padding: 0 4px;
+}
+.soap-feedback[data-state="success"] { color: var(--sage, #7A8B6F); }
+.soap-feedback[data-state="error"] { color: #c98b8b; }
+.formula-form button[disabled] {
+  opacity: 0.7;
+  cursor: progress;
+}
 
 /* ---- CART DRAWER ---- */
 .cart-drawer {
@@ -894,6 +984,13 @@ footer { border-top: 1px solid var(--border); padding: 50px 24px 30px; text-alig
   margin-top: 8px;
 }
 .checkout-pay-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.checkout-external-pay { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0 6px; }
+.checkout-external-pay .checkout-external-pay-btn { display: block; text-align: center; padding: 14px 16px; font-family: var(--font-display); letter-spacing: 0.06em; font-size: 15px; border-radius: var(--radius); text-decoration: none; }
+.checkout-external-pay-status { font-family: var(--font-body); font-size: 13px; color: var(--text-muted); margin: 6px 0 0; line-height: 1.55; min-height: 18px; }
+.checkout-external-pay-status[data-state="pending"] { color: var(--amethyst-lt, #c5a6db); }
+.checkout-external-pay-status[data-state="error"] { color: #e74c3c; }
+@media (max-width: 560px) { .checkout-external-pay { grid-template-columns: 1fr; } }
 
 .checkout-spinner {
   width: 18px; height: 18px; border: 2px solid rgba(243,235,221,0.3);
@@ -3798,6 +3895,7 @@ html, body {
   height: 200px;
   background: linear-gradient(160deg, rgba(75, 46, 89, 0.4), rgba(140, 106, 59, 0.15));
   position: relative;
+  overflow: hidden;
 }
 
 .soap-builder-cta-icon {
@@ -3812,6 +3910,80 @@ html, body {
   color: var(--brass-lt);
   font-size: 1.5rem;
   animation: pulse-ring 2.5s ease-in-out infinite;
+  z-index: 3;
+}
+
+/* Premium "Build Your Own Soap" product visual — layered soap bars
+   composed from existing soap photographs to create a cohesive artisan
+   product image without introducing a new generated asset. */
+.soap-builder-stack {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.soap-builder-stack::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 85%, rgba(20, 10, 30, 0.55) 0%, transparent 65%),
+              linear-gradient(160deg, rgba(75, 46, 89, 0.25), rgba(140, 106, 59, 0.08));
+}
+.sb-stack-img {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(243, 235, 221, 0.18);
+  box-shadow: 0 14px 28px rgba(10, 6, 20, 0.55), 0 0 0 1px rgba(184, 148, 90, 0.18);
+  background: rgba(30, 17, 40, 0.5);
+}
+.sb-stack-img-back {
+  left: calc(50% - 95px);
+  top: 22px;
+  transform: rotate(-9deg);
+  filter: brightness(0.9) saturate(1.05);
+}
+.sb-stack-img-mid {
+  left: calc(50% - 55px);
+  top: 44px;
+  transform: rotate(2deg);
+  z-index: 2;
+}
+.sb-stack-img-front {
+  left: calc(50% - 10px);
+  top: 32px;
+  transform: rotate(8deg);
+  z-index: 3;
+  border-color: rgba(243, 235, 221, 0.3);
+  box-shadow: 0 18px 36px rgba(10, 6, 20, 0.7), 0 0 0 1px rgba(184, 148, 90, 0.28);
+}
+.soap-builder-cta-ribbon {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--parchment, #F3EBDD);
+  background: rgba(20, 10, 30, 0.78);
+  border: 1px solid rgba(184, 148, 90, 0.45);
+  border-radius: 999px;
+  padding: 5px 14px;
+  z-index: 4;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+@media (max-width: 480px) {
+  .sb-stack-img { width: 88px; height: 88px; }
+  .sb-stack-img-back { left: calc(50% - 78px); top: 28px; }
+  .sb-stack-img-mid  { left: calc(50% - 44px); top: 48px; }
+  .sb-stack-img-front{ left: calc(50% - 10px); top: 36px; }
 }
 
 .soap-builder-launch-btn {
@@ -4143,7 +4315,7 @@ html, body {
   min-width: 120px;
 }
 
-/* Mobile */
+/* Mobile — tablet range keeps 2-up but with breathing room */
 @media (max-width: 768px) {
   .soap-builder-modal {
     padding: 1.25rem;
@@ -4151,8 +4323,30 @@ html, body {
   }
 
   .sb-options-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .sb-option-btn {
+    padding: 0.9rem 0.75rem;
+    min-height: 96px;
+    gap: 0.35rem;
+  }
+
+  .sb-opt-name {
+    font-size: 0.92rem;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .sb-opt-desc {
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  .sb-opt-price {
+    font-size: 0.82rem;
+    font-weight: 600;
   }
 
   .sb-review-grid {
@@ -4165,6 +4359,68 @@ html, body {
 
   .soap-builder-actions button {
     width: 100%;
+  }
+}
+
+/* Phones — single column keeps long labels fully visible */
+@media (max-width: 520px) {
+  .sb-options-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .sb-option-btn {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    text-align: left;
+    padding: 0.9rem 1rem;
+    min-height: 72px;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .sb-opt-emoji {
+    font-size: 1.8rem;
+    flex: 0 0 auto;
+  }
+
+  .sb-opt-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .sb-opt-price {
+    flex: 0 0 auto;
+    margin-left: auto;
+    margin-top: 0;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  .sb-opt-desc {
+    flex: 1 0 100%;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+    text-align: left;
+    line-height: 1.35;
+  }
+
+  .soap-builder-progress {
+    gap: 0.35rem;
+  }
+
+  .sb-progress-step {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.72rem;
+  }
+
+  .sb-progress-step span {
+    width: 18px;
+    height: 18px;
+    font-size: 0.68rem;
   }
 }
 
@@ -5232,25 +5488,20 @@ html, body {
   .cc-type-name { font-size: 0.82rem !important; }
   .cc-type-price { font-size: 0.85rem !important; }
 
-  /* Soap builder modal mobile */
+  /* Soap builder modal mobile — chrome only. Option grid spacing is
+     owned by the dedicated builder media query above so labels and
+     prices stay fully readable on narrow screens. */
   .soap-builder-modal {
     width: 100% !important; max-width: 100% !important;
     height: 100vh !important; max-height: 100vh !important;
     border-radius: 0 !important; margin: 0 !important;
     padding: 16px !important;
   }
-  .sb-options-grid {
-    grid-template-columns: 1fr 1fr !important; gap: 8px !important;
-  }
-  .sb-options-grid .sb-option {
-    padding: 10px 8px !important; font-size: 0.82rem !important;
-    min-height: 44px;
-  }
   .soap-builder-actions {
-    flex-wrap: wrap !important; gap: 8px !important;
-    padding: 12px 0 !important;
+    flex-wrap: wrap !important; gap: 10px !important;
+    padding: 14px 0 !important;
   }
-  .soap-builder-actions button { flex: 1; min-width: 100px; min-height: 44px; }
+  .soap-builder-actions button { flex: 1; min-width: 120px; min-height: 48px; }
 
   /* Guided flow mobile */
   .guided-flow-modal {
@@ -5560,5 +5811,122 @@ html, body {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
+}
+
+/* ==========================================================
+   HOMEPAGE — CUSTOM SOAP CREATION CTA
+   Warm parchment card linking to the soap builder.
+   ========================================================== */
+.custom-soap-home-cta {
+  margin: 2.5rem auto;
+  max-width: 1100px;
+  padding: 1.75rem clamp(1rem, 3vw, 2.25rem);
+  border-radius: 18px;
+}
+.custom-soap-home-cta-inner {
+  display: grid;
+  grid-template-columns: minmax(220px, 320px) 1fr;
+  gap: clamp(1rem, 3vw, 2rem);
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 14px;
+  padding: 1rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.custom-soap-home-cta-inner:hover,
+.custom-soap-home-cta-inner:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px rgba(92, 63, 28, 0.22);
+}
+.custom-soap-home-cta-visual {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f7ecd7 0%, #ecdcbe 60%, #c9a978 100%);
+  box-shadow: inset 0 0 0 1px rgba(138, 107, 56, 0.4),
+              0 10px 28px rgba(92, 63, 28, 0.2);
+}
+.custom-soap-home-cta-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.custom-soap-home-cta-ribbon {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, #b8945a 0%, #e6c988 50%, #8a6b38 100%);
+  color: #2d1f0f;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 600;
+  letter-spacing: 3px;
+  padding: 0.35rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  box-shadow: 0 4px 10px rgba(92, 63, 28, 0.35);
+}
+.custom-soap-home-cta-eyebrow {
+  display: inline-block;
+  color: var(--brass-lt, #b8945a);
+  letter-spacing: 4px;
+  font-size: 0.78rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  margin-bottom: 0.35rem;
+}
+.custom-soap-home-cta-copy h2 {
+  margin: 0 0 0.5rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  color: var(--text, #2d1f0f);
+}
+.custom-soap-home-cta-copy p {
+  margin: 0 0 1rem;
+  font-family: 'Lora', Georgia, serif;
+  line-height: 1.55;
+  color: var(--text-muted, #5c3f1c);
+}
+.custom-soap-home-cta-buttons {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.custom-soap-home-cta-btn {
+  display: inline-block;
+  pointer-events: none;
+}
+@media (max-width: 720px) {
+  .custom-soap-home-cta-inner {
+    grid-template-columns: 1fr;
+  }
+  .custom-soap-home-cta-visual {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
+
+/* Featured soap-builder card — top of the soaps grid */
+.soap-builder-featured-card {
+  outline: 1px solid rgba(184, 148, 90, 0.45);
+  position: relative;
+}
+.soap-builder-featured-card .soap-img-wrap {
+  background: linear-gradient(135deg, #f7ecd7 0%, #ecdcbe 60%, #c9a978 100%);
+}
+.soap-builder-featured-card .soap-img-wrap img {
+  background: transparent;
+}
+
+/* Soap-builder shop card (category=soaps view) */
+.soap-builder-shop-card {
+  outline: 1px solid rgba(184, 148, 90, 0.45);
+}
+.soap-builder-shop-card .product-img img {
+  background: linear-gradient(135deg, #f7ecd7 0%, #ecdcbe 60%, #c9a978 100%);
+  object-fit: contain;
 }
 

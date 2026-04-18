@@ -747,6 +747,26 @@
   </div>
 
 
+  <!-- CUSTOM SOAP CREATION CTA — homepage feature -->
+  <aside class="custom-soap-home-cta pane-bg" aria-labelledby="customSoapHomeCtaHeading">
+    <a class="custom-soap-home-cta-inner" href="#soaps" onclick="if(typeof openSoapBuilder==='function'){event.preventDefault();openSoapBuilder();}">
+      <div class="custom-soap-home-cta-visual" aria-hidden="true">
+        <img src="images/soap-custom-builder.svg" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'" />
+        <span class="custom-soap-home-cta-ribbon">✦ Build Your Own ✦</span>
+      </div>
+      <div class="custom-soap-home-cta-copy">
+        <span class="custom-soap-home-cta-eyebrow">✦ Handmade · Made to Order ✦</span>
+        <h2 id="customSoapHomeCtaHeading">Build Your Own Soap Remedy</h2>
+        <p>Create a handcrafted botanical bar with your choice of shape, scent, botanicals, and nourishing base — clear-top, creamy, or layered.</p>
+        <div class="custom-soap-home-cta-buttons">
+          <span class="btn-primary custom-soap-home-cta-btn">Build Your Own ✦</span>
+          <span class="btn-secondary custom-soap-home-cta-btn">Create My Soap</span>
+        </div>
+      </div>
+    </a>
+  </aside>
+
+
   <!-- APOTHECARY PROCESS (condensed) -->
   <div class="apothecary-process-section pane-bg">
     <div class="section-ornament">✦ ─────────────── ✦</div>
@@ -844,11 +864,17 @@
         <h2>🌿 Free Herbal Healing Guide</h2>
         <p>Subscribe for Amber's <strong>Beginner's Guide to Herbal Healing</strong> — 20 herbs and how to use them.</p>
       </div>
-      <div class="newsletter-form">
-        <input type="text" id="nlName" placeholder="Your Name" />
-        <input type="email" id="nlEmail" placeholder="Your Email" />
-        <button class="btn-primary" id="nlSubmitBtn">Send Me the Guide ✦</button>
-      </div>
+      <form class="newsletter-form" id="newsletterForm" name="newsletter-signup" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/">
+        <input type="hidden" name="form-name" value="newsletter-signup" />
+        <input type="hidden" name="source-tag" value="homepage-signup" />
+        <p class="nl-bot-field" aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;">
+          <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+        </p>
+        <input type="text" id="nlName" name="name" placeholder="Your Name" autocomplete="given-name" />
+        <input type="email" id="nlEmail" name="email" placeholder="Your Email" autocomplete="email" required />
+        <button class="btn-primary" id="nlSubmitBtn" type="submit">Send Me the Guide ✦</button>
+        <div class="nl-feedback" id="nlFeedback" role="status" aria-live="polite"></div>
+      </form>
     </div>
   </div>
 
@@ -1238,6 +1264,8 @@
     <button class="cat-filter-btn" data-cat="beauty">✨ Beauty</button>
     <button class="cat-filter-btn" data-cat="pain">🌿 Pain</button>
     <button class="cat-filter-btn" data-cat="hormonal">🌸 Hormonal</button>
+    <button class="cat-filter-btn" data-cat="digestive">🌱 Digestive</button>
+    <button class="cat-filter-btn" data-cat="soaps" data-scroll-to="soaps">🧼 Soaps</button>
   </div>
   <div class="products-grid" id="shopGrid"></div>
 
@@ -1257,8 +1285,8 @@
 <section id="soaps" class="page-section pane-bg">
   <div class="section-header">
     <div class="section-ornament">✦ ─────────────── ✦</div>
-    <h2>Artisan Botanical Soaps</h2>
-    <p class="section-subtitle">Our handmade botanical soaps are crafted in small batches with castor oil, vegetable glycerin, shea butter, and goat milk. Each bar is made with real botanicals, pure doTERRA essential oils for scent, and all-natural plant-based coloring — a small ritual of nature's beauty for your skin.</p>
+    <h2>Handmade All-Natural Soaps</h2>
+    <p class="section-subtitle">Our handmade all-natural botanical soaps are crafted in small batches with castor oil, vegetable glycerin, shea butter, and goat milk. Each bar is made with real botanicals, pure doTERRA essential oils for scent, and all-natural plant-based coloring — a small ritual of nature's beauty for your skin.</p>
     <div class="section-ornament">✦ ─────────────── ✦</div>
   </div>
 
@@ -1282,6 +1310,29 @@
 
   <!-- Soap Product Cards — 9 Signature Scents -->
   <div class="soap-grid">
+
+    <!-- FEATURED: Custom Soap Builder (promoted to top of soap catalog) -->
+    <div class="soap-card soap-builder-cta-card soap-builder-featured-card">
+      <div class="soap-img-wrap soap-builder-cta-visual" role="img" aria-label="Build Your Own Soap Remedy — custom artisan soap with your choice of scent, botanicals, and base">
+        <img class="soap-img" src="images/soap-custom-builder.svg" alt="Build Your Own Soap Remedy — custom artisan soap" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=img-placeholder style=height:200px>🧼✦</div>'" />
+        <div class="soap-img-badge">✦ Build Your Own</div>
+      </div>
+      <div class="soap-info">
+        <h3 class="soap-name">Build Your Own Soap Remedy</h3>
+        <p class="soap-latin">Your Vision · Your Botanicals · Your Ritual</p>
+        <p class="soap-desc">Create a handcrafted botanical bar with your choice of shape, scent, botanicals, and nourishing base — clear-top, creamy, or layered.</p>
+        <ul class="soap-benefits">
+          <li>✦ Choose a clear botanical top, creamy base, or layered bar</li>
+          <li>✦ Personalize with your favorite botanicals, color, and scent</li>
+          <li>✦ Handcrafted to order in small, intentional batches</li>
+        </ul>
+        <div class="soap-price-row">
+          <span class="soap-price">From $13.99</span>
+          <span class="soap-size">Handcrafted to order</span>
+        </div>
+        <button class="btn-primary soap-builder-launch-btn" onclick="openSoapBuilder()">Create My Soap ✦</button>
+      </div>
+    </div>
 
     <!-- 1. Lavender Fairy Dream -->
     <div class="soap-card">
@@ -1503,14 +1554,19 @@
 
     <!-- Custom Soap Builder CTA -->
     <div class="soap-card soap-builder-cta-card">
-      <div class="soap-img-wrap soap-builder-cta-visual">
-        <div class="soap-builder-cta-icon">⚗️</div>
-        <div class="soap-builder-cta-sparkle">✦</div>
+      <div class="soap-img-wrap soap-builder-cta-visual" role="img" aria-label="Build Your Own Soap Remedy — layered artisan bars with rose petals, lavender buds and calendula">
+        <img class="soap-img" src="images/soap-custom-builder.svg" alt="Build Your Own Soap Remedy — custom artisan soap" loading="lazy" decoding="async" onerror="this.style.display='none'" />
+        <div class="soap-builder-cta-sparkle" aria-hidden="true">✦</div>
+        <div class="soap-builder-cta-ribbon">Build Your Own</div>
       </div>
       <div class="soap-info">
-        <h3 class="soap-name">Design Your Own Soap</h3>
+        <h3 class="soap-name">Build Your Own Soap Remedy</h3>
         <p class="soap-latin">Your Vision · Your Botanicals · Your Ritual</p>
         <p class="soap-desc">Choose a botanical clear top bar, a creamy nourishing bar, or a layered bar with both — then personalize it with your favorite botanicals, natural color, and scent.</p>
+        <div class="soap-price-row">
+          <span class="soap-price">From $13.99</span>
+          <span class="soap-size">Handcrafted to order</span>
+        </div>
         <button class="btn-primary soap-builder-launch-btn" onclick="openSoapBuilder()">Create Your Custom Soap ✦</button>
       </div>
     </div>
@@ -1530,7 +1586,12 @@
   </div>
 
   <!-- Custom Soap Order Form -->
-  <div class="custom-soap-form">
+  <form class="custom-soap-form" id="customSoapForm" name="custom-soap" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/">
+    <input type="hidden" name="form-name" value="custom-soap" />
+    <input type="hidden" name="source-tag" value="custom-soap" />
+    <p class="nl-bot-field" aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;">
+      <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+    </p>
     <div class="section-header">
       <div class="section-ornament">✦ ─── ✦</div>
       <h3>✦ Order a Custom Soap</h3>
@@ -1538,9 +1599,9 @@
       <p style="font-size:1.1rem; color:var(--gold, #d4a843); font-weight:600;">$13.99 per custom bar &nbsp;|&nbsp; 5 Custom Soaps for $54.99</p>
     </div>
     <div class="soap-form-grid">
-      <input type="text" id="soapName" placeholder="Your Name" class="form-input" />
-      <input type="email" id="soapEmail" placeholder="Your Email" class="form-input" />
-      <select id="soapScent" class="form-select">
+      <input type="text" id="soapName" name="name" placeholder="Your Name" autocomplete="name" class="form-input" required />
+      <input type="email" id="soapEmail" name="email" placeholder="Your Email" autocomplete="email" class="form-input" required />
+      <select id="soapScent" name="scent" class="form-select">
         <option value="">-- Preferred Scent Direction --</option>
         <option>Floral (Rose, Lavender, Jasmine)</option>
         <option>Fresh &amp; Green (Eucalyptus, Mint, Tea Tree)</option>
@@ -1549,7 +1610,7 @@
         <option>Earthy &amp; Grounding (Patchouli, Cedarwood, Vetiver)</option>
         <option>Surprise Me — Amber's Choice</option>
       </select>
-      <select id="soapColor" class="form-select">
+      <select id="soapColor" name="color" class="form-select">
         <option value="">-- Color Palette --</option>
         <option>Deep Violet &amp; Ivory</option>
         <option>Crimson &amp; Gold</option>
@@ -1559,7 +1620,7 @@
         <option>Midnight Blue &amp; Silver</option>
         <option>Earthy Terracotta &amp; Sage</option>
       </select>
-      <select id="soapShape" class="form-select">
+      <select id="soapShape" name="shape" class="form-select">
         <option value="">-- Bar Shape --</option>
         <option>Classic Rectangle Bar</option>
         <option>Floral Rose Mold (Round)</option>
@@ -1567,7 +1628,7 @@
         <option>Heart Shape</option>
         <option>Decorative Specialty Mold</option>
       </select>
-      <select id="soapBotanical" class="form-select">
+      <select id="soapBotanical" name="botanical" class="form-select">
         <option value="">-- Botanical Addition --</option>
         <option>Dried Rose Petals</option>
         <option>Lavender Buds</option>
@@ -1581,18 +1642,19 @@
         <option>Dried Citrus Peel</option>
         <option>Mugwort &amp; Herbs</option>
       </select>
-      <select id="soapQuantity" class="form-select">
+      <select id="soapQuantity" name="quantity" class="form-select">
         <option value="">-- Quantity --</option>
         <option>1 Bar</option>
         <option>3 Bars (small gift set)</option>
         <option>6 Bars (full gift set)</option>
         <option>12 Bars (bulk / event favors)</option>
       </select>
-      <textarea id="soapNotes" placeholder="Any special requests, skin concerns, allergies, gifting occasion, or shipping address..." class="form-textarea" rows="4"></textarea>
+      <textarea id="soapNotes" name="notes" placeholder="Any special requests, skin concerns, allergies, gifting occasion, or shipping address..." class="form-textarea" rows="4"></textarea>
     </div>
-    <button class="btn-primary" id="soapSubmitBtn" style="margin-top:1.5rem; width:100%;">Send My Custom Soap Request ✦</button>
+    <button class="btn-primary" id="soapSubmitBtn" type="submit" style="margin-top:1.5rem; width:100%;">Send My Custom Soap Request ✦</button>
+    <div class="soap-feedback" id="soapFeedback" role="status" aria-live="polite"></div>
     <p class="soap-form-note">Custom orders typically ship within 7–10 business days. Amber will contact you to confirm details before crafting your bar.</p>
-  </div>
+  </form>
 
   <!-- SOAP REVIEWS -->
   <div class="soap-reviews-section" id="reviews-soaps">
@@ -1615,52 +1677,59 @@
     <div class="soap-builder-header">
       <div class="section-ornament">✦ ─── ✦</div>
       <h2>Custom Soap Builder</h2>
-      <p>Build your bar your way. Choose a botanical clear top bar, a creamy nourishing bar, or a layered bar with a clear botanical top and rich creamy base. Then personalize it with your favorite botanicals, natural color, and scent.</p>
+      <p>Six guided steps, infinite combinations. Start with your shape and size — then layer in a nourishing base, soul-stirring scent, dried botanicals, and natural plant-based color. Your bar, your ritual.</p>
     </div>
 
     <div class="soap-builder-progress">
-      <div class="sb-progress-step active" data-step="1"><span>1</span> Bar Type</div>
-      <div class="sb-progress-step" data-step="2"><span>2</span> Scent</div>
-      <div class="sb-progress-step" data-step="3"><span>3</span> Benefits</div>
-      <div class="sb-progress-step" data-step="4"><span>4</span> Add-Ons</div>
-      <div class="sb-progress-step" data-step="5"><span>5</span> Review</div>
+      <div class="sb-progress-step active" data-step="1"><span>1</span> Shape + Size</div>
+      <div class="sb-progress-step" data-step="2"><span>2</span> Base</div>
+      <div class="sb-progress-step" data-step="3"><span>3</span> Scent</div>
+      <div class="sb-progress-step" data-step="4"><span>4</span> Botanicals</div>
+      <div class="sb-progress-step" data-step="5"><span>5</span> Color</div>
+      <div class="sb-progress-step" data-step="6"><span>6</span> Review</div>
     </div>
 
     <div class="soap-builder-body">
-      <!-- Step 1: Base -->
+      <!-- Step 1: Shape + Size -->
       <div class="sb-step active" id="sbStep1">
-        <h3>Choose Your Bar Type</h3>
-        <p class="sb-step-desc">Pick the style of bar you'd love. The <strong>Botanical Clear Top Bar</strong> pours from vegetable glycerin + castor oil — perfect for showcasing real botanicals. The <strong>Creamy Nourishing Bar</strong> is shea butter + goat milk for deep, velvety hydration. The <strong>Layered Bar</strong> gives you both — a clear botanical top over a creamy nourishing base. You'll personalize scent, botanicals, and color in the next steps.</p>
+        <h3>Choose Your Shape + Size</h3>
+        <p class="sb-step-desc">Start with the silhouette that speaks to you. Shape + size sets the base price of your bar — everything else is optional personalization.</p>
+        <div class="sb-options-grid sb-options-shapes" id="sbShapeOptions"></div>
+      </div>
+
+      <!-- Step 2: Base -->
+      <div class="sb-step" id="sbStep2">
+        <h3>Choose Your Base</h3>
+        <p class="sb-step-desc">Pick the style of bar you'd love. The <strong>Full Bar — Castor + Glycerin</strong> is a clear botanical pour that lets flowers shine through. The <strong>Full Bar — Shea Butter + Goat Milk</strong> is rich and deeply moisturizing. The <strong>Layered Bar</strong> gives you both — a clear botanical top over a creamy nourishing base.</p>
         <div class="sb-options-grid" id="sbBaseOptions"></div>
       </div>
 
-      <!-- Step 2: Scent Profile -->
-      <div class="sb-step" id="sbStep2">
+      <!-- Step 3: Scent Profile -->
+      <div class="sb-step" id="sbStep3">
         <h3>Choose Your Scent Profile</h3>
         <p class="sb-step-desc">Select the scents that speak to your soul — all crafted with pure doTERRA essential oils.</p>
         <div class="sb-options-grid" id="sbScentOptions"></div>
       </div>
 
-      <!-- Step 3: Benefits -->
-      <div class="sb-step" id="sbStep3">
-        <h3>Choose Your Benefits</h3>
-        <p class="sb-step-desc">What do you want your soap to do for you?</p>
-        <div class="sb-options-grid" id="sbBenefitOptions"></div>
-      </div>
-
-      <!-- Step 4: Add-Ons -->
+      <!-- Step 4: Botanicals -->
       <div class="sb-step" id="sbStep4">
-        <h3>Optional Botanicals &amp; Color</h3>
-        <p class="sb-step-desc">Pick real botanicals and natural plant-based color for your bar — no synthetic dyes, ever.</p>
-        <div class="sb-options-grid" id="sbAddonOptions"></div>
+        <h3>Choose Your Botanicals</h3>
+        <p class="sb-step-desc">Pick real dried petals, flowers, and herbs to swirl into your bar. Optional — skip if you prefer a clean finish.</p>
+        <div class="sb-options-grid" id="sbBotanicalOptions"></div>
       </div>
 
-      <!-- Step 5: Review -->
+      <!-- Step 5: Color -->
       <div class="sb-step" id="sbStep5">
-        <h3>Your Custom Soap</h3>
-        <p class="sb-step-desc">Review your selections and add to cart</p>
+        <h3>Choose Your Color</h3>
+        <p class="sb-step-desc">Natural plant-based coloring only — no synthetic dyes, ever. Pick one hue or keep it pure.</p>
+        <div class="sb-options-grid" id="sbColorOptions"></div>
+      </div>
+
+      <!-- Step 6: Review -->
+      <div class="sb-step" id="sbStep6">
+        <h3>Review Your Custom Soap</h3>
+        <p class="sb-step-desc">Everything look right? Add your bar to the cart or step back to tweak.</p>
         <div class="sb-review-panel" id="sbReviewPanel"></div>
-        <div class="sb-suggestion-box" id="sbSuggestionBox"></div>
       </div>
     </div>
 
@@ -1670,14 +1739,14 @@
       <div id="sbLiveSummary"><p class="sb-empty">No selections yet</p></div>
       <div class="sb-live-price">
         <span>Estimated Price:</span>
-        <strong id="sbLivePrice">$13.99</strong>
+        <strong id="sbLivePrice">$5.99</strong>
       </div>
     </div>
 
     <div class="soap-builder-actions">
       <button class="btn-ghost" id="sbPrevBtn" onclick="sbPrevStep()" style="display:none;">Back</button>
       <button class="btn-secondary" id="sbStartNewBtn" onclick="sbStartNew()">Start New</button>
-      <button class="btn-primary" id="sbAddCartBtn" onclick="sbAddToCart()">Add to Cart</button>
+      <button class="btn-primary" id="sbAddCartBtn" onclick="sbAddToCart()" style="display:none;">Add to Cart</button>
       <button class="btn-primary" id="sbNextBtn" onclick="sbNextStep()">Next Step ✦</button>
     </div>
   </div>
@@ -1758,6 +1827,7 @@
           <button class="quiz-opt" data-next="result" data-use="capsule">💊 Capsules</button>
           <button class="quiz-opt" data-next="result" data-use="balm">🫙 Balm / Salve</button>
           <button class="quiz-opt" data-next="result" data-use="serum">✨ Serum / Tincture</button>
+          <button class="quiz-opt" data-next="result" data-use="soap">🧼 Botanical Soap</button>
           <button class="quiz-opt" data-next="result" data-use="all">🌿 Any form</button>
         </div>
       </div>
@@ -1797,6 +1867,7 @@
       <option value="capsule">Capsule Formula</option>
       <option value="balm">Balm / Salve</option>
       <option value="serum">Serum / Tincture</option>
+      <option value="soap">Botanical Soap</option>
     </select>
   </div>
 
@@ -2052,7 +2123,7 @@
         <div class="cc-safety-notice">
           <p class="cc-safety-text">🌿 <strong>Herbal Safety Notice:</strong> Custom botanical blends are crafted from whole plant ingredients and are intended to support general wellness. They are not a substitute for professional medical advice, diagnosis, or treatment. Herbs may interact with certain medications or health conditions. Please consult your healthcare provider if you are pregnant, breastfeeding, taking prescription medications, or managing a chronic condition.</p>
           <label class="cc-safety-label">
-            <input type="checkbox" id="ccSafetyCheck" required />
+            <input type="checkbox" id="ccSafetyCheck" name="safety-acknowledged" required />
             I understand that herbal remedies may interact with medications or medical conditions, and I am not relying on this blend to treat, cure, or prevent any disease.
           </label>
         </div>
@@ -2076,18 +2147,23 @@
 
   <!-- CONSULTATION FORM (formerly Custom Blend) -->
   <div class="formula-grid">
-    <div class="formula-form card">
+    <form class="formula-form card" id="customRemedyForm" name="custom-remedy" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/">
+      <input type="hidden" name="form-name" value="custom-remedy" />
+      <input type="hidden" name="source-tag" value="custom-remedy" />
+      <p class="nl-bot-field" aria-hidden="true" style="position:absolute;left:-9999px;top:-9999px;">
+        <label>Don't fill this out if you're human: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+      </p>
       <h3>✦ Your Personal Herbal Consultation</h3>
       <p class="form-intro">Fill out the form below and Amber will respond within 24–48 hours with your custom formula recommendation.</p>
-      <input type="text" id="formulaName" placeholder="Your Full Name" required />
-      <input type="email" id="formulaEmail" placeholder="Your Email Address" required />
+      <input type="text" id="formulaName" name="name" placeholder="Your Full Name" autocomplete="name" required />
+      <input type="email" id="formulaEmail" name="email" placeholder="Your Email Address" autocomplete="email" required />
       <div class="form-group">
-        <label>What symptoms are you experiencing?</label>
-        <textarea id="formulaSymptoms" placeholder="Describe your symptoms, health concerns, or wellness goals in as much detail as you would like..." rows="4"></textarea>
+        <label for="formulaSymptoms">What symptoms are you experiencing?</label>
+        <textarea id="formulaSymptoms" name="symptoms" placeholder="Describe your symptoms, health concerns, or wellness goals in as much detail as you would like..." rows="4"></textarea>
       </div>
       <div class="form-group">
-        <label>What type of remedy are you interested in?</label>
-        <select id="formulaType">
+        <label for="formulaType">What type of remedy are you interested in?</label>
+        <select id="formulaType" name="remedy-type">
           <option value="">-- Select Remedy Type --</option>
           <option>Custom Tea Blend</option>
           <option>Herbal Capsule Formula</option>
@@ -2097,20 +2173,20 @@
         </select>
       </div>
       <div class="form-group">
-        <label>Current medications (if any)</label>
-        <input type="text" id="formulaMeds" placeholder="List any medications you are currently taking..." />
+        <label for="formulaMeds">Current medications (if any)</label>
+        <input type="text" id="formulaMeds" name="medications" placeholder="List any medications you are currently taking..." />
       </div>
       <div class="form-group">
-        <label>Current supplements (vitamins, herbs, or other natural products)</label>
-        <input type="text" id="formulaSupplements" placeholder="e.g. Vitamin D, fish oil, ashwagandha..." />
+        <label for="formulaSupplements">Current supplements (vitamins, herbs, or other natural products)</label>
+        <input type="text" id="formulaSupplements" name="supplements" placeholder="e.g. Vitamin D, fish oil, ashwagandha..." />
       </div>
       <div class="form-group">
-        <label>Known allergies or sensitivities</label>
-        <input type="text" id="formulaAllergies" placeholder="e.g. ragweed, nuts, specific herbs..." />
+        <label for="formulaAllergies">Known allergies or sensitivities</label>
+        <input type="text" id="formulaAllergies" name="allergies" placeholder="e.g. ragweed, nuts, specific herbs..." />
       </div>
       <div class="form-group">
-        <label>Pregnancy or breastfeeding status</label>
-        <select id="formulaPregnancy">
+        <label for="formulaPregnancy">Pregnancy or breastfeeding status</label>
+        <select id="formulaPregnancy" name="pregnancy-status">
           <option value="">-- Please select --</option>
           <option>Not pregnant or breastfeeding</option>
           <option>Currently pregnant</option>
@@ -2120,22 +2196,23 @@
         </select>
       </div>
       <div class="form-group">
-        <label>Anything else Amber should know?</label>
-        <textarea id="formulaNotes" placeholder="Health history, lifestyle, dietary preferences, spiritual intentions..." rows="3"></textarea>
+        <label for="formulaNotes">Anything else Amber should know?</label>
+        <textarea id="formulaNotes" name="notes" placeholder="Health history, lifestyle, dietary preferences, spiritual intentions..." rows="3"></textarea>
       </div>
       <div class="formula-safety-notice">
         <p>🌿 <strong>Important:</strong> The information shared in this consultation is used solely to help Amber craft a personalized botanical blend. Custom herbal formulas are designed to support general wellness and are not intended to diagnose, treat, cure, or prevent any disease or medical condition. Always consult your healthcare provider before beginning any herbal regimen, especially if you are pregnant, breastfeeding, taking prescription medications, or managing a health condition.</p>
         <label class="formula-safety-label">
-          <input type="checkbox" id="formulaInteractionCheck" required />
+          <input type="checkbox" id="formulaInteractionCheck" name="interaction-acknowledged" value="yes" required />
           I understand that herbal remedies may interact with medications or medical conditions, and I am seeking wellness support, not medical treatment.
         </label>
         <label class="formula-safety-label" style="margin-top:0.5rem;">
-          <input type="checkbox" id="formulaAgeConfirm" required />
+          <input type="checkbox" id="formulaAgeConfirm" name="age-confirmed" value="yes" required />
           I confirm that I am 18 years of age or older.
         </label>
       </div>
-      <button class="btn-primary" id="formulaSubmitBtn">✦ Send My Consultation Request</button>
-    </div>
+      <button class="btn-primary" id="formulaSubmitBtn" type="submit">✦ Send My Consultation Request</button>
+      <div class="formula-feedback" id="formulaFeedback" role="status" aria-live="polite"></div>
+    </form>
     <div class="formula-info">
       <div class="formula-info-card card">
         <h4>🌿 How It Works</h4>
@@ -2930,8 +3007,19 @@
 
         <div class="checkout-divider"></div>
 
-        <h3>Pay with Card</h3>
-        <p class="checkout-secure-note">Your card information is processed securely by Stripe. No card data is stored on our servers.</p>
+        <h3>Pay with Venmo or Cash App</h3>
+        <p class="checkout-secure-note">Your order stays <strong>Pending Payment</strong> until we receive and verify your payment. Amber will email you once it's confirmed — nothing ships before payment is verified. Venmo and Cash App both accept Visa, Mastercard, and debit cards through their own checkout.</p>
+
+        <div class="checkout-external-pay">
+          <a id="checkoutVenmoBtn" href="https://venmo.com/AmberLynnPatten" target="_blank" rel="noopener" class="pay-btn venmo-btn checkout-external-pay-btn" data-provider="venmo">💜 Pay with Venmo</a>
+          <a id="checkoutCashAppBtn" href="https://cash.app/$AmberAlchemy" target="_blank" rel="noopener" class="pay-btn cashapp-btn checkout-external-pay-btn" data-provider="cashapp">💚 Pay with Cash App</a>
+        </div>
+        <p id="checkoutExternalPayStatus" class="checkout-external-pay-status" role="status" aria-live="polite"></p>
+
+        <div class="checkout-divider"></div>
+
+        <h3>Or Pay with Card</h3>
+        <p class="checkout-secure-note">Card payments are processed securely by Stripe when enabled. Card data never touches our servers.</p>
         <div class="checkout-trust-badges">
           <span class="trust-badge-item">🔒 SSL Encrypted</span>
           <span class="trust-badge-item">💳 Visa</span>
@@ -2950,6 +3038,7 @@
           <span id="payBtnText">Pay Now</span>
           <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
         </button>
+        <p class="checkout-secure-note" style="margin-top:8px;">If the card form is unavailable, please complete your order using the Venmo or Cash App buttons above — your order will be saved as Pending Payment until Amber verifies receipt.</p>
 
         <div class="checkout-trust-badges">
           <span>🔒 SSL Encrypted</span>
@@ -2964,8 +3053,8 @@
   <div id="checkoutConfirmation" class="checkout-confirmation" style="display:none;">
     <div class="checkout-confirm-inner card">
       <div class="checkout-confirm-icon">✦</div>
-      <h2>Thank You! Your Order Has Been Received</h2>
-      <p>Confirmation has been sent to your email. Amber will begin preparing your order right away.</p>
+      <h2 id="checkoutConfirmHeadline">Thank You! Your Order Has Been Received</h2>
+      <p id="checkoutConfirmBody">Confirmation has been sent to your email. Amber will begin preparing your order right away.</p>
       <div id="confirmationDetails" class="checkout-confirm-details"></div>
       <div class="rv-cta-row" style="justify-content:center;margin:20px 0 8px;">
         <button type="button" class="btn-primary" data-rv-open data-rv-open-type="site" data-rv-name="My order experience">✦ Review Your Experience</button>

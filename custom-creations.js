@@ -757,46 +757,82 @@
 
   // ---- Consultation form ----
   function bindFormulaForm() {
+    var form = document.getElementById('customRemedyForm');
     var submitBtn = document.getElementById('formulaSubmitBtn');
-    if (!submitBtn) return;
-    submitBtn.addEventListener('click', function() {
+    if (!form || !submitBtn) return;
+
+    var feedbackEl = document.getElementById('formulaFeedback');
+    function setStatus(message, state) {
+      if (!feedbackEl) return;
+      feedbackEl.textContent = message || '';
+      feedbackEl.dataset.state = state || '';
+    }
+
+    form.addEventListener('submit', function(ev) {
+      ev.preventDefault();
+
       var name = (document.getElementById('formulaName') || {}).value || '';
       var email = (document.getElementById('formulaEmail') || {}).value || '';
       var symptoms = (document.getElementById('formulaSymptoms') || {}).value || '';
       var ageConfirm = document.getElementById('formulaAgeConfirm');
       var interactionCheck = document.getElementById('formulaInteractionCheck');
 
+      name = String(name).trim();
+      email = String(email).trim();
+
       if (!name || !email || !symptoms) {
-        alert('Please fill in your name, email, and symptoms to send your consultation request.');
+        setStatus('Please share your name, email, and symptoms to send your consultation request.', 'error');
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setStatus('Please enter a valid email address.', 'error');
         return;
       }
       if (ageConfirm && !ageConfirm.checked) {
-        alert('Please confirm that you are 18 years of age or older.');
+        setStatus('Please confirm that you are 18 years of age or older.', 'error');
         return;
       }
       if (interactionCheck && !interactionCheck.checked) {
-        alert('Please acknowledge that herbal remedies may interact with medications or medical conditions before submitting.');
+        setStatus('Please acknowledge the interaction notice before submitting.', 'error');
         return;
       }
 
-      var type = (document.getElementById('formulaType') || {}).value || 'Not specified';
-      var meds = (document.getElementById('formulaMeds') || {}).value || 'None';
-      var supplements = (document.getElementById('formulaSupplements') || {}).value || 'None';
-      var pregnancy = (document.getElementById('formulaPregnancy') || {}).value || 'Not specified';
-      var allergies = (document.getElementById('formulaAllergies') || {}).value || 'None';
-      var fnotes = (document.getElementById('formulaNotes') || {}).value || '';
+      var originalLabel = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+      setStatus('', '');
 
-      var subject = encodeURIComponent('Custom Herbal Consultation Request from ' + name);
-      var body = encodeURIComponent(
-        'Name: ' + name + '\nEmail: ' + email + '\n\nSymptoms / Goals:\n' + symptoms +
-        '\n\nRemedy Type: ' + type +
-        '\nCurrent Medications: ' + meds +
-        '\nCurrent Supplements: ' + supplements +
-        '\nPregnancy / Breastfeeding: ' + pregnancy +
-        '\nAllergies: ' + allergies +
-        '\n\nAdditional Notes:\n' + fnotes
-      );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
+      var body = new URLSearchParams();
+      body.set('form-name', 'custom-remedy');
+      body.set('source-tag', 'custom-remedy');
+      body.set('name', name);
+      body.set('email', email);
+      body.set('symptoms', symptoms);
+      body.set('remedy-type', (document.getElementById('formulaType') || {}).value || '');
+      body.set('medications', (document.getElementById('formulaMeds') || {}).value || '');
+      body.set('supplements', (document.getElementById('formulaSupplements') || {}).value || '');
+      body.set('allergies', (document.getElementById('formulaAllergies') || {}).value || '');
+      body.set('pregnancy-status', (document.getElementById('formulaPregnancy') || {}).value || '');
+      body.set('notes', (document.getElementById('formulaNotes') || {}).value || '');
+      body.set('age-confirmed', 'yes');
+      body.set('interaction-acknowledged', 'yes');
+      body.set('bot-field', '');
+
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString()
+      }).then(function(res) {
+        if (!res.ok) throw new Error('submit-failed');
+        setStatus('✦ Thank you — Amber has received your consultation request and will respond within 24–48 hours.', 'success');
+        try { form.reset(); } catch (e) {}
+      }).catch(function(err) {
+        console.error('custom-remedy submit failed:', err);
+        setStatus('Sorry, your request could not be sent just now. Please try again or email awaken@consultant.com.', 'error');
+      }).finally(function() {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalLabel;
+      });
     });
   }
 

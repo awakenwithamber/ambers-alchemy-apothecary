@@ -323,8 +323,47 @@ const BOTANICAL_ILLUSTRATIONS = {
   "citrus-bergamot": "https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/FcwXQXkmwnYBNCmT.jpg"
 };
 
+// ---- Synonyms / aliases for display names that don't slug cleanly to a registry key
+// Keeps the registry as the single source of truth for images — aliases map
+// common variant names (plural, "Root" suffix, punctuation, etc.) to canonical slugs.
+const BOTANICAL_ALIASES = {
+  "valerian-root": "valerian",
+  "dandelion-root": "dandelion",
+  "rose-petals": "rose",
+  "rose-petal": "rose",
+  "red-raspberry-leaf": "red-raspberry",
+  "raspberry-leaf": "red-raspberry",
+  "st-john-s-wort": "st-johns-wort",
+  "st-john-s-wort-": "st-johns-wort",
+  "saint-johns-wort": "st-johns-wort",
+  "ginger-root": "ginger",
+  "turmeric-root": "turmeric",
+  "licorice-root": "licorice",
+  "burdock-root": "burdock",
+  "marshmallow-root": "marshmallow",
+  "slippery-elm-bark": "slippery-elm",
+  "lions-mane-mushroom": "lions-mane",
+  "lion-s-mane": "lions-mane",
+  "lion-s-mane-mushroom": "lions-mane",
+  "mucuna-pruriens": "ashwagandha",
+  "mucuna": "ashwagandha",
+  "bacopa": "gotu-kola",
+  "mimosa-bark": "mimosa",
+  "mimosa": "rose",
+  "matcha": "green-tea",
+  "cordyceps": "reishi",
+  "ginkgo": "gotu-kola",
+  "neroli": "rose",
+  "cats-claw": "cat-claw",
+  "cat-s-claw": "cat-claw",
+  "fennel-seed": "fennel",
+  "clover": "red-clover"
+};
+
 // Helper: get illustration URL for any herb ID
-// Falls back to a placeholder if not found
+// Falls back through a series of normalization steps and known aliases.
+// Returns null only when no reasonable match exists (callers should render a
+// themed placeholder, never a broken image).
 function getBotanicalIllustration(herbId) {
   if (!herbId) return null;
   // Direct lookup
@@ -334,9 +373,31 @@ function getBotanicalIllustration(herbId) {
   if (BOTANICAL_ILLUSTRATIONS[normalized]) return BOTANICAL_ILLUSTRATIONS[normalized];
   // Try with "herb-" prefix added
   if (BOTANICAL_ILLUSTRATIONS["herb-" + herbId]) return BOTANICAL_ILLUSTRATIONS["herb-" + herbId];
-  // Try replacing spaces/underscores with hyphens
-  const slug = herbId.toLowerCase().replace(/[_\s]+/g, "-");
+  // Try replacing spaces/underscores/punctuation with hyphens (then collapse & trim)
+  const slug = String(herbId)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
   if (BOTANICAL_ILLUSTRATIONS[slug]) return BOTANICAL_ILLUSTRATIONS[slug];
+  // Consult alias map
+  if (BOTANICAL_ALIASES[slug] && BOTANICAL_ILLUSTRATIONS[BOTANICAL_ALIASES[slug]]) {
+    return BOTANICAL_ILLUSTRATIONS[BOTANICAL_ALIASES[slug]];
+  }
+  // Try trimming a trailing modifier: "valerian-root" → "valerian", "rose-petals" → "rose"
+  const trimmed = slug.replace(/-(root|leaf|leaves|petal|petals|bark|seed|seeds|flower|flowers|powder|bud|buds|oil|extract|tincture)$/i, "");
+  if (trimmed !== slug) {
+    if (BOTANICAL_ILLUSTRATIONS[trimmed]) return BOTANICAL_ILLUSTRATIONS[trimmed];
+    if (BOTANICAL_ALIASES[trimmed] && BOTANICAL_ILLUSTRATIONS[BOTANICAL_ALIASES[trimmed]]) {
+      return BOTANICAL_ILLUSTRATIONS[BOTANICAL_ALIASES[trimmed]];
+    }
+  }
+  // Try the first token alone ("red-raspberry-leaf" → "red-raspberry" → "raspberry")
+  const firstPair = slug.split("-").slice(0, 2).join("-");
+  if (firstPair !== slug && BOTANICAL_ILLUSTRATIONS[firstPair]) return BOTANICAL_ILLUSTRATIONS[firstPair];
+  const firstToken = slug.split("-")[0];
+  if (firstToken && firstToken !== slug && BOTANICAL_ILLUSTRATIONS[firstToken]) {
+    return BOTANICAL_ILLUSTRATIONS[firstToken];
+  }
   return null;
 }
 
@@ -365,5 +426,6 @@ document.addEventListener("DOMContentLoaded", function() {
 // Export for use in other scripts
 if (typeof window !== "undefined") {
   window.BOTANICAL_ILLUSTRATIONS = BOTANICAL_ILLUSTRATIONS;
+  window.BOTANICAL_ALIASES = BOTANICAL_ALIASES;
   window.getBotanicalIllustration = getBotanicalIllustration;
 }

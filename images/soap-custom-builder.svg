@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Build Your Own Soap Remedy — custom artisan handmade soap">
+  <title>Build Your Own Soap Remedy</title>
+  <desc>Premium artisan handmade soaps — layered botanical bars, a sculpted rectangular wave bar, and an ivory white rose soap with rose petals, lavender buds and calendula on a warm parchment backdrop.</desc>
+
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="78%">
+      <stop offset="0%" stop-color="#f7ecd7" />
+      <stop offset="55%" stop-color="#ecdcbe" />
+      <stop offset="100%" stop-color="#c9a978" />
+    </radialGradient>
+
+    <linearGradient id="shea" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff3df" />
+      <stop offset="55%" stop-color="#f2d9ab" />
+      <stop offset="100%" stop-color="#d9b783" />
+    </linearGradient>
+
+    <linearGradient id="rose" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f4c9c3" />
+      <stop offset="55%" stop-color="#d88781" />
+      <stop offset="100%" stop-color="#a85b56" />
+    </linearGradient>
+
+    <linearGradient id="lavender" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ddcfe8" />
+      <stop offset="55%" stop-color="#a896c6" />
+      <stop offset="100%" stop-color="#6f5d91" />
+    </linearGradient>
+
+    <linearGradient id="calendula" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde5aa" />
+      <stop offset="55%" stop-color="#ecc35f" />
+      <stop offset="100%" stop-color="#b98726" />
+    </linearGradient>
+
+    <linearGradient id="clear" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e7f3eb" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#bcd7c3" stop-opacity="0.9" />
+    </linearGradient>
+
+    <radialGradient id="whiteRose" cx="50%" cy="45%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="60%" stop-color="#f3e9d6" />
+      <stop offset="100%" stop-color="#d9c8a8" />
+    </radialGradient>
+
+    <linearGradient id="waveBar" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ead9b9" />
+      <stop offset="55%" stop-color="#d7bf8c" />
+      <stop offset="100%" stop-color="#a8895a" />
+    </linearGradient>
+
+    <linearGradient id="ribbon" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#b8945a" />
+      <stop offset="50%" stop-color="#e6c988" />
+      <stop offset="100%" stop-color="#8a6b38" />
+    </linearGradient>
+
+    <filter id="soft" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="6" />
+    </filter>
+
+    <filter id="bar-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8" />
+      <feOffset dx="0" dy="8" result="off" />
+      <feComponentTransfer><feFuncA type="linear" slope="0.35" /></feComponentTransfer>
+      <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+    </filter>
+
+    <pattern id="parchmentGrain" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="4" fill="transparent" />
+      <circle cx="1" cy="1" r="0.4" fill="#a88757" fill-opacity="0.07" />
+      <circle cx="3" cy="3" r="0.3" fill="#5c3f1c" fill-opacity="0.05" />
+    </pattern>
+  </defs>
+
+  <!-- Parchment backdrop -->
+  <rect width="800" height="800" fill="url(#bg)" />
+  <rect width="800" height="800" fill="url(#parchmentGrain)" />
+
+  <!-- Ornamental border -->
+  <rect x="28" y="28" width="744" height="744" rx="12" ry="12"
+        fill="none" stroke="#8a6b38" stroke-width="1.2" stroke-opacity="0.55" />
+  <rect x="38" y="38" width="724" height="724" rx="10" ry="10"
+        fill="none" stroke="#8a6b38" stroke-width="0.6" stroke-opacity="0.35" />
+
+  <!-- Corner flourishes -->
+  <g stroke="#8a6b38" stroke-opacity="0.55" fill="none" stroke-width="1.2">
+    <path d="M 60 80 C 90 80, 110 100, 110 130" />
+    <path d="M 740 80 C 710 80, 690 100, 690 130" />
+    <path d="M 60 720 C 90 720, 110 700, 110 670" />
+    <path d="M 740 720 C 710 720, 690 700, 690 670" />
+  </g>
+
+  <!-- Soft shadow under soap arrangement -->
+  <ellipse cx="400" cy="590" rx="270" ry="36" fill="#5c3f1c" fill-opacity="0.22" filter="url(#soft)" />
+
+  <!-- BACK BAR — Layered rose clay -->
+  <g transform="translate(220,310) rotate(-8)" filter="url(#bar-shadow)">
+    <rect x="0" y="0" width="250" height="130" rx="18" ry="18" fill="url(#shea)" />
+    <rect x="0" y="0" width="250" height="52" rx="18" ry="18" fill="url(#rose)" />
+    <rect x="0" y="44" width="250" height="10" fill="#b8945a" fill-opacity="0.55" />
+    <!-- Rose petal specks -->
+    <g fill="#8a3a36" fill-opacity="0.78">
+      <circle cx="32" cy="22" r="4.5" />
+      <circle cx="66" cy="14" r="3.6" />
+      <circle cx="92" cy="30" r="5" />
+      <circle cx="134" cy="18" r="4" />
+      <circle cx="170" cy="26" r="5.2" />
+      <circle cx="206" cy="14" r="3.8" />
+      <circle cx="226" cy="30" r="4.2" />
+    </g>
+    <!-- Gold embossed monogram -->
+    <text x="125" y="102" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif"
+          font-size="26" fill="#8a6b38" font-style="italic" letter-spacing="2">Rose Clay</text>
+  </g>
+
+  <!-- MIDDLE BAR — Calendula oat -->
+  <g transform="translate(300,380) rotate(3)" filter="url(#bar-shadow)">
+    <rect x="0" y="0" width="260" height="140" rx="20" ry="20" fill="url(#shea)" />
+    <rect x="0" y="0" width="260" height="58" rx="20" ry="20" fill="url(#calendula)" />
+    <rect x="0" y="50" width="260" height="10" fill="#b8945a" fill-opacity="0.55" />
+    <!-- Calendula petal dots -->
+    <g fill="#c47a16" fill-opacity="0.85">
+      <circle cx="36" cy="26" r="5" />
+      <circle cx="72" cy="12" r="4" />
+      <circle cx="108" cy="26" r="5.4" />
+      <circle cx="148" cy="14" r="4.2" />
+      <circle cx="186" cy="28" r="5" />
+      <circle cx="224" cy="14" r="4.6" />
+    </g>
+    <!-- Oat flecks -->
+    <g fill="#8a6b38" fill-opacity="0.6">
+      <ellipse cx="50" cy="86" rx="4" ry="2" />
+      <ellipse cx="90" cy="100" rx="4" ry="2" />
+      <ellipse cx="140" cy="94" rx="4" ry="2" />
+      <ellipse cx="184" cy="100" rx="4" ry="2" />
+      <ellipse cx="220" cy="88" rx="4" ry="2" />
+    </g>
+    <text x="130" y="116" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif"
+          font-size="26" fill="#8a6b38" font-style="italic" letter-spacing="2">Calendula · Oat</text>
+  </g>
+
+  <!-- FRONT BAR — Lavender honey with layered clear top -->
+  <g transform="translate(230,460) rotate(-4)" filter="url(#bar-shadow)">
+    <rect x="0" y="0" width="300" height="150" rx="22" ry="22" fill="url(#shea)" />
+    <rect x="0" y="0" width="300" height="62" rx="22" ry="22" fill="url(#lavender)" />
+    <rect x="0" y="54" width="300" height="12" fill="#b8945a" fill-opacity="0.55" />
+    <!-- Clear top botanical inclusions -->
+    <rect x="0" y="0" width="300" height="62" rx="22" ry="22" fill="url(#clear)" opacity="0.35" />
+    <!-- Lavender buds -->
+    <g fill="#5b3a78">
+      <ellipse cx="42" cy="22" rx="3.8" ry="6" transform="rotate(-18 42 22)" />
+      <ellipse cx="78" cy="12" rx="3.6" ry="5.6" transform="rotate(12 78 12)" />
+      <ellipse cx="112" cy="28" rx="3.8" ry="6" transform="rotate(-8 112 28)" />
+      <ellipse cx="152" cy="16" rx="3.6" ry="5.6" transform="rotate(22 152 16)" />
+      <ellipse cx="192" cy="28" rx="3.8" ry="6" transform="rotate(-14 192 28)" />
+      <ellipse cx="228" cy="14" rx="3.6" ry="5.6" transform="rotate(10 228 14)" />
+      <ellipse cx="262" cy="30" rx="3.8" ry="6" transform="rotate(-6 262 30)" />
+    </g>
+    <text x="150" y="124" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif"
+          font-size="28" fill="#8a6b38" font-style="italic" letter-spacing="2">Lavender · Honey</text>
+  </g>
+
+  <!-- Loose botanicals around the composition -->
+  <g opacity="0.88">
+    <!-- WHITE ROSE SOAP — premium artisan rose (top-right grouping) -->
+    <g transform="translate(590,330) rotate(6)" filter="url(#bar-shadow)">
+      <!-- Ivory round base disc -->
+      <ellipse cx="0" cy="0" rx="74" ry="58" fill="url(#whiteRose)" stroke="#c9b488" stroke-width="1" stroke-opacity="0.6" />
+      <!-- Sculpted rose bloom on top -->
+      <g transform="translate(0,-4)">
+        <circle cx="0" cy="0" r="34" fill="#f8efe0" stroke="#c9b488" stroke-width="0.8" stroke-opacity="0.5" />
+        <!-- Outer petals -->
+        <path d="M -30 -4 Q -28 -26 -6 -30 Q 14 -30 24 -12 Q 28 8 12 22 Q -8 28 -24 16 Q -34 8 -30 -4 Z"
+              fill="#f1e4cc" stroke="#c9b488" stroke-width="0.7" stroke-opacity="0.55" />
+        <!-- Mid petals -->
+        <path d="M -16 -2 Q -18 -18 -2 -20 Q 14 -18 18 -4 Q 18 12 4 16 Q -12 14 -16 -2 Z"
+              fill="#faf1db" stroke="#c9b488" stroke-width="0.5" stroke-opacity="0.45" />
+        <!-- Inner bud -->
+        <path d="M -6 -2 Q -8 -12 2 -12 Q 10 -10 10 -2 Q 10 8 2 8 Q -6 6 -6 -2 Z"
+              fill="#fff7e6" stroke="#bfa779" stroke-width="0.4" stroke-opacity="0.5" />
+        <circle cx="1" cy="0" r="2.8" fill="#e6c988" />
+      </g>
+      <!-- Embossed label below rose -->
+      <text x="0" y="44" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif"
+            font-size="16" fill="#8a6b38" font-style="italic" letter-spacing="2">White Rose</text>
+    </g>
+
+    <!-- RECTANGULAR WAVE BAR — sculpted wave top-edge accent -->
+    <g transform="translate(520,180) rotate(-6)" filter="url(#bar-shadow)">
+      <!-- Wave silhouette -->
+      <path d="M 0 18 Q 22 0 44 18 T 88 18 T 132 18 L 132 82 L 0 82 Z"
+            fill="url(#waveBar)" stroke="#8a6b38" stroke-width="0.8" stroke-opacity="0.5" />
+      <!-- Wave highlight -->
+      <path d="M 0 22 Q 22 6 44 22 T 88 22 T 132 22"
+            fill="none" stroke="#fff3df" stroke-width="1.5" stroke-opacity="0.6" />
+      <!-- Dried botanical fleck row -->
+      <g fill="#8a3a36" fill-opacity="0.75">
+        <circle cx="20" cy="46" r="2.8" />
+        <circle cx="44" cy="52" r="2.4" />
+        <circle cx="72" cy="46" r="2.8" />
+        <circle cx="98" cy="52" r="2.4" />
+        <circle cx="118" cy="46" r="2.6" />
+      </g>
+      <text x="66" y="74" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif"
+            font-size="15" fill="#5c3f1c" font-style="italic" letter-spacing="2">Rectangular · Waves</text>
+    </g>
+
+    <!-- Lavender sprig top-left -->
+    <g transform="translate(110,240) rotate(-24)">
+      <line x1="0" y1="0" x2="0" y2="80" stroke="#5f8e5a" stroke-width="2.5" />
+      <g fill="#6d4f93">
+        <ellipse cx="-3" cy="14" rx="3" ry="5" />
+        <ellipse cx="3" cy="22" rx="3" ry="5" />
+        <ellipse cx="-3" cy="30" rx="3" ry="5" />
+        <ellipse cx="3" cy="38" rx="3" ry="5" />
+        <ellipse cx="-3" cy="46" rx="3" ry="5" />
+        <ellipse cx="3" cy="54" rx="3" ry="5" />
+      </g>
+    </g>
+    <!-- Calendula flower top-right -->
+    <g transform="translate(640,210)">
+      <circle cx="0" cy="0" r="22" fill="#c47a16" />
+      <g fill="#e6b04b">
+        <ellipse cx="0" cy="-24" rx="6" ry="14" />
+        <ellipse cx="17" cy="-17" rx="6" ry="14" transform="rotate(45 17 -17)" />
+        <ellipse cx="24" cy="0" rx="14" ry="6" />
+        <ellipse cx="17" cy="17" rx="6" ry="14" transform="rotate(-45 17 17)" />
+        <ellipse cx="0" cy="24" rx="6" ry="14" />
+        <ellipse cx="-17" cy="17" rx="6" ry="14" transform="rotate(45 -17 17)" />
+        <ellipse cx="-24" cy="0" rx="14" ry="6" />
+        <ellipse cx="-17" cy="-17" rx="6" ry="14" transform="rotate(-45 -17 -17)" />
+      </g>
+      <circle cx="0" cy="0" r="8" fill="#8a4a12" />
+    </g>
+    <!-- Rose bud bottom-left -->
+    <g transform="translate(140,620)">
+      <path d="M0 0 C -18 -4, -26 -26, -10 -36 C 6 -42, 22 -26, 18 -8 C 14 10, -2 14, 0 0 Z"
+            fill="#a85b56" />
+      <path d="M-4 -8 C -14 -12, -16 -24, -6 -28 C 4 -30, 12 -20, 10 -10 C 8 -2, -2 0, -4 -8 Z"
+            fill="#d88781" />
+      <path d="M14 -2 Q 40 2, 50 24 Q 32 22, 18 14 Z" fill="#5f8e5a" />
+      <path d="M-20 -2 Q -46 -2, -54 -22 Q -38 -22, -24 -14 Z" fill="#5f8e5a" />
+    </g>
+    <!-- Eucalyptus sprig bottom-right -->
+    <g transform="translate(660,580) rotate(24)">
+      <line x1="0" y1="0" x2="0" y2="90" stroke="#5f8e5a" stroke-width="2" />
+      <g fill="#8db088">
+        <ellipse cx="-8" cy="14" rx="9" ry="6" />
+        <ellipse cx="8" cy="26" rx="9" ry="6" />
+        <ellipse cx="-8" cy="38" rx="9" ry="6" />
+        <ellipse cx="8" cy="50" rx="9" ry="6" />
+        <ellipse cx="-8" cy="62" rx="9" ry="6" />
+      </g>
+    </g>
+    <!-- Oat fronds mid-top -->
+    <g transform="translate(400,170)" stroke="#8a6b38" stroke-width="1.4" fill="none" opacity="0.75">
+      <path d="M0 0 C -30 10, -60 30, -80 60" />
+      <path d="M0 0 C 30 10, 60 30, 80 60" />
+    </g>
+    <!-- Essential oil dropper bottom center -->
+    <g transform="translate(440,630)">
+      <rect x="-12" y="0" width="24" height="46" rx="4" ry="4" fill="#3d4f3a" />
+      <rect x="-14" y="-6" width="28" height="8" rx="2" ry="2" fill="#8a6b38" />
+      <rect x="-7" y="-14" width="14" height="10" rx="2" ry="2" fill="#b8945a" />
+      <ellipse cx="0" cy="24" rx="6" ry="10" fill="#d4a843" fill-opacity="0.5" />
+    </g>
+  </g>
+
+  <!-- Eyebrow line -->
+  <g font-family="Cormorant Garamond, Georgia, serif" text-anchor="middle">
+    <text x="400" y="118" font-size="22" fill="#5c3f1c" letter-spacing="6" font-style="italic">
+      ✦ HANDCRAFTED · MADE TO ORDER ✦
+    </text>
+  </g>
+
+  <!-- Brass ribbon -->
+  <g>
+    <path d="M 110 680 L 150 660 L 650 660 L 690 680 L 650 700 L 150 700 Z"
+          fill="url(#ribbon)" stroke="#5c3f1c" stroke-width="1" stroke-opacity="0.4" />
+    <path d="M 110 680 L 132 674 L 132 686 Z" fill="#8a6b38" />
+    <path d="M 690 680 L 668 674 L 668 686 Z" fill="#8a6b38" />
+    <text x="400" y="688" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif"
+          font-size="32" font-weight="600" fill="#2d1f0f" letter-spacing="4">
+      Build Your Own Soap Remedy
+    </text>
+  </g>
+
+  <!-- Small price / sub note -->
+  <g font-family="Cormorant Garamond, Georgia, serif" text-anchor="middle">
+    <text x="400" y="738" font-size="16" fill="#5c3f1c" font-style="italic" letter-spacing="2">
+      Your shape · your scent · your botanicals · from $13.99
+    </text>
+  </g>
+</svg>

@@ -450,9 +450,9 @@ async function initStripe() {
   }
 
   if (!pk) {
-    document.getElementById('card-errors').textContent = 'Card payments are being set up. You may also use Venmo or Cash App from the cart.';
-    document.getElementById('checkoutPayBtn').disabled = false;
-    document.getElementById('payBtnText').textContent = 'Submit Order';
+    document.getElementById('card-errors').textContent = 'Card payments are currently unavailable. Please use Venmo or Cash App above — your order will stay as Pending Payment until Amber verifies receipt.';
+    document.getElementById('checkoutPayBtn').disabled = true;
+    document.getElementById('payBtnText').textContent = 'Card Unavailable — Use Venmo or Cash App';
     return;
   }
   try {
@@ -517,14 +517,13 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
   errEl.textContent = '';
 
   try {
-    // If Stripe is not initialized, submit form as order (payment via Venmo/CashApp)
+    // Payment enforcement: a card payment must be initialized AND confirmed by
+    // Stripe before any order is recorded as paid. If Stripe is not available,
+    // the shopper must use the Venmo / Cash App buttons above (which record a
+    // Pending Payment order). We never submit a completed order from this
+    // handler without a successful Stripe paymentIntent.
     if (!stripe || !cardElement) {
-      document.getElementById('transactionId').value = 'PENDING-' + Date.now();
-      document.getElementById('paymentStatus').value = 'pending-external-payment';
-      document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-      await submitNetlifyForm();
-      showConfirmation('PENDING — Complete payment via Venmo or Cash App in the cart', 'pending');
-      return;
+      throw new Error('Card payments are unavailable right now. Please use Venmo or Cash App above to complete your order — it will stay as Pending Payment until Amber verifies receipt.');
     }
 
     // Create PaymentIntent on server
@@ -585,6 +584,84 @@ async function submitNetlifyForm() {
   });
 }
 
+// External payment (Venmo / Cash App) from the checkout page. Records the
+// order as PENDING PAYMENT before opening the payment provider. The order is
+// only marked Paid once Amber verifies receipt out-of-band and updates the
+// record manually — no paid confirmation email is sent from this path.
+function validateCheckoutFormFields() {
+  const errEl = document.getElementById('card-errors');
+  const name = document.getElementById('checkoutCustomerName').value.trim();
+  const email = document.getElementById('checkoutEmail').value.trim();
+  const address = document.getElementById('checkoutAddress').value.trim();
+  const cityZip = document.getElementById('checkoutCityStateZip').value.trim();
+  if (!name || !email || !address || !cityZip) {
+    if (errEl) errEl.textContent = '';
+    return { ok: false, message: 'Please fill in your name, email, address, and city/state/ZIP before paying.' };
+  }
+  if (cart.length === 0) return { ok: false, message: 'Your cart is empty.' };
+  return { ok: true, name, email };
+}
+
+function setExternalPayStatus(msg, state) {
+  const el = document.getElementById('checkoutExternalPayStatus');
+  if (!el) return;
+  el.textContent = msg || '';
+  if (state) el.setAttribute('data-state', state); else el.removeAttribute('data-state');
+}
+
+function startExternalPayment(provider) {
+  const validation = validateCheckoutFormFields();
+  if (!validation.ok) { setExternalPayStatus(validation.message, 'error'); return null; }
+
+  const { name, email } = validation;
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const shipping = subtotal >= 75 ? 0 : 6.99;
+  const tax = subtotal * 0.08;
+  const total = subtotal + shipping + tax;
+  const itemsSummary = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+  const pendingId = 'PENDING-' + provider.toUpperCase() + '-' + Date.now();
+
+  document.getElementById('transactionId').value = pendingId;
+  document.getElementById('paymentStatus').value = 'pending-payment-' + provider;
+  document.getElementById('checkoutProduct').value = itemsSummary;
+  document.getElementById('orderTotalField').value = formatPrice(total);
+
+  setExternalPayStatus('Saving your order as Pending Payment\u2026 complete your payment in the ' + (provider === 'venmo' ? 'Venmo' : 'Cash App') + ' tab. Amber will email you once it is verified.', 'pending');
+
+  // Fire-and-forget form submission so the Venmo/CashApp link opens in the
+  // same user gesture (popup blockers reject window.open after awaited work).
+  submitNetlifyForm()
+    .then(() => {
+      showConfirmation(pendingId, 'pending');
+    })
+    .catch(() => {
+      setExternalPayStatus('We could not save your order record. Please email awaken@consultant.com with your order details so Amber can match your payment.', 'error');
+    });
+
+  return { total, name, email, pendingId, itemsSummary };
+}
+
+function bindCheckoutExternalPayButtons() {
+  const venmoBtn = document.getElementById('checkoutVenmoBtn');
+  const cashAppBtn = document.getElementById('checkoutCashAppBtn');
+  if (venmoBtn) {
+    venmoBtn.addEventListener('click', function(e) {
+      const result = startExternalPayment('venmo');
+      if (!result) { e.preventDefault(); return; }
+      const note = `Amber's Alchemy Order ${result.pendingId} - ${result.name} | ${result.itemsSummary}`;
+      this.href = `https://venmo.com/AmberLynnPatten?txn=pay&amount=${result.total.toFixed(2)}&note=${encodeURIComponent(note)}`;
+    });
+  }
+  if (cashAppBtn) {
+    cashAppBtn.addEventListener('click', function(e) {
+      const result = startExternalPayment('cashapp');
+      if (!result) { e.preventDefault(); return; }
+      this.href = `https://cash.app/$AmberAlchemy/${result.total.toFixed(2)}`;
+    });
+  }
+}
+bindCheckoutExternalPayButtons();
+
 function showConfirmation(transactionId, status) {
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const shipping = subtotal >= 75 ? 0 : 6.99;
@@ -593,13 +670,25 @@ function showConfirmation(transactionId, status) {
   const name = document.getElementById('checkoutCustomerName').value.trim();
   const email = document.getElementById('checkoutEmail').value.trim();
 
+  const isPaid = status === 'paid';
+  const headline = isPaid ? 'Thank You! Your Order Has Been Received' : 'Order Received — Awaiting Payment Confirmation';
+  const body = isPaid
+    ? 'Confirmation has been sent to your email. Amber will begin preparing your order right away.'
+    : 'Your order has been received and is awaiting payment confirmation. Once your payment is received through Venmo or Cash App, your order will be confirmed. Please complete your payment now — your order will not ship until payment is verified.';
+  const statusLabel = isPaid ? 'Payment Confirmed — Order Submitted' : 'Pending Payment — Awaiting Verification';
+
+  const headlineEl = document.getElementById('checkoutConfirmHeadline');
+  const bodyEl = document.getElementById('checkoutConfirmBody');
+  if (headlineEl) headlineEl.textContent = headline;
+  if (bodyEl) bodyEl.textContent = body;
+
   document.getElementById('confirmationDetails').innerHTML = `
     <p><strong>Order for:</strong> ${name}</p>
     <p><strong>Email:</strong> ${email}</p>
     <p><strong>Items:</strong> ${cart.map(i => `${i.name} x${i.qty}`).join(', ')}</p>
     <p><strong>Total:</strong> ${formatPrice(total)}</p>
-    <p><strong>Transaction ID:</strong> ${transactionId}</p>
-    <p><strong>Status:</strong> ${status === 'paid' ? 'Payment Confirmed' : 'Awaiting Payment'}</p>
+    <p><strong>Reference ID:</strong> ${transactionId}</p>
+    <p><strong>Status:</strong> ${statusLabel}</p>
   `;
 
   // Show confirmation, hide form
@@ -609,12 +698,53 @@ function showConfirmation(transactionId, status) {
   // Clear cart
   cart = [];
   renderCart();
-  showToast('Order submitted successfully!');
+  showToast(isPaid ? 'Order submitted successfully!' : 'Order saved — awaiting your payment.');
 }
 
 // ---- RENDER PRODUCTS (with category filter) ----
 function renderProducts(filterCat = 'all') {
   const grid = document.getElementById('shopGrid');
+  // "soaps" category → render the soap catalog inline as product cards so
+  // customers see real inventory without leaving the shop pane.
+  if (filterCat === 'soaps') {
+    const soapList = (typeof SOAPS !== 'undefined' && Array.isArray(SOAPS)) ? SOAPS : [];
+    if (soapList.length === 0) {
+      grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px;grid-column:1/-1">Soaps are loading — scroll to the Artisan Botanical Soaps pane below.</p>';
+      return;
+    }
+    const builderCard = '<div class="product-card soap-builder-shop-card" data-categories="soap,custom">' +
+        '<div class="product-img">' +
+          '<img src="images/soap-custom-builder.svg" alt="Build Your Own Soap Remedy — custom artisan soap" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=img-placeholder>🧼✦</div>\'" />' +
+        '</div>' +
+        '<div class="product-body">' +
+          '<div class="product-badge">Custom</div>' +
+          '<div class="product-name">✦ Build Your Own Soap Remedy</div>' +
+          '<div class="product-benefit">Choose your shape, scent, botanicals, and nourishing base</div>' +
+          '<div class="product-short-desc">Create a handcrafted botanical bar with your choice of clear-top, creamy, or layered base.</div>' +
+          '<div class="product-benefit" style="color:var(--gold,#d4a843);font-weight:600;">From $13.99</div>' +
+          '<button class="product-add-btn btn-primary" onclick="openSoapBuilder()">Build Your Own ✦</button>' +
+        '</div>' +
+      '</div>';
+    grid.innerHTML = builderCard + soapList.map(s => {
+      const price = typeof s.price === 'number' ? s.price : 12.99;
+      const safeName = String(s.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const desc = s.description || s.desc || '';
+      return '<div class="product-card" data-categories="' + ((s.categories||['soap']).join(',')) + '">' +
+        '<div class="product-img">' +
+          '<img src="' + (s.img || s.illustration || '') + '" alt="' + safeName + '" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=img-placeholder>' + (s.emoji || '🧼') + '</div>\'" />' +
+        '</div>' +
+        '<div class="product-body">' +
+          '<div class="product-badge">Artisan Soap</div>' +
+          '<div class="product-name">' + (s.emoji || '🧼') + ' ' + (s.name || '') + '</div>' +
+          (s.botanicals ? '<div class="product-benefit">🌿 ' + s.botanicals + '</div>' : '') +
+          (desc ? '<div class="product-short-desc">' + desc + '</div>' : '') +
+          '<div class="product-benefit" style="color:var(--gold,#d4a843);font-weight:600;">$' + price.toFixed(2) + ' · 4 oz bar</div>' +
+          '<button class="product-add-btn btn-primary" onclick="addSoapToCart(\'' + safeName + '\', ' + price + ', this)">Add to Cart ✦</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    return;
+  }
   const filtered = filterCat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.categories && p.categories.includes(filterCat));
   if (filtered.length === 0) {
     grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px;grid-column:1/-1">No products found in this category.</p>';
@@ -645,7 +775,11 @@ function renderProducts(filterCat = 'all') {
         ${p.keyHerbs ? `<div class="product-herb-chips"><span class="herb-chips-label">✦ Key Botanicals</span><div class="herb-chips-row">${p.keyHerbs.map(h => {
           const slug = h.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
           const imgPath = (typeof getBotanicalIllustration === 'function' && getBotanicalIllustration(slug)) || '';
-          return '<div class="herb-chip botanical-chip" data-herb-name="' + h + '" title="Click to view ' + h + ' botanical profile"><img src="' + imgPath + '" alt="' + h + '" onerror="this.style.display=\'none\'" loading="lazy"/><span>' + h + '</span><span class=\"bic-chip-hint\">tap for profile</span></div>';
+          const safeName = String(h).replace(/"/g, '&quot;');
+          const thumb = imgPath
+            ? '<img src="' + imgPath + '" alt="' + safeName + '" width="44" height="44" loading="lazy" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'herb-chip-fallback\',textContent:\'🌿\'}))"/>'
+            : '<span class="herb-chip-fallback" aria-hidden="true">🌿</span>';
+          return '<div class="herb-chip botanical-chip" data-herb-name="' + safeName + '" title="Click to view ' + safeName + ' botanical profile">' + thumb + '<span>' + h + '</span><span class="bic-chip-hint">tap for profile</span></div>';
         }).join('')}</div></div>` : ''}
         ${whyItWorks ? `<details class="product-why-works"><summary>Why This Works</summary><div class="why-works-content">${whyItWorks}</div></details>` : ''}
         ${p.sampleNote ? `<div class="product-sample-note">🎁 ${p.sampleNote}</div>` : ''}
@@ -743,7 +877,17 @@ document.addEventListener('click', function(e) {
   if (!btn) return;
   document.querySelectorAll('.cat-filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  renderProducts(btn.dataset.cat);
+  const cat = btn.dataset.cat;
+  // Soaps live in their own section — render them inline AND deep-link to the soaps pane
+  if (cat === 'soaps') {
+    renderProducts('soaps');
+    const soapsSection = document.getElementById('soaps');
+    if (soapsSection && typeof soapsSection.scrollIntoView === 'function') {
+      soapsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    return;
+  }
+  renderProducts(cat);
 });
 
 // Shop goal filter buttons
@@ -752,7 +896,7 @@ document.addEventListener('click', function(e) {
   if (!btn) return;
   const goal = btn.dataset.goal;
   // Map goal names to product categories
-  const goalToCat = { sleep: 'sleep', stress: 'sleep', energy: 'energy', immune: 'immune', beauty: 'beauty', pain: 'pain', digestive: 'immune', hormonal: 'hormonal' };
+  const goalToCat = { sleep: 'sleep', stress: 'sleep', energy: 'energy', immune: 'immune', beauty: 'beauty', pain: 'pain', digestive: 'digestive', hormonal: 'hormonal' };
   const cat = goalToCat[goal] || 'all';
   document.querySelectorAll('.shop-goal-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -825,7 +969,9 @@ function renderHerbGrid(herbs) {
     return `
       <div class="herb-card ${isSelected ? 'selected' : ''}" data-id="${h.id}">
         <div class="herb-card-img herb-botanical-img">
-          <img src="${illus}" alt="Botanical illustration of ${h.name}" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>${h.emoji}</div>'" />
+          ${illus
+            ? `<img src="${illus}" alt="Botanical illustration of ${h.name}" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=img-placeholder>${h.emoji || '🌿'}</div>'" />`
+            : `<div class="img-placeholder">${h.emoji || '🌿'}</div>`}
         </div>
         <div class="herb-card-body">
           <div class="herb-name">${h.emoji} ${h.name}</div>
@@ -940,26 +1086,64 @@ document.getElementById('contactSubmitBtn').addEventListener('click', () => {
   if (!name || !email || !message) { showToast('Please fill in all fields.'); return; }
   const body = encodeURIComponent(`From: ${name} (${email})\n\n${message}`);
   try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
+  window.location.href = `mailto:awaken@consultant.com,perfectlyme347@gmail.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
   showToast('Opening email client...');
 });
 
-// ---- NEWSLETTER FORM ----
-document.getElementById('nlSubmitBtn').addEventListener('click', () => {
-  const name = document.getElementById('nlName').value.trim();
-  const email = document.getElementById('nlEmail').value.trim();
-  if (!email) { showToast('Please enter your email address.'); return; }
-  const body = encodeURIComponent(
-    `New Newsletter Subscriber — Amber's Alchemy Apothecary\n\n` +
-    `Name: ${name || 'Not provided'}\nEmail: ${email}\n\n` +
-    `Please add this subscriber to the mailing list and send the Free Herbal Healing Guide.`
-  );
-  try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?subject=${encodeURIComponent('New Subscriber — ' + (name || email))}&body=${body}`;
-  showToast('✦ Thank you! Check your email for the Herbal Healing Guide.');
-  document.getElementById('nlName').value = '';
-  document.getElementById('nlEmail').value = '';
-});
+// ---- NEWSLETTER FORM (Netlify Forms — AJAX submit) ----
+(function initNewsletterForm() {
+  const form = document.getElementById('newsletterForm');
+  if (!form) return;
+
+  const feedback = document.getElementById('nlFeedback');
+  const submitBtn = document.getElementById('nlSubmitBtn');
+
+  function setStatus(message, state) {
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.dataset.state = state || '';
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const name = (document.getElementById('nlName') || {}).value?.trim() || '';
+    const email = (document.getElementById('nlEmail') || {}).value?.trim() || '';
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setStatus('Please enter a valid email address.', 'error');
+      return;
+    }
+
+    const originalLabel = submitBtn ? submitBtn.textContent : '';
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+    setStatus('', '');
+
+    const body = new URLSearchParams();
+    body.set('form-name', 'newsletter-signup');
+    body.set('source-tag', 'homepage-signup');
+    body.set('name', name);
+    body.set('email', email);
+    body.set('bot-field', '');
+
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString()
+      });
+      if (!res.ok) throw new Error('submit-failed');
+      try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
+      setStatus('✦ Thank you! Your Herbal Healing Guide is on its way.', 'success');
+      form.reset();
+      showToast('✦ Subscribed — check your inbox for the guide.');
+    } catch (err) {
+      console.error('Newsletter signup failed:', err);
+      setStatus('Sorry, we could not submit your signup. Please try again in a moment.', 'error');
+      showToast('Signup failed — please try again.');
+    } finally {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+    }
+  });
+})();
 
 // ---- FAQS ----
 function renderFAQs() {
@@ -1185,7 +1369,11 @@ function renderBestSellers() {
     const herbChips = (p.keyHerbs || []).map(h => {
       const slug = h.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
       const imgPath = (typeof getBotanicalIllustration === 'function' && getBotanicalIllustration(slug)) || '';
-      return '<div class="herb-chip botanical-chip" data-herb-name="' + h + '" title="Click to view ' + h + ' botanical profile"><img src="' + imgPath + '" alt="' + h + '" onerror="this.style.display=\'none\'" loading="lazy"/><span>' + h + '</span><span class=\"bic-chip-hint\">tap for profile</span></div>';
+      const safeName = String(h).replace(/"/g, '&quot;');
+      const thumb = imgPath
+        ? '<img src="' + imgPath + '" alt="' + safeName + '" width="44" height="44" loading="lazy" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'herb-chip-fallback\',textContent:\'🌿\'}))"/>'
+        : '<span class="herb-chip-fallback" aria-hidden="true">🌿</span>';
+      return '<div class="herb-chip botanical-chip" data-herb-name="' + safeName + '" title="Click to view ' + safeName + ' botanical profile">' + thumb + '<span>' + h + '</span><span class="bic-chip-hint">tap for profile</span></div>';
     }).join('');
     return `
       <div class="product-card best-seller-card" data-categories="${(p.categories||[]).join(',')}">
@@ -1301,40 +1489,51 @@ function addSoapToCart(name, price, btnEl) {
 }
 window.addSoapToCart = addSoapToCart;
 
-// ---- SOAP CUSTOM ORDER FORM ----
+// ---- SOAP CUSTOM ORDER FORM (Netlify Forms — AJAX submit) ----
 (function() {
   function bindSoapForm() {
-    const soapSubmitBtn = document.getElementById('soapSubmitBtn');
-    if (!soapSubmitBtn) return;
-    soapSubmitBtn.addEventListener('click', function() {
+    const form = document.getElementById('customSoapForm');
+    if (!form) return;
+    const btn = document.getElementById('soapSubmitBtn');
+    const feedback = document.getElementById('soapFeedback');
+    function setStatus(message, state) {
+      if (!feedback) return;
+      feedback.textContent = message || '';
+      feedback.dataset.state = state || '';
+    }
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
       const name = (document.getElementById('soapName') || {}).value?.trim() || '';
       const email = (document.getElementById('soapEmail') || {}).value?.trim() || '';
       if (!name || !email) {
-        showToast('Please enter your name and email to submit a custom soap request.');
+        setStatus('Please enter your name and email to submit your request.', 'error');
         return;
       }
-      const scent = (document.getElementById('soapScent') || {}).value || 'Not specified';
-      const color = (document.getElementById('soapColor') || {}).value || 'Not specified';
-      const shape = (document.getElementById('soapShape') || {}).value || 'Not specified';
-      const botanical = (document.getElementById('soapBotanical') || {}).value || 'Not specified';
-      const quantity = (document.getElementById('soapQuantity') || {}).value || 'Not specified';
-      const notes = (document.getElementById('soapNotes') || {}).value?.trim() || '';
-      const subject = encodeURIComponent('Custom Soap Order from ' + name);
-      const body = encodeURIComponent(
-        'Custom Soap Order Request\n\n' +
-        'Name: ' + name + '\n' +
-        'Email: ' + email + '\n' +
-        'Scent: ' + scent + '\n' +
-        'Color: ' + color + '\n' +
-        'Shape: ' + shape + '\n' +
-        'Botanical: ' + botanical + '\n' +
-        'Quantity: ' + quantity + '\n' +
-        'Notes: ' + notes
-      );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
-      showToast('✦ Opening email to send your custom soap request...');
-      soapSubmitBtn.textContent = '✓ Request Sent!';
-      setTimeout(() => { soapSubmitBtn.textContent = 'Send My Custom Soap Request ✦'; }, 3000);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setStatus('Please enter a valid email address.', 'error');
+        return;
+      }
+      const originalLabel = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+      setStatus('', '');
+      const data = new URLSearchParams(new FormData(form));
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: data.toString()
+      }).then(function(res) {
+        if (!res.ok) throw new Error('submit-failed');
+        try { window.AAA && window.AAA.customSoapSubmit && window.AAA.customSoapSubmit(name); } catch (e) {}
+        setStatus('✓ Your custom soap request has been received. Amber will reach out within 1–2 business days.', 'success');
+        if (btn) { btn.textContent = '✓ Request Sent!'; }
+        form.reset();
+        setTimeout(function() {
+          if (btn) { btn.disabled = false; btn.textContent = originalLabel || 'Send My Custom Soap Request ✦'; }
+        }, 3000);
+      }).catch(function() {
+        setStatus('We could not submit your request right now. Please try again or email awaken@consultant.com.', 'error');
+        if (btn) { btn.disabled = false; btn.textContent = originalLabel || 'Send My Custom Soap Request ✦'; }
+      });
     });
   }
   if (document.readyState === 'loading') {

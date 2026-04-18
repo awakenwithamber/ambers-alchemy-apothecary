@@ -833,6 +833,9 @@ function renderAllyCard(ally) {
   var emoji = herb && herb.emoji ? herb.emoji : '\u{1F33F}';
   var latin = herb && herb.latin ? herb.latin : '';
   var img = herb ? (herb.illustration || herb.img || '') : '';
+  if (!img && typeof window.getBotanicalIllustration === 'function') {
+    img = window.getBotanicalIllustration(ally.id || (herb && herb.id)) || '';
+  }
   var traditional = herb && herb.desc ? herb.desc : '';
   var primaryBenefit = herb && Array.isArray(herb.benefits) && herb.benefits.length ? herb.benefits[0] : '';
 
