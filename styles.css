@@ -494,6 +494,43 @@ button { cursor: pointer; font-family: var(--font-body); }
 }
 .nl-form input::placeholder { color: var(--text-muted); }
 .nl-form input:focus { outline: none; border-color: var(--amethyst); }
+.newsletter-form {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.newsletter-form input[type="text"],
+.newsletter-form input[type="email"] {
+  flex: 1 1 200px;
+  min-width: 180px;
+  padding: 12px 18px;
+  border-radius: 30px;
+  border: 1px solid var(--border);
+  background: rgba(46,28,56,0.7);
+  color: var(--parchment);
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+.newsletter-form input::placeholder { color: var(--text-muted); }
+.newsletter-form input:focus { outline: none; border-color: var(--amethyst); }
+.nl-feedback {
+  flex-basis: 100%;
+  margin-top: 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  min-height: 1.2em;
+  text-align: center;
+}
+.nl-feedback[data-state="success"] { color: var(--sage, #7A8B6F); }
+.nl-feedback[data-state="error"] { color: #c98b8b; }
+.newsletter-form button[disabled] {
+  opacity: 0.7;
+  cursor: progress;
+}
 
 /* ---- SECTION PAGES ---- */
 .section-page { padding: 50px 24px 80px; max-width: 1200px; margin: 0 auto; }
@@ -542,6 +579,22 @@ button { cursor: pointer; font-family: var(--font-body); }
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  align-items: stretch;
+}
+@media (max-width: 480px) {
+  .herb-chips-row {
+    gap: 6px;
+  }
+  .herb-chip {
+    min-width: 56px;
+    max-width: 68px;
+    padding: 5px 6px;
+  }
+  .herb-chip img,
+  .herb-chip .herb-chip-fallback {
+    width: 40px;
+    height: 40px;
+  }
 }
 .herb-chip {
   display: flex;
@@ -594,6 +647,20 @@ button { cursor: pointer; font-family: var(--font-body); }
   border-radius: 8px;
   object-fit: cover;
   border: 1px solid rgba(140,106,59,0.2);
+}
+.herb-chip .herb-chip-fallback {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid rgba(140,106,59,0.2);
+  background: radial-gradient(circle at 50% 50%, rgba(122,139,111,0.35) 0%, rgba(46,28,56,0.85) 75%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+  max-width: 44px;
+  overflow: hidden;
 }
 .herb-chip span {
   font-family: var(--font-body);
@@ -732,11 +799,34 @@ button { cursor: pointer; font-family: var(--font-body); }
 .formula-form { background: rgba(46,28,56,0.5); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; margin-bottom: 24px; }
 .formula-form label { display: block; font-family: var(--font-display); font-size: 13px; letter-spacing: 0.06em; color: var(--brass); margin-bottom: 6px; text-transform: uppercase; }
 .formula-form input, .formula-form textarea, .formula-form select {
-  width: 100%; padding: 11px 16px; border-radius: var(--radius); border: 1px solid var(--border);
-  background: rgba(30,17,40,0.65); color: var(--parchment); font-family: var(--font-body); font-size: 14px; margin-bottom: 16px;
+    width: 100%; padding: 12px 16px; margin-bottom: 14px; background: rgba(30,17,40,0.6); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--parchment); font-family: var(--font-body); font-size: 14px;
 }
 .formula-form input:focus, .formula-form textarea:focus, .formula-form select:focus { outline: none; border-color: var(--amethyst); }
 .formula-form textarea { min-height: 100px; resize: vertical; }
+.formula-feedback {
+  margin-top: 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  min-height: 1.2em;
+  text-align: center;
+  padding: 0 4px;
+}
+.formula-feedback[data-state="success"] { color: var(--sage, #7A8B6F); }
+.formula-feedback[data-state="error"] { color: #c98b8b; }
+.soap-feedback {
+  margin-top: 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  min-height: 1.2em;
+  text-align: center;
+  padding: 0 4px;
+}
+.soap-feedback[data-state="success"] { color: var(--sage, #7A8B6F); }
+.soap-feedback[data-state="error"] { color: #c98b8b; }
+.formula-form button[disabled] {
+  opacity: 0.7;
+  cursor: progress;
+}
 
 /* ---- CART DRAWER ---- */
 .cart-drawer {
@@ -3798,6 +3888,7 @@ html, body {
   height: 200px;
   background: linear-gradient(160deg, rgba(75, 46, 89, 0.4), rgba(140, 106, 59, 0.15));
   position: relative;
+  overflow: hidden;
 }
 
 .soap-builder-cta-icon {
@@ -3812,6 +3903,80 @@ html, body {
   color: var(--brass-lt);
   font-size: 1.5rem;
   animation: pulse-ring 2.5s ease-in-out infinite;
+  z-index: 3;
+}
+
+/* Premium "Build Your Own Soap" product visual — layered soap bars
+   composed from existing soap photographs to create a cohesive artisan
+   product image without introducing a new generated asset. */
+.soap-builder-stack {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.soap-builder-stack::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 85%, rgba(20, 10, 30, 0.55) 0%, transparent 65%),
+              linear-gradient(160deg, rgba(75, 46, 89, 0.25), rgba(140, 106, 59, 0.08));
+}
+.sb-stack-img {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(243, 235, 221, 0.18);
+  box-shadow: 0 14px 28px rgba(10, 6, 20, 0.55), 0 0 0 1px rgba(184, 148, 90, 0.18);
+  background: rgba(30, 17, 40, 0.5);
+}
+.sb-stack-img-back {
+  left: calc(50% - 95px);
+  top: 22px;
+  transform: rotate(-9deg);
+  filter: brightness(0.9) saturate(1.05);
+}
+.sb-stack-img-mid {
+  left: calc(50% - 55px);
+  top: 44px;
+  transform: rotate(2deg);
+  z-index: 2;
+}
+.sb-stack-img-front {
+  left: calc(50% - 10px);
+  top: 32px;
+  transform: rotate(8deg);
+  z-index: 3;
+  border-color: rgba(243, 235, 221, 0.3);
+  box-shadow: 0 18px 36px rgba(10, 6, 20, 0.7), 0 0 0 1px rgba(184, 148, 90, 0.28);
+}
+.soap-builder-cta-ribbon {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--parchment, #F3EBDD);
+  background: rgba(20, 10, 30, 0.78);
+  border: 1px solid rgba(184, 148, 90, 0.45);
+  border-radius: 999px;
+  padding: 5px 14px;
+  z-index: 4;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+@media (max-width: 480px) {
+  .sb-stack-img { width: 88px; height: 88px; }
+  .sb-stack-img-back { left: calc(50% - 78px); top: 28px; }
+  .sb-stack-img-mid  { left: calc(50% - 44px); top: 48px; }
+  .sb-stack-img-front{ left: calc(50% - 10px); top: 36px; }
 }
 
 .soap-builder-launch-btn {

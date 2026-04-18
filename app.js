@@ -645,7 +645,11 @@ function renderProducts(filterCat = 'all') {
         ${p.keyHerbs ? `<div class="product-herb-chips"><span class="herb-chips-label">✦ Key Botanicals</span><div class="herb-chips-row">${p.keyHerbs.map(h => {
           const slug = h.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
           const imgPath = (typeof getBotanicalIllustration === 'function' && getBotanicalIllustration(slug)) || '';
-          return '<div class="herb-chip botanical-chip" data-herb-name="' + h + '" title="Click to view ' + h + ' botanical profile"><img src="' + imgPath + '" alt="' + h + '" onerror="this.style.display=\'none\'" loading="lazy"/><span>' + h + '</span><span class=\"bic-chip-hint\">tap for profile</span></div>';
+          const safeName = String(h).replace(/"/g, '&quot;');
+          const thumb = imgPath
+            ? '<img src="' + imgPath + '" alt="' + safeName + '" width="44" height="44" loading="lazy" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'herb-chip-fallback\',textContent:\'🌿\'}))"/>'
+            : '<span class="herb-chip-fallback" aria-hidden="true">🌿</span>';
+          return '<div class="herb-chip botanical-chip" data-herb-name="' + safeName + '" title="Click to view ' + safeName + ' botanical profile">' + thumb + '<span>' + h + '</span><span class="bic-chip-hint">tap for profile</span></div>';
         }).join('')}</div></div>` : ''}
         ${whyItWorks ? `<details class="product-why-works"><summary>Why This Works</summary><div class="why-works-content">${whyItWorks}</div></details>` : ''}
         ${p.sampleNote ? `<div class="product-sample-note">🎁 ${p.sampleNote}</div>` : ''}
@@ -944,22 +948,60 @@ document.getElementById('contactSubmitBtn').addEventListener('click', () => {
   showToast('Opening email client...');
 });
 
-// ---- NEWSLETTER FORM ----
-document.getElementById('nlSubmitBtn').addEventListener('click', () => {
-  const name = document.getElementById('nlName').value.trim();
-  const email = document.getElementById('nlEmail').value.trim();
-  if (!email) { showToast('Please enter your email address.'); return; }
-  const body = encodeURIComponent(
-    `New Newsletter Subscriber — Amber's Alchemy Apothecary\n\n` +
-    `Name: ${name || 'Not provided'}\nEmail: ${email}\n\n` +
-    `Please add this subscriber to the mailing list and send the Free Herbal Healing Guide.`
-  );
-  try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?subject=${encodeURIComponent('New Subscriber — ' + (name || email))}&body=${body}`;
-  showToast('✦ Thank you! Check your email for the Herbal Healing Guide.');
-  document.getElementById('nlName').value = '';
-  document.getElementById('nlEmail').value = '';
-});
+// ---- NEWSLETTER FORM (Netlify Forms — AJAX submit) ----
+(function initNewsletterForm() {
+  const form = document.getElementById('newsletterForm');
+  if (!form) return;
+
+  const feedback = document.getElementById('nlFeedback');
+  const submitBtn = document.getElementById('nlSubmitBtn');
+
+  function setStatus(message, state) {
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.dataset.state = state || '';
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const name = (document.getElementById('nlName') || {}).value?.trim() || '';
+    const email = (document.getElementById('nlEmail') || {}).value?.trim() || '';
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setStatus('Please enter a valid email address.', 'error');
+      return;
+    }
+
+    const originalLabel = submitBtn ? submitBtn.textContent : '';
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+    setStatus('', '');
+
+    const body = new URLSearchParams();
+    body.set('form-name', 'newsletter-signup');
+    body.set('source-tag', 'homepage-signup');
+    body.set('name', name);
+    body.set('email', email);
+    body.set('bot-field', '');
+
+    try {
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString()
+      });
+      if (!res.ok) throw new Error('submit-failed');
+      try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
+      setStatus('✦ Thank you! Your Herbal Healing Guide is on its way.', 'success');
+      form.reset();
+      showToast('✦ Subscribed — check your inbox for the guide.');
+    } catch (err) {
+      console.error('Newsletter signup failed:', err);
+      setStatus('Sorry, we could not submit your signup. Please try again in a moment.', 'error');
+      showToast('Signup failed — please try again.');
+    } finally {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+    }
+  });
+})();
 
 // ---- FAQS ----
 function renderFAQs() {
@@ -1301,40 +1343,51 @@ function addSoapToCart(name, price, btnEl) {
 }
 window.addSoapToCart = addSoapToCart;
 
-// ---- SOAP CUSTOM ORDER FORM ----
+// ---- SOAP CUSTOM ORDER FORM (Netlify Forms — AJAX submit) ----
 (function() {
   function bindSoapForm() {
-    const soapSubmitBtn = document.getElementById('soapSubmitBtn');
-    if (!soapSubmitBtn) return;
-    soapSubmitBtn.addEventListener('click', function() {
+    const form = document.getElementById('customSoapForm');
+    if (!form) return;
+    const btn = document.getElementById('soapSubmitBtn');
+    const feedback = document.getElementById('soapFeedback');
+    function setStatus(message, state) {
+      if (!feedback) return;
+      feedback.textContent = message || '';
+      feedback.dataset.state = state || '';
+    }
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
       const name = (document.getElementById('soapName') || {}).value?.trim() || '';
       const email = (document.getElementById('soapEmail') || {}).value?.trim() || '';
       if (!name || !email) {
-        showToast('Please enter your name and email to submit a custom soap request.');
+        setStatus('Please enter your name and email to submit your request.', 'error');
         return;
       }
-      const scent = (document.getElementById('soapScent') || {}).value || 'Not specified';
-      const color = (document.getElementById('soapColor') || {}).value || 'Not specified';
-      const shape = (document.getElementById('soapShape') || {}).value || 'Not specified';
-      const botanical = (document.getElementById('soapBotanical') || {}).value || 'Not specified';
-      const quantity = (document.getElementById('soapQuantity') || {}).value || 'Not specified';
-      const notes = (document.getElementById('soapNotes') || {}).value?.trim() || '';
-      const subject = encodeURIComponent('Custom Soap Order from ' + name);
-      const body = encodeURIComponent(
-        'Custom Soap Order Request\n\n' +
-        'Name: ' + name + '\n' +
-        'Email: ' + email + '\n' +
-        'Scent: ' + scent + '\n' +
-        'Color: ' + color + '\n' +
-        'Shape: ' + shape + '\n' +
-        'Botanical: ' + botanical + '\n' +
-        'Quantity: ' + quantity + '\n' +
-        'Notes: ' + notes
-      );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
-      showToast('✦ Opening email to send your custom soap request...');
-      soapSubmitBtn.textContent = '✓ Request Sent!';
-      setTimeout(() => { soapSubmitBtn.textContent = 'Send My Custom Soap Request ✦'; }, 3000);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setStatus('Please enter a valid email address.', 'error');
+        return;
+      }
+      const originalLabel = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+      setStatus('', '');
+      const data = new URLSearchParams(new FormData(form));
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: data.toString()
+      }).then(function(res) {
+        if (!res.ok) throw new Error('submit-failed');
+        try { window.AAA && window.AAA.customSoapSubmit && window.AAA.customSoapSubmit(name); } catch (e) {}
+        setStatus('✓ Your custom soap request has been received. Amber will reach out within 1–2 business days.', 'success');
+        if (btn) { btn.textContent = '✓ Request Sent!'; }
+        form.reset();
+        setTimeout(function() {
+          if (btn) { btn.disabled = false; btn.textContent = originalLabel || 'Send My Custom Soap Request ✦'; }
+        }, 3000);
+      }).catch(function() {
+        setStatus('We could not submit your request right now. Please try again or email awaken@consultant.com.', 'error');
+        if (btn) { btn.disabled = false; btn.textContent = originalLabel || 'Send My Custom Soap Request ✦'; }
+      });
     });
   }
   if (document.readyState === 'loading') {
