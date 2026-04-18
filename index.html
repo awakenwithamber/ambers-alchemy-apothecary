@@ -2885,6 +2885,7 @@
         <input type="hidden" name="bot-field" />
         <input type="hidden" name="transaction-id" id="transactionId" value="" />
         <input type="hidden" name="payment-status" id="paymentStatus" value="" />
+        <input type="hidden" name="payment-method" id="paymentMethodField" value="" />
         <input type="hidden" name="order-total" id="orderTotalField" value="" />
         <input type="hidden" name="subject" value="New Website Order – Amber's Alchemy Apothecary" />
 
@@ -2930,26 +2931,78 @@
 
         <div class="checkout-divider"></div>
 
-        <h3>Pay with Card</h3>
-        <p class="checkout-secure-note">Your card information is processed securely by Stripe. No card data is stored on our servers.</p>
-        <div class="checkout-trust-badges">
-          <span class="trust-badge-item">🔒 SSL Encrypted</span>
-          <span class="trust-badge-item">💳 Visa</span>
-          <span class="trust-badge-item">💳 Mastercard</span>
-          <span class="trust-badge-item">💳 Amex</span>
-          <span class="trust-badge-item">🛡️ Secure Checkout</span>
+        <h3>Choose Payment Method</h3>
+        <p class="checkout-secure-note">Your order will not be submitted until payment is completed or a Venmo / Cash App payment is confirmed by you.</p>
+
+        <div class="checkout-pay-methods" role="radiogroup" aria-label="Payment method">
+          <label class="checkout-pay-method" data-pay-method="stripe">
+            <input type="radio" name="pay-method-select" value="stripe" checked />
+            <span class="checkout-pay-method-label">💳 Pay with Card (secure)</span>
+          </label>
+          <label class="checkout-pay-method" data-pay-method="venmo">
+            <input type="radio" name="pay-method-select" value="venmo" />
+            <span class="checkout-pay-method-label">💜 Pay with Venmo</span>
+          </label>
+          <label class="checkout-pay-method" data-pay-method="cashapp">
+            <input type="radio" name="pay-method-select" value="cashapp" />
+            <span class="checkout-pay-method-label">💚 Pay with Cash App</span>
+          </label>
         </div>
 
-        <div class="checkout-field">
-          <label for="card-element">Card Details</label>
-          <div id="card-element" class="stripe-card-element"></div>
-          <div id="card-errors" class="checkout-card-errors" role="alert"></div>
+        <!-- Card payment panel (Stripe) -->
+        <div id="payPanelStripe" class="checkout-pay-panel">
+          <p class="checkout-secure-note">Your card information is processed securely by Stripe. No card data is stored on our servers.</p>
+          <div class="checkout-trust-badges">
+            <span class="trust-badge-item">🔒 SSL Encrypted</span>
+            <span class="trust-badge-item">💳 Visa</span>
+            <span class="trust-badge-item">💳 Mastercard</span>
+            <span class="trust-badge-item">💳 Amex</span>
+            <span class="trust-badge-item">🛡️ Secure Checkout</span>
+          </div>
+
+          <div class="checkout-field">
+            <label for="card-element">Card Details</label>
+            <div id="card-element" class="stripe-card-element"></div>
+            <div id="card-errors" class="checkout-card-errors" role="alert"></div>
+          </div>
+
+          <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn" disabled>
+            <span id="payBtnText">Pay Now</span>
+            <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
+          </button>
         </div>
 
-        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn" disabled>
-          <span id="payBtnText">Pay Now</span>
-          <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
-        </button>
+        <!-- Venmo / Cash App panel (manual verification) -->
+        <div id="payPanelExternal" class="checkout-pay-panel" style="display:none;">
+          <div class="checkout-external-pay-note" style="background:#f6efe2;border-left:4px solid #8a5a00;padding:12px 14px;margin:10px 0 14px;color:#2a1f3d;">
+            <p style="margin:0 0 6px;"><strong>Your order will not be confirmed until Amber verifies your payment.</strong></p>
+            <p style="margin:0;font-size:0.95em;">Follow the steps below. When your payment has been sent, click the final button to submit your order for verification.</p>
+          </div>
+
+          <ol class="checkout-external-steps" style="padding-left:20px;color:var(--text);line-height:1.6;">
+            <li>Click the button below to open <span id="externalPayAppName">Venmo</span> with your order total pre-filled.</li>
+            <li>Send the payment to <strong id="externalPayHandle">@AmberLynnPatten</strong> for the amount shown in your order summary.</li>
+            <li>Include your full name in the payment note so Amber can match it to your order.</li>
+            <li>Return here and click <strong>“I have sent my payment”</strong> below.</li>
+          </ol>
+
+          <div class="checkout-external-actions">
+            <a id="externalPayLink" class="btn-primary checkout-external-open" href="#" target="_blank" rel="noopener">Open Venmo to Pay</a>
+            <div class="checkout-external-amount" id="externalPayAmount" style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--text-muted);margin:8px 0 12px;">Amount: $0.00</div>
+          </div>
+
+          <label class="checkout-external-confirm" style="display:flex;align-items:flex-start;gap:10px;margin:14px 0;color:var(--text);cursor:pointer;">
+            <input type="checkbox" id="externalPayConfirmBox" style="margin-top:4px;" />
+            <span>I confirm I have sent the full amount shown above through <span id="externalPayConfirmLabel">Venmo</span>, with my name in the note.</span>
+          </label>
+
+          <button type="button" id="submitPendingOrderBtn" class="btn-primary checkout-pay-btn" disabled>
+            <span id="submitPendingBtnText">I have sent my payment — Submit order for verification</span>
+            <span id="submitPendingBtnSpinner" class="checkout-spinner" style="display:none;"></span>
+          </button>
+          <p class="checkout-external-foot" style="color:var(--text-muted);font-size:0.85rem;margin:10px 0 0;">Your order will be marked <strong>Pending Payment</strong> until Amber verifies your payment was received. You will receive a confirmation email once your payment is matched.</p>
+          <div id="externalPayError" class="checkout-card-errors" role="alert"></div>
+        </div>
 
         <div class="checkout-trust-badges">
           <span>🔒 SSL Encrypted</span>
@@ -2963,15 +3016,15 @@
   <!-- Confirmation (hidden by default) -->
   <div id="checkoutConfirmation" class="checkout-confirmation" style="display:none;">
     <div class="checkout-confirm-inner card">
-      <div class="checkout-confirm-icon">✦</div>
-      <h2>Thank You! Your Order Has Been Received</h2>
-      <p>Confirmation has been sent to your email. Amber will begin preparing your order right away.</p>
+      <div class="checkout-confirm-icon" id="checkoutConfirmIcon">✦</div>
+      <h2 id="checkoutConfirmHeadline">Thank You! Your Order Has Been Received</h2>
+      <p id="checkoutConfirmSubhead">Confirmation has been sent to your email. Amber will begin preparing your order right away.</p>
       <div id="confirmationDetails" class="checkout-confirm-details"></div>
-      <div class="rv-cta-row" style="justify-content:center;margin:20px 0 8px;">
+      <div id="checkoutConfirmReviewCta" class="rv-cta-row" style="justify-content:center;margin:20px 0 8px;">
         <button type="button" class="btn-primary" data-rv-open data-rv-open-type="site" data-rv-name="My order experience">✦ Review Your Experience</button>
         <a class="rv-google-link" data-rv-google target="_blank" rel="noopener">Leave a Review on Google ↗</a>
       </div>
-      <p style="color:var(--text-muted);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.95rem;margin:0 auto 14px;max-width:540px;">We'll also check in by email in about ten days so you can review the products once you've had time to notice how they feel.</p>
+      <p id="checkoutConfirmReviewNote" style="color:var(--text-muted);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.95rem;margin:0 auto 14px;max-width:540px;">We'll also check in by email in about ten days so you can review the products once you've had time to notice how they feel.</p>
       <button class="btn-primary" onclick="showSection('shop')">Continue Shopping</button>
     </div>
   </div>
