@@ -615,6 +615,47 @@ function showConfirmation(transactionId, status) {
 // ---- RENDER PRODUCTS (with category filter) ----
 function renderProducts(filterCat = 'all') {
   const grid = document.getElementById('shopGrid');
+  // "soaps" category → render the soap catalog inline as product cards so
+  // customers see real inventory without leaving the shop pane.
+  if (filterCat === 'soaps') {
+    const soapList = (typeof SOAPS !== 'undefined' && Array.isArray(SOAPS)) ? SOAPS : [];
+    if (soapList.length === 0) {
+      grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px;grid-column:1/-1">Soaps are loading — scroll to the Artisan Botanical Soaps pane below.</p>';
+      return;
+    }
+    const builderCard = '<div class="product-card soap-builder-shop-card" data-categories="soap,custom">' +
+        '<div class="product-img">' +
+          '<img src="images/soap-custom-builder.svg" alt="Build Your Own Soap Remedy — custom artisan soap" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=img-placeholder>🧼✦</div>\'" />' +
+        '</div>' +
+        '<div class="product-body">' +
+          '<div class="product-badge">Custom</div>' +
+          '<div class="product-name">✦ Build Your Own Soap Remedy</div>' +
+          '<div class="product-benefit">Choose your shape, scent, botanicals, and nourishing base</div>' +
+          '<div class="product-short-desc">Create a handcrafted botanical bar with your choice of clear-top, creamy, or layered base.</div>' +
+          '<div class="product-benefit" style="color:var(--gold,#d4a843);font-weight:600;">From $13.99</div>' +
+          '<button class="product-add-btn btn-primary" onclick="openSoapBuilder()">Build Your Own ✦</button>' +
+        '</div>' +
+      '</div>';
+    grid.innerHTML = builderCard + soapList.map(s => {
+      const price = typeof s.price === 'number' ? s.price : 12.99;
+      const safeName = String(s.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const desc = s.description || s.desc || '';
+      return '<div class="product-card" data-categories="' + ((s.categories||['soap']).join(',')) + '">' +
+        '<div class="product-img">' +
+          '<img src="' + (s.img || s.illustration || '') + '" alt="' + safeName + '" loading="lazy" onerror="this.parentElement.innerHTML=\'<div class=img-placeholder>' + (s.emoji || '🧼') + '</div>\'" />' +
+        '</div>' +
+        '<div class="product-body">' +
+          '<div class="product-badge">Artisan Soap</div>' +
+          '<div class="product-name">' + (s.emoji || '🧼') + ' ' + (s.name || '') + '</div>' +
+          (s.botanicals ? '<div class="product-benefit">🌿 ' + s.botanicals + '</div>' : '') +
+          (desc ? '<div class="product-short-desc">' + desc + '</div>' : '') +
+          '<div class="product-benefit" style="color:var(--gold,#d4a843);font-weight:600;">$' + price.toFixed(2) + ' · 4 oz bar</div>' +
+          '<button class="product-add-btn btn-primary" onclick="addSoapToCart(\'' + safeName + '\', ' + price + ', this)">Add to Cart ✦</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    return;
+  }
   const filtered = filterCat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.categories && p.categories.includes(filterCat));
   if (filtered.length === 0) {
     grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px;grid-column:1/-1">No products found in this category.</p>';
@@ -747,7 +788,17 @@ document.addEventListener('click', function(e) {
   if (!btn) return;
   document.querySelectorAll('.cat-filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  renderProducts(btn.dataset.cat);
+  const cat = btn.dataset.cat;
+  // Soaps live in their own section — render them inline AND deep-link to the soaps pane
+  if (cat === 'soaps') {
+    renderProducts('soaps');
+    const soapsSection = document.getElementById('soaps');
+    if (soapsSection && typeof soapsSection.scrollIntoView === 'function') {
+      soapsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    return;
+  }
+  renderProducts(cat);
 });
 
 // Shop goal filter buttons
@@ -756,7 +807,7 @@ document.addEventListener('click', function(e) {
   if (!btn) return;
   const goal = btn.dataset.goal;
   // Map goal names to product categories
-  const goalToCat = { sleep: 'sleep', stress: 'sleep', energy: 'energy', immune: 'immune', beauty: 'beauty', pain: 'pain', digestive: 'immune', hormonal: 'hormonal' };
+  const goalToCat = { sleep: 'sleep', stress: 'sleep', energy: 'energy', immune: 'immune', beauty: 'beauty', pain: 'pain', digestive: 'digestive', hormonal: 'hormonal' };
   const cat = goalToCat[goal] || 'all';
   document.querySelectorAll('.shop-goal-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -829,7 +880,9 @@ function renderHerbGrid(herbs) {
     return `
       <div class="herb-card ${isSelected ? 'selected' : ''}" data-id="${h.id}">
         <div class="herb-card-img herb-botanical-img">
-          <img src="${illus}" alt="Botanical illustration of ${h.name}" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>${h.emoji}</div>'" />
+          ${illus
+            ? `<img src="${illus}" alt="Botanical illustration of ${h.name}" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=img-placeholder>${h.emoji || '🌿'}</div>'" />`
+            : `<div class="img-placeholder">${h.emoji || '🌿'}</div>`}
         </div>
         <div class="herb-card-body">
           <div class="herb-name">${h.emoji} ${h.name}</div>
@@ -1227,7 +1280,11 @@ function renderBestSellers() {
     const herbChips = (p.keyHerbs || []).map(h => {
       const slug = h.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
       const imgPath = (typeof getBotanicalIllustration === 'function' && getBotanicalIllustration(slug)) || '';
-      return '<div class="herb-chip botanical-chip" data-herb-name="' + h + '" title="Click to view ' + h + ' botanical profile"><img src="' + imgPath + '" alt="' + h + '" onerror="this.style.display=\'none\'" loading="lazy"/><span>' + h + '</span><span class=\"bic-chip-hint\">tap for profile</span></div>';
+      const safeName = String(h).replace(/"/g, '&quot;');
+      const thumb = imgPath
+        ? '<img src="' + imgPath + '" alt="' + safeName + '" width="44" height="44" loading="lazy" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'herb-chip-fallback\',textContent:\'🌿\'}))"/>'
+        : '<span class="herb-chip-fallback" aria-hidden="true">🌿</span>';
+      return '<div class="herb-chip botanical-chip" data-herb-name="' + safeName + '" title="Click to view ' + safeName + ' botanical profile">' + thumb + '<span>' + h + '</span><span class="bic-chip-hint">tap for profile</span></div>';
     }).join('');
     return `
       <div class="product-card best-seller-card" data-categories="${(p.categories||[]).join(',')}">

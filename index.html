@@ -747,6 +747,26 @@
   </div>
 
 
+  <!-- CUSTOM SOAP CREATION CTA — homepage feature -->
+  <aside class="custom-soap-home-cta pane-bg" aria-labelledby="customSoapHomeCtaHeading">
+    <a class="custom-soap-home-cta-inner" href="#soaps" onclick="if(typeof openSoapBuilder==='function'){event.preventDefault();openSoapBuilder();}">
+      <div class="custom-soap-home-cta-visual" aria-hidden="true">
+        <img src="images/soap-custom-builder.svg" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'" />
+        <span class="custom-soap-home-cta-ribbon">✦ Build Your Own ✦</span>
+      </div>
+      <div class="custom-soap-home-cta-copy">
+        <span class="custom-soap-home-cta-eyebrow">✦ Handmade · Made to Order ✦</span>
+        <h2 id="customSoapHomeCtaHeading">Build Your Own Soap Remedy</h2>
+        <p>Create a handcrafted botanical bar with your choice of shape, scent, botanicals, and nourishing base — clear-top, creamy, or layered.</p>
+        <div class="custom-soap-home-cta-buttons">
+          <span class="btn-primary custom-soap-home-cta-btn">Build Your Own ✦</span>
+          <span class="btn-secondary custom-soap-home-cta-btn">Create My Soap</span>
+        </div>
+      </div>
+    </a>
+  </aside>
+
+
   <!-- APOTHECARY PROCESS (condensed) -->
   <div class="apothecary-process-section pane-bg">
     <div class="section-ornament">✦ ─────────────── ✦</div>
@@ -1244,6 +1264,8 @@
     <button class="cat-filter-btn" data-cat="beauty">✨ Beauty</button>
     <button class="cat-filter-btn" data-cat="pain">🌿 Pain</button>
     <button class="cat-filter-btn" data-cat="hormonal">🌸 Hormonal</button>
+    <button class="cat-filter-btn" data-cat="digestive">🌱 Digestive</button>
+    <button class="cat-filter-btn" data-cat="soaps" data-scroll-to="soaps">🧼 Soaps</button>
   </div>
   <div class="products-grid" id="shopGrid"></div>
 
@@ -1263,8 +1285,8 @@
 <section id="soaps" class="page-section pane-bg">
   <div class="section-header">
     <div class="section-ornament">✦ ─────────────── ✦</div>
-    <h2>Artisan Botanical Soaps</h2>
-    <p class="section-subtitle">Our handmade botanical soaps are crafted in small batches with castor oil, vegetable glycerin, shea butter, and goat milk. Each bar is made with real botanicals, pure doTERRA essential oils for scent, and all-natural plant-based coloring — a small ritual of nature's beauty for your skin.</p>
+    <h2>Handmade All-Natural Soaps</h2>
+    <p class="section-subtitle">Our handmade all-natural botanical soaps are crafted in small batches with castor oil, vegetable glycerin, shea butter, and goat milk. Each bar is made with real botanicals, pure doTERRA essential oils for scent, and all-natural plant-based coloring — a small ritual of nature's beauty for your skin.</p>
     <div class="section-ornament">✦ ─────────────── ✦</div>
   </div>
 
@@ -1288,6 +1310,29 @@
 
   <!-- Soap Product Cards — 9 Signature Scents -->
   <div class="soap-grid">
+
+    <!-- FEATURED: Custom Soap Builder (promoted to top of soap catalog) -->
+    <div class="soap-card soap-builder-cta-card soap-builder-featured-card">
+      <div class="soap-img-wrap soap-builder-cta-visual" role="img" aria-label="Build Your Own Soap Remedy — custom artisan soap with your choice of scent, botanicals, and base">
+        <img class="soap-img" src="images/soap-custom-builder.svg" alt="Build Your Own Soap Remedy — custom artisan soap" loading="lazy" decoding="async" onerror="this.outerHTML='<div class=img-placeholder style=height:200px>🧼✦</div>'" />
+        <div class="soap-img-badge">✦ Build Your Own</div>
+      </div>
+      <div class="soap-info">
+        <h3 class="soap-name">Build Your Own Soap Remedy</h3>
+        <p class="soap-latin">Your Vision · Your Botanicals · Your Ritual</p>
+        <p class="soap-desc">Create a handcrafted botanical bar with your choice of shape, scent, botanicals, and nourishing base — clear-top, creamy, or layered.</p>
+        <ul class="soap-benefits">
+          <li>✦ Choose a clear botanical top, creamy base, or layered bar</li>
+          <li>✦ Personalize with your favorite botanicals, color, and scent</li>
+          <li>✦ Handcrafted to order in small, intentional batches</li>
+        </ul>
+        <div class="soap-price-row">
+          <span class="soap-price">From $13.99</span>
+          <span class="soap-size">Handcrafted to order</span>
+        </div>
+        <button class="btn-primary soap-builder-launch-btn" onclick="openSoapBuilder()">Create My Soap ✦</button>
+      </div>
+    </div>
 
     <!-- 1. Lavender Fairy Dream -->
     <div class="soap-card">
@@ -1510,11 +1555,7 @@
     <!-- Custom Soap Builder CTA -->
     <div class="soap-card soap-builder-cta-card">
       <div class="soap-img-wrap soap-builder-cta-visual" role="img" aria-label="Build Your Own Soap Remedy — layered artisan bars with rose petals, lavender buds and calendula">
-        <div class="soap-builder-stack">
-          <img class="sb-stack-img sb-stack-img-back" src="images/soap-rose-clay.png" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'" />
-          <img class="sb-stack-img sb-stack-img-mid" src="images/soap-calendula-oat.png" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'" />
-          <img class="sb-stack-img sb-stack-img-front" src="images/soap-lavender-honey.png" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'" />
-        </div>
+        <img class="soap-img" src="images/soap-custom-builder.svg" alt="Build Your Own Soap Remedy — custom artisan soap" loading="lazy" decoding="async" onerror="this.style.display='none'" />
         <div class="soap-builder-cta-sparkle" aria-hidden="true">✦</div>
         <div class="soap-builder-cta-ribbon">Build Your Own</div>
       </div>
@@ -1779,6 +1820,7 @@
           <button class="quiz-opt" data-next="result" data-use="capsule">💊 Capsules</button>
           <button class="quiz-opt" data-next="result" data-use="balm">🫙 Balm / Salve</button>
           <button class="quiz-opt" data-next="result" data-use="serum">✨ Serum / Tincture</button>
+          <button class="quiz-opt" data-next="result" data-use="soap">🧼 Botanical Soap</button>
           <button class="quiz-opt" data-next="result" data-use="all">🌿 Any form</button>
         </div>
       </div>
@@ -1818,6 +1860,7 @@
       <option value="capsule">Capsule Formula</option>
       <option value="balm">Balm / Salve</option>
       <option value="serum">Serum / Tincture</option>
+      <option value="soap">Botanical Soap</option>
     </select>
   </div>
 
@@ -2073,7 +2116,7 @@
         <div class="cc-safety-notice">
           <p class="cc-safety-text">🌿 <strong>Herbal Safety Notice:</strong> Custom botanical blends are crafted from whole plant ingredients and are intended to support general wellness. They are not a substitute for professional medical advice, diagnosis, or treatment. Herbs may interact with certain medications or health conditions. Please consult your healthcare provider if you are pregnant, breastfeeding, taking prescription medications, or managing a chronic condition.</p>
           <label class="cc-safety-label">
-            <input type="checkbox" id="ccSafetyCheck" required />
+            <input type="checkbox" id="ccSafetyCheck" name="safety-acknowledged" required />
             I understand that herbal remedies may interact with medications or medical conditions, and I am not relying on this blend to treat, cure, or prevent any disease.
           </label>
         </div>

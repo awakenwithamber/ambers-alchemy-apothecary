@@ -342,8 +342,9 @@ const BOTANICAL_ALIASES = {
   "burdock-root": "burdock",
   "marshmallow-root": "marshmallow",
   "slippery-elm-bark": "slippery-elm",
-  "lions-mane": "lion-s-mane",
-  "lion-s-mane": "reishi",
+  "lions-mane-mushroom": "lions-mane",
+  "lion-s-mane": "lions-mane",
+  "lion-s-mane-mushroom": "lions-mane",
   "mucuna-pruriens": "ashwagandha",
   "mucuna": "ashwagandha",
   "bacopa": "gotu-kola",
@@ -352,11 +353,11 @@ const BOTANICAL_ALIASES = {
   "matcha": "green-tea",
   "cordyceps": "reishi",
   "ginkgo": "gotu-kola",
-  "saffron": "saffron",
   "neroli": "rose",
-  "comfrey": "marshmallow",
   "cats-claw": "cat-claw",
-  "cat-s-claw": "cat-claw"
+  "cat-s-claw": "cat-claw",
+  "fennel-seed": "fennel",
+  "clover": "red-clover"
 };
 
 // Helper: get illustration URL for any herb ID
