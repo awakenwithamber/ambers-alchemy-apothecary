@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline — Amber's Alchemy Apothecary</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: linear-gradient(135deg, #1a0f1e 0%, #2a1a2e 50%, #1a0f1e 100%);
+      color: #e8dcc8;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .offline-wrap { max-width: 440px; }
+    .offline-icon { font-size: 4rem; margin-bottom: 1.5rem; }
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      color: #c9a84c;
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+    }
+    p { line-height: 1.7; margin-bottom: 1.5rem; opacity: 0.85; }
+    .retry-btn {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      background: linear-gradient(135deg, #c9a84c, #a88a3e);
+      color: #1a0f1e;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-wrap">
+    <div class="offline-icon">🌿</div>
+    <h1>You're Offline</h1>
+    <p>It looks like your connection wandered off the garden path. Please check your internet connection and try again.</p>
+    <button class="retry-btn" onclick="location.reload()">Try Again</button>
+  </div>
+</body>
+</html>

@@ -1,0 +1,459 @@
+/* ============================================================
+   BOTANICAL INDEX CARDS — Floating illustration cards
+   Appears when clicking any herb chip or botanical name
+   ============================================================ */
+
+/* ---- Overlay backdrop ---- */
+.botanical-index-card-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(20, 10, 30, 0.75);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.botanical-index-card-overlay.visible {
+  opacity: 1;
+}
+
+/* ---- The card itself ---- */
+.botanical-index-card {
+  position: relative;
+  background: linear-gradient(145deg, #2E1C38 0%, #1E1128 60%, #2a1535 100%);
+  border: 1px solid rgba(184, 148, 90, 0.45);
+  border-radius: 18px;
+  box-shadow: 0 12px 60px rgba(20, 10, 30, 0.85), 0 0 0 1px rgba(110, 75, 126, 0.2);
+  max-width: 480px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  animation: bicSlideIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes bicSlideIn {
+  from { transform: scale(0.88) translateY(20px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* ---- Close button ---- */
+.bic-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: rgba(140, 106, 59, 0.2);
+  border: 1px solid rgba(184, 148, 90, 0.35);
+  color: var(--parchment, #F3EBDD);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 2;
+  line-height: 1;
+  padding: 0;
+}
+.bic-close:hover {
+  background: rgba(184, 148, 90, 0.35);
+  border-color: var(--brass-lt, #B8945A);
+}
+
+/* ---- Illustration image area ---- */
+.bic-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 17px 17px 0 0;
+  background: rgba(30, 17, 40, 0.8);
+  flex-shrink: 0;
+}
+.bic-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+.bic-img-placeholder {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 64px;
+  background: radial-gradient(circle at 50% 50%, rgba(110, 75, 126, 0.3) 0%, rgba(30, 17, 40, 0.8) 70%);
+}
+
+/* Gradient overlay on image */
+.bic-img-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: linear-gradient(to top, #1E1128 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* ---- Body content ---- */
+.bic-body {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bic-emoji {
+  font-size: 28px;
+  line-height: 1;
+  margin-bottom: -4px;
+}
+
+.bic-name {
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 22px;
+  color: var(--parchment, #F3EBDD);
+  margin: 0;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+.bic-latin {
+  font-family: var(--font-accent, 'Cormorant Garamond', serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--brass-lt, #B8945A);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Category tags ---- */
+.bic-cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.bic-cat-tag {
+  background: rgba(110, 75, 126, 0.25);
+  border: 1px solid rgba(155, 114, 176, 0.35);
+  color: var(--amethyst-lt, #9B72B0);
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* ---- Description ---- */
+.bic-desc {
+  font-family: var(--font-body, 'Lora', serif);
+  font-size: 14px;
+  color: var(--text-body, #EDE4D8);
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* ---- Benefits list ---- */
+.bic-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.bic-benefits li {
+  font-family: var(--font-body, 'Lora', serif);
+  font-size: 13px;
+  color: var(--text-body, #EDE4D8);
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.5;
+}
+.bic-benefits li::before {
+  content: '✦';
+  position: absolute;
+  left: 0;
+  color: var(--brass-lt, #B8945A);
+  font-size: 9px;
+  top: 4px;
+}
+
+/* ---- Uses tags ---- */
+.bic-uses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.bic-use-tag {
+  background: rgba(122, 139, 111, 0.15);
+  border: 1px solid rgba(122, 139, 111, 0.3);
+  color: var(--sage, #7A8B6F);
+  font-family: var(--font-body, 'Lora', serif);
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* ---- View in Grimoire button ---- */
+.bic-view-btn {
+  background: linear-gradient(135deg, rgba(140, 106, 59, 0.3) 0%, rgba(184, 148, 90, 0.2) 100%);
+  border: 1px solid rgba(184, 148, 90, 0.5);
+  color: var(--brass-lt, #B8945A);
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+  text-transform: uppercase;
+  width: 100%;
+}
+.bic-view-btn:hover {
+  background: linear-gradient(135deg, rgba(140, 106, 59, 0.5) 0%, rgba(184, 148, 90, 0.35) 100%);
+  border-color: var(--brass-lt, #B8945A);
+  color: var(--parchment, #F3EBDD);
+  transform: translateY(-1px);
+}
+
+/* ---- Enhanced herb chip (clickable) ---- */
+.herb-chip.botanical-chip {
+  cursor: pointer;
+  position: relative;
+}
+.herb-chip.botanical-chip:hover {
+  border-color: var(--brass-lt, #B8945A);
+  background: rgba(140, 106, 59, 0.18);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(20, 10, 30, 0.5);
+}
+.bic-chip-hint {
+  font-family: var(--font-body, 'Lora', serif);
+  font-size: 9px;
+  color: var(--amethyst-lt, #9B72B0);
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 64px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.herb-chip.botanical-chip:hover .bic-chip-hint {
+  opacity: 1;
+}
+
+/* ---- "View Full Profile" button in Grimoire herb cards ---- */
+.bic-view-in-grimoire {
+  background: transparent;
+  border: 1px solid rgba(184, 148, 90, 0.3);
+  color: var(--brass-lt, #B8945A);
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+  width: 100%;
+}
+.bic-view-in-grimoire:hover {
+  background: rgba(140, 106, 59, 0.15);
+  border-color: var(--brass-lt, #B8945A);
+}
+
+/* ---- Related Botanicals section in herb modal ---- */
+.bic-related-botanicals h4 {
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 13px;
+  color: var(--brass-lt, #B8945A);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.bic-related-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.bic-related-card {
+  background: rgba(30, 17, 40, 0.6);
+  border: 1px solid rgba(140, 106, 59, 0.25);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 8px;
+}
+.bic-related-card:hover {
+  border-color: var(--brass-lt, #B8945A);
+  transform: translateY(-2px);
+  background: rgba(75, 46, 89, 0.4);
+}
+.bic-related-card img {
+  width: 100%;
+  height: 70px;
+  object-fit: cover;
+  display: block;
+}
+.bic-related-name {
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-size: 11px;
+  color: var(--parchment, #F3EBDD);
+  text-align: center;
+  padding: 6px 6px 2px;
+  line-height: 1.3;
+}
+.bic-related-latin {
+  font-family: var(--font-accent, 'Cormorant Garamond', serif);
+  font-style: italic;
+  font-size: 10px;
+  color: var(--text-muted, #B8A898);
+  text-align: center;
+  padding: 0 4px;
+  line-height: 1.2;
+}
+
+/* ---- Mobile responsive ---- */
+@media (max-width: 540px) {
+  .botanical-index-card {
+    max-height: 85vh;
+    border-radius: 14px;
+  }
+  .bic-img-wrap {
+    height: 180px;
+    border-radius: 13px 13px 0 0;
+  }
+  .bic-body {
+    padding: 16px 18px 20px;
+  }
+  .bic-name {
+    font-size: 19px;
+  }
+  .bic-related-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---- Larger fonts for desktop ---- */
+@media (min-width: 769px) {
+  .bic-body       { font-size: 16px; }
+  .bic-name       { font-size: 32px; }
+  .bic-latin      { font-size: 25px; }
+  .bic-desc       { font-size: 17px; }
+  .bic-prop-label { font-size: 12px; }
+  .bic-prop-val   { font-size: 16px; }
+  .bic-section-title { font-size: 15px; }
+  .bic-related-name  { font-size: 12px; }
+  .bic-related-cat   { font-size: 11px; }
+  .bic-use-tag       { font-size: 14px; }
+}
+
+/* Enhanced Info Panel Sections */
+.bic-why-recommended {
+  background: rgba(122, 139, 111, 0.15);
+  border-left: 3px solid #7A8B6F;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  border-radius: 0 8px 8px 0;
+}
+.bic-why-recommended h4 {
+  font-family: 'Cinzel', serif;
+  color: #7A8B6F;
+  font-size: 0.85rem;
+  margin: 0 0 0.35rem 0;
+}
+.bic-why-recommended p {
+  font-size: 0.85rem;
+  color: rgba(243, 235, 221, 0.9);
+  margin: 0;
+  font-style: italic;
+}
+
+.bic-how-it-works {
+  margin: 0.75rem 0;
+  padding: 0.5rem 0;
+  border-top: 1px solid rgba(140, 106, 59, 0.2);
+}
+.bic-how-it-works h4 {
+  font-family: 'Cinzel', serif;
+  color: #B8945A;
+  font-size: 0.85rem;
+  margin: 0 0 0.35rem 0;
+}
+.bic-how-it-works p {
+  font-size: 0.82rem;
+  color: rgba(243, 235, 221, 0.8);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.bic-common-uses {
+  margin: 0.75rem 0;
+}
+.bic-common-uses h4 {
+  font-family: 'Cinzel', serif;
+  color: #B8945A;
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem 0;
+}
+.bic-common-use-tag {
+  display: inline-block;
+  background: rgba(110, 75, 126, 0.25);
+  color: #d4b8e0;
+  padding: 0.2rem 0.65rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  margin: 0.15rem 0.25rem;
+}
+
+.bic-enhancements {
+  margin: 0.75rem 0;
+  padding: 0.5rem 0;
+  border-top: 1px solid rgba(140, 106, 59, 0.2);
+  font-size: 0.82rem;
+  color: rgba(243, 235, 221, 0.75);
+  line-height: 1.6;
+}
+.bic-enhancements strong {
+  color: #B8945A;
+}
+.bic-found-in, .bic-pairs-with {
+  margin: 0.25rem 0;
+}
+
+.bic-confidence {
+  background: rgba(122, 139, 111, 0.1);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  margin: 0.75rem 0 0;
+  text-align: center;
+}
+.bic-confidence p {
+  font-size: 0.78rem;
+  color: #7A8B6F;
+  margin: 0;
+  font-style: italic;
+}

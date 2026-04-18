@@ -1,0 +1,129 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/shop"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/home"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/herbal-wisdom"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/herbal-library"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/custom-formula"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/herb-index"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/journal"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/soaps"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/soap-menu"
+  to = "/soap-menu.html"
+  status = 200
+
+[[redirects]]
+  from = "/soap-flyer"
+  to = "/soap-menu.html"
+  status = 200
+
+[[redirects]]
+  from = "/services"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/about"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/faqs"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/contact"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/start-here"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/checkout"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+    Service-Worker-Allowed = "/"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+    Cache-Control = "public, max-age=86400"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Content-Type = "application/xml; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/images/social-preview.png"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+    X-Robots-Tag = "all"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

@@ -1,0 +1,60 @@
+# Amber's Alchemy Apothecary — awakenagain.com
+# https://awakenagain.com
+
+User-agent: *
+Allow: /
+Disallow: /netlify/functions/
+Disallow: /*.json$
+
+# Allow all major crawlers full access to images, assets, and pages
+User-agent: Googlebot
+Allow: /
+Allow: /images/
+Allow: /*.css$
+Allow: /*.js$
+
+User-agent: Googlebot-Image
+Allow: /images/
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Pinterestbot
+Allow: /
+Allow: /images/
+
+User-agent: facebookexternalhit
+Allow: /
+Allow: /images/
+
+User-agent: Twitterbot
+Allow: /
+Allow: /images/
+
+User-agent: LinkedInBot
+Allow: /
+Allow: /images/
+
+User-agent: Slackbot
+Allow: /
+Allow: /images/
+
+User-agent: Slackbot-LinkExpanding
+Allow: /
+Allow: /images/
+
+User-agent: Discordbot
+Allow: /
+Allow: /images/
+
+User-agent: Applebot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+# Sitemap
+Sitemap: https://awakenagain.com/sitemap.xml

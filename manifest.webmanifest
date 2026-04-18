@@ -1,0 +1,25 @@
+{
+  "name": "Amber's Alchemy Apothecary",
+  "short_name": "Alchemy",
+  "description": "Handcrafted herbal remedies, botanical wellness, and custom herbal formulas.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a0f1e",
+  "theme_color": "#2a1a2e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "images/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "images/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["health", "shopping", "lifestyle"]
+}

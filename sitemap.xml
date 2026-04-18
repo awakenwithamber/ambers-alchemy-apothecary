@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://awakenagain.com/</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://awakenagain.com/images/social-preview-og.jpg</image:loc>
+      <image:title>Amber's Alchemy Apothecary — The Empress Amber</image:title>
+      <image:caption>Handcrafted herbal remedies and botanical wellness — landscape social preview</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://awakenagain.com/images/social-preview.png</image:loc>
+      <image:title>The Empress Amber — Amber's Alchemy Apothecary</image:title>
+      <image:caption>Tarot-inspired portrait representing Amber's mystical apothecary brand</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://awakenagain.com/images/hero-background.png</image:loc>
+      <image:title>Amber's Alchemy Apothecary — Mystical Apothecary Hero</image:title>
+    </image:image>
+  </url>
+
+  <!-- Primary Collection / Shop -->
+  <url>
+    <loc>https://awakenagain.com/shop</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- Custom Formula Builder -->
+  <url>
+    <loc>https://awakenagain.com/custom-formula</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Artisan Soaps Collection -->
+  <url>
+    <loc>https://awakenagain.com/soaps</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://awakenagain.com/images/soap-lavender-honey.png</image:loc>
+      <image:title>Lavender Honey Artisan Botanical Soap</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://awakenagain.com/images/soap-rose-clay.png</image:loc>
+      <image:title>Rose Clay Artisan Botanical Soap</image:title>
+    </image:image>
+  </url>
+
+  <!-- Articles & Guides -->
+  <url>
+    <loc>https://awakenagain.com/herbal-wisdom</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Herb Encyclopedia / Living Grimoire -->
+  <url>
+    <loc>https://awakenagain.com/herbal-library</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Ingredient Library -->
+  <url>
+    <loc>https://awakenagain.com/herb-index</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Services -->
+  <url>
+    <loc>https://awakenagain.com/services</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- About Amber -->
+  <url>
+    <loc>https://awakenagain.com/about</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- FAQs -->
+  <url>
+    <loc>https://awakenagain.com/faqs</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://awakenagain.com/contact</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Article deep-links (hash anchors on homepage) -->
+  <url>
+    <loc>https://awakenagain.com/#hw-stress</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://awakenagain.com/#hw-sleep</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://awakenagain.com/#hw-digestion</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://awakenagain.com/#hw-hormones</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://awakenagain.com/#hw-adaptogens</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://awakenagain.com/#hw-teas-vs-capsules</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+  </url>
+  <url>
+    <loc>https://awakenagain.com/#hw-custom-remedy</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Apothecary Journal deep-links -->
+  <url>
+    <loc>https://awakenagain.com/#journal</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://awakenagain.com/#services</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://awakenagain.com/#bundles</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://awakenagain.com/#soaps</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>

@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Botanical Soap Atelier — Build Your Own Bar · Amber's Alchemy</title>
+<meta name="description" content="A printable apothecary menu for designing your own handcrafted botanical soap bar. Thirteen signature scents, ten natural add-ins, seven earthly colors." />
+<link rel="canonical" href="https://awakenagain.com/soap-menu" />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Italiana&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* -------------------------------------------------------------
+   Amber's Alchemy · Botanical Soap Atelier
+   Editorial apothecary flyer — print-ready 8.5 × 14 feel
+   ------------------------------------------------------------- */
+:root{
+  --cream:#f6efe0;
+  --cream-hi:#fbf6ea;
+  --parchment:#ede2c9;
+  --sage:#8c9a7e;
+  --sage-dp:#5a6a55;
+  --sage-soft:#c3ccb6;
+  --blush:#dca9a2;
+  --blush-soft:#eccdc7;
+  --lavender:#b6a6c9;
+  --lavender-soft:#d7cde2;
+  --gold:#b28940;
+  --gold-lt:#d4b378;
+  --gold-ink:#8a6a2f;
+  --ink:#3b3329;
+  --ink-soft:#6a5f4e;
+  --plum:#57384a;
+  --terracotta:#b9704f;
+  --rule:#c5a97236;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#2a261e;color:var(--ink);font-family:'Jost',sans-serif;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{
+  padding:28px 14px 64px;
+  background:
+    radial-gradient(1200px 700px at 15% -10%, #3a3226 0%, transparent 60%),
+    radial-gradient(900px 600px at 110% 110%, #3d3227 0%, transparent 50%),
+    linear-gradient(180deg, #2e281e, #221d16);
+}
+
+/* ---------- printable sheet ---------- */
+.sheet{
+  position:relative;
+  max-width:1180px;
+  margin:0 auto;
+  padding:64px 68px 72px;
+  background:
+    radial-gradient(circle at 50% -200px, #fff7e6 0, transparent 420px),
+    radial-gradient(circle at -10% 110%, #ead6b1 0, transparent 480px),
+    linear-gradient(180deg, var(--cream-hi), var(--cream) 70%, var(--parchment));
+  box-shadow:
+    0 40px 100px -30px rgba(0,0,0,.55),
+    0 10px 30px -10px rgba(0,0,0,.35),
+    inset 0 0 0 1px #e8d9bb;
+  color:var(--ink);
+  isolation:isolate;
+}
+.sheet::before{
+  content:"";
+  position:absolute;inset:18px;
+  border:1px solid #d7bf8a;
+  pointer-events:none;
+  border-radius:2px;
+}
+.sheet::after{
+  content:"";
+  position:absolute;inset:26px;
+  border-top:.5px solid #c9ab6e;
+  border-bottom:.5px solid #c9ab6e;
+  pointer-events:none;
+}
+/* paper grain */
+.grain{
+  position:absolute;inset:0;
+  pointer-events:none;
+  opacity:.5;
+  mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='7'/><feColorMatrix values='0 0 0 0 .36  0 0 0 0 .3  0 0 0 0 .22  0 0 0 .08 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  z-index:0;
+}
+.sheet>*{position:relative;z-index:1}
+
+/* ---------- corner flourish ---------- */
+.corner{position:absolute;width:70px;height:70px;color:#b89653;opacity:.85}
+.corner.tl{top:30px;left:30px}
+.corner.tr{top:30px;right:30px;transform:scaleX(-1)}
+.corner.bl{bottom:30px;left:30px;transform:scaleY(-1)}
+.corner.br{bottom:30px;right:30px;transform:scale(-1,-1)}
+
+/* ---------- typography system ---------- */
+.eyebrow{
+  font-family:'Jost',sans-serif;
+  font-weight:400;letter-spacing:.42em;
+  text-transform:uppercase;font-size:11px;
+  color:var(--gold-ink);
+}
+.display{
+  font-family:'Italiana',serif;
+  font-weight:400;letter-spacing:.02em;
+  line-height:.95;
+}
+.serif{font-family:'Fraunces',serif}
+.serif-ital{font-family:'Fraunces',serif;font-style:italic;font-variation-settings:"opsz" 12}
+.small-caps{
+  font-family:'Jost',sans-serif;font-weight:500;
+  letter-spacing:.28em;text-transform:uppercase;
+  font-size:11.5px;color:var(--ink-soft);
+}
+
+/* ---------- masthead ---------- */
+.masthead{
+  display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;gap:26px;
+  padding-bottom:22px;
+}
+.masthead .left,.masthead .right{font-size:10.5px;letter-spacing:.38em;text-transform:uppercase;color:var(--ink-soft)}
+.masthead .right{text-align:right}
+.masthead .crest{display:flex;flex-direction:column;align-items:center;gap:6px}
+.crest svg{width:58px;height:58px;color:var(--gold)}
+.crest .name{
+  font-family:'Italiana',serif;font-size:14px;letter-spacing:.32em;color:var(--gold-ink);
+}
+
+/* ---------- hero ---------- */
+.hero{
+  text-align:center;padding:38px 0 28px;
+  position:relative;
+}
+.hero .kicker{
+  display:inline-flex;align-items:center;gap:14px;margin-bottom:26px;
+}
+.hero .kicker .line{width:84px;height:1px;background:var(--gold-lt)}
+.hero h1{
+  font-family:'Italiana',serif;
+  font-size:clamp(48px, 7.2vw, 86px);
+  line-height:.94;
+  letter-spacing:.015em;
+  color:var(--ink);
+}
+.hero h1 em{
+  font-family:'Fraunces',serif;font-style:italic;
+  font-weight:300;color:var(--plum);
+  font-variation-settings:"opsz" 120;
+}
+.hero .sub{
+  margin-top:20px;
+  font-family:'Fraunces',serif;font-style:italic;font-weight:300;
+  color:var(--ink-soft);font-size:19px;letter-spacing:.02em;
+}
+.hero .sub span{color:var(--gold-ink);margin:0 10px}
+
+.ornament{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  margin:26px auto 6px;color:var(--gold);
+}
+.ornament .bar{width:120px;height:.75px;background:linear-gradient(90deg,transparent,var(--gold-lt),transparent)}
+.ornament svg{width:22px;height:22px}
+
+/* floating hero botanical sprigs */
+.hero .sprig{position:absolute;color:var(--sage-dp);opacity:.68}
+.hero .sprig.l{left:-6px;top:40px;transform:rotate(-18deg)}
+.hero .sprig.r{right:-6px;top:46px;transform:rotate(18deg) scaleX(-1)}
+.hero .sprig svg{width:110px;height:auto}
+
+/* ---------- section framework ---------- */
+section.block{padding:36px 0;border-top:1px dashed #cdb583}
+section.block:first-of-type{border-top:none}
+
+.section-head{
+  display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:18px;
+  margin-bottom:26px;
+}
+.section-head .num{
+  font-family:'Italiana',serif;
+  color:var(--gold);font-size:42px;letter-spacing:0;line-height:1;
+}
+.section-head h2{
+  font-family:'Italiana',serif;
+  font-size:34px;line-height:1;color:var(--ink);letter-spacing:.012em;
+}
+.section-head h2 em{font-family:'Fraunces',serif;font-style:italic;color:var(--plum);font-weight:300}
+.section-head .tag{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:300;
+  color:var(--ink-soft);font-size:14.5px;
+  justify-self:end;text-align:right;max-width:260px;
+}
+
+/* ---------- SECTION I · Bases ---------- */
+.bases{
+  display:grid;grid-template-columns:1fr 1fr;gap:28px;
+}
+.base-card{
+  position:relative;
+  padding:30px 28px 28px;
+  background:linear-gradient(180deg,#fff9eb,#f3e8cc);
+  border:1px solid #e4ca8e;
+  border-radius:3px;
+  box-shadow: 0 12px 26px -18px rgba(77,55,15,.4), inset 0 0 0 1px #fff7e388;
+  overflow:hidden;
+}
+.base-card::after{
+  content:"";position:absolute;inset:6px;border:.5px solid #dfbd76;border-radius:2px;pointer-events:none;
+}
+.base-card .lbl{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-bottom:18px;
+}
+.base-card .lbl .ord{
+  font-family:'Italiana',serif;color:var(--gold-ink);letter-spacing:.3em;font-size:13px;
+}
+.base-card .lbl .pick{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:300;
+  color:var(--ink-soft);font-size:13px;
+}
+.base-card h3{
+  font-family:'Italiana',serif;font-size:28px;line-height:1;margin-bottom:14px;color:var(--ink);
+}
+.base-card p.intro{
+  font-family:'Fraunces',serif;font-weight:300;font-style:italic;
+  color:var(--ink-soft);margin-bottom:20px;font-size:14.5px;line-height:1.45;
+}
+.bar-visual{
+  display:flex;justify-content:center;align-items:flex-end;
+  height:160px;margin:4px 0 18px;
+  filter:drop-shadow(0 10px 16px rgba(80,60,18,.18));
+}
+.layer-row{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:10px 0;border-top:.5px dashed #d8bb7a}
+.layer-row:first-of-type{border-top:none}
+.layer-chip{
+  width:36px;height:36px;border-radius:50%;
+  box-shadow:inset 0 0 0 1px #fff8, 0 4px 10px -4px #584018aa;
+}
+.layer-chip.top{background:linear-gradient(135deg,#e7b7a5,#d88c7e)}
+.layer-chip.bot{background:linear-gradient(135deg,#f6e7c7,#d9c28f)}
+.layer-chip.solo-a{background:linear-gradient(135deg,#efcab7,#cf8a79)}
+.layer-chip.solo-b{background:linear-gradient(135deg,#f4e6c3,#cfaf70)}
+.layer-row .tx .t{
+  font-family:'Jost';font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-ink);
+}
+.layer-row .tx .d{
+  font-family:'Fraunces',serif;font-weight:400;color:var(--ink);font-size:15px;margin-top:2px
+}
+.or-divider{
+  margin:14px 0 10px;
+  display:flex;align-items:center;gap:12px;
+  font-family:'Italiana',serif;color:var(--gold);letter-spacing:.32em;font-size:12px;
+}
+.or-divider::before,.or-divider::after{content:"";flex:1;height:.5px;background:var(--gold-lt)}
+
+/* ---------- SECTION II · Scents ---------- */
+.scents{
+  display:grid;grid-template-columns:repeat(13,1fr);gap:10px;
+}
+.scent{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:14px 6px 12px;
+  background:#fbf4e1aa;
+  border:1px solid #e7ceaf;
+  border-radius:2px;
+  transition:transform .5s ease, box-shadow .5s ease;
+}
+.scent:hover{transform:translateY(-2px);box-shadow:0 10px 20px -14px rgba(82,58,14,.45);background:#fff6dc}
+.scent .ico{width:40px;height:40px;color:var(--sage-dp)}
+.scent .nm{
+  font-family:'Fraunces',serif;font-weight:400;font-size:11.5px;
+  letter-spacing:.04em;color:var(--ink);text-align:center;line-height:1.1;
+}
+.scent .num{font-family:'Italiana',serif;font-size:10.5px;color:var(--gold);letter-spacing:.18em}
+
+/* ---------- SECTION III · Add-Ins ---------- */
+.addins{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:14px;
+}
+.addin{
+  position:relative;
+  padding:20px 14px 18px;
+  border:1px solid #e1c993;
+  background:
+    radial-gradient(120% 120% at 0% 0%, #fff7dd 0, transparent 55%),
+    linear-gradient(180deg,#fbf2d7,#f2e4bc);
+  border-radius:3px;
+  display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;
+  box-shadow: 0 6px 14px -10px rgba(82,58,14,.4);
+  transition: transform .5s ease;
+}
+.addin:hover{transform:translateY(-2px)}
+.addin .ico{width:46px;height:46px;color:var(--plum)}
+.addin .nm{
+  font-family:'Fraunces',serif;font-size:15px;color:var(--ink);line-height:1.12;font-weight:500;
+}
+.addin .sub{
+  display:block;font-family:'Jost';font-weight:300;
+  font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold-ink);margin-top:3px;
+}
+
+/* ---------- SECTION IV · Colors ---------- */
+.colors{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:16px;
+  padding:6px 0;
+}
+.color{
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.swatch{
+  --d:88px;
+  width:var(--d);height:var(--d);border-radius:50%;
+  position:relative;
+  box-shadow:
+    inset 0 -14px 24px -8px rgba(0,0,0,.25),
+    inset 0 10px 16px -8px rgba(255,255,255,.45),
+    0 12px 24px -14px rgba(60,40,10,.55),
+    0 0 0 1px #00000012;
+}
+.swatch::after{
+  content:"";position:absolute;inset:6px;border-radius:50%;
+  box-shadow:inset 0 0 24px rgba(0,0,0,.15);
+}
+.swatch.pink   {background:radial-gradient(circle at 30% 28%,#f4c4c8,#d57d8d 70%,#a34c60)}
+.swatch.yellow {background:radial-gradient(circle at 30% 28%,#f2d48c,#d49f42 70%,#a46a1f)}
+.swatch.green  {background:radial-gradient(circle at 30% 28%,#a8bd90,#6e8a63 70%,#3f5738)}
+.swatch.purple {background:radial-gradient(circle at 30% 28%,#c3adc8,#8f6c99 70%,#5a3f68)}
+.swatch.brown  {background:radial-gradient(circle at 30% 28%,#b1836a,#7c4f38 70%,#4b2d1d)}
+.swatch.black  {background:radial-gradient(circle at 30% 28%,#655a5e,#36302f 70%,#1a1416)}
+.swatch.cream  {background:radial-gradient(circle at 30% 28%,#fbf3de,#e3cfa8 70%,#b59866)}
+.color .label{
+  text-align:center;
+}
+.color .label .t{
+  font-family:'Italiana',serif;font-size:14px;letter-spacing:.16em;color:var(--ink);
+  text-transform:uppercase;
+}
+.color .label .s{
+  display:block;font-family:'Fraunces',serif;font-weight:300;font-style:italic;
+  font-size:12.5px;color:var(--ink-soft);margin-top:3px;
+}
+
+/* ---------- SECTION V · Make It Fun ---------- */
+.steps{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+  margin-top:4px;
+}
+.step{
+  position:relative;
+  padding:26px 20px 22px;
+  text-align:center;
+  background:linear-gradient(180deg,#fff7e1,#f3e1b4);
+  border:.5px solid #d6b77a;
+  border-radius:2px;
+  overflow:hidden;
+}
+.step .n{
+  font-family:'Italiana',serif;font-size:56px;line-height:1;color:var(--gold-lt);letter-spacing:0;
+  display:block;margin-bottom:10px;
+}
+.step .t{
+  font-family:'Fraunces',serif;font-size:16.5px;color:var(--ink);line-height:1.2;
+}
+.step .t em{font-style:italic;color:var(--plum);font-weight:300}
+.step::after{
+  content:"";position:absolute;inset:8px;border:.5px solid #cfae6d;border-radius:2px;pointer-events:none;
+}
+
+/* ---------- sample bars ---------- */
+.samples{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:10px;
+}
+.sample{
+  position:relative;
+  background:linear-gradient(180deg,#fff6e0,#f1deb0);
+  border:.5px solid #d6b470;
+  border-radius:3px;
+  padding:22px 22px 20px;
+  display:grid;grid-template-columns:110px 1fr;gap:18px;align-items:center;
+  overflow:hidden;
+}
+.sample .bar-svg{width:100px;height:130px}
+.sample h4{
+  font-family:'Italiana',serif;font-size:20px;line-height:1;color:var(--ink);margin-bottom:6px;letter-spacing:.02em;
+}
+.sample p{
+  font-family:'Fraunces',serif;font-weight:300;font-style:italic;color:var(--ink-soft);
+  font-size:12.5px;line-height:1.45;
+}
+.sample .tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.sample .tag{
+  font-family:'Jost';font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--gold-ink);border:.5px solid #d4b378;padding:3px 7px;border-radius:20px;
+  background:#fff8e0;
+}
+
+/* ---------- footer pillars ---------- */
+.pillars{
+  margin-top:30px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:30px;text-align:center;
+  padding-top:30px;border-top:1px solid #cfb06a55;
+}
+.pillar .ico{width:44px;height:44px;color:var(--gold-ink);margin:0 auto 10px}
+.pillar .t{font-family:'Italiana',serif;font-size:17px;letter-spacing:.18em;color:var(--ink);text-transform:uppercase}
+.pillar .d{font-family:'Fraunces',serif;font-style:italic;font-weight:300;color:var(--ink-soft);font-size:13px;margin-top:4px}
+
+/* ---------- colophon ---------- */
+.colophon{
+  margin-top:34px;padding-top:22px;border-top:.5px dashed #c9ab6e;
+  display:grid;grid-template-columns:1fr auto 1fr;gap:22px;align-items:center;
+}
+.colophon .mark{
+  font-family:'Italiana',serif;font-size:13px;letter-spacing:.35em;color:var(--gold-ink);text-transform:uppercase
+}
+.colophon .mark.right{text-align:right}
+.colophon .wax{
+  width:70px;height:70px;border-radius:50%;
+  background:
+    radial-gradient(circle at 34% 34%,#e28a6a 0 18%,#b9532c 55%,#7a2f16 100%);
+  display:grid;place-items:center;color:#fbe9c8;
+  font-family:'Italiana',serif;font-size:22px;letter-spacing:.1em;
+  box-shadow:inset 0 -8px 14px #5b1e0c, 0 10px 20px -10px #00000066;
+  justify-self:center;
+}
+.colophon .wax span{transform:rotate(-8deg)}
+
+/* ---------- Back-to-site toolbar ---------- */
+.toolbar{
+  max-width:1180px;margin:18px auto 0;padding:0 14px;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  font-family:'Jost',sans-serif;color:#d8c79d;font-size:12px;letter-spacing:.3em;text-transform:uppercase
+}
+.toolbar a,.toolbar button{
+  color:#efdcab;background:transparent;border:.5px solid #7b6638;
+  padding:10px 16px;border-radius:30px;cursor:pointer;text-decoration:none;
+  letter-spacing:.28em;font-size:11px;text-transform:uppercase;font-family:inherit;
+  transition:background .3s, color .3s, transform .3s;
+}
+.toolbar a:hover,.toolbar button:hover{background:#efdcab;color:#3b2e14;transform:translateY(-1px)}
+
+/* ---------- responsive ---------- */
+@media (max-width:1024px){
+  .sheet{padding:46px 30px 50px}
+  .scents{grid-template-columns:repeat(7,1fr)}
+  .addins{grid-template-columns:repeat(3,1fr)}
+  .colors{grid-template-columns:repeat(4,1fr)}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .samples{grid-template-columns:1fr}
+  .pillars{grid-template-columns:1fr;gap:18px}
+}
+@media (max-width:680px){
+  body{padding:16px 6px 32px}
+  .sheet{padding:40px 20px 40px}
+  .masthead{grid-template-columns:1fr;gap:10px;text-align:center}
+  .masthead .right,.masthead .left{text-align:center}
+  .hero h1{font-size:44px}
+  .section-head{grid-template-columns:auto 1fr;gap:12px}
+  .section-head .tag{grid-column:1/-1;text-align:left;justify-self:start}
+  .bases{grid-template-columns:1fr}
+  .scents{grid-template-columns:repeat(3,1fr)}
+  .addins{grid-template-columns:repeat(2,1fr)}
+  .colors{grid-template-columns:repeat(3,1fr)}
+  .steps{grid-template-columns:1fr}
+  .colophon{grid-template-columns:1fr;gap:16px;text-align:center}
+  .colophon .mark.right{text-align:center}
+  .corner{display:none}
+}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(10px);animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.sheet .reveal{animation-delay:calc(var(--i, 0) * 80ms)}
+
+/* ---------- print ---------- */
+@media print{
+  html,body{background:#fff}
+  body{padding:0}
+  .toolbar{display:none}
+  .sheet{box-shadow:none;margin:0;max-width:none;padding:32px}
+  .sheet::before{inset:10px}
+  .sheet::after{inset:16px}
+  section.block{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<!-- top toolbar -->
+<div class="toolbar">
+  <a href="index.html" aria-label="Return to Amber's Alchemy Apothecary">← Amber's Alchemy</a>
+  <button type="button" onclick="window.print()">Print this menu</button>
+</div>
+
+<!-- ============ SHEET ============ -->
+<article class="sheet" role="document" aria-label="Botanical Soap Atelier Menu">
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- corner flourishes -->
+  <svg class="corner tl" viewBox="0 0 100 100" aria-hidden="true"><path d="M2 50 Q2 2 50 2" fill="none" stroke="currentColor" stroke-width=".7"/><path d="M8 50 Q8 8 50 8" fill="none" stroke="currentColor" stroke-width=".4"/><path d="M14 22 q6 -4 10 -2 q0 -6 6 -8" fill="none" stroke="currentColor" stroke-width=".6"/><circle cx="22" cy="20" r="1.4" fill="currentColor"/><circle cx="30" cy="12" r="1.1" fill="currentColor"/><path d="M40 4 l2 4 l4 2 l-4 2 l-2 4 l-2 -4 l-4 -2 l4 -2 z" fill="currentColor" opacity=".7"/></svg>
+  <svg class="corner tr" viewBox="0 0 100 100" aria-hidden="true"><path d="M2 50 Q2 2 50 2" fill="none" stroke="currentColor" stroke-width=".7"/><path d="M8 50 Q8 8 50 8" fill="none" stroke="currentColor" stroke-width=".4"/><path d="M14 22 q6 -4 10 -2 q0 -6 6 -8" fill="none" stroke="currentColor" stroke-width=".6"/><circle cx="22" cy="20" r="1.4" fill="currentColor"/><circle cx="30" cy="12" r="1.1" fill="currentColor"/><path d="M40 4 l2 4 l4 2 l-4 2 l-2 4 l-2 -4 l-4 -2 l4 -2 z" fill="currentColor" opacity=".7"/></svg>
+  <svg class="corner bl" viewBox="0 0 100 100" aria-hidden="true"><path d="M2 50 Q2 2 50 2" fill="none" stroke="currentColor" stroke-width=".7"/><path d="M8 50 Q8 8 50 8" fill="none" stroke="currentColor" stroke-width=".4"/><path d="M14 22 q6 -4 10 -2 q0 -6 6 -8" fill="none" stroke="currentColor" stroke-width=".6"/></svg>
+  <svg class="corner br" viewBox="0 0 100 100" aria-hidden="true"><path d="M2 50 Q2 2 50 2" fill="none" stroke="currentColor" stroke-width=".7"/><path d="M8 50 Q8 8 50 8" fill="none" stroke="currentColor" stroke-width=".4"/><path d="M14 22 q6 -4 10 -2 q0 -6 6 -8" fill="none" stroke="currentColor" stroke-width=".6"/></svg>
+
+  <!-- masthead -->
+  <header class="masthead reveal" style="--i:0">
+    <div class="left">Botanical · Small Batch</div>
+    <div class="crest">
+      <svg viewBox="0 0 60 60" fill="none" aria-hidden="true">
+        <circle cx="30" cy="30" r="22" stroke="currentColor" stroke-width=".8"/>
+        <circle cx="30" cy="30" r="16" stroke="currentColor" stroke-width=".4"/>
+        <path d="M30 14 C 22 22, 22 38, 30 46 C 38 38, 38 22, 30 14 Z" stroke="currentColor" stroke-width=".7" fill="none"/>
+        <path d="M30 17 L30 43" stroke="currentColor" stroke-width=".4"/>
+        <path d="M24 24 q6 -4 12 0" stroke="currentColor" stroke-width=".4" fill="none"/>
+        <path d="M24 36 q6 4 12 0" stroke="currentColor" stroke-width=".4" fill="none"/>
+        <circle cx="30" cy="30" r="1.6" fill="currentColor"/>
+      </svg>
+      <div class="name">Soap Atelier · N°III</div>
+    </div>
+    <div class="right">Awaken Again · Est. MMXIX</div>
+  </header>
+
+  <!-- hero -->
+  <div class="hero reveal" style="--i:1">
+    <!-- decorative left sprig -->
+    <span class="sprig l" aria-hidden="true">
+      <svg viewBox="0 0 140 220" fill="none">
+        <path d="M70 10 Q72 110 70 210" stroke="currentColor" stroke-width=".9"/>
+        <g stroke="currentColor" stroke-width=".7" fill="none">
+          <path d="M70 40 Q42 36 30 60 Q52 58 70 50"/>
+          <path d="M70 70 Q100 66 118 90 Q92 90 70 80"/>
+          <path d="M70 100 Q40 98 22 122 Q50 124 70 110"/>
+          <path d="M70 130 Q104 130 122 154 Q92 158 70 140"/>
+          <path d="M70 160 Q40 162 24 184 Q52 186 70 170"/>
+        </g>
+        <g fill="currentColor" opacity=".6">
+          <circle cx="36" cy="56" r="1.4"/>
+          <circle cx="108" cy="86" r="1.4"/>
+          <circle cx="30" cy="118" r="1.4"/>
+          <circle cx="112" cy="150" r="1.4"/>
+          <circle cx="32" cy="180" r="1.4"/>
+        </g>
+      </svg>
+    </span>
+    <span class="sprig r" aria-hidden="true">
+      <svg viewBox="0 0 140 220" fill="none">
+        <path d="M70 10 Q72 110 70 210" stroke="currentColor" stroke-width=".9"/>
+        <g stroke="currentColor" stroke-width=".7" fill="none">
+          <path d="M70 40 Q42 36 30 60 Q52 58 70 50"/>
+          <path d="M70 70 Q100 66 118 90 Q92 90 70 80"/>
+          <path d="M70 100 Q40 98 22 122 Q50 124 70 110"/>
+          <path d="M70 130 Q104 130 122 154 Q92 158 70 140"/>
+          <path d="M70 160 Q40 162 24 184 Q52 186 70 170"/>
+        </g>
+      </svg>
+    </span>
+
+    <div class="kicker">
+      <span class="line"></span>
+      <span class="eyebrow">Build Your Own Bar · An Apothecary Menu</span>
+      <span class="line"></span>
+    </div>
+
+    <h1>Create Your Own<br/><em>Botanical</em> Soap Bar</h1>
+    <div class="sub">Crafted by Nature <span>·</span> Designed by You</div>
+
+    <div class="ornament">
+      <span class="bar"></span>
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l2.2 5.8 6.1.4-4.7 3.8 1.5 5.9L12 14.8 6.9 17.9l1.5-5.9L3.7 8.2l6.1-.4L12 2z" fill="currentColor" opacity=".9"/></svg>
+      <span class="bar"></span>
+    </div>
+  </div>
+
+  <!-- ============ SECTION I · BASES ============ -->
+  <section class="block reveal" style="--i:2" aria-labelledby="sec-base">
+    <div class="section-head">
+      <div class="num">I</div>
+      <h2 id="sec-base">Choose Your <em>Base</em></h2>
+      <div class="tag">Every bar begins with the quiet chemistry of plant oils &amp; milk.</div>
+    </div>
+
+    <div class="bases">
+      <!-- Option 1 — Layered -->
+      <div class="base-card">
+        <div class="lbl"><span class="ord">Option I</span><span class="pick">— recommended</span></div>
+        <h3>Luxe Layered Bar</h3>
+        <p class="intro">A dual-phase pour: a silken botanical glycerin crown rests above a pillow of milk and butter.</p>
+
+        <div class="bar-visual" aria-hidden="true">
+          <svg viewBox="0 0 200 160" width="200" height="160">
+            <defs>
+              <linearGradient id="layerTop" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#f3cac1"/>
+                <stop offset="100%" stop-color="#d99a8f"/>
+              </linearGradient>
+              <linearGradient id="layerBot" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#fbeecb"/>
+                <stop offset="100%" stop-color="#d9bf83"/>
+              </linearGradient>
+              <linearGradient id="shine" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity=".6"/>
+                <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <g transform="translate(22,18)">
+              <!-- bar body with rounded corners -->
+              <rect x="0" y="0" width="156" height="120" rx="10" fill="url(#layerBot)"/>
+              <rect x="0" y="0" width="156" height="58" rx="10" fill="url(#layerTop)"/>
+              <rect x="0" y="50" width="156" height="10" fill="#c9988b" opacity=".3"/>
+              <rect x="0" y="0" width="156" height="40" rx="10" fill="url(#shine)"/>
+              <!-- dried petals on top -->
+              <g opacity=".9">
+                <ellipse cx="28" cy="22" rx="6" ry="3" fill="#b65c4c" transform="rotate(-15 28 22)"/>
+                <ellipse cx="52" cy="14" rx="5" ry="2.4" fill="#8a3b34" transform="rotate(12 52 14)"/>
+                <ellipse cx="80" cy="26" rx="7" ry="3.2" fill="#b65c4c" transform="rotate(-6 80 26)"/>
+                <ellipse cx="108" cy="16" rx="5" ry="2.4" fill="#8a3b34" transform="rotate(20 108 16)"/>
+                <ellipse cx="134" cy="24" rx="6" ry="3" fill="#b65c4c" transform="rotate(-10 134 24)"/>
+                <circle cx="38" cy="12" r="1.6" fill="#4a3a28"/>
+                <circle cx="64" cy="28" r="1.4" fill="#4a3a28"/>
+                <circle cx="94" cy="12" r="1.6" fill="#4a3a28"/>
+                <circle cx="122" cy="30" r="1.4" fill="#4a3a28"/>
+              </g>
+              <!-- stamp -->
+              <g transform="translate(78,84)" fill="none" stroke="#7c5a2d" stroke-width=".8" opacity=".65">
+                <circle r="14"/>
+                <path d="M0 -8 Q-5 0 0 8 Q5 0 0 -8" fill="#7c5a2d" opacity=".3"/>
+              </g>
+              <!-- bar edge shadow -->
+              <rect x="0" y="0" width="156" height="120" rx="10" fill="none" stroke="#8b6b2d" stroke-opacity=".25" stroke-width=".8"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="layer-row">
+          <div class="layer-chip top" aria-hidden="true"></div>
+          <div class="tx">
+            <div class="t">Top Layer</div>
+            <div class="d">Castor Oil · Vegetable Glycerin · Natural Botanical Color</div>
+          </div>
+        </div>
+        <div class="layer-row">
+          <div class="layer-chip bot" aria-hidden="true"></div>
+          <div class="tx">
+            <div class="t">Bottom Layer</div>
+            <div class="d">Shea Butter · Goat Milk</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Option 2 — Single -->
+      <div class="base-card">
+        <div class="lbl"><span class="ord">Option II</span><span class="pick">— choose one</span></div>
+        <h3>Full Bar Single Base</h3>
+        <p class="intro">A single pour from earth to edge — for those who prefer one pure, uninterrupted foundation.</p>
+
+        <div class="bar-visual" aria-hidden="true">
+          <svg viewBox="0 0 220 160" width="220" height="160">
+            <defs>
+              <linearGradient id="singA" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f0c7bb"/><stop offset="1" stop-color="#c88878"/></linearGradient>
+              <linearGradient id="singB" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fbeecb"/><stop offset="1" stop-color="#cba55e"/></linearGradient>
+            </defs>
+            <!-- left bar -->
+            <g transform="translate(10,22)">
+              <rect width="88" height="116" rx="10" fill="url(#singA)"/>
+              <rect width="88" height="40" rx="10" fill="#fff" opacity=".28"/>
+              <g opacity=".85">
+                <ellipse cx="22" cy="18" rx="4" ry="2" fill="#8e3d34" transform="rotate(-16 22 18)"/>
+                <ellipse cx="50" cy="14" rx="4" ry="2" fill="#5b2722" transform="rotate(10 50 14)"/>
+                <ellipse cx="68" cy="20" rx="3.4" ry="1.8" fill="#8e3d34" transform="rotate(-6 68 20)"/>
+              </g>
+              <rect width="88" height="116" rx="10" fill="none" stroke="#8b6b2d" stroke-opacity=".25"/>
+            </g>
+            <!-- divider -->
+            <text x="110" y="88" font-family="Italiana,serif" font-size="18" fill="#b28940" text-anchor="middle" letter-spacing=".18em">OR</text>
+            <!-- right bar -->
+            <g transform="translate(124,22)">
+              <rect width="88" height="116" rx="10" fill="url(#singB)"/>
+              <rect width="88" height="40" rx="10" fill="#fff" opacity=".28"/>
+              <g opacity=".75">
+                <circle cx="22" cy="20" r="2" fill="#7c5a2d"/>
+                <circle cx="42" cy="14" r="1.4" fill="#7c5a2d"/>
+                <circle cx="58" cy="22" r="1.8" fill="#7c5a2d"/>
+                <circle cx="74" cy="16" r="1.4" fill="#7c5a2d"/>
+              </g>
+              <rect width="88" height="116" rx="10" fill="none" stroke="#8b6b2d" stroke-opacity=".25"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="layer-row">
+          <div class="layer-chip solo-a" aria-hidden="true"></div>
+          <div class="tx"><div class="t">Full Bar — A</div><div class="d">Castor Oil + Vegetable Glycerin</div></div>
+        </div>
+        <div class="or-divider">or</div>
+        <div class="layer-row">
+          <div class="layer-chip solo-b" aria-hidden="true"></div>
+          <div class="tx"><div class="t">Full Bar — B</div><div class="d">Shea Butter + Goat Milk</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION II · SCENTS ============ -->
+  <section class="block reveal" style="--i:3" aria-labelledby="sec-scent">
+    <div class="section-head">
+      <div class="num">II</div>
+      <h2 id="sec-scent">Choose Your <em>Signature Scent</em></h2>
+      <div class="tag">Thirteen favorites from our cellar of eighty pure essential oils.</div>
+    </div>
+
+    <div class="scents">
+
+      <div class="scent" title="Lavender">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 42V14" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>
+          <g stroke="currentColor" stroke-width=".9" fill="#b6a6c9" fill-opacity=".45" stroke-linecap="round">
+            <ellipse cx="24" cy="8"  rx="2.2" ry="3"/>
+            <ellipse cx="20" cy="12" rx="1.8" ry="2.4"/>
+            <ellipse cx="28" cy="12" rx="1.8" ry="2.4"/>
+            <ellipse cx="22" cy="17" rx="2"   ry="2.6"/>
+            <ellipse cx="26" cy="17" rx="2"   ry="2.6"/>
+            <ellipse cx="24" cy="22" rx="2"   ry="2.6"/>
+          </g>
+          <path d="M24 30 q-5 2 -9 0" stroke="currentColor" stroke-width=".9" fill="none"/>
+          <path d="M24 30 q5 2 9 0" stroke="currentColor" stroke-width=".9" fill="none"/>
+        </svg>
+        <div class="nm">Lavender</div><div class="num">I</div>
+      </div>
+
+      <div class="scent" title="Peppermint">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 44 C 14 34, 12 20, 24 6 C 36 20, 34 34, 24 44 Z" stroke="currentColor" stroke-width="1" fill="#8c9a7e" fill-opacity=".3"/>
+          <path d="M24 8 V42" stroke="currentColor" stroke-width=".7"/>
+          <path d="M24 14 Q 18 16 15 22" stroke="currentColor" stroke-width=".6" fill="none"/>
+          <path d="M24 14 Q 30 16 33 22" stroke="currentColor" stroke-width=".6" fill="none"/>
+          <path d="M24 22 Q 17 24 14 30" stroke="currentColor" stroke-width=".6" fill="none"/>
+          <path d="M24 22 Q 31 24 34 30" stroke="currentColor" stroke-width=".6" fill="none"/>
+        </svg>
+        <div class="nm">Peppermint</div><div class="num">II</div>
+      </div>
+
+      <div class="scent" title="Eucalyptus">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 44 Q 22 26 28 8" stroke="currentColor" stroke-width=".9" fill="none"/>
+          <g fill="#8c9a7e" fill-opacity=".45" stroke="currentColor" stroke-width=".7">
+            <ellipse cx="18" cy="34" rx="4" ry="2.5" transform="rotate(-30 18 34)"/>
+            <ellipse cx="28" cy="30" rx="4" ry="2.5" transform="rotate(30 28 30)"/>
+            <ellipse cx="18" cy="24" rx="4" ry="2.5" transform="rotate(-30 18 24)"/>
+            <ellipse cx="28" cy="20" rx="4" ry="2.5" transform="rotate(30 28 20)"/>
+            <ellipse cx="22" cy="12" rx="3.5" ry="2.2" transform="rotate(-10 22 12)"/>
+          </g>
+        </svg>
+        <div class="nm">Eucalyptus</div><div class="num">III</div>
+      </div>
+
+      <div class="scent" title="Sweet Orange">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle cx="24" cy="26" r="16" fill="#e8a262" stroke="currentColor" stroke-width="1"/>
+          <g stroke="#fff" stroke-width="1" opacity=".75">
+            <path d="M24 12 V40"/><path d="M10 26 H38"/><path d="M14 16 L34 36"/><path d="M34 16 L14 36"/>
+          </g>
+          <circle cx="24" cy="26" r="3" fill="#fff" opacity=".6"/>
+          <path d="M22 10 Q24 6 28 6" stroke="#6e8a63" stroke-width="1" fill="none"/>
+          <ellipse cx="30" cy="7" rx="3" ry="1.4" fill="#6e8a63"/>
+        </svg>
+        <div class="nm">Sweet Orange</div><div class="num">IV</div>
+      </div>
+
+      <div class="scent" title="Lemon">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <ellipse cx="24" cy="24" rx="14" ry="18" fill="#e6c749" stroke="currentColor" stroke-width="1"/>
+          <ellipse cx="24" cy="11" rx="2" ry="3.5" fill="#b29426"/>
+          <ellipse cx="24" cy="37" rx="2" ry="3.5" fill="#b29426"/>
+          <path d="M19 20 q5 -4 10 0" stroke="#fff" stroke-width=".7" fill="none"/>
+          <path d="M19 28 q5 4 10 0" stroke="#fff" stroke-width=".7" fill="none"/>
+        </svg>
+        <div class="nm">Lemon</div><div class="num">V</div>
+      </div>
+
+      <div class="scent" title="Vanilla">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M14 40 Q 10 24 18 10 Q 26 6 32 14 Q 36 24 30 36 Q 24 42 14 40 Z" fill="#b48a5b" fill-opacity=".4" stroke="currentColor" stroke-width="1"/>
+          <path d="M16 34 Q 18 22 24 12" stroke="currentColor" stroke-width=".6" fill="none"/>
+          <path d="M20 36 Q 24 24 30 16" stroke="currentColor" stroke-width=".6" fill="none"/>
+          <circle cx="16" cy="42" r="1.2" fill="currentColor"/>
+          <circle cx="34" cy="10" r="1.2" fill="currentColor"/>
+        </svg>
+        <div class="nm">Vanilla</div><div class="num">VI</div>
+      </div>
+
+      <div class="scent" title="Tea Tree">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 44 V12" stroke="currentColor" stroke-width=".9"/>
+          <g stroke="currentColor" stroke-width=".7" fill="#8c9a7e" fill-opacity=".35">
+            <path d="M24 14 L18 8 L24 10 Z"/>
+            <path d="M24 14 L30 8 L24 10 Z"/>
+            <path d="M24 22 L14 18 L24 20 Z"/>
+            <path d="M24 22 L34 18 L24 20 Z"/>
+            <path d="M24 30 L14 26 L24 28 Z"/>
+            <path d="M24 30 L34 26 L24 28 Z"/>
+          </g>
+          <circle cx="24" cy="38" r="2" fill="#fff" stroke="currentColor" stroke-width=".6"/>
+          <circle cx="20" cy="40" r="1.6" fill="#fff" stroke="currentColor" stroke-width=".5"/>
+          <circle cx="28" cy="40" r="1.6" fill="#fff" stroke="currentColor" stroke-width=".5"/>
+        </svg>
+        <div class="nm">Tea Tree</div><div class="num">VII</div>
+      </div>
+
+      <div class="scent" title="Rosemary">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 44 V8" stroke="currentColor" stroke-width=".9"/>
+          <g stroke="currentColor" stroke-width=".8">
+            <line x1="24" y1="14" x2="14" y2="10"/>
+            <line x1="24" y1="14" x2="34" y2="10"/>
+            <line x1="24" y1="20" x2="12" y2="18"/>
+            <line x1="24" y1="20" x2="36" y2="18"/>
+            <line x1="24" y1="26" x2="13" y2="26"/>
+            <line x1="24" y1="26" x2="35" y2="26"/>
+            <line x1="24" y1="32" x2="14" y2="34"/>
+            <line x1="24" y1="32" x2="34" y2="34"/>
+            <line x1="24" y1="38" x2="16" y2="42"/>
+            <line x1="24" y1="38" x2="32" y2="42"/>
+          </g>
+        </svg>
+        <div class="nm">Rosemary</div><div class="num">VIII</div>
+      </div>
+
+      <div class="scent" title="Grapefruit">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle cx="24" cy="24" r="16" fill="#e39a8f" stroke="currentColor" stroke-width="1"/>
+          <g stroke="#fff" stroke-width="1" opacity=".75" fill="none">
+            <circle cx="24" cy="24" r="10"/><path d="M24 12 V36"/><path d="M12 24 H36"/><path d="M14 16 L34 32"/><path d="M34 16 L14 32"/>
+          </g>
+          <circle cx="24" cy="24" r="2.4" fill="#fff" opacity=".7"/>
+        </svg>
+        <div class="nm">Grapefruit</div><div class="num">IX</div>
+      </div>
+
+      <div class="scent" title="Cedarwood">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <rect x="20" y="36" width="8" height="8" fill="#8a5a2d" stroke="currentColor" stroke-width=".7"/>
+          <path d="M24 6 L36 22 L30 22 L40 36 L8 36 L18 22 L12 22 Z" fill="#6e8a63" fill-opacity=".55" stroke="currentColor" stroke-width=".9"/>
+        </svg>
+        <div class="nm">Cedarwood</div><div class="num">X</div>
+      </div>
+
+      <div class="scent" title="Frankincense">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 8 C 18 22, 12 28, 12 34 a12 12 0 0 0 24 0 c 0 -6 -6 -12 -12 -26 Z" fill="#dcb876" stroke="currentColor" stroke-width=".9"/>
+          <path d="M18 26 q-2 8 4 12" stroke="#fff" stroke-width=".8" fill="none" opacity=".55"/>
+          <circle cx="20" cy="30" r="1.6" fill="#fff" opacity=".6"/>
+        </svg>
+        <div class="nm">Frankincense</div><div class="num">XI</div>
+      </div>
+
+      <div class="scent" title="Patchouli">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 44 V22" stroke="currentColor" stroke-width=".9"/>
+          <path d="M24 22 C 10 18, 8 10, 16 6 C 22 10, 26 16, 24 22 Z" fill="#6e8a63" fill-opacity=".5" stroke="currentColor" stroke-width=".8"/>
+          <path d="M24 22 C 38 18, 40 10, 32 6 C 26 10, 22 16, 24 22 Z" fill="#6e8a63" fill-opacity=".5" stroke="currentColor" stroke-width=".8"/>
+          <path d="M16 10 L22 18" stroke="currentColor" stroke-width=".5"/>
+          <path d="M32 10 L26 18" stroke="currentColor" stroke-width=".5"/>
+        </svg>
+        <div class="nm">Patchouli</div><div class="num">XII</div>
+      </div>
+
+      <div class="scent" title="Lemongrass">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <g stroke="currentColor" stroke-width=".9" fill="none">
+            <path d="M16 44 Q 18 24 14 6"/>
+            <path d="M22 44 Q 22 26 26 6"/>
+            <path d="M28 44 Q 28 24 32 6"/>
+            <path d="M34 44 Q 32 26 38 10"/>
+          </g>
+          <path d="M12 44 H 38" stroke="#8a6a2f" stroke-width="1.2"/>
+        </svg>
+        <div class="nm">Lemongrass</div><div class="num">XIII</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ SECTION III · ADD-INS ============ -->
+  <section class="block reveal" style="--i:4" aria-labelledby="sec-addin">
+    <div class="section-head">
+      <div class="num">III</div>
+      <h2 id="sec-addin">Choose Your <em>Botanical Add-Ins</em></h2>
+      <div class="tag">Pressed flowers, roots, and grains folded through the pour.</div>
+    </div>
+
+    <div class="addins">
+
+      <div class="addin">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <g stroke="currentColor" stroke-width=".7" fill="#dca9a2" fill-opacity=".75">
+            <ellipse cx="18" cy="22" rx="7" ry="4" transform="rotate(-18 18 22)"/>
+            <ellipse cx="30" cy="16" rx="6" ry="3.2" transform="rotate(20 30 16)"/>
+            <ellipse cx="34" cy="30" rx="7" ry="4" transform="rotate(-8 34 30)"/>
+            <ellipse cx="20" cy="34" rx="6" ry="3.2" transform="rotate(14 20 34)"/>
+          </g>
+        </svg>
+        <div class="nm">Rose Petals<span class="sub">Softening · Romantic</span></div>
+      </div>
+
+      <div class="addin">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <g stroke="currentColor" stroke-width=".7" fill="#b6a6c9" fill-opacity=".7">
+            <ellipse cx="18" cy="16" rx="3" ry="4"/>
+            <ellipse cx="24" cy="12" rx="3" ry="4"/>
+            <ellipse cx="30" cy="16" rx="3" ry="4"/>
+            <ellipse cx="16" cy="24" rx="3" ry="4"/>
+            <ellipse cx="22" cy="20" rx="3" ry="4"/>
+            <ellipse cx="28" cy="24" rx="3" ry="4"/>
+            <ellipse cx="34" cy="22" rx="3" ry="4"/>
+            <ellipse cx="20" cy="30" rx="3" ry="4"/>
+            <ellipse cx="26" cy="32" rx="3" ry="4"/>
+          </g>
+        </svg>
+        <div class="nm">Lavender Buds<span class="sub">Calming · Sleep</span></div>
+      </div>
+
+      <div class="addin">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle cx="24" cy="24" r="4" fill="#b28940"/>
+          <g stroke="currentColor" stroke-width=".6" fill="#dca957" fill-opacity=".75">
+            <ellipse cx="24" cy="13" rx="3" ry="7"/>
+            <ellipse cx="24" cy="35" rx="3" ry="7"/>
+            <ellipse cx="13" cy="24" rx="7" ry="3"/>
+            <ellipse cx="35" cy="24" rx="7" ry="3"/>
+            <ellipse cx="16" cy="16" rx="3" ry="6" transform="rotate(-45 16 16)"/>
+            <ellipse cx="32" cy="16" rx="3" ry="6" transform="rotate(45 32 16)"/>
+            <ellipse cx="16" cy="32" rx="3" ry="6" transform="rotate(45 16 32)"/>
+            <ellipse cx="32" cy="32" rx="3" ry="6" transform="rotate(-45 32 32)"/>
+          </g>
+        </svg>
+        <div class="nm">Calendula<span class="sub">Healing · Sunlit</span></div>
+      </div>
+
+      <div class="addin">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <circle cx="24" cy="24" r="3.2" fill="#dca957"/>
+          <g stroke="currentColor" stroke-width=".6" fill="#fbf3de">
+            <ellipse cx="24" cy="13" rx="2.6" ry="6"/>
+            <ellipse cx="24" cy="35" rx="2.6" ry="6"/>
+            <ellipse cx="13" cy="24" rx="6" ry="2.6"/>
+            <ellipse cx="35" cy="24" rx="6" ry="2.6"/>
+            <ellipse cx="16" cy="16" rx="2.6" ry="5" transform="rotate(-45 16 16)"/>
+            <ellipse cx="32" cy="16" rx="2.6" ry="5" transform="rotate(45 32 16)"/>
+            <ellipse cx="16" cy="32" rx="2.6" ry="5" transform="rotate(45 16 32)"/>
+            <ellipse cx="32" cy="32" rx="2.6" ry="5" transform="rotate(-45 32 32)"/>
+          </g>
+        </svg>
+        <div class="nm">Chamomile<span class="sub">Gentle · Quiet</span></div>
+      </div>
+
+      <div class="addin">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 44 V12" stroke="currentColor" stroke-width=".8"/>
+          <g stroke="currentColor" stroke-width=".6" fill="#e3cfa8">
+            <ellipse cx="20" cy="14" rx="2" ry="5" transform="rotate(-12 20 14)"/>
+            <ellipse cx="28" cy="12" rx="2" ry="5" transform="rotate(12 28 12)"/>
+            <ellipse cx="19" cy="22" rx="2" ry="5" transform="rotate(-12 19 22)"/>
+            <ellipse cx="29" cy="20" rx="2" ry="5" transform="rotate(12 29 20)"/>
+            <ellipse cx="20" cy="30" rx="2" ry="5" transform="rotate(-12 20 30)"/>
+            <ellipse cx="28" cy="28" rx="2" ry="5" transform="rotate(12 28 28)"/>
+          </g>
+        </svg>
+        <div class="nm">Oatmeal<span class="sub">Soothing · Scrub</span></div>
+      </div>
+
+      <div class="addin">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <g stroke="currentColor" stroke-width=".7" fill="#c25a6a" fill-opacity=".8">
+            <ellipse cx="24" cy="14" rx="5" ry="8"/>
+            <ellipse cx="14" cy="22" rx="8" ry="5" transform="rotate(-25 14 22)"/>
+            <ellipse cx="34" cy="22" rx="8" ry="5" transform="rotate(25 34 22)"/>
+            <ellipse cx="18" cy="34" rx="5" ry="8" transform="rotate(-20 18 34)"/>
+            <ellipse cx="30" cy="34" rx="5" ry="8" transform="rotate(20 30 34)"/>
+          </g>
+          <circle cx="24" cy="24" r="2.2" fill="#8a1a30"/>
+        </svg>
+        <div class="nm">Hibiscus<span class="sub">Brightening · Tart</span></div>
+      </div>
+
+      <div class="addin">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <g fill="#dca957" stroke="currentColor" stroke-width=".6">
+            <path d="M10 24 C 10 16, 18 12, 24 18 C 30 24, 26 32, 20 32 C 14 32, 10 30, 10 24 Z"/>
+            <path d="M22 20 C 22 16, 28 14, 34 18 C 40 24, 36 30, 30 30 C 26 30, 22 28, 22 22 Z"/>
+          </g>
+          <path d="M14 24 Q 18 22 22 24" stroke="#7c5a2d" stroke-width=".6" fill="none"/>
+          <path d="M26 22 Q 30 20 34 22" stroke="#7c5a2d" stroke-width=".6" fill="none"/>
+        </svg>
+        <div class="nm">Turmeric<span class="sub">Glow · Warming</span></div>
+      </div>
+
+      <div class="addin">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <ellipse cx="24" cy="24" rx="10" ry="14" fill="#5a3720" stroke="currentColor" stroke-width=".8"/>
+          <path d="M24 10 V38" stroke="#2e1a0d" stroke-width="1"/>
+          <ellipse cx="20" cy="18" r="1.4" rx="1.4" ry="1.4" fill="#fff" opacity=".25"/>
+          <circle cx="14" cy="42" r="1.4" fill="#5a3720"/>
+          <circle cx="34" cy="42" r="1.4" fill="#5a3720"/>
+          <circle cx="10" cy="38" r="1.2" fill="#5a3720"/>
+          <circle cx="38" cy="38" r="1.2" fill="#5a3720"/>
+        </svg>
+        <div class="nm">Coffee Grounds<span class="sub">Scrub · Waking</span></div>
+      </div>
+
+      <div class="addin">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M14 38 C 10 24, 18 8, 34 10 C 36 24, 28 40, 14 38 Z" fill="#6e8a63" fill-opacity=".55" stroke="currentColor" stroke-width=".8"/>
+          <path d="M20 36 Q 22 22 32 12" stroke="currentColor" stroke-width=".6" fill="none"/>
+          <path d="M20 30 L28 28" stroke="currentColor" stroke-width=".5"/>
+          <path d="M18 24 L28 20" stroke="currentColor" stroke-width=".5"/>
+          <path d="M20 18 L28 14" stroke="currentColor" stroke-width=".5"/>
+        </svg>
+        <div class="nm">Mint Leaf<span class="sub">Cooling · Fresh</span></div>
+      </div>
+
+      <div class="addin">
+        <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M12 28 L16 14 L30 10 L38 22 L34 36 L20 40 Z" fill="#2a2327" stroke="currentColor" stroke-width=".8"/>
+          <path d="M18 16 L26 14 L30 22 L28 32" stroke="#7a6f72" stroke-width=".5" fill="none"/>
+          <path d="M16 22 L22 28 L30 26" stroke="#7a6f72" stroke-width=".5" fill="none"/>
+          <circle cx="22" cy="24" r="1" fill="#bba7a0"/>
+          <circle cx="30" cy="34" r="1" fill="#bba7a0"/>
+        </svg>
+        <div class="nm">Activated Charcoal<span class="sub">Clarifying · Detox</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ SECTION IV · COLORS ============ -->
+  <section class="block reveal" style="--i:5" aria-labelledby="sec-color">
+    <div class="section-head">
+      <div class="num">IV</div>
+      <h2 id="sec-color">Choose Your <em>Natural Color</em></h2>
+      <div class="tag">Pigment pulled from root, leaf, and bloom — no synthetic dyes.</div>
+    </div>
+
+    <div class="colors">
+      <div class="color"><div class="swatch pink"></div><div class="label"><div class="t">Pink</div><span class="s">Beet Root</span></div></div>
+      <div class="color"><div class="swatch yellow"></div><div class="label"><div class="t">Yellow</div><span class="s">Turmeric</span></div></div>
+      <div class="color"><div class="swatch green"></div><div class="label"><div class="t">Green</div><span class="s">Spirulina</span></div></div>
+      <div class="color"><div class="swatch purple"></div><div class="label"><div class="t">Purple</div><span class="s">Berry · Alkanet</span></div></div>
+      <div class="color"><div class="swatch brown"></div><div class="label"><div class="t">Brown</div><span class="s">Cocoa</span></div></div>
+      <div class="color"><div class="swatch black"></div><div class="label"><div class="t">Black</div><span class="s">Charcoal</span></div></div>
+      <div class="color"><div class="swatch cream"></div><div class="label"><div class="t">Cream</div><span class="s">Natural · Untinted</span></div></div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION V · MAKE IT FUN ============ -->
+  <section class="block reveal" style="--i:6" aria-labelledby="sec-fun">
+    <div class="section-head">
+      <div class="num">V</div>
+      <h2 id="sec-fun">Make It <em>Fun</em></h2>
+      <div class="tag">Four small rituals stand between you and your finished bar.</div>
+    </div>
+
+    <div class="steps">
+      <div class="step"><span class="n">i</span><div class="t">Pick your <em>base</em></div></div>
+      <div class="step"><span class="n">ii</span><div class="t">Pick your <em>scent</em></div></div>
+      <div class="step"><span class="n">iii</span><div class="t">Add <em>botanicals</em></div></div>
+      <div class="step"><span class="n">iv</span><div class="t">Name your <em>creation</em></div></div>
+    </div>
+  </section>
+
+  <!-- ============ SAMPLE BARS ============ -->
+  <section class="block reveal" style="--i:7" aria-labelledby="sec-samples">
+    <div class="section-head">
+      <div class="num">✦</div>
+      <h2 id="sec-samples">From Our <em>Atelier</em></h2>
+      <div class="tag">A small parade of recent pours — for the imagining.</div>
+    </div>
+
+    <div class="samples">
+
+      <!-- Sample 1 -->
+      <div class="sample">
+        <svg class="bar-svg" viewBox="0 0 100 130" aria-hidden="true">
+          <defs>
+            <linearGradient id="s1t" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#eccdc7"/><stop offset="1" stop-color="#c9807c"/></linearGradient>
+            <linearGradient id="s1b" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fbeecb"/><stop offset="1" stop-color="#d4a843"/></linearGradient>
+          </defs>
+          <rect x="6" y="4" width="88" height="122" rx="10" fill="url(#s1b)"/>
+          <rect x="6" y="4" width="88" height="58" rx="10" fill="url(#s1t)"/>
+          <g opacity=".85">
+            <ellipse cx="20" cy="24" rx="5" ry="2.4" fill="#7c3840" transform="rotate(-10 20 24)"/>
+            <ellipse cx="46" cy="18" rx="4.5" ry="2.2" fill="#9c4a55" transform="rotate(14 46 18)"/>
+            <ellipse cx="72" cy="26" rx="5" ry="2.4" fill="#7c3840" transform="rotate(-6 72 26)"/>
+          </g>
+          <circle cx="50" cy="90" r="10" fill="none" stroke="#7c5a2d" stroke-width=".6" opacity=".6"/>
+        </svg>
+        <div>
+          <h4>Rose · Rosewater No. 7</h4>
+          <p>Top layer of beetroot-blushed glycerin; goat milk below, scattered damask petals.</p>
+          <div class="tags"><span class="tag">Rose</span><span class="tag">Beet Root</span><span class="tag">Layered</span></div>
+        </div>
+      </div>
+
+      <!-- Sample 2 -->
+      <div class="sample">
+        <svg class="bar-svg" viewBox="0 0 100 130" aria-hidden="true">
+          <defs>
+            <linearGradient id="s2t" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d7cde2"/><stop offset="1" stop-color="#8f77a8"/></linearGradient>
+            <linearGradient id="s2b" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f5ecdc"/><stop offset="1" stop-color="#d9bf83"/></linearGradient>
+          </defs>
+          <rect x="6" y="4" width="88" height="122" rx="10" fill="url(#s2b)"/>
+          <rect x="6" y="4" width="88" height="58" rx="10" fill="url(#s2t)"/>
+          <g>
+            <circle cx="22" cy="22" r="1.4" fill="#6b5180"/>
+            <circle cx="30" cy="16" r="1.2" fill="#6b5180"/>
+            <circle cx="40" cy="24" r="1.4" fill="#6b5180"/>
+            <circle cx="52" cy="18" r="1.2" fill="#6b5180"/>
+            <circle cx="64" cy="26" r="1.4" fill="#6b5180"/>
+            <circle cx="76" cy="16" r="1.2" fill="#6b5180"/>
+          </g>
+          <path d="M16 84 q34 -18 68 0" stroke="#7c5a2d" stroke-width=".7" fill="none" opacity=".4"/>
+        </svg>
+        <div>
+          <h4>Lavandin · Midnight Calm</h4>
+          <p>Alkanet-violet crown, shea &amp; goat milk base, a drift of dried French lavender buds.</p>
+          <div class="tags"><span class="tag">Lavender</span><span class="tag">Alkanet</span><span class="tag">Sleep</span></div>
+        </div>
+      </div>
+
+      <!-- Sample 3 -->
+      <div class="sample">
+        <svg class="bar-svg" viewBox="0 0 100 130" aria-hidden="true">
+          <defs>
+            <linearGradient id="s3t" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#c3ccb6"/><stop offset="1" stop-color="#7d8d6f"/></linearGradient>
+            <linearGradient id="s3b" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#3b3b3d"/><stop offset="1" stop-color="#1f1b1d"/></linearGradient>
+          </defs>
+          <rect x="6" y="4" width="88" height="122" rx="10" fill="url(#s3b)"/>
+          <rect x="6" y="4" width="88" height="58" rx="10" fill="url(#s3t)"/>
+          <g stroke="#3f5332" stroke-width=".5" fill="#657a54">
+            <path d="M20 16 q6 -6 12 0 q-6 4 -12 0Z"/>
+            <path d="M48 22 q6 -4 12 0 q-6 4 -12 0Z"/>
+            <path d="M68 14 q6 -6 12 0 q-6 4 -12 0Z"/>
+          </g>
+          <g fill="#cfa667" opacity=".6">
+            <circle cx="30" cy="92" r="1.4"/><circle cx="48" cy="98" r="1"/><circle cx="70" cy="88" r="1.4"/><circle cx="40" cy="108" r="1"/>
+          </g>
+        </svg>
+        <div>
+          <h4>Eucalyptus · Charred Forest</h4>
+          <p>Spirulina-green glycerin pour over a charcoal bar, freckled with activated ash.</p>
+          <div class="tags"><span class="tag">Eucalyptus</span><span class="tag">Spirulina</span><span class="tag">Charcoal</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ FOOTER PILLARS ============ -->
+  <section class="pillars reveal" style="--i:8" aria-label="Atelier promises">
+
+    <div class="pillar">
+      <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <path d="M16 10 h16 v2 l-2 4 v22 a6 6 0 0 1 -6 6 h0 a6 6 0 0 1 -6 -6 V16 l-2 -4 z" stroke="currentColor" stroke-width="1" fill="#fbf3de"/>
+        <rect x="19" y="22" width="10" height="8" fill="currentColor" opacity=".2"/>
+        <path d="M18 30 q6 -3 12 0" stroke="currentColor" stroke-width=".5" fill="none"/>
+      </svg>
+      <div class="t">80 Scents Available</div>
+      <div class="d">A library of pure essence — blend two, three, or keep it singular.</div>
+    </div>
+
+    <div class="pillar">
+      <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <circle cx="24" cy="24" r="14" stroke="currentColor" stroke-width="1" fill="#fbf3de"/>
+        <path d="M24 12 V36 M12 24 H36" stroke="currentColor" stroke-width=".6"/>
+        <circle cx="24" cy="24" r="5" fill="currentColor" opacity=".35"/>
+      </svg>
+      <div class="t">Pure doTERRA Oils</div>
+      <div class="d">Certified therapeutic grade, steam-distilled from single origins.</div>
+    </div>
+
+    <div class="pillar">
+      <svg class="ico" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <path d="M12 40 h24 v-6 l-4 -16 h-16 l-4 16 z" stroke="currentColor" stroke-width="1" fill="#fbf3de"/>
+        <path d="M18 18 v-6 a6 6 0 0 1 12 0 v6" stroke="currentColor" stroke-width="1" fill="none"/>
+        <path d="M18 26 h12" stroke="currentColor" stroke-width=".6"/>
+      </svg>
+      <div class="t">Small Batch Handmade</div>
+      <div class="d">Poured six at a time in a quiet Carolina kitchen — never on conveyor.</div>
+    </div>
+
+  </section>
+
+  <!-- ============ COLOPHON ============ -->
+  <div class="colophon reveal" style="--i:9">
+    <div class="mark">Awaken Again · Amber's Alchemy Apothecary</div>
+    <div class="wax" aria-hidden="true"><span>A·A</span></div>
+    <div class="mark right">Menu N°III · Spring MMXXVI</div>
+  </div>
+
+</article>
+
+</body>
+</html>
