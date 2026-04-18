@@ -623,6 +623,8 @@ function renderSynthesis() {
 
     renderWhyThisWorks(patterns) +
 
+    renderBodyReading(patterns, signals, allies) +
+
     (rituals.length > 0 ? '<section class="synth-section">' +
       '<h4 class="synth-heading">Gentle Rituals for Your Pattern</h4>' +
       '<p class="synth-sub">Small, non-product practices that pair beautifully with your remedy.</p>' +
@@ -669,10 +671,66 @@ function renderFinalRemedyCTA(formKey, allies) {
         '<li>\u2726 Prepared as ' + formLabel + '</li>' +
         '<li>\u2726 Hand-blended in small batches, shipped promptly</li>' +
       '</ul>' +
-      '<button type="button" class="synth-cta-primary synth-cta-xl" id="synth-cta-custom">\u2728 Add My Custom Remedy to Cart</button>' +
+      '<div class="synth-choice-label">Two ways to receive your support</div>' +
+      '<button type="button" class="synth-cta-primary synth-cta-xl" id="synth-cta-custom">\u2728 Add My Vision Remedy to Cart</button>' +
+      '<p class="synth-choice-or">\u2014 or \u2014</p>' +
+      '<a class="synth-cta-bundle-link synth-cta-xl" href="#synth-wbundle-mount" id="synth-cta-bundle">\u{1FAD6} Get the Custom Remedy Bundle</a>' +
       '<p class="synth-final-fineprint">One quiz session \u00b7 one custom remedy \u00b7 crafted to your answers</p>' +
     '</div>' +
     '<div id="synth-wbundle-mount"></div>' +
+  '</section>';
+}
+
+// ============================================================
+// BODY READING — warm, educational trio at the end of quiz results
+// Appended only to the final synthesis step. Uses existing pattern
+// + signal + ally data; no quiz logic, scoring, or flow is changed.
+// ============================================================
+function renderBodyReading(patterns, signals, allies) {
+  if (!patterns || !patterns.length) return '';
+  var primary = patterns[0] && patterns[0].pattern;
+  if (!primary) return '';
+
+  var signalPhrases = (signals || [])
+    .slice(0, 3)
+    .map(function(s) { return window.RemedyFlow ? window.RemedyFlow.humanSignalPhrase(s) : s; })
+    .filter(function(p, i, arr) { return p && arr.indexOf(p) === i; });
+
+  var bodyLine = signalPhrases.length
+    ? 'Your answers gently point to <em>' + signalPhrases.join(', ') + '</em>. Taken together, this looks like <strong>' + primary.name + '</strong> \u2014 a pattern that often signals the body is asking for ' + (primary.rootSupport || 'deeper care, steadier rhythm, and nourishment where it has been depleted') + '.'
+    : 'Your answers gently point to <strong>' + primary.name + '</strong> \u2014 a pattern that often signals the body is asking for ' + (primary.rootSupport || 'deeper care and steadier rhythm') + '.';
+
+  var allyCount = (allies || []).length;
+  var topAllyNames = (allies || []).slice(0, 3).map(function(a) {
+    var h = (typeof BOTANICALS !== 'undefined') ? BOTANICALS.find(function(b) { return b.id === a.id; }) : null;
+    return h ? h.name : '';
+  }).filter(Boolean);
+  var allyPreview = topAllyNames.length
+    ? ' \u2014 including <em>' + topAllyNames.join(', ') + '</em>'
+    : '';
+  var whyLine = 'We chose these ' + (allyCount || 'matched') + ' plant allies' + allyPreview + ' because each one was traditionally used for exactly the signals you shared. They were not picked at random \u2014 they were picked for you.';
+
+  var supports = (primary.supports && primary.supports.length) ? primary.supports.slice(0, 3) : [];
+  var howLine = supports.length
+    ? 'Together, they may help ' + supports.join(', ') + ' \u2014 supporting the daily rhythm you\u2019re already trying to tend to.'
+    : 'Together, they offer layered, gentle support \u2014 softening the pattern while nourishing the systems underneath it.';
+
+  return '<section class="synth-section synth-body-reading">' +
+    '<h4 class="synth-heading">A Gentle Reading of Your Results</h4>' +
+    '<div class="synth-reading-grid">' +
+      '<article class="synth-reading-card">' +
+        '<div class="synth-reading-eyebrow">\u2726 What Your Body May Be Saying</div>' +
+        '<p class="synth-reading-body">' + bodyLine + '</p>' +
+      '</article>' +
+      '<article class="synth-reading-card">' +
+        '<div class="synth-reading-eyebrow">\u2726 Why These Herbal Allies Were Chosen</div>' +
+        '<p class="synth-reading-body">' + whyLine + '</p>' +
+      '</article>' +
+      '<article class="synth-reading-card">' +
+        '<div class="synth-reading-eyebrow">\u2726 How They Help</div>' +
+        '<p class="synth-reading-body">' + howLine + '</p>' +
+      '</article>' +
+    '</div>' +
   '</section>';
 }
 
@@ -1253,6 +1311,19 @@ if (!window.__advisorDelegationInstalled) {
       if (id === 'lead-submit') { submitLeadCapture(); return; }
       if (id === 'lead-skip')   { skipLeadCapture();   return; }
       if (id === 'synth-cta-custom') { synthAddCustomToCart(); return; }
+      if (id === 'synth-cta-bundle') {
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+        var mount = document.getElementById('synth-wbundle-mount');
+        if (mount) {
+          try { mount.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (err) {}
+          var upgradeBtn = mount.querySelector('.wbundle-btn-primary');
+          if (upgradeBtn) {
+            upgradeBtn.classList.add('wbundle-btn-pulse');
+            setTimeout(function() { upgradeBtn.classList.remove('wbundle-btn-pulse'); }, 1600);
+          }
+        }
+        return;
+      }
       if (id === 'synth-extended-submit') { submitExtendedResultsCapture(); return; }
     }
   });

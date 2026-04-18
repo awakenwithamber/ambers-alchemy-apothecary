@@ -5870,3 +5870,163 @@ html, body {
   .wbundle-btn-link { padding: 8px 0; text-align: left; }
 }
 
+/* ============================================================
+   BODY READING — final quiz results trio + dual CTA
+   Appended as a supplement to the synthesis step. Uses existing
+   apothecary palette tokens; does not alter any quiz behavior.
+   ============================================================ */
+.synth-body-reading { margin-top: 28px; }
+.synth-reading-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+.synth-reading-card {
+  background: var(--parchment, #fbf6ec);
+  border: 1px solid rgba(107, 71, 127, 0.18);
+  border-radius: 14px;
+  padding: 18px 18px 16px;
+  box-shadow: 0 2px 6px rgba(74, 45, 90, 0.06);
+}
+.synth-reading-eyebrow {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-weight: 600;
+  color: var(--accent-brass, #a6832f);
+  letter-spacing: 0.02em;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+.synth-reading-body {
+  color: var(--ink, #3b2f4b);
+  font-family: var(--font-body, 'Lora', Georgia, serif);
+  font-size: 0.96rem;
+  line-height: 1.55;
+  margin: 0;
+}
+.synth-reading-body em { color: var(--plum, #6b477f); font-style: italic; }
+.synth-reading-body strong { color: var(--plum-deep, #4a2d5a); }
+
+.synth-choice-label {
+  margin-top: 10px;
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  color: var(--accent-brass, #a6832f);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+.synth-choice-or {
+  text-align: center;
+  color: var(--text-muted, #7a6a95);
+  font-family: var(--font-body, 'Lora', Georgia, serif);
+  font-size: 0.85rem;
+  margin: 8px 0 6px;
+}
+.synth-cta-bundle-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 22px;
+  border-radius: 999px;
+  text-decoration: none;
+  background: transparent;
+  color: var(--plum-deep, #4a2d5a);
+  border: 1.5px solid var(--plum, #6b477f);
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease;
+  cursor: pointer;
+}
+.synth-cta-bundle-link:hover,
+.synth-cta-bundle-link:focus-visible {
+  background: var(--plum, #6b477f);
+  color: #fbf6ec;
+  box-shadow: 0 4px 14px rgba(74, 45, 90, 0.2);
+}
+.synth-cta-bundle-link.synth-cta-xl { font-size: 1.05rem; }
+
+@keyframes wbundleBtnPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(166, 131, 47, 0.45); }
+  50%      { box-shadow: 0 0 0 10px rgba(166, 131, 47, 0); }
+}
+.wbundle-btn-pulse { animation: wbundleBtnPulse 0.8s ease-out 2; }
+
+/* Custom Artisan Soap companion callout on the Custom Remedy page */
+.cc-artisan-soap-callout {
+  margin: 18px auto 0;
+  max-width: 860px;
+  background: linear-gradient(135deg, rgba(107, 71, 127, 0.06), rgba(166, 131, 47, 0.08));
+  border: 1px solid rgba(107, 71, 127, 0.18);
+  border-radius: 16px;
+  padding: 22px 22px 20px;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 8px rgba(74, 45, 90, 0.06);
+}
+.cc-artisan-soap-callout .cc-artisan-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+.cc-artisan-soap-callout .cc-artisan-body { flex: 1 1 260px; min-width: 200px; }
+.cc-artisan-soap-callout .cc-artisan-eyebrow {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-brass, #a6832f);
+  margin-bottom: 2px;
+}
+.cc-artisan-soap-callout h3 {
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  color: var(--plum-deep, #4a2d5a);
+  font-size: 1.35rem;
+  margin: 0 0 6px;
+}
+.cc-artisan-soap-callout p {
+  color: var(--ink, #3b2f4b);
+  font-family: var(--font-body, 'Lora', Georgia, serif);
+  font-size: 0.96rem;
+  line-height: 1.55;
+  margin: 0;
+}
+.cc-artisan-soap-callout .cc-artisan-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  flex: 0 0 auto;
+}
+.cc-artisan-soap-callout .cc-artisan-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--plum, #6b477f);
+  color: #fbf6ec;
+  border: none;
+  font-family: var(--font-display, 'Cormorant Garamond', Georgia, serif);
+  font-weight: 600;
+  font-size: 0.98rem;
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+.cc-artisan-soap-callout .cc-artisan-btn:hover,
+.cc-artisan-soap-callout .cc-artisan-btn:focus-visible {
+  background: var(--plum-deep, #4a2d5a);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(74, 45, 90, 0.22);
+}
+
+@media (max-width: 560px) {
+  .synth-cta-bundle-link.synth-cta-xl { width: 100%; }
+  .cc-artisan-soap-callout { flex-direction: column; align-items: flex-start; }
+  .cc-artisan-soap-callout .cc-artisan-actions { width: 100%; }
+  .cc-artisan-soap-callout .cc-artisan-btn { width: 100%; justify-content: center; }
+}
+
