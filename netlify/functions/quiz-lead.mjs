@@ -9,9 +9,9 @@
 // provider (Resend) is configured.
 
 import { getStore } from "@netlify/blobs";
+import { sendAdminNotification } from "./_admin-notify.mjs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const ADMIN_NOTIFY_TO = ['awaken@consultant.com', 'perfectlyme347@gmail.com'];
 const GUEST_FROM = process.env.QUIZ_LEAD_FROM_EMAIL || 'Amber\u2019s Alchemy Apothecary <hello@awakenagain.com>';
 const EXTENDED_DEDUPE_WINDOW_MS = 6 * 60 * 60 * 1000; // 6 hours
 
@@ -257,7 +257,13 @@ export default async (req) => {
 
         const [guestSend, adminSend] = await Promise.all([
           sendViaResend({ to: email, subject: guest.subject, html: guest.html, text: guest.text }),
-          sendViaResend({ to: ADMIN_NOTIFY_TO, subject: admin.subject, html: admin.html, text: admin.text })
+          sendAdminNotification({
+            subject: admin.subject,
+            html: admin.html,
+            text: admin.text,
+            flow: 'quiz-extended-results',
+            submissionId: key
+          })
         ]);
 
         await extendedIndex.setJSON(email, {

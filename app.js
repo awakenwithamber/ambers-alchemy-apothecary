@@ -997,7 +997,7 @@ document.getElementById('contactSubmitBtn').addEventListener('click', () => {
   if (!name || !email || !message) { showToast('Please fill in all fields.'); return; }
   const body = encodeURIComponent(`From: ${name} (${email})\n\n${message}`);
   try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
+  window.location.href = `mailto:awaken@consultant.com,perfectlyme347@gmail.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
   showToast('Opening email client...');
 });
 

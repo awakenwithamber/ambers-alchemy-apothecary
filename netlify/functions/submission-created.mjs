@@ -12,9 +12,9 @@
 // from the form endpoint is Netlify's receipt that the submission was stored.
 
 import { getStore } from "@netlify/blobs";
+import { sendAdminNotification } from "./_admin-notify.mjs";
 
 const REVIEW_REQUEST_DELAY_DAYS = 10;
-const ADMIN_NOTIFY_TO = ['awaken@consultant.com', 'perfectlyme347@gmail.com'];
 const GUEST_FROM = process.env.QUIZ_LEAD_FROM_EMAIL || "Amber\u2019s Alchemy Apothecary <hello@awakenagain.com>";
 
 function escapeHtml(str) {
@@ -96,6 +96,72 @@ async function handleCheckoutOrder(payload) {
       createdAt: now.toISOString(),
     });
   }
+
+  // Admin notification — dual delivery enforced by the shared helper.
+  const adminSubject = `New Order \u2014 ${order.customerName || email || orderId} (${orderId})`;
+  const adminHtml = `<!doctype html><html><body style="font-family:Georgia,serif;color:#222;line-height:1.5;">
+    <h2 style="margin:0 0 8px;">New Order Received</h2>
+    <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;">
+      <tr><td><strong>Order ID</strong></td><td>${escapeHtml(orderId)}</td></tr>
+      <tr><td><strong>Customer</strong></td><td>${escapeHtml(order.customerName || '\u2014')}</td></tr>
+      <tr><td><strong>Email</strong></td><td>${escapeHtml(email || '\u2014')}</td></tr>
+      <tr><td><strong>Phone</strong></td><td>${escapeHtml(order.phone || '\u2014')}</td></tr>
+      <tr><td><strong>Shipping address</strong></td><td>${escapeHtml(order.shippingAddress || '\u2014')}</td></tr>
+      <tr><td><strong>Product</strong></td><td><pre style="white-space:pre-wrap;margin:0;font-family:inherit;">${escapeHtml(order.product || '')}</pre></td></tr>
+      <tr><td><strong>Quantity</strong></td><td>${escapeHtml(order.quantity || '\u2014')}</td></tr>
+      <tr><td><strong>Order total</strong></td><td>${escapeHtml(order.orderTotal || '\u2014')}</td></tr>
+      <tr><td><strong>Payment status</strong></td><td>${escapeHtml(order.paymentStatus || '\u2014')}</td></tr>
+      <tr><td><strong>Transaction ID</strong></td><td>${escapeHtml(order.transactionId || '\u2014')}</td></tr>
+      <tr><td><strong>Notes</strong></td><td><pre style="white-space:pre-wrap;margin:0;font-family:inherit;">${escapeHtml(order.notes || '')}</pre></td></tr>
+      <tr><td><strong>Submitted</strong></td><td>${escapeHtml(order.submittedAt)}</td></tr>
+    </table>
+  </body></html>`;
+  const adminText = [
+    `New Order Received`,
+    `Order ID: ${orderId}`,
+    `Customer: ${order.customerName || ''}`,
+    `Email: ${email}`,
+    `Phone: ${order.phone || ''}`,
+    `Shipping: ${order.shippingAddress || ''}`,
+    `Product: ${order.product || ''}`,
+    `Quantity: ${order.quantity || ''}`,
+    `Order total: ${order.orderTotal || ''}`,
+    `Payment status: ${order.paymentStatus || ''}`,
+    `Transaction ID: ${order.transactionId || ''}`,
+    `Notes: ${order.notes || ''}`,
+    `Submitted: ${order.submittedAt}`
+  ].join('\n');
+
+  const sends = [
+    sendAdminNotification({
+      subject: adminSubject,
+      html: adminHtml,
+      text: adminText,
+      flow: 'checkout-order',
+      orderId
+    })
+  ];
+
+  if (email) {
+    const customerSubject = `Your order is confirmed \u2728 (${orderId})`;
+    const customerHtml = `<!doctype html><html><body style="margin:0;padding:0;background:#f7f1ea;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f7f1ea;padding:28px 12px;">
+        <tr><td align="center">
+          <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;box-shadow:0 10px 30px rgba(60,30,110,0.12);overflow:hidden;">
+            <tr><td style="padding:28px;text-align:center;font-family:Georgia,serif;color:#3b2a5e;">
+              <div style="font-family:'Cinzel',Georgia,serif;letter-spacing:0.18em;font-size:12px;color:#6b4f9b;text-transform:uppercase;">\u2726 Order Confirmation</div>
+              <h1 style="font-family:'Cinzel',Georgia,serif;font-size:22px;margin:10px 0 12px;">${escapeHtml(order.customerName || 'Friend')}, your order is confirmed.</h1>
+              <p style="line-height:1.6;text-align:left;">Order ID: <strong>${escapeHtml(orderId)}</strong></p>
+              <p style="line-height:1.6;text-align:left;">Thank you for your order. Amber will prepare and ship your items with care. You\u2019ll receive a shipment update once your package is on its way.</p>
+            </td></tr>
+          </table>
+        </td></tr>
+      </table></body></html>`;
+    const customerText = `${order.customerName || 'Friend'}, your order (${orderId}) is confirmed. Amber will ship soon.`;
+    sends.push(sendViaResend({ to: email, subject: customerSubject, html: customerHtml, text: customerText }));
+  }
+
+  await Promise.all(sends);
 }
 
 async function handleNewsletterSignup(payload) {
@@ -157,7 +223,13 @@ async function handleNewsletterSignup(payload) {
   if (record.signupCount === 1) {
     sends.push(sendViaResend({ to: email, subject: welcomeSubject, html: welcomeHtml, text: welcomeText }));
   }
-  sends.push(sendViaResend({ to: ADMIN_NOTIFY_TO, subject: adminSubject, html: adminHtml, text: adminText }));
+  sends.push(sendAdminNotification({
+    subject: adminSubject,
+    html: adminHtml,
+    text: adminText,
+    flow: 'newsletter-signup',
+    submissionId: `newsletter_${email}_${Date.now()}`
+  }));
   await Promise.all(sends);
 }
 
@@ -243,7 +315,13 @@ async function handleCustomRemedy(payload) {
 
   await Promise.all([
     sendViaResend({ to: email, subject: customerSubject, html: customerHtml, text: customerText }),
-    sendViaResend({ to: ADMIN_NOTIFY_TO, subject: adminSubject, html: adminHtml, text: adminText })
+    sendAdminNotification({
+      subject: adminSubject,
+      html: adminHtml,
+      text: adminText,
+      flow: 'custom-remedy',
+      submissionId: key
+    })
   ]);
 }
 
@@ -324,7 +402,13 @@ async function handleCustomSoap(payload) {
 
   await Promise.all([
     sendViaResend({ to: email, subject: customerSubject, html: customerHtml, text: customerText }),
-    sendViaResend({ to: ADMIN_NOTIFY_TO, subject: adminSubject, html: adminHtml, text: adminText })
+    sendAdminNotification({
+      subject: adminSubject,
+      html: adminHtml,
+      text: adminText,
+      flow: 'custom-soap',
+      submissionId: key
+    })
   ]);
 }
 
