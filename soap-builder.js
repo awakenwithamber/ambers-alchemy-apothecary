@@ -162,6 +162,7 @@
   }
 
   function showStep(n) {
+    var previousStep = sbStep;
     sbStep = n;
     document.querySelectorAll('.sb-step').forEach(function(s) { s.classList.remove('active'); });
     var stepEl = document.getElementById('sbStep' + n);
@@ -181,6 +182,30 @@
     if (n === 4) renderOptions('sbBotanicalOptions', SB_DATA.botanicals, 'botanicals');
     if (n === 5) renderOptions('sbColorOptions', SB_DATA.colors, 'colors');
     if (n === TOTAL_STEPS) renderReview();
+
+    if (previousStep !== n) scrollBuilderToTop();
+  }
+
+  function scrollBuilderToTop() {
+    var modal = document.querySelector('.soap-builder-modal');
+    var target = document.querySelector('.soap-builder-header') || modal;
+    if (!modal || !target) return;
+    var doScroll = function() {
+      try {
+        if (typeof modal.scrollTo === 'function') {
+          modal.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          modal.scrollTop = 0;
+        }
+      } catch (e) {
+        modal.scrollTop = 0;
+      }
+    };
+    if (typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(doScroll);
+    } else {
+      setTimeout(doScroll, 0);
+    }
   }
 
   function renderReview() {

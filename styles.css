@@ -4308,7 +4308,7 @@ html, body {
   min-width: 120px;
 }
 
-/* Mobile */
+/* Mobile — tablet range keeps 2-up but with breathing room */
 @media (max-width: 768px) {
   .soap-builder-modal {
     padding: 1.25rem;
@@ -4316,8 +4316,30 @@ html, body {
   }
 
   .sb-options-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .sb-option-btn {
+    padding: 0.9rem 0.75rem;
+    min-height: 96px;
+    gap: 0.35rem;
+  }
+
+  .sb-opt-name {
+    font-size: 0.92rem;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .sb-opt-desc {
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  .sb-opt-price {
+    font-size: 0.82rem;
+    font-weight: 600;
   }
 
   .sb-review-grid {
@@ -4330,6 +4352,68 @@ html, body {
 
   .soap-builder-actions button {
     width: 100%;
+  }
+}
+
+/* Phones — single column keeps long labels fully visible */
+@media (max-width: 520px) {
+  .sb-options-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .sb-option-btn {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    text-align: left;
+    padding: 0.9rem 1rem;
+    min-height: 72px;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .sb-opt-emoji {
+    font-size: 1.8rem;
+    flex: 0 0 auto;
+  }
+
+  .sb-opt-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .sb-opt-price {
+    flex: 0 0 auto;
+    margin-left: auto;
+    margin-top: 0;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  .sb-opt-desc {
+    flex: 1 0 100%;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-top: 0.1rem;
+    text-align: left;
+    line-height: 1.35;
+  }
+
+  .soap-builder-progress {
+    gap: 0.35rem;
+  }
+
+  .sb-progress-step {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.72rem;
+  }
+
+  .sb-progress-step span {
+    width: 18px;
+    height: 18px;
+    font-size: 0.68rem;
   }
 }
 
@@ -5397,25 +5481,20 @@ html, body {
   .cc-type-name { font-size: 0.82rem !important; }
   .cc-type-price { font-size: 0.85rem !important; }
 
-  /* Soap builder modal mobile */
+  /* Soap builder modal mobile — chrome only. Option grid spacing is
+     owned by the dedicated builder media query above so labels and
+     prices stay fully readable on narrow screens. */
   .soap-builder-modal {
     width: 100% !important; max-width: 100% !important;
     height: 100vh !important; max-height: 100vh !important;
     border-radius: 0 !important; margin: 0 !important;
     padding: 16px !important;
   }
-  .sb-options-grid {
-    grid-template-columns: 1fr 1fr !important; gap: 8px !important;
-  }
-  .sb-options-grid .sb-option {
-    padding: 10px 8px !important; font-size: 0.82rem !important;
-    min-height: 44px;
-  }
   .soap-builder-actions {
-    flex-wrap: wrap !important; gap: 8px !important;
-    padding: 12px 0 !important;
+    flex-wrap: wrap !important; gap: 10px !important;
+    padding: 14px 0 !important;
   }
-  .soap-builder-actions button { flex: 1; min-width: 100px; min-height: 44px; }
+  .soap-builder-actions button { flex: 1; min-width: 120px; min-height: 48px; }
 
   /* Guided flow mobile */
   .guided-flow-modal {
