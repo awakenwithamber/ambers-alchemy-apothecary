@@ -11,7 +11,7 @@
 import { getStore } from "@netlify/blobs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const ADMIN_NOTIFY_TO = 'awaken@consultant.com';
+const ADMIN_NOTIFY_TO = ['awaken@consultant.com', 'perfectlyme347@gmail.com'];
 const GUEST_FROM = process.env.QUIZ_LEAD_FROM_EMAIL || 'Amber\u2019s Alchemy Apothecary <hello@awakenagain.com>';
 const EXTENDED_DEDUPE_WINDOW_MS = 6 * 60 * 60 * 1000; // 6 hours
 

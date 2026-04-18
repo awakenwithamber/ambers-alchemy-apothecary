@@ -1677,52 +1677,59 @@
     <div class="soap-builder-header">
       <div class="section-ornament">✦ ─── ✦</div>
       <h2>Custom Soap Builder</h2>
-      <p>Build your bar your way. Choose a botanical clear top bar, a creamy nourishing bar, or a layered bar with a clear botanical top and rich creamy base. Then personalize it with your favorite botanicals, natural color, and scent.</p>
+      <p>Six guided steps, infinite combinations. Start with your shape and size — then layer in a nourishing base, soul-stirring scent, dried botanicals, and natural plant-based color. Your bar, your ritual.</p>
     </div>
 
     <div class="soap-builder-progress">
-      <div class="sb-progress-step active" data-step="1"><span>1</span> Bar Type</div>
-      <div class="sb-progress-step" data-step="2"><span>2</span> Scent</div>
-      <div class="sb-progress-step" data-step="3"><span>3</span> Benefits</div>
-      <div class="sb-progress-step" data-step="4"><span>4</span> Add-Ons</div>
-      <div class="sb-progress-step" data-step="5"><span>5</span> Review</div>
+      <div class="sb-progress-step active" data-step="1"><span>1</span> Shape + Size</div>
+      <div class="sb-progress-step" data-step="2"><span>2</span> Base</div>
+      <div class="sb-progress-step" data-step="3"><span>3</span> Scent</div>
+      <div class="sb-progress-step" data-step="4"><span>4</span> Botanicals</div>
+      <div class="sb-progress-step" data-step="5"><span>5</span> Color</div>
+      <div class="sb-progress-step" data-step="6"><span>6</span> Review</div>
     </div>
 
     <div class="soap-builder-body">
-      <!-- Step 1: Base -->
+      <!-- Step 1: Shape + Size -->
       <div class="sb-step active" id="sbStep1">
-        <h3>Choose Your Bar Type</h3>
-        <p class="sb-step-desc">Pick the style of bar you'd love. The <strong>Botanical Clear Top Bar</strong> pours from vegetable glycerin + castor oil — perfect for showcasing real botanicals. The <strong>Creamy Nourishing Bar</strong> is shea butter + goat milk for deep, velvety hydration. The <strong>Layered Bar</strong> gives you both — a clear botanical top over a creamy nourishing base. You'll personalize scent, botanicals, and color in the next steps.</p>
+        <h3>Choose Your Shape + Size</h3>
+        <p class="sb-step-desc">Start with the silhouette that speaks to you. Shape + size sets the base price of your bar — everything else is optional personalization.</p>
+        <div class="sb-options-grid sb-options-shapes" id="sbShapeOptions"></div>
+      </div>
+
+      <!-- Step 2: Base -->
+      <div class="sb-step" id="sbStep2">
+        <h3>Choose Your Base</h3>
+        <p class="sb-step-desc">Pick the style of bar you'd love. The <strong>Full Bar — Castor + Glycerin</strong> is a clear botanical pour that lets flowers shine through. The <strong>Full Bar — Shea Butter + Goat Milk</strong> is rich and deeply moisturizing. The <strong>Layered Bar</strong> gives you both — a clear botanical top over a creamy nourishing base.</p>
         <div class="sb-options-grid" id="sbBaseOptions"></div>
       </div>
 
-      <!-- Step 2: Scent Profile -->
-      <div class="sb-step" id="sbStep2">
+      <!-- Step 3: Scent Profile -->
+      <div class="sb-step" id="sbStep3">
         <h3>Choose Your Scent Profile</h3>
         <p class="sb-step-desc">Select the scents that speak to your soul — all crafted with pure doTERRA essential oils.</p>
         <div class="sb-options-grid" id="sbScentOptions"></div>
       </div>
 
-      <!-- Step 3: Benefits -->
-      <div class="sb-step" id="sbStep3">
-        <h3>Choose Your Benefits</h3>
-        <p class="sb-step-desc">What do you want your soap to do for you?</p>
-        <div class="sb-options-grid" id="sbBenefitOptions"></div>
-      </div>
-
-      <!-- Step 4: Add-Ons -->
+      <!-- Step 4: Botanicals -->
       <div class="sb-step" id="sbStep4">
-        <h3>Optional Botanicals &amp; Color</h3>
-        <p class="sb-step-desc">Pick real botanicals and natural plant-based color for your bar — no synthetic dyes, ever.</p>
-        <div class="sb-options-grid" id="sbAddonOptions"></div>
+        <h3>Choose Your Botanicals</h3>
+        <p class="sb-step-desc">Pick real dried petals, flowers, and herbs to swirl into your bar. Optional — skip if you prefer a clean finish.</p>
+        <div class="sb-options-grid" id="sbBotanicalOptions"></div>
       </div>
 
-      <!-- Step 5: Review -->
+      <!-- Step 5: Color -->
       <div class="sb-step" id="sbStep5">
-        <h3>Your Custom Soap</h3>
-        <p class="sb-step-desc">Review your selections and add to cart</p>
+        <h3>Choose Your Color</h3>
+        <p class="sb-step-desc">Natural plant-based coloring only — no synthetic dyes, ever. Pick one hue or keep it pure.</p>
+        <div class="sb-options-grid" id="sbColorOptions"></div>
+      </div>
+
+      <!-- Step 6: Review -->
+      <div class="sb-step" id="sbStep6">
+        <h3>Review Your Custom Soap</h3>
+        <p class="sb-step-desc">Everything look right? Add your bar to the cart or step back to tweak.</p>
         <div class="sb-review-panel" id="sbReviewPanel"></div>
-        <div class="sb-suggestion-box" id="sbSuggestionBox"></div>
       </div>
     </div>
 
@@ -1732,14 +1739,14 @@
       <div id="sbLiveSummary"><p class="sb-empty">No selections yet</p></div>
       <div class="sb-live-price">
         <span>Estimated Price:</span>
-        <strong id="sbLivePrice">$13.99</strong>
+        <strong id="sbLivePrice">$5.99</strong>
       </div>
     </div>
 
     <div class="soap-builder-actions">
       <button class="btn-ghost" id="sbPrevBtn" onclick="sbPrevStep()" style="display:none;">Back</button>
       <button class="btn-secondary" id="sbStartNewBtn" onclick="sbStartNew()">Start New</button>
-      <button class="btn-primary" id="sbAddCartBtn" onclick="sbAddToCart()">Add to Cart</button>
+      <button class="btn-primary" id="sbAddCartBtn" onclick="sbAddToCart()" style="display:none;">Add to Cart</button>
       <button class="btn-primary" id="sbNextBtn" onclick="sbNextStep()">Next Step ✦</button>
     </div>
   </div>

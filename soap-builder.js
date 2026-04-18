@@ -1,19 +1,31 @@
 // ============================================================
 // CUSTOM SOAP BUILDER — Amber's Alchemy Apothecary
+// 6-step guided flow: Shape+Size → Base → Scent → Botanicals → Color → Review
 // ============================================================
 
 (function() {
   'use strict';
 
+  var TOTAL_STEPS = 6;
   var sbStep = 1;
-  var sbSelections = { bases: [], scents: [], benefits: [], addons: [] };
-  var SB_BASE_PRICE = 13.99;
+  var sbSelections = { shapes: [], bases: [], scents: [], botanicals: [], colors: [] };
+
+  // Step 1 (shape) chooses the base price of the bar. No shape selected falls back to
+  // the cheapest option so the live summary always shows a real number.
+  var SB_DEFAULT_SHAPE_PRICE = 5.99;
 
   var SB_DATA = {
+    shapes: [
+      { id: 'rect-waves', name: 'Rectangular with Waves', desc: '4 oz · classic sculpted bar', price: 12.99, emoji: '〰️', singleSelect: true },
+      { id: 'round-flowers', name: 'Round with Flowers', desc: '4 oz · floral relief', price: 12.99, emoji: '🌼', singleSelect: true },
+      { id: 'big-rose', name: 'Big Rose', desc: '3 oz · statement bloom', price: 8.99, emoji: '🌹', singleSelect: true },
+      { id: 'small-rose', name: 'Small Rose', desc: '2 oz · delicate bud', price: 5.99, emoji: '🌷', singleSelect: true },
+      { id: 'white-rose', name: 'White Rose Soap', desc: 'Premium artisan rose · 3 oz', price: 8.99, emoji: '🤍', singleSelect: true }
+    ],
     bases: [
-      { id: 'clear-top', name: 'Botanical Clear Top Bar', desc: 'A full bar made with vegetable glycerin + castor oil. Clear, radiant, and botanical — lets your flowers and herbs shine through.', price: 0, emoji: '✨' },
-      { id: 'creamy-nourishing', name: 'Creamy Nourishing Bar', desc: 'A full bar made with shea butter + goat milk. Rich, velvety, and deeply moisturizing for thirsty skin.', price: 0, emoji: '🧈' },
-      { id: 'layered', name: 'Layered Bar (Clear Top + Creamy Base)', desc: 'Best of both — a clear glycerin + castor oil top over a creamy shea butter + goat milk base. Show-stopping and nourishing.', price: 0, emoji: '🌗' }
+      { id: 'clear-top', name: 'Full Bar — Castor + Glycerin', desc: 'Clear botanical bar — lets flowers and herbs shine through.', price: 0, emoji: '✨', singleSelect: true },
+      { id: 'creamy-nourishing', name: 'Full Bar — Shea Butter + Goat Milk', desc: 'Rich, velvety, deeply moisturizing for thirsty skin.', price: 0, emoji: '🧈', singleSelect: true },
+      { id: 'layered', name: 'Layered Bar — Clear Top + Creamy Base', desc: 'Clear glycerin + castor oil top over a shea butter + goat milk base.', price: 0, emoji: '🌗', singleSelect: true }
     ],
     scents: [
       { id: 'lavender-fairy-dream', name: 'Lavender Fairy Dream', desc: 'Soft floral \u2022 calming \u2022 dreamy', price: 0, emoji: '💜' },
@@ -26,54 +38,53 @@
       { id: 'fresh-mountain', name: 'Fresh Mountain Air', desc: 'Clean \u2022 herbal \u2022 awakening', price: 0, emoji: '🏔️' },
       { id: 'sunlit-garden', name: 'Sunlit Garden Bloom', desc: 'Floral \u2022 soft \u2022 feminine', price: 0, emoji: '🌸' }
     ],
-    benefits: [
-      { id: 'relaxation', name: 'Relaxation', desc: 'Soothes stress & tension', price: 0, emoji: '🧘' },
-      { id: 'skin-healing', name: 'Skin Healing', desc: 'Repairs & restores', price: 0, emoji: '💚' },
-      { id: 'exfoliation', name: 'Exfoliation', desc: 'Reveals fresh skin', price: 0, emoji: '✨' },
-      { id: 'moisturizing', name: 'Deep Moisture', desc: 'Hydrates intensely', price: 0, emoji: '💧' },
-      { id: 'energizing', name: 'Energizing', desc: 'Uplifts & revitalizes', price: 0, emoji: '⚡' },
-      { id: 'anti-aging', name: 'Anti-Aging', desc: 'Firms & brightens', price: 0.50, emoji: '🌟' },
-      { id: 'detox', name: 'Detox & Cleanse', desc: 'Purifies skin deeply', price: 0, emoji: '🫧' },
-      { id: 'hormonal', name: 'Hormonal Balance', desc: 'Supports body balance', price: 0, emoji: '🌸' }
-    ],
-    addons: [
+    botanicals: [
       { id: 'rose-petals', name: 'Rose Petals', desc: 'Pink, romantic, skin-softening', price: 0.75, emoji: '🌹' },
       { id: 'lavender-buds', name: 'Lavender Buds', desc: 'Calming, classic aromatherapy', price: 0.75, emoji: '💜' },
       { id: 'chamomile', name: 'Chamomile Flowers', desc: 'Soft yellow, soothing', price: 0.75, emoji: '🌼' },
-      { id: 'hibiscus', name: 'Hibiscus Petals', desc: 'Deep pink/red, vibrant color', price: 0.75, emoji: '🌺' },
+      { id: 'hibiscus', name: 'Hibiscus Petals', desc: 'Deep pink/red, vibrant', price: 0.75, emoji: '🌺' },
       { id: 'calendula', name: 'Calendula Petals', desc: 'Golden/orange, healing', price: 0.75, emoji: '🌻' },
       { id: 'mint-leaves', name: 'Dried Mint Leaves', desc: 'Fresh green, invigorating', price: 0.50, emoji: '🌿' },
       { id: 'rosemary', name: 'Rosemary', desc: 'Herbal texture, stimulating', price: 0.50, emoji: '🌱' },
       { id: 'nettle-leaf', name: 'Nettle Leaf Powder', desc: 'Earthy green, mineral-rich', price: 0.50, emoji: '🍃' },
-      { id: 'spirulina', name: 'Spirulina Powder', desc: 'Vibrant green color', price: 0.75, emoji: '💚' },
-      { id: 'cinnamon', name: 'Cinnamon Powder', desc: 'Warm tone, stimulating', price: 0.50, emoji: '🍂' },
-      { id: 'clove', name: 'Clove Powder', desc: 'Deep spice look, warming', price: 0.50, emoji: '🔥' },
-      { id: 'butterfly-pea', name: 'Butterfly Pea Flower', desc: 'Blue/purple tones, luxurious', price: 1.00, emoji: '🦋' },
+      { id: 'butterfly-pea', name: 'Butterfly Pea Flower', desc: 'Blue/violet tones, luxurious', price: 1.00, emoji: '🦋' },
       { id: 'orange-peel', name: 'Orange Peel (dried)', desc: 'Citrus texture, vitamin C', price: 0.50, emoji: '🍊' }
+    ],
+    colors: [
+      { id: 'natural', name: 'Natural (No Color)', desc: 'Pure and unadorned', price: 0, emoji: '🤍', singleSelect: true },
+      { id: 'blush-rose', name: 'Blush Rose', desc: 'Madder root · soft romantic pink', price: 0.50, emoji: '🌸', singleSelect: true },
+      { id: 'golden-calendula', name: 'Golden Calendula', desc: 'Warm sunlit yellow', price: 0.50, emoji: '🌻', singleSelect: true },
+      { id: 'sage-green', name: 'Sage Green', desc: 'Spirulina · botanical green', price: 0.50, emoji: '🌿', singleSelect: true },
+      { id: 'butterfly-blue', name: 'Butterfly Blue', desc: 'Butterfly pea · dreamy blue-violet', price: 0.75, emoji: '🦋', singleSelect: true },
+      { id: 'amethyst-purple', name: 'Amethyst Purple', desc: 'Alkanet root · mystical violet', price: 0.75, emoji: '💜', singleSelect: true },
+      { id: 'ember-copper', name: 'Ember Copper', desc: 'Annatto · warm glowing amber', price: 0.50, emoji: '🍂', singleSelect: true },
+      { id: 'midnight-charcoal', name: 'Midnight Charcoal', desc: 'Purifying deep black', price: 0.50, emoji: '🖤', singleSelect: true }
     ]
   };
 
-  var SB_SUGGESTIONS = {
-    'relaxation': { scents: ['lavender-fairy-dream', 'sunlit-garden'], addons: ['lavender-buds', 'chamomile', 'butterfly-pea'] },
-    'skin-healing': { scents: ['gaias-rose', 'sunlit-garden'], addons: ['rose-petals', 'calendula', 'chamomile'] },
-    'exfoliation': { scents: ['citrus-goddess', 'eucalyptus-mint-spa'], addons: ['orange-peel', 'mint-leaves', 'spirulina'] },
-    'moisturizing': { scents: ['gaias-rose', 'sunlit-garden'], addons: ['rose-petals', 'hibiscus', 'chamomile'] },
-    'energizing': { scents: ['citrus-goddess', 'orange-lily', 'fresh-mountain'], addons: ['orange-peel', 'mint-leaves', 'calendula'] },
-    'anti-aging': { scents: ['gaias-rose', 'citrus-goddess'], addons: ['rose-petals', 'hibiscus', 'calendula'] },
-    'detox': { scents: ['eucalyptus-mint-spa', 'sacred-forest'], addons: ['nettle-leaf', 'spirulina', 'mint-leaves'] },
-    'hormonal': { scents: ['lavender-fairy-dream', 'gaias-rose', 'sunlit-garden'], addons: ['rose-petals', 'lavender-buds', 'chamomile'] }
-  };
+  var STEP_META = [
+    { key: 'shapes', label: 'Shape + Size' },
+    { key: 'bases', label: 'Base' },
+    { key: 'scents', label: 'Scent' },
+    { key: 'botanicals', label: 'Botanicals' },
+    { key: 'colors', label: 'Color' },
+    { key: null, label: 'Review' }
+  ];
 
   function renderOptions(containerId, items, selectionKey) {
     var container = document.getElementById(containerId);
     if (!container) return;
     container.innerHTML = items.map(function(item) {
       var selected = sbSelections[selectionKey].indexOf(item.id) !== -1;
-      return '<button class="sb-option-btn' + (selected ? ' selected' : '') + '" data-id="' + item.id + '" data-key="' + selectionKey + '">' +
+      var priceLabel = item.price > 0
+        ? '+$' + item.price.toFixed(2)
+        : (selectionKey === 'shapes' ? '$' + (item.price || 0).toFixed(2) : 'Included');
+      if (selectionKey === 'shapes') priceLabel = '$' + item.price.toFixed(2);
+      return '<button type="button" class="sb-option-btn' + (selected ? ' selected' : '') + '" data-id="' + item.id + '" data-key="' + selectionKey + '">' +
         '<span class="sb-opt-emoji">' + item.emoji + '</span>' +
         '<span class="sb-opt-name">' + item.name + '</span>' +
         '<span class="sb-opt-desc">' + item.desc + '</span>' +
-        (item.price > 0 ? '<span class="sb-opt-price">+$' + item.price.toFixed(2) + '</span>' : '<span class="sb-opt-price">Included</span>') +
+        '<span class="sb-opt-price">' + priceLabel + '</span>' +
       '</button>';
     }).join('');
 
@@ -81,22 +92,27 @@
       btn.addEventListener('click', function() {
         var id = this.dataset.id;
         var key = this.dataset.key;
+        var item = items.find(function(d) { return d.id === id; });
+        var isSingle = item && item.singleSelect === true;
         var idx = sbSelections[key].indexOf(id);
-        if (idx === -1) {
-          sbSelections[key].push(id);
-          this.classList.add('selected');
+        if (isSingle) {
+          sbSelections[key] = idx === -1 ? [id] : [];
         } else {
-          sbSelections[key].splice(idx, 1);
-          this.classList.remove('selected');
+          if (idx === -1) sbSelections[key].push(id);
+          else sbSelections[key].splice(idx, 1);
         }
+        // Refresh the whole grid so radio-like buttons toggle neighbors cleanly.
+        renderOptions(containerId, items, selectionKey);
         updateLiveSummary();
       });
     });
   }
 
   function calcPrice() {
-    var total = SB_BASE_PRICE;
-    ['bases', 'scents', 'benefits', 'addons'].forEach(function(key) {
+    var shapeId = sbSelections.shapes[0];
+    var shape = shapeId ? getItemByKey('shapes', shapeId) : null;
+    var total = shape ? shape.price : SB_DEFAULT_SHAPE_PRICE;
+    ['bases', 'scents', 'botanicals', 'colors'].forEach(function(key) {
       sbSelections[key].forEach(function(id) {
         var item = SB_DATA[key].find(function(d) { return d.id === id; });
         if (item) total += item.price;
@@ -115,10 +131,11 @@
     if (!el) return;
     var html = '';
     var cats = [
-      { key: 'bases', label: 'Bar Type' },
+      { key: 'shapes', label: 'Shape' },
+      { key: 'bases', label: 'Base' },
       { key: 'scents', label: 'Scent' },
-      { key: 'benefits', label: 'Benefits' },
-      { key: 'addons', label: 'Add-Ons' }
+      { key: 'botanicals', label: 'Botanicals' },
+      { key: 'colors', label: 'Color' }
     ];
     var hasAny = false;
     cats.forEach(function(cat) {
@@ -138,7 +155,7 @@
 
   function updateProgressBar() {
     document.querySelectorAll('.sb-progress-step').forEach(function(s) {
-      var n = parseInt(s.dataset.step);
+      var n = parseInt(s.dataset.step, 10);
       s.classList.toggle('active', n === sbStep);
       s.classList.toggle('completed', n < sbStep);
     });
@@ -153,27 +170,30 @@
 
     var prevBtn = document.getElementById('sbPrevBtn');
     var nextBtn = document.getElementById('sbNextBtn');
+    var addBtn = document.getElementById('sbAddCartBtn');
     if (prevBtn) prevBtn.style.display = n > 1 ? '' : 'none';
-    if (nextBtn) nextBtn.style.display = n < 5 ? '' : 'none';
+    if (nextBtn) nextBtn.style.display = n < TOTAL_STEPS ? '' : 'none';
+    if (addBtn) addBtn.style.display = n === TOTAL_STEPS ? '' : 'none';
 
-    if (n === 1) renderOptions('sbBaseOptions', SB_DATA.bases, 'bases');
-    if (n === 2) renderOptions('sbScentOptions', SB_DATA.scents, 'scents');
-    if (n === 3) renderOptions('sbBenefitOptions', SB_DATA.benefits, 'benefits');
-    if (n === 4) renderOptions('sbAddonOptions', SB_DATA.addons, 'addons');
-    if (n === 5) renderReview();
+    if (n === 1) renderOptions('sbShapeOptions', SB_DATA.shapes, 'shapes');
+    if (n === 2) renderOptions('sbBaseOptions', SB_DATA.bases, 'bases');
+    if (n === 3) renderOptions('sbScentOptions', SB_DATA.scents, 'scents');
+    if (n === 4) renderOptions('sbBotanicalOptions', SB_DATA.botanicals, 'botanicals');
+    if (n === 5) renderOptions('sbColorOptions', SB_DATA.colors, 'colors');
+    if (n === TOTAL_STEPS) renderReview();
   }
 
   function renderReview() {
     var panel = document.getElementById('sbReviewPanel');
-    var suggBox = document.getElementById('sbSuggestionBox');
     if (!panel) return;
 
     var html = '<div class="sb-review-grid">';
     var cats = [
-      { key: 'bases', label: 'Bar Type', icon: '🧴' },
+      { key: 'shapes', label: 'Shape + Size', icon: '🧼' },
+      { key: 'bases', label: 'Base', icon: '🧴' },
       { key: 'scents', label: 'Scent Profile', icon: '🌸' },
-      { key: 'benefits', label: 'Benefits', icon: '✨' },
-      { key: 'addons', label: 'Add-Ons', icon: '🌿' }
+      { key: 'botanicals', label: 'Botanicals', icon: '🌿' },
+      { key: 'colors', label: 'Color', icon: '🎨' }
     ];
     cats.forEach(function(cat) {
       html += '<div class="sb-review-group"><h4>' + cat.icon + ' ' + cat.label + '</h4>';
@@ -183,7 +203,11 @@
         html += '<ul>';
         sbSelections[cat.key].forEach(function(id) {
           var item = getItemByKey(cat.key, id);
-          if (item) html += '<li>' + item.emoji + ' ' + item.name + (item.price > 0 ? ' (+$' + item.price.toFixed(2) + ')' : '') + '</li>';
+          if (!item) return;
+          var priceBit = '';
+          if (cat.key === 'shapes') priceBit = ' ($' + item.price.toFixed(2) + ')';
+          else if (item.price > 0) priceBit = ' (+$' + item.price.toFixed(2) + ')';
+          html += '<li>' + item.emoji + ' ' + item.name + priceBit + '</li>';
         });
         html += '</ul>';
       }
@@ -192,34 +216,6 @@
     html += '</div>';
     html += '<div class="sb-review-total"><strong>Total: $' + calcPrice().toFixed(2) + '</strong></div>';
     panel.innerHTML = html;
-
-    // Smart suggestions
-    if (suggBox) {
-      var suggestions = getSuggestions();
-      if (suggestions.length > 0) {
-        suggBox.innerHTML = '<h4>Recommended for Your Goals</h4><p>' + suggestions.join(' ') + '</p>';
-        suggBox.style.display = '';
-      } else {
-        suggBox.style.display = 'none';
-      }
-    }
-  }
-
-  function getSuggestions() {
-    var tips = [];
-    sbSelections.benefits.forEach(function(benefitId) {
-      var sugg = SB_SUGGESTIONS[benefitId];
-      if (!sugg) return;
-      sugg.scents.forEach(function(scentId) {
-        if (sbSelections.scents.indexOf(scentId) === -1) {
-          var item = getItemByKey('scents', scentId);
-          if (item && tips.length < 3) {
-            tips.push('Try adding ' + item.emoji + ' ' + item.name + ' for better ' + benefitId + ' results.');
-          }
-        }
-      });
-    });
-    return tips;
   }
 
   window.openSoapBuilder = function() {
@@ -241,7 +237,7 @@
   };
 
   window.sbNextStep = function() {
-    if (sbStep < 5) showStep(sbStep + 1);
+    if (sbStep < TOTAL_STEPS) showStep(sbStep + 1);
   };
 
   window.sbPrevStep = function() {
@@ -249,41 +245,44 @@
   };
 
   window.sbStartNew = function() {
-    sbSelections = { bases: [], scents: [], benefits: [], addons: [] };
+    sbSelections = { shapes: [], bases: [], scents: [], botanicals: [], colors: [] };
     showStep(1);
     updateLiveSummary();
   };
 
   window.sbAddToCart = function() {
-    var name = 'Custom Soap';
-    var parts = [];
+    var shapeId = sbSelections.shapes[0];
+    var shape = shapeId ? getItemByKey('shapes', shapeId) : null;
+    var namePrefix = shape ? shape.name : 'Build Your Own Soap Remedy';
+    var name = namePrefix;
     if (sbSelections.scents.length > 0) {
       var scentNames = sbSelections.scents.map(function(id) { var i = getItemByKey('scents', id); return i ? i.name : id; });
-      name = scentNames.join(' & ') + ' Custom Soap';
+      name = namePrefix + ' — ' + scentNames.join(' & ');
     }
+
+    var parts = [];
     if (sbSelections.bases.length > 0) {
       parts.push('Base: ' + sbSelections.bases.map(function(id) { var i = getItemByKey('bases', id); return i ? i.name : id; }).join(', '));
     }
-    if (sbSelections.benefits.length > 0) {
-      parts.push('Benefits: ' + sbSelections.benefits.map(function(id) { var i = getItemByKey('benefits', id); return i ? i.name : id; }).join(', '));
+    if (sbSelections.botanicals.length > 0) {
+      parts.push('Botanicals: ' + sbSelections.botanicals.map(function(id) { var i = getItemByKey('botanicals', id); return i ? i.name : id; }).join(', '));
     }
-    if (sbSelections.addons.length > 0) {
-      parts.push('Add-Ons: ' + sbSelections.addons.map(function(id) { var i = getItemByKey('addons', id); return i ? i.name : id; }).join(', '));
+    if (sbSelections.colors.length > 0) {
+      parts.push('Color: ' + sbSelections.colors.map(function(id) { var i = getItemByKey('colors', id); return i ? i.name : id; }).join(', '));
     }
 
     var price = calcPrice();
 
-    if (typeof addToCart === 'function') {
-      var existing = cart ? cart.find(function(i) { return i.name === name; }) : null;
+    if (typeof addToCart === 'function' || typeof cart !== 'undefined') {
+      var existing = (typeof cart !== 'undefined' && cart) ? cart.find(function(i) { return i.name === name; }) : null;
       if (existing) {
         existing.qty += 1;
-        if (typeof renderCart === 'function') renderCart();
       } else {
         var item = { name: name, price: price, qty: 1 };
         if (parts.length > 0) item.herbs = parts.join(' | ');
         if (typeof cart !== 'undefined') cart.push(item);
-        if (typeof renderCart === 'function') renderCart();
       }
+      if (typeof renderCart === 'function') renderCart();
       if (typeof showToast === 'function') showToast('Added to cart: ' + name);
       if (typeof openCart === 'function') openCart();
     }

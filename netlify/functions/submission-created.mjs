@@ -14,7 +14,7 @@
 import { getStore } from "@netlify/blobs";
 
 const REVIEW_REQUEST_DELAY_DAYS = 10;
-const ADMIN_NOTIFY_TO = 'awaken@consultant.com';
+const ADMIN_NOTIFY_TO = ['awaken@consultant.com', 'perfectlyme347@gmail.com'];
 const GUEST_FROM = process.env.QUIZ_LEAD_FROM_EMAIL || "Amber\u2019s Alchemy Apothecary <hello@awakenagain.com>";
 
 function escapeHtml(str) {
