@@ -346,10 +346,14 @@ function renderCart() {
   calcCartTotals();
 }
 
-function addToCart(name, price, qty = 1) {
+function addToCart(name, price, qty = 1, opts = {}) {
   const existing = cart.find(i => i.name === name);
   if (existing) { existing.qty += qty; }
-  else { cart.push({ name, price, qty }); }
+  else {
+    const item = { name, price, qty };
+    if (opts && opts.shopifyVariantId) item.shopifyVariantId = opts.shopifyVariantId;
+    cart.push(item);
+  }
   renderCart();
   showToast(`✦ Added to cart: ${name}`);
   openCart();
@@ -405,6 +409,68 @@ document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
   if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
   this.href = `https://cash.app/$AmberAlchemy/${total.toFixed(2)}`;
 });
+
+// --- Shopify hosted "Pay by Card" checkout ---
+const shopifyPayBtn = document.getElementById('shopifyPayBtn');
+if (shopifyPayBtn) {
+  shopifyPayBtn.addEventListener('click', async function () {
+    if (cart.length === 0) { showToast('Your cart is empty!'); return; }
+
+    const email = (document.getElementById('cartEmail')?.value || '').trim();
+    const name = (document.getElementById('cartName')?.value || '').trim();
+    const address = (document.getElementById('cartAddress')?.value || '').trim();
+    const cityState = (document.getElementById('cartCityState')?.value || '').trim();
+    const notes = (document.getElementById('cartNotes')?.value || '').trim();
+
+    const itemsWithVariant = cart.filter(i => i.shopifyVariantId);
+    if (itemsWithVariant.length === 0) {
+      showToast('Card checkout is being set up for these items. Please use Venmo or Cash App for now.');
+      return;
+    }
+    if (itemsWithVariant.length < cart.length) {
+      showToast('Some items are not yet connected to Shopify — continuing with the ones that are.');
+    }
+
+    const origLabel = this.textContent;
+    this.disabled = true;
+    this.textContent = 'Redirecting…';
+
+    try {
+      const orderNote = [
+        name && `Customer: ${name}`,
+        address && `Ship to: ${address}${cityState ? ', ' + cityState : ''}`,
+        notes && `Notes: ${notes}`,
+      ].filter(Boolean).join('\n');
+
+      const res = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: itemsWithVariant.map(i => ({
+            variantId: i.shopifyVariantId,
+            quantity: i.qty,
+            title: i.name,
+          })),
+          email: email || undefined,
+          note: orderNote || undefined,
+          returnTo: `${window.location.origin}/thank-you`,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.checkoutUrl) {
+        showToast(data.error || 'Could not start card checkout. Please try Venmo or Cash App.');
+        return;
+      }
+      try { window.AAA && window.AAA.beginCheckout && window.AAA.beginCheckout(cart, calcCartTotals().total); } catch (e) {}
+      window.location.href = data.checkoutUrl;
+    } catch (err) {
+      showToast('Card checkout is temporarily unavailable. Please try Venmo or Cash App.');
+    } finally {
+      this.disabled = false;
+      this.textContent = origLabel;
+    }
+  });
+}
 
 // ---- SECURE CHECKOUT (Stripe) ----
 let stripe, cardElement, stripeReady = false;
