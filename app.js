@@ -402,20 +402,53 @@ function getOrderNote() {
   return note;
 }
 
+// Cart-drawer direct-pay shortcuts. Previously these opened Venmo/Cash App
+// directly, which left no order record — Amber received money with no way to
+// match it to a customer or shipping address. They now route into the secure
+// checkout flow with the chosen method pre-selected, so an order is always
+// saved as Pending Payment before the customer pays.
+function startCartCheckout(preferredMethod) {
+  if (cart.length === 0) { showToast('Your cart is empty!'); return false; }
+  const name = document.getElementById('cartName').value.trim();
+  const email = document.getElementById('cartEmail').value.trim();
+  const address = document.getElementById('cartAddress').value.trim();
+  const cityState = document.getElementById('cartCityState').value.trim();
+  const notes = document.getElementById('cartNotes').value.trim();
+  if (!name || !email || !address || !cityState) {
+    showToast('Please fill in your name, email, address, and city/state/ZIP above.');
+    return false;
+  }
+
+  document.getElementById('checkoutCustomerName').value = name;
+  document.getElementById('checkoutEmail').value = email;
+  document.getElementById('checkoutAddress').value = address;
+  document.getElementById('checkoutCityStateZip').value = cityState;
+  document.getElementById('checkoutNotes').value = notes;
+  document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+  document.getElementById('checkoutQuantity').value = cart.reduce((s, i) => s + i.qty, 0);
+
+  const cartTotal = cart.reduce((s, i) => s + (parseFloat(i.price) || 0) * i.qty, 0);
+  try { window.AAA && window.AAA.beginCheckout && window.AAA.beginCheckout(cart, cartTotal); } catch (e) {}
+
+  closeCartFn();
+  showSection('checkout');
+  renderCheckoutSummary();
+
+  const radio = document.querySelector('input[name="pay-method-select"][value="' + preferredMethod + '"]');
+  if (radio) { radio.checked = true; setPayMethod(preferredMethod); }
+  initStripe();
+  return true;
+}
+
 document.getElementById('venmoPayBtn').addEventListener('click', function(e) {
-  const { total } = calcCartTotals();
-  if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  // Venmo /code?user_id= URL does not reliably support ?amount=/note= prefill,
-  // so route the user to Amber's Venmo profile as-is and surface the total via
-  // the toast so they know what to enter. Do NOT hack unsupported URL params.
-  this.href = VENMO_URL;
-  showToast(`Amount to send: $${total.toFixed(2)}`);
+  // Always prevent the raw anchor navigation; the checkout flow handles the
+  // redirect to Venmo after an order record is saved.
+  e.preventDefault();
+  startCartCheckout('venmo');
 });
 document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
-  const { total } = calcCartTotals();
-  if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  // Cash App supports amount prefill via /$handle/amount.
-  this.href = `${CASHAPP_BASE_URL}/${total.toFixed(2)}`;
+  e.preventDefault();
+  startCartCheckout('cashapp');
 });
 
 // ---- SECURE CHECKOUT (Stripe card + Venmo/Cash App manual-verify) ----
@@ -615,6 +648,41 @@ function fallbackCopy(text, flash) {
   }
 })();
 
+// Kick off the Stripe availability check at page load so the card-vs-external
+// decision is already made by the time the customer arrives at the checkout
+// section — prevents a visible flash of the card form before it is hidden.
+// setTimeout defers the call so it runs after this file's function hoisting
+// completes (DOMContentLoaded may have already fired since app.js is loaded
+// near the end of the document).
+setTimeout(function() { try { initStripe(); } catch (e) { /* initStripe itself logs */ } }, 0);
+
+// Hide the Stripe card option entirely (label + radio) so customers are never
+// shown a payment method that cannot process. Called when no Stripe key is
+// configured. Preserves the customer's selection if they already chose an
+// external method; otherwise falls back to Venmo so the external-pay panel
+// becomes the active one with no extra clicks.
+function disableCardPayMethod(reason) {
+  const cardLabel = document.querySelector('.checkout-pay-method[data-pay-method="stripe"]');
+  if (cardLabel) cardLabel.style.display = 'none';
+  const cardRadio = document.querySelector('input[name="pay-method-select"][value="stripe"]');
+  const wasStripeSelected = cardRadio && cardRadio.checked;
+  if (cardRadio) cardRadio.checked = false;
+  const cardPanel = document.getElementById('payPanelStripe');
+  if (cardPanel) cardPanel.style.display = 'none';
+  const payBtn = document.getElementById('checkoutPayBtn');
+  if (payBtn) payBtn.disabled = true;
+  // Only force a default if the customer hadn't already picked an external
+  // method. This prevents us from stomping on a Cash App selection made from
+  // the cart drawer shortcut.
+  if (wasStripeSelected || selectedPayMethod === 'stripe') {
+    const venmoRadio = document.querySelector('input[name="pay-method-select"][value="venmo"]');
+    if (venmoRadio) { venmoRadio.checked = true; setPayMethod('venmo'); }
+  }
+  const cardErr = document.getElementById('card-errors');
+  if (cardErr) cardErr.textContent = '';
+  if (reason) console.info('[checkout] card payments disabled:', reason);
+}
+
 async function initStripe() {
   if (stripeReady) return;
 
@@ -632,18 +700,14 @@ async function initStripe() {
   }
 
   if (!pk) {
-    // Card payments are not available. Force customer to an external method
-    // so there is no path that submits the order without real payment.
-    document.getElementById('card-errors').textContent = 'Card payments are temporarily unavailable. Please choose Venmo or Cash App above to complete your order.';
-    const payBtn = document.getElementById('checkoutPayBtn');
-    if (payBtn) {
-      payBtn.disabled = true;
-      const payTxt = document.getElementById('payBtnText');
-      if (payTxt) payTxt.textContent = 'Card unavailable';
-    }
-    // Switch UI to the Venmo panel so customer can see how to pay.
-    const venmoRadio = document.querySelector('input[name="pay-method-select"][value="venmo"]');
-    if (venmoRadio) { venmoRadio.checked = true; setPayMethod('venmo'); }
+    // No Stripe key configured — hide the card option entirely rather than
+    // leaving a dead form as the default method.
+    disableCardPayMethod('no publishable key configured');
+    return;
+  }
+  if (typeof Stripe !== 'function') {
+    // Stripe.js script failed to load (network / CSP / offline).
+    disableCardPayMethod('Stripe.js not loaded');
     return;
   }
   try {
@@ -669,9 +733,7 @@ async function initStripe() {
     });
     stripeReady = true;
   } catch (e) {
-    document.getElementById('card-errors').textContent = 'Could not initialize payment form. Please choose Venmo or Cash App above.';
-    const payBtn = document.getElementById('checkoutPayBtn');
-    if (payBtn) payBtn.disabled = true;
+    disableCardPayMethod('Stripe init exception');
   }
 }
 
@@ -770,6 +832,9 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
       document.getElementById('paymentStatus').value = 'paid';
       document.getElementById('paymentMethodField').value = 'stripe';
       document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+      // Clear, accurate subject line for the built-in Netlify Forms email.
+      const subjectField = document.querySelector('#checkoutForm input[name="subject"]');
+      if (subjectField) subjectField.value = `[PAID] New order from ${fields.name} — ${formatPrice(total)}`;
       await submitNetlifyForm();
       showConfirmation(paymentIntent.id, 'paid');
       return;
@@ -824,6 +889,11 @@ async function submitPendingExternalOrder() {
   document.getElementById('paymentMethodField').value = selectedPayMethod;
   document.getElementById('orderTotalField').value = formatPrice(total);
   document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+  // Clear, accurate subject line for the built-in Netlify Forms email so the
+  // pending-payment status is visible even without Resend configured.
+  const methodLabel = selectedPayMethod === 'cashapp' ? 'Cash App' : 'Venmo';
+  const subjectField = document.querySelector('#checkoutForm input[name="subject"]');
+  if (subjectField) subjectField.value = `[PENDING ${methodLabel.toUpperCase()}] Order ${txnId} — ${fields.name} — ${formatPrice(total)}`;
 
   try {
     await submitNetlifyForm();
