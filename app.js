@@ -381,198 +381,240 @@ document.getElementById('proceedToCheckoutBtn').addEventListener('click', () => 
   closeCartFn();
   showSection('checkout');
   renderCheckoutSummary();
-  initStripe();
 });
 
-// Venmo/CashApp dynamic total — accepts debit & credit cards
-function getOrderNote() {
-  const name = document.getElementById('cartName').value.trim();
-  const items = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-  let note = "Amber's Alchemy Order";
-  if (name) note += ` - ${name}`;
-  if (items) note += ` | ${items}`;
-  return note;
+// ---- PAYMENT DESTINATIONS (Cash App + Venmo only) ----
+const CASHAPP_HANDLE = '$AmberPatten92';
+const CASHAPP_BASE = 'https://cash.app/$AmberPatten92';
+const VENMO_URL = 'https://venmo.com/code?user_id=3573264899114195665&created=1776543987';
+
+function buildCashAppUrl(total) {
+  const amt = Number(total || 0);
+  if (!amt || !Number.isFinite(amt) || amt <= 0) return CASHAPP_BASE;
+  return `${CASHAPP_BASE}/${amt.toFixed(2)}`;
 }
 
-document.getElementById('venmoPayBtn').addEventListener('click', function(e) {
-  const { total } = calcCartTotals();
-  if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  const note = getOrderNote();
-  this.href = `https://venmo.com/AmberLynnPatten?txn=pay&amount=${total.toFixed(2)}&note=${encodeURIComponent(note)}`;
-});
-document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
-  const { total } = calcCartTotals();
-  if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  this.href = `https://cash.app/$AmberAlchemy/${total.toFixed(2)}`;
-});
+function buildVenmoUrl() {
+  // Venmo QR/code link does not support amount prefill — customer enters the
+  // amount shown on screen. We keep the owner's verified code URL intact.
+  return VENMO_URL;
+}
 
-// ---- SECURE CHECKOUT (Stripe) ----
-let stripe, cardElement, stripeReady = false;
+async function copyAmountToClipboard(btn, total) {
+  const value = Number(total || 0).toFixed(2);
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(value);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = value;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    if (btn) {
+      const prev = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = prev; btn.classList.remove('copied'); }, 1600);
+    }
+    showToast(`✦ Amount $${value} copied to clipboard`);
+  } catch (e) {
+    showToast(`Amount to send: $${value}`);
+  }
+}
+
+function refreshAmountDue() {
+  const total = typeof getCheckoutTotals === 'function' ? getCheckoutTotals().total : (calcCartTotals && calcCartTotals().total) || 0;
+  const formatted = formatPrice(total);
+  const cartAmt = document.getElementById('cartAmountDue');
+  if (cartAmt) cartAmt.textContent = formatted;
+  const coAmt = document.getElementById('checkoutAmountDue');
+  if (coAmt) coAmt.textContent = formatted;
+
+  const cashBtn = document.getElementById('cartCashAppPayBtn');
+  if (cashBtn) cashBtn.href = buildCashAppUrl(total);
+  const venmoBtn = document.getElementById('cartVenmoPayBtn');
+  if (venmoBtn) venmoBtn.href = buildVenmoUrl();
+}
+
+// Watch the cart total text node so amount-due + payment links always follow
+// cart changes even when we can't directly hook calcCartTotals.
+(function observeCartTotal() {
+  const target = document.getElementById('cartTotal');
+  if (!target || typeof MutationObserver === 'undefined') return;
+  const obs = new MutationObserver(() => { try { refreshAmountDue(); } catch (e) {} });
+  obs.observe(target, { childList: true, characterData: true, subtree: true });
+})();
+
+// Cart drawer buttons: validate cart is non-empty; open correct destination.
+const cartCashAppBtn = document.getElementById('cartCashAppPayBtn');
+if (cartCashAppBtn) {
+  cartCashAppBtn.addEventListener('click', function(e) {
+    if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
+    const { total } = calcCartTotals();
+    this.href = buildCashAppUrl(total);
+    showToast(`✦ Send $${total.toFixed(2)} to ${CASHAPP_HANDLE} on Cash App`);
+  });
+}
+
+const cartVenmoBtn = document.getElementById('cartVenmoPayBtn');
+if (cartVenmoBtn) {
+  cartVenmoBtn.addEventListener('click', function(e) {
+    if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
+    const { total } = calcCartTotals();
+    this.href = buildVenmoUrl();
+    showToast(`✦ Send $${total.toFixed(2)} to Amber's Alchemy on Venmo`);
+  });
+}
+
+const cartCopyAmountBtn = document.getElementById('cartCopyAmountBtn');
+if (cartCopyAmountBtn) {
+  cartCopyAmountBtn.addEventListener('click', function() {
+    const { total } = calcCartTotals();
+    copyAmountToClipboard(this, total);
+  });
+}
+
+const checkoutCopyAmountBtn = document.getElementById('checkoutCopyAmountBtn');
+if (checkoutCopyAmountBtn) {
+  checkoutCopyAmountBtn.addEventListener('click', function() {
+    const { total } = getCheckoutTotals();
+    copyAmountToClipboard(this, total);
+  });
+}
+
+// Initialise amount fields as soon as the DOM is ready.
+refreshAmountDue();
+
+function getCheckoutTotals() {
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const shipping = subtotal === 0 ? 0 : (subtotal >= 75 ? 0 : 6.99);
+  const tax = subtotal * 0.08;
+  const total = subtotal + shipping + tax;
+  return { subtotal, shipping, tax, total };
+}
 
 function renderCheckoutSummary() {
   const el = document.getElementById('checkoutItems');
   if (cart.length === 0) {
     el.innerHTML = '<p class="empty-cart">No items in cart.</p>';
-    return;
+  } else {
+    el.innerHTML = cart.map(i => `
+      <div class="checkout-item">
+        <span>${i.name} x${i.qty}</span>
+        <span class="checkout-item-price">${formatPrice(i.price * i.qty)}</span>
+      </div>
+    `).join('');
   }
-  el.innerHTML = cart.map(i => `
-    <div class="checkout-item">
-      <span>${i.name} x${i.qty}</span>
-      <span class="checkout-item-price">${formatPrice(i.price * i.qty)}</span>
-    </div>
-  `).join('');
 
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  const { subtotal, shipping, tax, total } = getCheckoutTotals();
   document.getElementById('checkoutSubtotal').textContent = formatPrice(subtotal);
-  document.getElementById('checkoutShipping').textContent = shipping === 0 ? 'FREE' : formatPrice(shipping);
+  document.getElementById('checkoutShipping').textContent = shipping === 0 && subtotal > 0 ? 'FREE' : formatPrice(shipping);
   document.getElementById('checkoutTax').textContent = formatPrice(tax);
   document.getElementById('checkoutTotal').textContent = formatPrice(total);
   document.getElementById('orderTotalField').value = formatPrice(total);
+
+  const amtEl = document.getElementById('checkoutAmountDue');
+  if (amtEl) amtEl.textContent = formatPrice(total);
 }
 
-async function initStripe() {
-  if (stripeReady) return;
-
-  // Try meta tag first, then fetch from API
-  let pk = '';
-  const stripeKey = document.querySelector('meta[name="stripe-key"]');
-  if (stripeKey && stripeKey.content) {
-    pk = stripeKey.content;
-  } else {
-    try {
-      const res = await fetch('/api/stripe-config');
-      const data = await res.json();
-      pk = data.publishableKey || '';
-    } catch (e) { /* ignore */ }
-  }
-
-  if (!pk) {
-    document.getElementById('card-errors').textContent = 'Card payments are being set up. You may also use Venmo or Cash App from the cart.';
-    document.getElementById('checkoutPayBtn').disabled = false;
-    document.getElementById('payBtnText').textContent = 'Submit Order';
-    return;
-  }
-  try {
-    stripe = Stripe(pk);
-    const elements = stripe.elements();
-    cardElement = elements.create('card', {
-      style: {
-        base: {
-          color: '#F3EBDD',
-          fontFamily: 'Lora, Georgia, serif',
-          fontSize: '15px',
-          '::placeholder': { color: '#B8A898' },
-        },
-        invalid: { color: '#e74c3c' },
-      },
-    });
-    cardElement.mount('#card-element');
-    cardElement.on('change', function(event) {
-      const errEl = document.getElementById('card-errors');
-      errEl.textContent = event.error ? event.error.message : '';
-      document.getElementById('checkoutPayBtn').disabled = !event.complete;
-    });
-    stripeReady = true;
-  } catch (e) {
-    document.getElementById('card-errors').textContent = 'Could not initialize payment form.';
-  }
-}
-
-// Handle checkout form submission
+// Handle checkout form submission — create a Pending-Payment order, then open
+// the customer's chosen payment destination (Cash App or Venmo).
 document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
   const payBtn = document.getElementById('checkoutPayBtn');
   const btnText = document.getElementById('payBtnText');
   const spinner = document.getElementById('payBtnSpinner');
-  const errEl = document.getElementById('card-errors');
+  const errEl = document.getElementById('checkoutFormError');
+  if (errEl) errEl.textContent = '';
 
-  // Validate required fields
   const name = document.getElementById('checkoutCustomerName').value.trim();
   const email = document.getElementById('checkoutEmail').value.trim();
   const address = document.getElementById('checkoutAddress').value.trim();
   const cityZip = document.getElementById('checkoutCityStateZip').value.trim();
   if (!name || !email || !address || !cityZip) {
-    errEl.textContent = 'Please fill in all required fields.';
+    if (errEl) errEl.textContent = 'Please fill in all required fields.';
     return;
   }
-  if (cart.length === 0) { errEl.textContent = 'Your cart is empty.'; return; }
+  if (cart.length === 0) {
+    if (errEl) errEl.textContent = 'Your cart is empty.';
+    return;
+  }
 
-  // Calculate total in cents for Stripe
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
-  const amountCents = Math.round(total * 100);
+  const methodInput = document.querySelector('input[name="payment-method-choice"]:checked');
+  const method = methodInput ? methodInput.value : 'cashapp';
+  const methodLabel = method === 'venmo' ? 'Venmo' : 'Cash App';
 
-  // Ensure order total is set on hidden field
+  const { subtotal, shipping, tax, total } = getCheckoutTotals();
+  const orderId = 'AAA-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7).toUpperCase();
+  document.getElementById('transactionId').value = orderId;
+  document.getElementById('paymentStatus').value = 'pending-payment';
+  document.getElementById('paymentMethodName').value = methodLabel;
   document.getElementById('orderTotalField').value = formatPrice(total);
+  document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+  document.getElementById('checkoutQuantity').value = cart.reduce((s, i) => s + i.qty, 0);
 
   payBtn.disabled = true;
-  btnText.textContent = 'Processing...';
+  btnText.textContent = 'Placing order…';
   spinner.style.display = 'inline-block';
-  errEl.textContent = '';
 
+  const payload = {
+    orderId,
+    customer: {
+      name,
+      email,
+      phone: (document.getElementById('checkoutPhone') || {}).value || '',
+      address,
+      cityStateZip: cityZip,
+      notes: (document.getElementById('checkoutNotes') || {}).value || '',
+    },
+    cart: cart.map(i => ({ name: i.name, price: Number(i.price) || 0, qty: Number(i.qty) || 1 })),
+    totals: { subtotal, shipping, tax, total },
+    paymentMethod: methodLabel,
+  };
+
+  // 1) Submit the Netlify Form so Amber's form notifications fire and the
+  //    submission-created hook stores the order in Netlify Blobs.
+  try { await submitNetlifyForm(); } catch (e) { /* non-blocking */ }
+
+  // 2) Call the place-order function to send admin + customer emails for the
+  //    pending-payment order (Resend / webhook / Netlify-form fallback).
+  let emailsSent = false;
   try {
-    // If Stripe is not initialized, submit form as order (payment via Venmo/CashApp)
-    if (!stripe || !cardElement) {
-      document.getElementById('transactionId').value = 'PENDING-' + Date.now();
-      document.getElementById('paymentStatus').value = 'pending-external-payment';
-      document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-      await submitNetlifyForm();
-      showConfirmation('PENDING — Complete payment via Venmo or Cash App in the cart', 'pending');
-      return;
-    }
-
-    // Create PaymentIntent on server
-    const piResponse = await fetch('/api/create-payment-intent', {
+    const res = await fetch('/api/place-order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: amountCents,
-        currency: 'usd',
-        description: `Order from ${name} — Amber's Alchemy Apothecary`,
-        metadata: {
-          customer_name: name,
-          email: email,
-          items: cart.map(i => `${i.name} x${i.qty}`).join(', ').substring(0, 500),
-        },
-      }),
+      body: JSON.stringify(payload),
     });
-
-    const piData = await piResponse.json();
-    if (piData.error) { throw new Error(piData.error); }
-
-    // Confirm payment with Stripe
-    const { error, paymentIntent } = await stripe.confirmCardPayment(piData.clientSecret, {
-      payment_method: {
-        card: cardElement,
-        billing_details: {
-          name: name,
-          email: email,
-          address: { postal_code: cityZip.split(/\s+/).pop() || '' },
-        },
-      },
-    });
-
-    if (error) { throw new Error(error.message); }
-
-    if (paymentIntent.status === 'succeeded') {
-      // Set transaction info and submit Netlify Form
-      document.getElementById('transactionId').value = paymentIntent.id;
-      document.getElementById('paymentStatus').value = 'paid';
-      await submitNetlifyForm();
-      showConfirmation(paymentIntent.id, 'paid');
+    if (res.ok) {
+      const data = await res.json().catch(() => ({}));
+      emailsSent = Boolean(data && (data.ok || data.emailResult));
     }
-  } catch (err) {
-    errEl.textContent = err.message || 'Payment failed. Please try again.';
-    payBtn.disabled = false;
-    btnText.textContent = 'Pay Now';
-    spinner.style.display = 'none';
+  } catch (e) { /* non-blocking */ }
+
+  try { window.AAA && window.AAA.addPaymentInfo && window.AAA.addPaymentInfo(cart, total, methodLabel); } catch (e) {}
+
+  // 3) Open the customer's chosen payment destination.
+  const payWindow = window.open('about:blank', '_blank', 'noopener');
+  const dest = method === 'venmo' ? buildVenmoUrl() : buildCashAppUrl(total);
+  if (payWindow) {
+    payWindow.opener = null;
+    payWindow.location.href = dest;
+  } else {
+    // Popup blocked — navigate current tab as last resort.
+    window.location.href = dest;
   }
+
+  showConfirmation(orderId, 'pending', methodLabel, total, emailsSent);
+
+  payBtn.disabled = false;
+  btnText.textContent = 'Place Order & Open Payment';
+  spinner.style.display = 'none';
 });
 
 async function submitNetlifyForm() {
@@ -585,31 +627,31 @@ async function submitNetlifyForm() {
   });
 }
 
-function showConfirmation(transactionId, status) {
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+function showConfirmation(transactionId, status, methodLabel, total, emailsSent) {
+  const amount = typeof total === 'number' ? total : getCheckoutTotals().total;
   const name = document.getElementById('checkoutCustomerName').value.trim();
   const email = document.getElementById('checkoutEmail').value.trim();
+  const method = methodLabel || 'Cash App';
+  const dest = method === 'Venmo' ? 'Amber\'s Alchemy on Venmo' : '$AmberPatten92 on Cash App';
 
   document.getElementById('confirmationDetails').innerHTML = `
+    <p><strong>Order number:</strong> ${transactionId}</p>
     <p><strong>Order for:</strong> ${name}</p>
     <p><strong>Email:</strong> ${email}</p>
     <p><strong>Items:</strong> ${cart.map(i => `${i.name} x${i.qty}`).join(', ')}</p>
-    <p><strong>Total:</strong> ${formatPrice(total)}</p>
-    <p><strong>Transaction ID:</strong> ${transactionId}</p>
-    <p><strong>Status:</strong> ${status === 'paid' ? 'Payment Confirmed' : 'Awaiting Payment'}</p>
+    <p><strong>Amount due:</strong> ${formatPrice(amount)}</p>
+    <p><strong>Payment method:</strong> ${method}</p>
+    <p><strong>Send payment to:</strong> ${dest}</p>
+    <p><strong>Status:</strong> Pending payment — awaiting Amber's confirmation</p>
+    <p style="margin-top:10px;color:var(--text-muted);font-size:13px;">Your order has been received and is awaiting payment confirmation.${emailsSent ? ' A confirmation email is on the way.' : ''}</p>
   `;
 
-  // Show confirmation, hide form
   document.querySelector('.checkout-container').style.display = 'none';
   document.getElementById('checkoutConfirmation').style.display = 'block';
 
-  // Clear cart
   cart = [];
   renderCart();
-  showToast('Order submitted successfully!');
+  showToast('Order received — complete payment in the window that just opened.');
 }
 
 // ---- RENDER PRODUCTS (with category filter) ----

@@ -1,6 +1,7 @@
 // Triggered automatically when a Netlify Form submission is created.
-// Stores order data in Netlify Blobs for record-keeping and queues a polite
-// review request to be sent after the customer has had time with the product.
+// Stores order data in Netlify Blobs for record-keeping. A review request is
+// only queued once the order is actually paid — pending-payment orders wait
+// for Amber's manual confirmation before entering the review pipeline.
 
 import { getStore } from "@netlify/blobs";
 
@@ -20,6 +21,8 @@ export default async (req) => {
     const email = (data['email'] || '').toLowerCase().trim();
     const now = new Date();
     const sendAt = new Date(now.getTime() + REVIEW_REQUEST_DELAY_DAYS * 24 * 60 * 60 * 1000);
+    const paymentStatus = (data['payment-status'] || '').toLowerCase();
+    const isPaid = paymentStatus === 'paid';
 
     const order = {
       orderId,
@@ -31,15 +34,26 @@ export default async (req) => {
       quantity: data['quantity'],
       notes: data['order-notes'],
       transactionId: data['transaction-id'],
-      paymentStatus: data['payment-status'],
+      paymentStatus: data['payment-status'] || 'pending-payment',
+      paymentMethod: data['payment-method'] || '',
       orderTotal: data['order-total'],
       submittedAt: payload.created_at || now.toISOString(),
     };
 
     const orders = getStore('orders');
-    await orders.setJSON(orderId, order);
+    // Preserve any richer record already written by place-order (totals, etc.).
+    try {
+      const existing = await orders.get(orderId, { type: 'json' });
+      if (existing && typeof existing === 'object') {
+        await orders.setJSON(orderId, { ...existing, ...order });
+      } else {
+        await orders.setJSON(orderId, order);
+      }
+    } catch {
+      await orders.setJSON(orderId, order);
+    }
 
-    if (email) {
+    if (email && isPaid) {
       const reviewRequests = getStore('review-requests');
       await reviewRequests.setJSON(orderId, {
         orderId,
@@ -61,3 +75,4 @@ export default async (req) => {
     return new Response('Error', { status: 500 });
   }
 };
+
