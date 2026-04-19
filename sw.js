@@ -3,7 +3,7 @@
 // Stale-while-revalidate for static assets, network-first for pages
 // ============================================================
 
-var CACHE_NAME = 'alchemy-v2-pricing';
+var CACHE_NAME = 'alchemy-v3-cashapp-venmo';
 var STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -21,12 +21,11 @@ var STATIC_ASSETS = [
 // Never cache these patterns
 var NEVER_CACHE = [
   '/api/',
-  'stripe.com',
   'venmo.com',
   'cash.app',
   'checkout',
   'payment',
-  'create-payment-intent'
+  'place-order'
 ];
 
 self.addEventListener('install', function(e) {

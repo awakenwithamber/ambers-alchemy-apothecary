@@ -803,9 +803,87 @@ button { cursor: pointer; font-family: var(--font-body); }
 .payment-instructions { background: rgba(110,75,126,0.08); border: 1px solid rgba(110,75,126,0.15); border-radius: var(--radius); padding: 12px 14px; }
 .payment-instructions p { font-family: var(--font-body); font-size: 11px; color: var(--text-muted); margin: 3px 0; line-height: 1.5; }
 
+/* Amount Due block — shown prominently at cart + checkout so the customer
+   never has to guess what to send in Cash App / Venmo. */
+.payment-amount-due {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: rgba(110,75,126,0.15);
+  border: 1px solid rgba(184,148,90,0.35);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+.payment-amount-label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--brass-lt, #B8945A);
+  text-transform: uppercase;
+}
+.payment-amount-value {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--parchment);
+  font-weight: 600;
+  flex: 1;
+  text-align: center;
+}
+.payment-copy-btn {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  padding: 7px 12px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(184,148,90,0.5);
+  background: rgba(30,20,35,0.6);
+  color: var(--brass-lt, #B8945A);
+  cursor: pointer;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+.payment-copy-btn:hover { background: rgba(184,148,90,0.15); color: var(--parchment); }
+.payment-copy-btn.copied { background: rgba(75,126,75,0.3); color: #8fd1a4; border-color: rgba(75,126,75,0.5); }
+
+/* Payment method radio choice on the checkout page */
+.checkout-payment-choice {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin: 10px 0 14px;
+}
+.checkout-payment-option {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 14px;
+  border: 1px solid rgba(110,75,126,0.35);
+  border-radius: var(--radius);
+  background: rgba(30,20,35,0.5);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.checkout-payment-option:hover { border-color: rgba(110,75,126,0.7); background: rgba(40,28,48,0.7); }
+.checkout-payment-option input[type="radio"] { accent-color: var(--brass, #B8945A); }
+.checkout-payment-option input[type="radio"]:checked + .checkout-payment-option-label { color: var(--parchment); }
+.checkout-payment-option:has(input[type="radio"]:checked) {
+  border-color: var(--brass, #B8945A);
+  background: rgba(110,75,126,0.2);
+}
+.checkout-payment-option-label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  display: flex; align-items: center; gap: 6px;
+}
+.checkout-payment-option-label small {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0;
+}
+.checkout-payment-option-icon { font-size: 18px; }
+
 @media (max-width: 480px) {
-  .payment-method-grid { grid-template-columns: 1fr; }
-  .payment-method-types { gap: 3px; }
+  .checkout-payment-choice { grid-template-columns: 1fr; }
+  .payment-amount-due { flex-wrap: wrap; }
+  .payment-amount-value { text-align: left; font-size: 1.25rem; flex-basis: 100%; }
 }
 
 /* ---- FAQ ---- */
@@ -880,12 +958,6 @@ footer { border-top: 1px solid var(--border); padding: 50px 24px 30px; text-alig
 .checkout-divider { height: 1px; background: var(--border); margin: 10px 0; }
 .checkout-secure-note { font-family: var(--font-body); font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 4px; }
 
-.stripe-card-element {
-  padding: 14px; border-radius: var(--radius); border: 1px solid var(--border);
-  background: rgba(30,17,40,0.65); transition: border-color var(--transition);
-}
-.stripe-card-element.StripeElement--focus { border-color: var(--amethyst); }
-.stripe-card-element.StripeElement--invalid { border-color: #c0392b; }
 .checkout-card-errors { font-family: var(--font-body); font-size: 13px; color: #e74c3c; min-height: 20px; margin-top: 4px; }
 
 .checkout-pay-btn {

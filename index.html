@@ -476,9 +476,7 @@
     <link rel="stylesheet" href="herbal-advisor.css">
     <link rel="stylesheet" href="soap-gallery.css">
 <!-- v-music-fix -->
-<script src="https://js.stripe.com/v3/"></script>
 <script src="https://player.vimeo.com/api/player.js"></script>
-<meta name="stripe-key" content="" />
 
 <!-- Analytics: dataLayer + GA4 / GTM bootstrap (consent-safe defaults).
      Set GTM_ID and/or GA4_MEASUREMENT_ID below to activate. -->
@@ -603,39 +601,38 @@
   </div>
 
   <div class="payment-section">
-    <p class="payment-section-title">✦ Or Pay Directly</p>
-    <p class="payment-accepts-cards">Venmo &amp; Cash App also accept Debit &amp; Credit Cards</p>
+    <p class="payment-section-title">✦ Choose Payment Method</p>
+    <p class="payment-accepts-cards">Pay the amount due using Cash App or Venmo. Your order is marked paid once Amber confirms receipt.</p>
+
+    <div class="payment-amount-due">
+      <span class="payment-amount-label">Amount Due</span>
+      <span class="payment-amount-value" id="cartAmountDue">$0.00</span>
+      <button type="button" class="payment-copy-btn" id="cartCopyAmountBtn" aria-label="Copy amount to clipboard">Copy Amount</button>
+    </div>
 
     <div class="payment-method-grid">
-      <div class="payment-method-card" id="payMethodVenmo">
-        <div class="payment-method-icon">💜</div>
-        <div class="payment-method-name">Venmo</div>
-        <div class="payment-method-types">
-          <span class="card-badge">💳 Visa</span>
-          <span class="card-badge">💳 Mastercard</span>
-          <span class="card-badge">💳 Debit</span>
-          <span class="card-badge">📱 Venmo Balance</span>
-        </div>
-        <a id="venmoPayBtn" href="https://venmo.com/AmberLynnPatten" target="_blank" rel="noopener" class="pay-btn venmo-btn">Pay with Venmo</a>
-      </div>
-
       <div class="payment-method-card" id="payMethodCashApp">
         <div class="payment-method-icon">💚</div>
         <div class="payment-method-name">Cash App</div>
         <div class="payment-method-types">
-          <span class="card-badge">💳 Visa</span>
-          <span class="card-badge">💳 Mastercard</span>
-          <span class="card-badge">💳 Debit</span>
-          <span class="card-badge">📱 Cash App Balance</span>
+          <span class="card-badge">$AmberPatten92</span>
         </div>
-        <a id="cashAppPayBtn" href="https://cash.app/$AmberAlchemy" target="_blank" rel="noopener" class="pay-btn cashapp-btn">Pay with Cash App</a>
+        <a id="cartCashAppPayBtn" href="https://cash.app/$AmberPatten92" target="_blank" rel="noopener" class="pay-btn cashapp-btn">Pay with Cash App</a>
+      </div>
+      <div class="payment-method-card" id="payMethodVenmo">
+        <div class="payment-method-icon">💜</div>
+        <div class="payment-method-name">Venmo</div>
+        <div class="payment-method-types">
+          <span class="card-badge">Amber's Alchemy</span>
+        </div>
+        <a id="cartVenmoPayBtn" href="https://venmo.com/code?user_id=3573264899114195665&created=1776543987" target="_blank" rel="noopener" class="pay-btn venmo-btn">Pay with Venmo</a>
       </div>
     </div>
 
     <div class="payment-instructions">
-      <p>✦ Click your preferred payment method above</p>
-      <p>✦ You can pay with any debit or credit card — no account needed</p>
-      <p>✦ After payment, Amber will confirm your order via email</p>
+      <p>✦ Enter the exact amount shown above when paying</p>
+      <p>✦ Include your name so Amber can match the payment to your order</p>
+      <p>✦ Orders ship once Amber confirms payment is received</p>
     </div>
   </div>
 </div>
@@ -2859,7 +2856,7 @@
   <div class="section-header">
     <div class="section-ornament">✦ ─────────────── ✦</div>
     <h2>Secure Checkout</h2>
-    <p>Complete your order below. Your payment is processed securely — card data never touches our servers.</p>
+    <p>Review your order, then send payment with Cash App or Venmo. Orders are held as <strong>Pending Payment</strong> until Amber confirms receipt.</p>
   </div>
 
   <div class="checkout-container">
@@ -2885,6 +2882,7 @@
         <input type="hidden" name="bot-field" />
         <input type="hidden" name="transaction-id" id="transactionId" value="" />
         <input type="hidden" name="payment-status" id="paymentStatus" value="" />
+        <input type="hidden" name="payment-method" id="paymentMethodName" value="" />
         <input type="hidden" name="order-total" id="orderTotalField" value="" />
         <input type="hidden" name="subject" value="New Website Order – Amber's Alchemy Apothecary" />
 
@@ -2930,31 +2928,46 @@
 
         <div class="checkout-divider"></div>
 
-        <h3>Pay with Card</h3>
-        <p class="checkout-secure-note">Your card information is processed securely by Stripe. No card data is stored on our servers.</p>
+        <h3>Pay with Cash App or Venmo</h3>
+        <p class="checkout-secure-note">After you submit the order below, choose Cash App or Venmo to send the exact amount shown. Your order is held as <strong>Pending Payment</strong> until Amber confirms receipt, then it is released for fulfillment.</p>
         <div class="checkout-trust-badges">
-          <span class="trust-badge-item">🔒 SSL Encrypted</span>
-          <span class="trust-badge-item">💳 Visa</span>
-          <span class="trust-badge-item">💳 Mastercard</span>
-          <span class="trust-badge-item">💳 Amex</span>
-          <span class="trust-badge-item">🛡️ Secure Checkout</span>
+          <span class="trust-badge-item">💚 Cash App · $AmberPatten92</span>
+          <span class="trust-badge-item">💜 Venmo · Amber's Alchemy</span>
         </div>
 
-        <div class="checkout-field">
-          <label for="card-element">Card Details</label>
-          <div id="card-element" class="stripe-card-element"></div>
-          <div id="card-errors" class="checkout-card-errors" role="alert"></div>
+        <div class="payment-amount-due">
+          <span class="payment-amount-label">Amount Due</span>
+          <span class="payment-amount-value" id="checkoutAmountDue">$0.00</span>
+          <button type="button" class="payment-copy-btn" id="checkoutCopyAmountBtn" aria-label="Copy amount to clipboard">Copy Amount</button>
         </div>
 
-        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn" disabled>
-          <span id="payBtnText">Pay Now</span>
+        <div class="checkout-payment-choice">
+          <label class="checkout-payment-option">
+            <input type="radio" name="payment-method-choice" value="cashapp" checked />
+            <span class="checkout-payment-option-label"><span class="checkout-payment-option-icon">💚</span>Cash App <small>$AmberPatten92</small></span>
+          </label>
+          <label class="checkout-payment-option">
+            <input type="radio" name="payment-method-choice" value="venmo" />
+            <span class="checkout-payment-option-label"><span class="checkout-payment-option-icon">💜</span>Venmo <small>Amber's Alchemy</small></span>
+          </label>
+        </div>
+
+        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn">
+          <span id="payBtnText">Place Order &amp; Open Payment</span>
           <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
         </button>
 
+        <div id="checkoutFormError" class="checkout-card-errors" role="alert"></div>
+
+        <div class="payment-instructions">
+          <p>✦ Your order is created as <strong>Pending Payment</strong></p>
+          <p>✦ Amber confirms payment and marks the order ready to ship</p>
+          <p>✦ You will receive an email confirmation for both steps</p>
+        </div>
+
         <div class="checkout-trust-badges">
           <span>🔒 SSL Encrypted</span>
-          <span>💳 Visa, Mastercard, Amex</span>
-          <span>✦ PCI Compliant</span>
+          <span>✦ No card data stored</span>
         </div>
       </form>
     </div>
