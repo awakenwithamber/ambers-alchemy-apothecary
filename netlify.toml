@@ -82,6 +82,16 @@
   to = "/index.html"
   status = 200
 
+[[redirects]]
+  from = "/thank-you"
+  to = "/thank-you.html"
+  status = 200
+
+[[redirects]]
+  from = "/api/shopify-checkout"
+  to = "/.netlify/functions/shopify-checkout"
+  status = 200
+
 [[headers]]
   for = "/sw.js"
   [headers.values]
