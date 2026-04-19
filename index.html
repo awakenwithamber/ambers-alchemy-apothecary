@@ -616,7 +616,7 @@
           <span class="card-badge">💳 Debit</span>
           <span class="card-badge">📱 Venmo Balance</span>
         </div>
-        <a id="venmoPayBtn" href="https://venmo.com/AmberLynnPatten" target="_blank" rel="noopener" class="pay-btn venmo-btn">Pay with Venmo</a>
+        <a id="venmoPayBtn" href="https://venmo.com/code?user_id=3573264899114195665&amp;created=1776543987" target="_blank" rel="noopener" class="pay-btn venmo-btn">Pay with Venmo</a>
       </div>
 
       <div class="payment-method-card" id="payMethodCashApp">
@@ -628,7 +628,7 @@
           <span class="card-badge">💳 Debit</span>
           <span class="card-badge">📱 Cash App Balance</span>
         </div>
-        <a id="cashAppPayBtn" href="https://cash.app/$AmberAlchemy" target="_blank" rel="noopener" class="pay-btn cashapp-btn">Pay with Cash App</a>
+        <a id="cashAppPayBtn" href="https://cash.app/$AmberPatten92" target="_blank" rel="noopener" class="pay-btn cashapp-btn">Pay with Cash App</a>
       </div>
     </div>
 
@@ -2975,25 +2975,39 @@
         <!-- Venmo / Cash App panel (manual verification) -->
         <div id="payPanelExternal" class="checkout-pay-panel" style="display:none;">
           <div class="checkout-external-pay-note" style="background:#f6efe2;border-left:4px solid #8a5a00;padding:12px 14px;margin:10px 0 14px;color:#2a1f3d;">
-            <p style="margin:0 0 6px;"><strong>Your order will not be confirmed until Amber verifies your payment.</strong></p>
-            <p style="margin:0;font-size:0.95em;">Follow the steps below. When your payment has been sent, click the final button to submit your order for verification.</p>
+            <p style="margin:0 0 6px;"><strong>Complete your payment using <span id="externalPayAppName">Cash App or Venmo</span>. Your order will remain pending until payment is received and confirmed.</strong></p>
+            <p style="margin:0;font-size:0.95em;">Follow the steps below. When your payment has been sent, check the confirmation box and submit your order for verification.</p>
+          </div>
+
+          <div class="checkout-external-facts">
+            <div class="checkout-external-fact">
+              <span class="checkout-external-fact-label">Amount Due</span>
+              <span class="checkout-external-fact-value" id="externalPayAmountText">$0.00</span>
+              <button type="button" class="checkout-external-copy-btn" id="copyAmountBtn" data-copy-target="externalPayAmountValue">Copy amount</button>
+            </div>
+            <div class="checkout-external-fact">
+              <span class="checkout-external-fact-label">Order #</span>
+              <span class="checkout-external-fact-value" id="externalPayOrderRefText">—</span>
+              <button type="button" class="checkout-external-copy-btn" id="copyOrderRefBtn" data-copy-target="externalPayOrderRefValue">Copy order #</button>
+            </div>
+            <input type="hidden" id="externalPayAmountValue" value="" />
+            <input type="hidden" id="externalPayOrderRefValue" value="" />
           </div>
 
           <ol class="checkout-external-steps" style="padding-left:20px;color:var(--text);line-height:1.6;">
-            <li>Click the button below to open <span id="externalPayAppName">Venmo</span> with your order total pre-filled.</li>
-            <li>Send the payment to <strong id="externalPayHandle">@AmberLynnPatten</strong> for the amount shown in your order summary.</li>
-            <li>Include your full name in the payment note so Amber can match it to your order.</li>
-            <li>Return here and click <strong>“I have sent my payment”</strong> below.</li>
+            <li id="externalPayStepOpen">Click the button below to open <span class="externalPayAppNameInline">Cash App</span>.</li>
+            <li id="externalPayStepAmount">Enter the <strong>Amount Due</strong> shown above (your amount may be pre-filled).</li>
+            <li id="externalPayStepNote">Add your <strong>Order #</strong> (above) in the payment note so Amber can match it to your order.</li>
+            <li>Return here, check the confirmation box, and submit your order for verification.</li>
           </ol>
 
           <div class="checkout-external-actions">
-            <a id="externalPayLink" class="btn-primary checkout-external-open" href="#" target="_blank" rel="noopener">Open Venmo to Pay</a>
-            <div class="checkout-external-amount" id="externalPayAmount" style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--text-muted);margin:8px 0 12px;">Amount: $0.00</div>
+            <a id="externalPayLink" class="btn-primary checkout-external-open" href="#" target="_blank" rel="noopener">Open Cash App to Pay</a>
           </div>
 
           <label class="checkout-external-confirm" style="display:flex;align-items:flex-start;gap:10px;margin:14px 0;color:var(--text);cursor:pointer;">
             <input type="checkbox" id="externalPayConfirmBox" style="margin-top:4px;" />
-            <span>I confirm I have sent the full amount shown above through <span id="externalPayConfirmLabel">Venmo</span>, with my name in the note.</span>
+            <span>I confirm I have sent <strong id="externalPayConfirmAmount">the full amount</strong> to Amber through <span id="externalPayConfirmLabel">Cash App</span>, with my Order # in the payment note.</span>
           </label>
 
           <button type="button" id="submitPendingOrderBtn" class="btn-primary checkout-pay-btn" disabled>

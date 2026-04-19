@@ -384,7 +384,15 @@ document.getElementById('proceedToCheckoutBtn').addEventListener('click', () => 
   initStripe();
 });
 
-// Venmo/CashApp dynamic total — accepts debit & credit cards
+// Correct business payment destinations.
+// Cash App supports amount prefill via /$handle/amount URL.
+// Venmo amount prefill is NOT reliably supported for /code?user_id= links,
+// so we do NOT append unsupported query params — we show the amount and order
+// reference clearly with one-tap copy instead.
+const CASHAPP_BASE_URL = 'https://cash.app/$AmberPatten92';
+const VENMO_URL = 'https://venmo.com/code?user_id=3573264899114195665&created=1776543987';
+
+// Venmo/CashApp dynamic total — cart drawer direct-pay shortcut.
 function getOrderNote() {
   const name = document.getElementById('cartName').value.trim();
   const items = cart.map(i => `${i.name} x${i.qty}`).join(', ');
@@ -397,18 +405,32 @@ function getOrderNote() {
 document.getElementById('venmoPayBtn').addEventListener('click', function(e) {
   const { total } = calcCartTotals();
   if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  const note = getOrderNote();
-  this.href = `https://venmo.com/AmberLynnPatten?txn=pay&amount=${total.toFixed(2)}&note=${encodeURIComponent(note)}`;
+  // Venmo /code?user_id= URL does not reliably support ?amount=/note= prefill,
+  // so route the user to Amber's Venmo profile as-is and surface the total via
+  // the toast so they know what to enter. Do NOT hack unsupported URL params.
+  this.href = VENMO_URL;
+  showToast(`Amount to send: $${total.toFixed(2)}`);
 });
 document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
   const { total } = calcCartTotals();
   if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  this.href = `https://cash.app/$AmberAlchemy/${total.toFixed(2)}`;
+  // Cash App supports amount prefill via /$handle/amount.
+  this.href = `${CASHAPP_BASE_URL}/${total.toFixed(2)}`;
 });
 
 // ---- SECURE CHECKOUT (Stripe card + Venmo/Cash App manual-verify) ----
 let stripe, cardElement, stripeReady = false;
 let selectedPayMethod = 'stripe'; // 'stripe' | 'venmo' | 'cashapp'
+let pendingExternalOrderRef = ''; // stable order reference shown + used on submit
+
+function buildExternalOrderRef() {
+  const name = (document.getElementById('checkoutCustomerName') || {}).value || '';
+  const firstName = String(name).trim().split(/\s+/)[0] || 'ORDER';
+  const safe = firstName.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 12) || 'ORDER';
+  const prefix = selectedPayMethod === 'cashapp' ? 'CASHAPP' : 'VENMO';
+  const stamp = Date.now().toString().slice(-6);
+  return `${prefix}-${safe}-${stamp}`;
+}
 
 function renderCheckoutSummary() {
   const el = document.getElementById('checkoutItems');
@@ -436,33 +458,58 @@ function renderCheckoutSummary() {
 }
 
 function updateExternalPayUI(totalNumber) {
-  const amountEl = document.getElementById('externalPayAmount');
   const linkEl = document.getElementById('externalPayLink');
   const appNameEl = document.getElementById('externalPayAppName');
-  const handleEl = document.getElementById('externalPayHandle');
   const confirmLabelEl = document.getElementById('externalPayConfirmLabel');
-  if (!amountEl || !linkEl) return;
+  const confirmAmountEl = document.getElementById('externalPayConfirmAmount');
+  const amountTextEl = document.getElementById('externalPayAmountText');
+  const amountValueEl = document.getElementById('externalPayAmountValue');
+  const orderRefTextEl = document.getElementById('externalPayOrderRefText');
+  const orderRefValueEl = document.getElementById('externalPayOrderRefValue');
+  const stepOpenEl = document.getElementById('externalPayStepOpen');
+  const stepAmountEl = document.getElementById('externalPayStepAmount');
+  const stepNoteEl = document.getElementById('externalPayStepNote');
+  if (!linkEl) return;
 
-  const name = (document.getElementById('checkoutCustomerName') || {}).value || '';
-  const items = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-  const note = [`Amber's Alchemy Order`, name ? `- ${name}` : '', items ? `| ${items}` : '']
-    .filter(Boolean).join(' ');
   const amt = (totalNumber || 0).toFixed(2);
+  const amountDisplay = `$${amt}`;
+  if (amountTextEl) amountTextEl.textContent = amountDisplay;
+  if (amountValueEl) amountValueEl.value = amt;
+  if (confirmAmountEl) confirmAmountEl.textContent = amountDisplay;
 
-  amountEl.textContent = `Amount: $${amt}`;
+  // Lock an order reference the first time the external panel becomes active,
+  // so the reference the customer copies is the same one submitted later.
+  if (!pendingExternalOrderRef && (selectedPayMethod === 'venmo' || selectedPayMethod === 'cashapp')) {
+    pendingExternalOrderRef = buildExternalOrderRef();
+  }
+  if (orderRefTextEl) orderRefTextEl.textContent = pendingExternalOrderRef || '—';
+  if (orderRefValueEl) orderRefValueEl.value = pendingExternalOrderRef || '';
+
+  // Keep inline app-name spans in the step list in sync.
+  document.querySelectorAll('.externalPayAppNameInline').forEach(el => {
+    el.textContent = selectedPayMethod === 'cashapp' ? 'Cash App' : 'Venmo';
+  });
 
   if (selectedPayMethod === 'cashapp') {
     if (appNameEl) appNameEl.textContent = 'Cash App';
-    if (handleEl) handleEl.textContent = '$AmberAlchemy';
     if (confirmLabelEl) confirmLabelEl.textContent = 'Cash App';
     linkEl.textContent = 'Open Cash App to Pay';
-    linkEl.href = `https://cash.app/$AmberAlchemy/${amt}`;
+    // Cash App supports /$handle/amount deep-link prefill.
+    linkEl.href = `${CASHAPP_BASE_URL}/${amt}`;
+    if (stepOpenEl) stepOpenEl.innerHTML = 'Click the button below to open <span class="externalPayAppNameInline">Cash App</span>. Your amount will be pre-filled.';
+    if (stepAmountEl) stepAmountEl.innerHTML = 'Confirm the <strong>Amount Due</strong> shown above matches the Cash App screen.';
+    if (stepNoteEl) stepNoteEl.innerHTML = 'Add your <strong>Order #</strong> (above) in the Cash App "For" / note field so Amber can match it to your order.';
   } else {
     if (appNameEl) appNameEl.textContent = 'Venmo';
-    if (handleEl) handleEl.textContent = '@AmberLynnPatten';
     if (confirmLabelEl) confirmLabelEl.textContent = 'Venmo';
     linkEl.textContent = 'Open Venmo to Pay';
-    linkEl.href = `https://venmo.com/AmberLynnPatten?txn=pay&amount=${amt}&note=${encodeURIComponent(note)}`;
+    // Venmo /code?user_id= URL does not reliably honor ?amount= / ?note= params,
+    // so route to the profile as-is and rely on the copy buttons + instructions
+    // above for amount and order reference.
+    linkEl.href = VENMO_URL;
+    if (stepOpenEl) stepOpenEl.innerHTML = 'Click the button below to open Amber\u2019s Venmo profile in the app.';
+    if (stepAmountEl) stepAmountEl.innerHTML = 'Tap <strong>Pay</strong>, then enter the <strong>Amount Due</strong> shown above (use the copy button if helpful).';
+    if (stepNoteEl) stepNoteEl.innerHTML = 'Paste your <strong>Order #</strong> (above) into the Venmo note so Amber can match it to your order.';
   }
 }
 
@@ -474,6 +521,8 @@ function setPayMethod(method) {
   if (selectedPayMethod === 'stripe') {
     stripePanel.style.display = '';
     extPanel.style.display = 'none';
+    // Clear pending external ref so a fresh one is generated if they come back.
+    pendingExternalOrderRef = '';
   } else {
     stripePanel.style.display = 'none';
     extPanel.style.display = '';
@@ -484,11 +533,54 @@ function setPayMethod(method) {
     if (btn) btn.disabled = true;
     const errEl = document.getElementById('externalPayError');
     if (errEl) errEl.textContent = '';
+    // Regenerate the order reference with the right method prefix each time
+    // the customer lands on the external panel, so the prefix matches.
+    pendingExternalOrderRef = buildExternalOrderRef();
   }
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const shipping = subtotal >= 75 ? 0 : 6.99;
   const tax = subtotal * 0.08;
   updateExternalPayUI(subtotal + shipping + tax);
+}
+
+// Copy a value from a hidden input / element to the clipboard and flash feedback.
+function copyValueById(valueElId, buttonEl) {
+  const valueEl = document.getElementById(valueElId);
+  const val = valueEl ? (valueEl.value != null ? valueEl.value : valueEl.textContent) : '';
+  if (!val) return;
+  const flash = (ok) => {
+    if (!buttonEl) return;
+    const original = buttonEl.dataset.originalText || buttonEl.textContent;
+    buttonEl.dataset.originalText = original;
+    buttonEl.textContent = ok ? 'Copied!' : 'Copy failed';
+    buttonEl.classList.toggle('is-copied', !!ok);
+    setTimeout(() => {
+      buttonEl.textContent = original;
+      buttonEl.classList.remove('is-copied');
+    }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(val).then(() => flash(true), () => fallbackCopy(val, flash));
+  } else {
+    fallbackCopy(val, flash);
+  }
+}
+
+function fallbackCopy(text, flash) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'absolute';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    flash(ok);
+  } catch (e) {
+    flash(false);
+  }
 }
 
 // Wire up method radios, attestation checkbox, and the pending-submit button.
@@ -507,6 +599,14 @@ function setPayMethod(method) {
     if (pendingBtn) {
       pendingBtn.addEventListener('click', submitPendingExternalOrder);
     }
+    // Copy amount / copy order # buttons (fallback UX for Venmo where amount
+    // prefill is not reliably supported, and belt-and-suspenders for Cash App).
+    document.querySelectorAll('.checkout-external-copy-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const target = this.getAttribute('data-copy-target');
+        if (target) copyValueById(target, this);
+      });
+    });
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', wire);
@@ -714,8 +814,10 @@ async function submitPendingExternalOrder() {
   const shipping = subtotal >= 75 ? 0 : 6.99;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
-  const methodPrefix = selectedPayMethod === 'cashapp' ? 'CASHAPP' : 'VENMO';
-  const txnId = `${methodPrefix}-${Date.now()}`;
+  // Prefer the order reference the customer already saw and may have pasted
+  // into the Venmo/Cash App note. Fall back to a fresh ref if somehow empty.
+  const txnId = pendingExternalOrderRef || buildExternalOrderRef();
+  pendingExternalOrderRef = txnId;
 
   document.getElementById('transactionId').value = txnId;
   document.getElementById('paymentStatus').value = 'pending-payment';

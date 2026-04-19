@@ -300,7 +300,7 @@ const FAQS = [
   },
   {
     q: 'How do I pay for my order?',
-    a: 'All payments are processed directly through Venmo (@AmberAlchemy) or Cash App ($AmberAlchemy). After placing your order, you will receive payment instructions via email. Your order is confirmed once payment is received.'
+    a: 'All payments are processed directly through Venmo or Cash App ($AmberPatten92). Your cart and checkout will open the correct payment link with the amount pre-filled where supported, and show your order reference to copy into the payment note. Your order remains pending and is only confirmed once Amber has received and matched your payment.'
   },
   {
     q: 'Do you ship internationally?',

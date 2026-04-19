@@ -3,7 +3,7 @@
 // Stale-while-revalidate for static assets, network-first for pages
 // ============================================================
 
-var CACHE_NAME = 'alchemy-v2-pricing';
+var CACHE_NAME = 'alchemy-v3-payroute';
 var STATIC_ASSETS = [
   '/',
   '/index.html',
