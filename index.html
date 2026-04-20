@@ -542,23 +542,12 @@
   </div>
   <div class="nav-links" id="navLinks">
     <button class="nav-btn active" data-section="home">Home</button>
-    <button class="nav-btn" data-section="shop">Shop Remedies</button>
-    <button class="nav-btn" data-section="custom-formula">Create Remedy</button>
-    <button class="nav-btn nav-dropdown-parent" id="factsArticlesNav">Learn
-      <span class="nav-dropdown-arrow">&#9662;</span>
-      <span class="nav-dropdown" id="factsDropdown">
-        <button class="nav-dropdown-item" data-section="herbal-wisdom">Articles &amp; Guides</button>
-        <button class="nav-dropdown-item" data-section="herbal-library">Herb Encyclopedia</button>
-        <button class="nav-dropdown-item" data-section="herb-index">Ingredient Library</button>
-      </span>
-    </button>
-    <button class="nav-btn" data-section="soaps">Soaps</button>
-    <button class="nav-btn" data-section="services">Services</button>
-    <button class="nav-btn" data-section="about">About Amber</button>
-    <button class="nav-btn" data-section="faqs">FAQs</button>
+    <button class="nav-btn" data-section="shop">Shop</button>
+    <button class="nav-btn" data-section="custom-formula">Build a Remedy</button>
+    <button class="nav-btn" data-section="herbal-wisdom">Journal</button>
+    <button class="nav-btn" data-section="herb-index">Botanicals</button>
+    <button class="nav-btn" data-section="about">About</button>
     <button class="nav-btn" data-section="contact">Contact</button>
-    <button class="nav-btn nav-btn-start" onclick="openHerbalAdvisor()">Find My Remedy</button>
-    <button class="nav-btn" data-section="checkout" id="navCheckoutBtn" style="display:none">Checkout</button>
   </div>
   <div class="audio-controls">
     <button id="musicToggleBtn" class="music-toggle-btn" aria-label="Toggle music" title="Toggle background music">♪</button>
@@ -576,7 +565,7 @@
     <h3>Your Cart</h3>
     <button id="closeCart">✕</button>
   </div>
-  <div id="cartItems"><p class="empty-cart">Your jar is empty.</p></div>
+  <div id="cartItems"><p class="empty-cart">Your cart is empty.</p></div>
   <div class="cart-totals">
     <div class="cart-row"><span>Subtotal</span><span id="cartSubtotal">$0.00</span></div>
     <div class="cart-row">
@@ -658,9 +647,10 @@
         <span class="hero-trust-item">✦ Personalized to You</span>
       </div>
       <div class="hero-btns hero-two-paths">
-        <button class="btn-primary hero-cta hero-cta-main" onclick="openHerbalAdvisor()">✦ Start My Wellness Quiz</button>
-        <button class="btn-secondary hero-cta" data-section="shop">Shop by Goal</button>
+        <button class="btn-primary hero-cta hero-cta-main" data-section="shop">✦ Shop Now</button>
+        <button class="btn-secondary hero-cta" data-section="custom-formula">Build My Remedy</button>
       </div>
+      <p class="hero-quiz-link"><a href="#" onclick="event.preventDefault();openHerbalAdvisor()">Not sure where to start? Take the 2-minute wellness quiz →</a></p>
     </div>
     <div class="hero-scroll-hint">↓</div>
   </div>
@@ -829,6 +819,36 @@
         <h4>Herb Encyclopedia</h4>
         <p>Browse 316+ botanicals — benefits, traditional uses, and how they work</p>
       </div>
+    </div>
+  </div>
+
+  <!-- JOURNAL PREVIEW — 3 featured articles linking to /articles -->
+  <div class="journal-preview-section pane-bg">
+    <div class="section-ornament">✦ ─────────────── ✦</div>
+    <h2 class="section-title">From the Wellness Journal</h2>
+    <p class="section-sub">Short reads on the herbs we work with every day.</p>
+    <div class="journal-preview-grid">
+      <a class="journal-preview-card" href="/articles" onclick="event.preventDefault();showSection('herbal-wisdom');setTimeout(function(){var a=document.getElementById('hw-stress');if(a)a.scrollIntoView({behavior:'smooth',block:'start'});},120);">
+        <span class="journal-preview-tag">Stress &amp; Calm</span>
+        <h4>Best Herbs for Stress Relief</h4>
+        <p>How adaptogens and nervines help the body return to equilibrium — ashwagandha, holy basil, lemon balm, chamomile.</p>
+        <span class="journal-preview-cta">Read more →</span>
+      </a>
+      <a class="journal-preview-card" href="/articles" onclick="event.preventDefault();showSection('herbal-wisdom');setTimeout(function(){var a=document.getElementById('hw-sleep');if(a)a.scrollIntoView({behavior:'smooth',block:'start'});},120);">
+        <span class="journal-preview-tag">Sleep</span>
+        <h4>Best Herbs for Sleep</h4>
+        <p>Natural sleep support without dependency — valerian, lavender, passionflower, and chamomile explained.</p>
+        <span class="journal-preview-cta">Read more →</span>
+      </a>
+      <a class="journal-preview-card" href="/articles" onclick="event.preventDefault();showSection('herbal-wisdom');setTimeout(function(){var a=document.getElementById('hw-hormones');if(a)a.scrollIntoView({behavior:'smooth',block:'start'});},120);">
+        <span class="journal-preview-tag">Hormones</span>
+        <h4>Best Herbs for Hormone Balance</h4>
+        <p>Supporting hormonal equilibrium through adrenal and endocrine health — maca, vitex, shatavari, holy basil.</p>
+        <span class="journal-preview-cta">Read more →</span>
+      </a>
+    </div>
+    <div class="journal-preview-footer">
+      <a href="/articles" class="btn-secondary" onclick="event.preventDefault();showSection('herbal-wisdom');">Browse all articles →</a>
     </div>
   </div>
 
@@ -2867,7 +2887,7 @@
     <div class="checkout-summary card">
       <h3>Order Summary</h3>
       <div id="checkoutItems" class="checkout-items">
-        <p class="empty-cart">No items yet. Add products from the shop.</p>
+        <p class="empty-cart">Your cart is empty. Add products from the shop.</p>
       </div>
       <div class="checkout-totals">
         <div class="cart-row"><span>Subtotal</span><span id="checkoutSubtotal">$0.00</span></div>

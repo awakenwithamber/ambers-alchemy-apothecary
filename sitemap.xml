@@ -35,10 +35,10 @@
     <priority>0.95</priority>
   </url>
 
-  <!-- Custom Formula Builder -->
+  <!-- Custom Formula Builder (canonical: /build-a-remedy) -->
   <url>
-    <loc>https://awakenagain.com/custom-formula</loc>
-    <lastmod>2026-04-17</lastmod>
+    <loc>https://awakenagain.com/build-a-remedy</loc>
+    <lastmod>2026-04-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -59,10 +59,10 @@
     </image:image>
   </url>
 
-  <!-- Articles & Guides -->
+  <!-- Articles & Guides (canonical: /articles) -->
   <url>
-    <loc>https://awakenagain.com/herbal-wisdom</loc>
-    <lastmod>2026-04-17</lastmod>
+    <loc>https://awakenagain.com/articles</loc>
+    <lastmod>2026-04-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -75,10 +75,10 @@
     <priority>0.9</priority>
   </url>
 
-  <!-- Ingredient Library -->
+  <!-- Botanicals / Living Grimoire (canonical: /botanicals) -->
   <url>
-    <loc>https://awakenagain.com/herb-index</loc>
-    <lastmod>2026-04-17</lastmod>
+    <loc>https://awakenagain.com/botanicals</loc>
+    <lastmod>2026-04-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>

@@ -38,6 +38,31 @@
   status = 200
 
 [[redirects]]
+  from = "/articles"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/botanicals"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/build-a-remedy"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/custom-remedy"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/cart"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
   from = "/soaps"
   to = "/index.html"
   status = 200
