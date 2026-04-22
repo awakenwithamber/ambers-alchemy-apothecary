@@ -52,6 +52,18 @@ document.getElementById('hamburger').addEventListener('click', () => {
   document.getElementById('navLinks').classList.toggle('open');
 });
 
+// Mobile-friendly: tap to expand "Learn" dropdown (CSS :hover is unreliable on touch)
+document.querySelectorAll('.nav-dropdown-parent').forEach(function(parent) {
+  parent.addEventListener('click', function(e) {
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      if (e.target === parent || e.target.classList.contains('nav-dropdown-arrow')) {
+        e.preventDefault();
+        parent.classList.toggle('open');
+      }
+    }
+  });
+});
+
 // ---- CONSULTATION BANNER ----
 document.getElementById('consultClose').addEventListener('click', () => {
   document.getElementById('consultBanner').style.display = 'none';
@@ -476,9 +488,121 @@ async function initStripe() {
       document.getElementById('checkoutPayBtn').disabled = !event.complete;
     });
     stripeReady = true;
+
+    // Mount the Payment Request button (Apple Pay, Google Pay, Shop Pay).
+    // Stripe only displays the button when the user's device supports at
+    // least one wallet — so if it's not available we silently leave the
+    // container hidden.
+    try { mountPaymentRequestButton(elements); } catch (e) { /* ignore */ }
   } catch (e) {
     document.getElementById('card-errors').textContent = 'Could not initialize payment form.';
   }
+}
+
+// Wallet payments via Stripe PaymentRequest. Re-computes total from the
+// current cart each time the sheet opens, so quantity changes are honored.
+let paymentRequest = null;
+function mountPaymentRequestButton(elements) {
+  if (!stripe) return;
+  const wrap = document.getElementById('payment-request-wrap');
+  const container = document.getElementById('payment-request-button');
+  if (!wrap || !container) return;
+
+  function currentAmountCents() {
+    const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const shipping = subtotal >= 75 ? 0 : 6.99;
+    const tax = subtotal * 0.08;
+    const total = subtotal + shipping + tax;
+    return Math.round(total * 100);
+  }
+
+  paymentRequest = stripe.paymentRequest({
+    country: 'US',
+    currency: 'usd',
+    total: { label: "Amber's Alchemy Apothecary", amount: Math.max(currentAmountCents(), 100) },
+    requestPayerName: true,
+    requestPayerEmail: true,
+    requestShipping: false,
+  });
+
+  const prButton = elements.create('paymentRequestButton', {
+    paymentRequest: paymentRequest,
+    style: { paymentRequestButton: { type: 'default', theme: 'dark', height: '48px' } },
+  });
+
+  paymentRequest.canMakePayment().then((result) => {
+    if (result) {
+      prButton.mount('#payment-request-button');
+      wrap.style.display = 'block';
+    } else {
+      wrap.style.display = 'none';
+    }
+  });
+
+  // Keep the wallet sheet's total in sync with the cart just before it opens.
+  prButton.on('click', (event) => {
+    try {
+      paymentRequest.update({
+        total: { label: "Amber's Alchemy Apothecary", amount: Math.max(currentAmountCents(), 100) },
+      });
+    } catch (e) { /* ignore */ }
+  });
+
+  paymentRequest.on('paymentmethod', async (ev) => {
+    try {
+      const name = (ev.payerName || document.getElementById('checkoutCustomerName').value || '').trim() || 'Apothecary Guest';
+      const email = (ev.payerEmail || document.getElementById('checkoutEmail').value || '').trim();
+      document.getElementById('checkoutCustomerName').value = name;
+      if (email) document.getElementById('checkoutEmail').value = email;
+
+      const amount = currentAmountCents();
+      const piResponse = await fetch('/api/create-payment-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, email, name, cart, metadata: { source: 'payment_request' } }),
+      });
+      const piData = await piResponse.json();
+      if (piData.error) throw new Error(piData.error);
+
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        piData.clientSecret,
+        { payment_method: ev.paymentMethod.id },
+        { handleActions: false }
+      );
+
+      if (error) {
+        ev.complete('fail');
+        document.getElementById('card-errors').textContent = error.message || 'Wallet payment failed.';
+        return;
+      }
+      ev.complete('success');
+
+      // If the bank requires 3DS, let Stripe handle it.
+      if (paymentIntent.status === 'requires_action' || paymentIntent.status === 'requires_confirmation') {
+        const { error: confirmErr, paymentIntent: pi2 } = await stripe.confirmCardPayment(piData.clientSecret);
+        if (confirmErr) {
+          document.getElementById('card-errors').textContent = confirmErr.message || 'Payment could not be confirmed.';
+          return;
+        }
+        if (pi2 && pi2.status === 'succeeded') {
+          document.getElementById('transactionId').value = pi2.id;
+          document.getElementById('paymentStatus').value = 'paid';
+          await submitNetlifyForm();
+          showConfirmation(pi2.id, 'paid');
+        }
+        return;
+      }
+      if (paymentIntent.status === 'succeeded') {
+        document.getElementById('transactionId').value = paymentIntent.id;
+        document.getElementById('paymentStatus').value = 'paid';
+        await submitNetlifyForm();
+        showConfirmation(paymentIntent.id, 'paid');
+      }
+    } catch (err) {
+      try { ev.complete('fail'); } catch (e) {}
+      document.getElementById('card-errors').textContent = err.message || 'Wallet payment failed.';
+    }
+  });
 }
 
 // Handle checkout form submission
@@ -605,6 +729,18 @@ function showConfirmation(transactionId, status) {
   // Show confirmation, hide form
   document.querySelector('.checkout-container').style.display = 'none';
   document.getElementById('checkoutConfirmation').style.display = 'block';
+
+  // Dispatch order success event — the thank-you overlay listens for this
+  // and shows next-step options (continue shopping, grimoire, quiz, book, etc).
+  try {
+    document.dispatchEvent(new CustomEvent('awaken:order:success', {
+      detail: {
+        orderRef: transactionId,
+        total: formatPrice(total),
+        status: status,
+      },
+    }));
+  } catch (e) {}
 
   // Clear cart
   cart = [];

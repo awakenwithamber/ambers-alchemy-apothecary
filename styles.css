@@ -5562,3 +5562,320 @@ html, body {
   }
 }
 
+/* ============================================================
+   MOBILE POLISH — v8 (preserves brand, fixes touch + spacing)
+   Additive-only refinements for narrow screens.
+   ============================================================ */
+
+/* Tighter nav on small tablets — reduces crowding without rewriting */
+@media (max-width: 860px) {
+  #mainNav {
+    padding: 0 14px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .nav-brand { margin-right: 6px; }
+  .audio-controls { order: 2; margin-left: auto; }
+  .cart-btn { order: 3; }
+  .hamburger { order: 4; }
+}
+
+/* Mobile: elegant stacked nav, thumb-friendly nav buttons */
+@media (max-width: 768px) {
+  #mainNav {
+    padding: 8px 14px;
+    min-height: 52px;
+  }
+  .nav-brand-sub { font-size: 7.5px; letter-spacing: 0.14em; }
+  .nav-brand-main { font-size: 12.5px; letter-spacing: 0.03em; }
+
+  .nav-links {
+    gap: 2px;
+    padding: 14px 14px 18px;
+    background: linear-gradient(180deg, #1a0f24 0%, #211130 100%);
+    box-shadow: 0 12px 28px rgba(10, 6, 20, 0.6);
+    max-height: calc(100vh - 52px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-links .nav-btn {
+    width: 100%;
+    text-align: left;
+    padding: 12px 14px;
+    font-size: 14px;
+    border-radius: 10px;
+    min-height: 44px;
+    letter-spacing: 0.05em;
+  }
+  .nav-links .nav-btn:hover,
+  .nav-links .nav-btn.active {
+    background: rgba(110, 75, 126, 0.22);
+    color: var(--brass-lt);
+  }
+  .nav-links .nav-btn-start {
+    margin-top: 6px;
+    border: 1px solid var(--brass-lt);
+    background: rgba(140, 106, 59, 0.12);
+  }
+  .nav-dropdown {
+    position: static;
+    display: none;
+    width: 100%;
+    box-shadow: none;
+    background: rgba(30, 17, 40, 0.5);
+    margin-top: 2px;
+  }
+  .nav-dropdown-parent.open .nav-dropdown,
+  .nav-dropdown-parent:focus-within .nav-dropdown { display: flex; }
+  .nav-dropdown-item {
+    padding: 11px 18px;
+    font-size: 13px;
+    min-height: 44px;
+  }
+
+  /* Hamburger: bigger tap target */
+  .hamburger {
+    font-size: 26px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Music + volume: tighter, still visible, thumb-friendly */
+  .audio-controls { gap: 4px; }
+  .music-toggle-btn {
+    font-size: 12px;
+    height: 34px;
+    min-width: 52px;
+    padding: 0 10px;
+  }
+  .volume-control { width: 58px; }
+
+  /* Cart button: always readable */
+  .cart-btn {
+    font-size: 12px;
+    padding: 7px 12px;
+  }
+
+  /* Consultation banner: tighter on mobile */
+  #consultBanner {
+    font-size: 12.5px;
+    padding: 8px 38px;
+    line-height: 1.45;
+  }
+  #consultClose { right: 8px; font-size: 15px; }
+}
+
+/* Very small phones (iPhone SE, narrow Android) */
+@media (max-width: 420px) {
+  #mainNav { padding: 6px 10px; gap: 6px; }
+  .nav-brand-main { font-size: 11.5px; }
+  .nav-brand-sub { font-size: 7px; }
+  .cart-btn { font-size: 11.5px; padding: 6px 10px; }
+  .music-toggle-btn { font-size: 11.5px; min-width: 48px; height: 32px; }
+  .volume-control { width: 50px; }
+  .hero { padding: 48px 14px 40px; }
+  .hero-eyebrow { font-size: 11px; letter-spacing: 0.18em; margin-bottom: 14px; }
+  .hero-headline { margin-bottom: 16px; }
+  .hero-sub { margin-bottom: 28px; font-size: 0.95rem; }
+  .hero-btns { gap: 10px; }
+  .hero-btns .hero-cta {
+    width: 100%;
+    max-width: 320px;
+    font-size: 12px;
+    padding: 13px 20px;
+  }
+  .hero-trust-bar { gap: 10px; font-size: 11.5px; }
+}
+
+/* Cart drawer polish on narrow screens */
+@media (max-width: 480px) {
+  .cart-drawer {
+    width: 100vw;
+    max-width: 100vw;
+    padding: 0 0 32px;
+  }
+  .cart-header { padding: 16px 16px; }
+  .cart-header h3 { font-size: 1.05rem; }
+  #cartItems { padding: 14px 16px; }
+  .cart-totals { padding: 14px 16px; }
+  .cart-shipping-note { padding: 10px 16px; }
+  .cart-form { padding: 14px 16px; }
+  .cart-form input,
+  .cart-form textarea {
+    font-size: 15px; /* prevents iOS zoom on focus */
+    padding: 12px 14px;
+    min-height: 44px;
+  }
+  .cart-form textarea { min-height: 90px; }
+  .checkout-proceed-btn {
+    padding: 14px;
+    font-size: 14px;
+    min-height: 48px;
+  }
+  .payment-section { padding: 14px 16px; }
+  .payment-method-card { padding: 14px 12px; }
+  .pay-btn { min-height: 44px; font-size: 14px; }
+}
+
+/* Global touch-target floor on mobile — buttons, inputs, links */
+@media (max-width: 768px) {
+  button,
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost,
+  input[type="submit"],
+  input[type="button"] {
+    min-height: 44px;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  textarea,
+  select {
+    font-size: 16px; /* prevents iOS auto-zoom */
+  }
+  .btn-primary,
+  .btn-secondary {
+    padding: 13px 22px;
+  }
+  /* Music welcome modal readable on small screens */
+  .music-modal-box {
+    padding: 28px 22px;
+    max-width: 92vw;
+  }
+  .music-modal-title { font-size: 1.25rem; line-height: 1.35; }
+  .music-modal-sub { font-size: 0.95rem; line-height: 1.6; }
+  .music-modal-btns { gap: 10px; flex-direction: column; }
+  .music-modal-btns button { width: 100%; }
+}
+
+/* Section padding floor so content never hugs the screen edge */
+@media (max-width: 540px) {
+  .page-section { padding-left: 4px; padding-right: 4px; }
+  .trust-section { padding: 48px 16px; }
+  .promo-video-section,
+  .hero-video-section { padding: 40px 16px; }
+  .section-title { line-height: 1.3; }
+  .section-sub { padding: 0 6px; }
+
+  /* Herb modal padding tighter on phones */
+  .herb-modal-info { padding: 1.5rem 1.15rem; }
+  .herb-modal-name { font-size: 1.35rem; }
+
+  /* Grimoire header breathes better */
+  .grimoire-header { padding: 2.25rem 1rem 1.5rem; }
+  .grimoire-title { letter-spacing: 0.04em; }
+  .grimoire-explorer,
+  .grimoire-quiz { padding: 1.25rem; }
+  .explorer-herb-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+}
+
+/* Keep sticky / floating elements from colliding with Lunna FAB */
+@media (max-width: 768px) {
+  #toast { bottom: 88px; } /* so toasts don't hide behind Lunna */
+}
+
+
+/* ==========================================================================
+   v9 additions — wallet payments, consultation nav CTA, Lunna book action
+   ========================================================================== */
+
+/* Stripe Payment Request button (Apple Pay / Google Pay / Shop Pay) */
+.payment-request-wrap {
+  margin: 12px 0 10px;
+  padding: 12px;
+  border: 1px dashed rgba(184, 148, 90, 0.35);
+  border-radius: 10px;
+  background: rgba(184, 148, 90, 0.05);
+  text-align: center;
+}
+.payment-request-label {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 2px;
+  font-size: 0.82rem;
+  color: var(--brass-lt, #d9bd83);
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+.payment-request-button {
+  min-height: 48px;
+  margin: 0 auto;
+  max-width: 420px;
+}
+.payment-request-note {
+  margin: 8px 0 0;
+  font-size: 0.84rem;
+  color: rgba(244, 234, 217, 0.65);
+  font-style: italic;
+}
+
+/* Nav consultation CTA (desktop + mobile menu) */
+.nav-btn-consult {
+  background: transparent !important;
+  color: #f4ead9 !important;
+  border: 1px solid rgba(217, 189, 131, 0.6) !important;
+  border-radius: 8px !important;
+  padding: 8px 14px !important;
+  letter-spacing: 1.5px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  line-height: 1;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.nav-btn-consult:hover,
+.nav-btn-consult:focus-visible {
+  background: rgba(217, 189, 131, 0.15) !important;
+  transform: translateY(-1px);
+  outline: none;
+}
+
+/* Book-consult link button variant */
+.book-consult-link {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Lunna footer actions split */
+.lunna-footer-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.lunna-book-btn {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 1.5px;
+  font-size: 0.78rem;
+  color: #f4ead9;
+  text-decoration: none;
+  padding: 8px 12px;
+  min-height: 40px;
+  border-radius: 8px;
+  border: 1px solid rgba(217, 189, 131, 0.55);
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  transition: background 0.2s ease;
+}
+.lunna-book-btn:hover,
+.lunna-book-btn:focus-visible {
+  background: rgba(217, 189, 131, 0.15);
+  outline: none;
+}
+
+/* Keep nav consult button visible on small screens (mobile menu) */
+@media (max-width: 860px) {
+  #navLinks .nav-btn-consult {
+    width: 100%;
+    justify-content: flex-start;
+    padding-left: 14px !important;
+  }
+}
