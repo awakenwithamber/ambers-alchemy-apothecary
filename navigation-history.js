@@ -54,11 +54,32 @@
 
   // --- WRAP showSection for history ---
   var _baseShowSection = window.showSection;
+
+  // Human-readable titles per section (SEO + accessibility on SPA routes)
+  var SECTION_TITLES = {
+    'home': "Awaken Again | Amber's Alchemy Apothecary — Handcrafted Herbal Remedies",
+    'shop': "Shop Handcrafted Remedies | Amber's Alchemy Apothecary",
+    'custom-formula': "Create a Custom Herbal Formula | Amber's Alchemy Apothecary",
+    'soaps': "Handcrafted Artisan Soaps | Amber's Alchemy Apothecary",
+    'herb-index': "Herb Library & Grimoire | Amber's Alchemy Apothecary",
+    'herbal-library': "Herb Encyclopedia | Amber's Alchemy Apothecary",
+    'herbal-wisdom': "Herbal Wisdom & Articles | Amber's Alchemy Apothecary",
+    'journal': "The Apothecary Journal | Amber's Alchemy Apothecary",
+    'services': "Healing Services & Consultations | Amber's Alchemy Apothecary",
+    'about': "About Amber | Amber's Alchemy Apothecary",
+    'faqs': "Frequently Asked Questions | Amber's Alchemy Apothecary",
+    'contact': "Contact Amber | Amber's Alchemy Apothecary",
+    'checkout': "Secure Checkout | Amber's Alchemy Apothecary"
+  };
+
   window.showSection = function(id) {
     _baseShowSection(id);
     if (!isPopping) {
       pushState({ section: id }, id);
     }
+    // Update the document title for SEO/AX on SPA routes
+    var title = SECTION_TITLES[id];
+    if (title) { try { document.title = title; } catch(e) {} }
     // Persist last section
     try { sessionStorage.setItem(KEYS.LAST_SECTION, id); } catch(e) {}
     // Save scroll position of previous section

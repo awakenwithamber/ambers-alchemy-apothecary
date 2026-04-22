@@ -770,6 +770,15 @@
         alert('Please fill in your name, email, and symptoms to send your consultation request.');
         return;
       }
+      var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
+      if (!emailOk) {
+        alert('That email address does not look quite right. Please double-check so Amber can reach you.');
+        return;
+      }
+      if (name.trim().length < 2) {
+        alert('Please enter your name so Amber knows how to address you.');
+        return;
+      }
       if (ageConfirm && !ageConfirm.checked) {
         alert('Please confirm that you are 18 years of age or older.');
         return;

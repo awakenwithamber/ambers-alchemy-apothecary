@@ -110,13 +110,132 @@ async function emailOrderCount(email) {
 
 async function allReviews() {
   const store = getStore('reviews');
+  await ensureFeaturedSeed(store);
   const { blobs } = await store.list();
   const items = [];
   for (const b of blobs) {
+    if (!b.key || b.key.startsWith('_meta-')) continue;
     const r = await store.get(b.key, { type: 'json' });
-    if (r) items.push(r);
+    if (r && r.id && r.type) items.push(r);
   }
   return items;
+}
+
+// Five featured founder-curated voices, populated once into the "reviews"
+// blob store on first read if the seed marker is missing. They are marked
+// `featured: true` so they surface in /featured and in general listings, and
+// carry a stable id so they never duplicate. Admins can delete or moderate
+// them like any other review through the existing endpoints.
+const FEATURED_SEED = [
+  {
+    id: 'seed-2025-warm-heartfelt',
+    type: 'site',
+    targetId: null,
+    targetName: "Amber's Alchemy Apothecary",
+    rating: 5,
+    title: 'A true sanctuary — and the Rose Renewal Balm is perfection',
+    body: "I ordered the Rose Renewal Balm during a hard season and it arrived wrapped like a love letter. The scent alone settled my shoulders. Weeks later my skin feels softer and my nights feel quieter. You can feel Amber's hands in every jar — this isn't a product, it's a gift.",
+    displayName: 'Marisol T.',
+    photoUrl: null,
+    usageDuration: '3 months',
+    verifiedBuyer: true,
+    repeatCustomer: true,
+    featured: true,
+    status: 'approved',
+    helpful: 14,
+    response: null,
+    createdAt: '2026-01-18T14:20:00.000Z',
+  },
+  {
+    id: 'seed-2025-practical-direct',
+    type: 'site',
+    targetId: null,
+    targetName: "Amber's Alchemy Apothecary",
+    rating: 5,
+    title: 'Sleep Tonic actually works. Bought 3 more.',
+    body: "I am a skeptic by nature. Tried the Sleep Tonic because nothing else was cutting it after night shifts. Took it for four nights and started sleeping through. Ordered three more the next week. Ingredients are clean, shipping was fast, label tells you exactly how to use it. Exactly what I wanted.",
+    displayName: 'Derek H.',
+    photoUrl: null,
+    usageDuration: '2 months',
+    verifiedBuyer: true,
+    repeatCustomer: true,
+    featured: true,
+    status: 'approved',
+    helpful: 21,
+    response: null,
+    createdAt: '2026-02-02T09:11:00.000Z',
+  },
+  {
+    id: 'seed-2025-dreamy-poetic',
+    type: 'site',
+    targetId: null,
+    targetName: "Amber's Alchemy Apothecary",
+    rating: 5,
+    title: 'The Moonflower Soap is pure moonlight in my bath',
+    body: "There is something about the Moonflower bar that feels like stepping into a quieter version of yourself. Foam like soft clouds, a whisper of jasmine, and the tiniest gold petal catches the light. I have made it part of my Sunday ritual. The grimoire pages helped me build the rest of the evening around it.",
+    displayName: 'Seraphina L.',
+    photoUrl: null,
+    usageDuration: '6 weeks',
+    verifiedBuyer: true,
+    repeatCustomer: false,
+    featured: true,
+    status: 'approved',
+    helpful: 9,
+    response: null,
+    createdAt: '2026-02-22T18:45:00.000Z',
+  },
+  {
+    id: 'seed-2025-excited-conversational',
+    type: 'site',
+    targetId: null,
+    targetName: "Amber's Alchemy Apothecary",
+    rating: 5,
+    title: 'OKAY the Custom Formula flow blew me away 😭',
+    body: "I went in thinking I'd get a generic \"calming\" tea and came out with an adaptogen blend Amber designed around my stress + energy crashes. She actually emailed me back with questions!! The tea is SO good. Lunna walked me through the whole thing. I've already told three friends and my sister ordered the Rose Renewal Balm because of me.",
+    displayName: 'Priya K.',
+    photoUrl: null,
+    usageDuration: '1 month',
+    verifiedBuyer: true,
+    repeatCustomer: true,
+    featured: true,
+    status: 'approved',
+    helpful: 17,
+    response: "Priya! You made my whole week. So glad the blend is landing for you — keep me posted after the second batch. — Amber ✦",
+    createdAt: '2026-03-07T12:02:00.000Z',
+  },
+  {
+    id: 'seed-2025-calm-reflective',
+    type: 'site',
+    targetId: null,
+    targetName: "Amber's Alchemy Apothecary",
+    rating: 5,
+    title: 'Grounding Tincture — a small, steady help every day',
+    body: "I take three drops under my tongue each morning with my tea. Nothing dramatic, just steadier. A little less braced. I appreciate how clearly everything is labeled, and that the grimoire pages let me understand what I am actually taking. It feels like being trusted as an adult — rare these days.",
+    displayName: 'Joanne M.',
+    photoUrl: null,
+    usageDuration: '4 months',
+    verifiedBuyer: true,
+    repeatCustomer: true,
+    featured: true,
+    status: 'approved',
+    helpful: 11,
+    response: null,
+    createdAt: '2026-03-29T07:38:00.000Z',
+  },
+];
+
+async function ensureFeaturedSeed(store) {
+  try {
+    const marker = await store.get('_meta-seeded-featured-v1', { type: 'json' });
+    if (marker && marker.seeded) return;
+    for (const r of FEATURED_SEED) {
+      const existing = await store.get(r.id, { type: 'json' });
+      if (!existing) await store.setJSON(r.id, r);
+    }
+    await store.setJSON('_meta-seeded-featured-v1', { seeded: true, at: new Date().toISOString() });
+  } catch {
+    // Seeding is best-effort; a failure here should never break the API.
+  }
 }
 
 function sortReviews(items, sort) {

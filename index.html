@@ -475,6 +475,10 @@
     <link rel="stylesheet" href="grimoire-seo.css">
     <link rel="stylesheet" href="herbal-advisor.css">
     <link rel="stylesheet" href="soap-gallery.css">
+    <link rel="stylesheet" href="lunna.css">
+    <link rel="stylesheet" href="grimoire-book.css">
+    <link rel="stylesheet" href="soap-guide.css">
+    <link rel="stylesheet" href="thank-you.css">
 <!-- v-music-fix -->
 <script src="https://js.stripe.com/v3/"></script>
 <script src="https://player.vimeo.com/api/player.js"></script>
@@ -558,6 +562,7 @@
     <button class="nav-btn" data-section="faqs">FAQs</button>
     <button class="nav-btn" data-section="contact">Contact</button>
     <button class="nav-btn nav-btn-start" onclick="openHerbalAdvisor()">Find My Remedy</button>
+    <a class="nav-btn nav-btn-consult" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener" data-consult-cta>📅 Book Consultation</a>
     <button class="nav-btn" data-section="checkout" id="navCheckoutBtn" style="display:none">Checkout</button>
   </div>
   <div class="audio-controls">
@@ -592,6 +597,7 @@
   <div class="cart-shipping-note">
     <p>🚚 Standard shipping $6.99 | Free on orders over $75</p>
     <p>📍 Sales tax calculated at 8% (may vary by state)</p>
+    <div class="shopify-badge" data-shopify-badge aria-hidden="true"></div>
   </div>
   <div class="cart-form">
     <input type="text" id="cartName" placeholder="Your Name" required />
@@ -1280,6 +1286,20 @@
     <p class="soap-intro-body">Each bar is made with real botanicals, pure doTERRA essential oils for scent, and all-natural plant-based coloring — a small ritual of nature's beauty for your skin.</p>
   </aside>
 
+  <!-- TWO PATHS TO A CUSTOM SOAP -->
+  <div class="soap-paths-row" aria-label="Choose a soap creation path">
+    <div class="soap-path-card">
+      <h3>🌙 Create a Soap with Lunna</h3>
+      <p>A gentle guided experience. Answer a few questions about mood, scent, skin, and intention — Lunna will recommend the perfect blend for you.</p>
+      <button type="button" class="soap-path-btn" data-soap-guide>Begin the Guided Path ✦</button>
+    </div>
+    <div class="soap-path-card">
+      <h3>🫧 Build Your Own Soap</h3>
+      <p>Already know what you want? Step directly into the builder — pick your bar, scent, benefits, and botanicals yourself.</p>
+      <button type="button" class="soap-path-btn" onclick="openSoapBuilder()">Open the Direct Builder ✦</button>
+    </div>
+  </div>
+
   <!-- Soap Product Cards — 9 Signature Scents -->
   <div class="soap-grid">
 
@@ -1704,6 +1724,10 @@
       <span class="sourcing-icon">🌱</span>
       <p><strong>Our Sourcing Promise:</strong> Every botanical in this Grimoire is either <strong>hand-harvested by Amber</strong> from wild or cultivated gardens, or <strong>sustainably sourced</strong> from certified organic, trusted wholesale partners who share our commitment to ethical wildcrafting, fair trade, and ecological stewardship. We never use irradiated, fumigated, or conventionally grown herbs.</p>
     </div>
+    <div class="grimoire-book-cta">
+      <button class="gb-launch" type="button" data-grimoire-book aria-label="Open the Living Grimoire book">📖 Open the Living Grimoire</button>
+    </div>
+    <p class="grimoire-book-cta-note">A page-turning book of cleansing, sleep, moon, bath, and tea rituals — plus blessings, journaling prompts, and gentle herbal recipes to keep at home.</p>
   </div>
 
   <!-- HERB EXPLORER SEARCH -->
@@ -2210,7 +2234,7 @@
       </div>
       <div class="about-cta-row">
         <button class="btn-primary" data-section="custom-formula">Get a Custom Formula</button>
-        <button class="btn-secondary" data-section="contact">Book a Consultation</button>
+        <a class="btn-secondary book-consult-link" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener" data-consult-cta>📅 Book a Consultation</a>
         <button class="btn-ghost" data-section="herbal-wisdom">Read Articles &amp; Guides</button>
       </div>
     </div>
@@ -2835,7 +2859,7 @@
       <p>📧 <a href="mailto:awaken@consultant.com">awaken@consultant.com</a></p>
       <p>📘 <a href="https://www.facebook.com/share/1BNvSQzPiP/" target="_blank" rel="noopener">Follow on Facebook</a></p>
       <p>📸 <a href="https://www.instagram.com/awakenwithamber" target="_blank" rel="noopener">@awakenwithamber on Instagram</a></p>
-      <p>📅 <a href="#" data-section="custom-formula">Book a Free Consultation</a></p>
+      <p>📅 <a href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener" data-consult-cta>Book a Free Consultation ↗</a></p>
       <div class="rv-cta-row" style="margin-top:1rem;">
         <button type="button" class="btn-secondary" data-rv-open data-rv-open-type="site" data-rv-name="My experience with Amber's Alchemy">✦ Leave a Review Here</button>
         <a class="rv-google-link" data-rv-google target="_blank" rel="noopener">Leave a Review on Google ↗</a>
@@ -2946,6 +2970,12 @@
           <div id="card-errors" class="checkout-card-errors" role="alert"></div>
         </div>
 
+        <div id="payment-request-wrap" class="payment-request-wrap" style="display:none;">
+          <p class="payment-request-label">✦ Or check out quickly with</p>
+          <div id="payment-request-button" class="payment-request-button"></div>
+          <p class="payment-request-note">Apple Pay, Google Pay, and Shop Pay appear here when supported on your device.</p>
+        </div>
+
         <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn" disabled>
           <span id="payBtnText">Pay Now</span>
           <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
@@ -2998,6 +3028,7 @@
       <h4>Connect</h4>
       <a href="#" data-section="contact">Contact</a>
       <a href="#" data-section="services">Healing Services</a>
+      <a href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener" data-consult-cta>📅 Book a Consultation</a>
       <a href="https://www.facebook.com/share/1BNvSQzPiP/" target="_blank" rel="noopener">📘 Facebook</a>
       <a href="https://www.instagram.com/awakenwithamber" target="_blank" rel="noopener">📸 Instagram</a>
       <a href="mailto:awaken@consultant.com">awaken@consultant.com</a>
@@ -3088,6 +3119,11 @@
 <script src="herbal-wisdom.js"></script>
 <script src="navigation-history.js"></script>
 <script src="reviews.js"></script>
+<script src="lunna.js" defer></script>
+<script src="grimoire-book.js" defer></script>
+<script src="soap-guide.js" defer></script>
+<script src="thank-you.js" defer></script>
+<script src="shopify.js" defer></script>
 <script src="pwa-init.js"></script>
     </body>
 </html>

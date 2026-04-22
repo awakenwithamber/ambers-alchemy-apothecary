@@ -1,0 +1,333 @@
+/* ============================================================
+   LUNNA — Apothecary Companion
+   A gentle guide; warm, botanical, never distracting.
+   ============================================================ */
+
+#lunna-root {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  z-index: 2400;
+  font-family: 'Lora', Georgia, serif;
+  pointer-events: none;
+}
+
+#lunna-root > * { pointer-events: auto; }
+
+/* FAB — the moon at rest */
+.lunna-fab {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  border: 1px solid rgba(184, 148, 90, 0.55);
+  background:
+    radial-gradient(circle at 32% 30%, #f6e7c8 0%, #e0c589 35%, #a97f3f 90%),
+    #2E1C38;
+  color: #2E1C38;
+  box-shadow:
+    0 0 0 2px rgba(46, 28, 56, 0.9),
+    0 6px 22px rgba(10, 6, 20, 0.55),
+    0 0 22px rgba(184, 148, 90, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  position: relative;
+  animation: lunna-breathe 5.5s ease-in-out infinite;
+}
+.lunna-fab::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid rgba(184, 148, 90, 0.22);
+  pointer-events: none;
+}
+.lunna-fab:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 0 2px rgba(46, 28, 56, 0.9),
+    0 8px 30px rgba(10, 6, 20, 0.65),
+    0 0 28px rgba(184, 148, 90, 0.45);
+}
+.lunna-fab svg { width: 30px; height: 30px; opacity: 0.92; }
+@keyframes lunna-breathe {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(46, 28, 56, 0.9), 0 6px 22px rgba(10, 6, 20, 0.55), 0 0 22px rgba(184, 148, 90, 0.22); }
+  50%      { box-shadow: 0 0 0 2px rgba(46, 28, 56, 0.9), 0 6px 22px rgba(10, 6, 20, 0.55), 0 0 32px rgba(184, 148, 90, 0.45); }
+}
+
+.lunna-fab-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #9B72B0;
+  border: 2px solid #1a0f24;
+  display: none;
+  box-shadow: 0 0 10px rgba(155, 114, 176, 0.55);
+}
+.lunna-fab.lunna-has-hint .lunna-fab-badge { display: block; }
+
+/* Tooltip (hint bubble near the FAB) */
+.lunna-hint {
+  position: absolute;
+  bottom: 74px;
+  right: 0;
+  max-width: 260px;
+  background: linear-gradient(160deg, #2E1C38 0%, #1E1128 100%);
+  border: 1px solid rgba(184, 148, 90, 0.35);
+  border-radius: 14px;
+  padding: 12px 14px 12px 14px;
+  color: #EDE4D8;
+  font-size: 13.5px;
+  line-height: 1.55;
+  box-shadow: 0 10px 28px rgba(10, 6, 20, 0.55);
+  transform: translateY(4px);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+.lunna-hint.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.lunna-hint::after {
+  content: '';
+  position: absolute;
+  right: 22px;
+  bottom: -7px;
+  width: 12px; height: 12px;
+  background: linear-gradient(135deg, transparent 50%, #2E1C38 50%);
+  border-right: 1px solid rgba(184, 148, 90, 0.35);
+  border-bottom: 1px solid rgba(184, 148, 90, 0.35);
+  transform: rotate(45deg);
+}
+.lunna-hint-text { display: block; margin-bottom: 6px; font-family: 'Cormorant Garamond', serif; font-style: italic; color: #E0D0B8; }
+.lunna-hint-close {
+  background: none; border: none; color: #B8A898;
+  font-size: 12px; letter-spacing: 0.06em; cursor: pointer;
+  padding: 0; text-transform: uppercase; font-family: 'Cinzel', serif;
+}
+.lunna-hint-close:hover { color: #B8945A; }
+
+/* Panel — when Lunna is fully open */
+.lunna-panel {
+  position: absolute;
+  bottom: 78px;
+  right: 0;
+  width: 340px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 110px);
+  background: linear-gradient(160deg, #2E1C38 0%, #1E1128 100%);
+  border: 1px solid rgba(184, 148, 90, 0.35);
+  border-radius: 18px;
+  box-shadow: 0 18px 48px rgba(10, 6, 20, 0.65);
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+  transform-origin: bottom right;
+  animation: lunna-panel-in 0.28s ease;
+}
+.lunna-panel.open { display: flex; }
+@keyframes lunna-panel-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.lunna-panel-header {
+  padding: 18px 20px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid rgba(184, 148, 90, 0.22);
+  background: linear-gradient(180deg, rgba(110, 75, 126, 0.18) 0%, transparent 100%);
+}
+.lunna-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 30%, #f6e7c8 0%, #e0c589 40%, #a97f3f 100%);
+  box-shadow: 0 0 0 1px rgba(184, 148, 90, 0.45), 0 0 14px rgba(184, 148, 90, 0.3);
+  flex-shrink: 0;
+}
+.lunna-who {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.lunna-name {
+  font-family: 'Cinzel', serif;
+  font-size: 15px;
+  color: #B8945A;
+  letter-spacing: 0.08em;
+}
+.lunna-role {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 12.5px;
+  color: #B8A898;
+  line-height: 1.3;
+  margin-top: 1px;
+}
+.lunna-close {
+  background: rgba(46, 28, 56, 0.6);
+  border: 1px solid rgba(184, 148, 90, 0.25);
+  color: #B8A898;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.lunna-close:hover { background: #4B2E59; color: #B8945A; border-color: #B8945A; }
+
+.lunna-body {
+  padding: 16px 20px 18px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.lunna-greeting {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: #E0D0B8;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.lunna-greeting .lunna-accent { color: #B8945A; font-style: normal; }
+
+.lunna-section-title {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: #B8945A;
+  text-transform: uppercase;
+  margin: 8px 0 10px;
+  opacity: 0.9;
+}
+
+.lunna-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.lunna-suggestion {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  background: rgba(46, 28, 56, 0.55);
+  border: 1px solid rgba(184, 148, 90, 0.22);
+  color: #EDE4D8;
+  font-family: 'Lora', serif;
+  font-size: 13.5px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1.45;
+}
+.lunna-suggestion:hover {
+  background: rgba(110, 75, 126, 0.35);
+  border-color: #B8945A;
+  transform: translateX(2px);
+}
+.lunna-suggestion-icon {
+  font-size: 16px;
+  line-height: 1;
+  color: #B8945A;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.lunna-suggestion-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.lunna-suggestion-title {
+  font-family: 'Cinzel', serif;
+  font-size: 12.5px;
+  letter-spacing: 0.05em;
+  color: #B8945A;
+}
+.lunna-suggestion-desc {
+  font-size: 12.5px;
+  color: #B8A898;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+.lunna-footer {
+  border-top: 1px solid rgba(184, 148, 90, 0.18);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  background: rgba(10, 6, 20, 0.35);
+}
+.lunna-footer-note {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 12px;
+  color: #B8A898;
+  opacity: 0.85;
+}
+.lunna-contact-btn {
+  background: none;
+  border: 1px solid rgba(184, 148, 90, 0.4);
+  color: #B8945A;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 7px 13px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 32px;
+}
+.lunna-contact-btn:hover {
+  background: rgba(184, 148, 90, 0.18);
+  color: #EDE4D8;
+  border-color: #B8945A;
+}
+
+/* Mobile: Lunna gets full-width bottom sheet */
+@media (max-width: 540px) {
+  #lunna-root {
+    bottom: 16px;
+    right: 14px;
+  }
+  .lunna-fab { width: 56px; height: 56px; }
+  .lunna-fab svg { width: 26px; height: 26px; }
+  .lunna-panel {
+    width: calc(100vw - 28px);
+    right: 0;
+    bottom: 72px;
+    border-radius: 16px;
+  }
+  .lunna-hint {
+    max-width: calc(100vw - 44px);
+    right: 0;
+    bottom: 66px;
+  }
+  .lunna-body { padding: 14px 16px 16px; }
+  .lunna-panel-header { padding: 14px 16px 12px; }
+  .lunna-footer { padding: 10px 16px; }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .lunna-fab { animation: none; }
+  .lunna-panel { animation: none; }
+  .lunna-hint { transition: opacity 0.15s; }
+}

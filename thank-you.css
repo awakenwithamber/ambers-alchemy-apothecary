@@ -1,0 +1,159 @@
+/* ==========================================================================
+   Thank-You / Post-purchase next-step overlay
+   ========================================================================== */
+
+.ty-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 10500;
+}
+.ty-overlay.ty-open { display: block; }
+
+.ty-backdrop {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 20%, rgba(40, 16, 42, 0.82), rgba(10, 4, 14, 0.96));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.ty-panel {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  max-width: min(720px, 96vw);
+  max-height: min(92vh, 880px);
+  background: linear-gradient(160deg, #2a0f1e 0%, #3c1a2a 60%, #1d0916 100%);
+  color: #f4ead9;
+  border-radius: 14px;
+  border: 1px solid rgba(217, 189, 131, 0.35);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+  padding: 30px 28px;
+  overflow: auto;
+  font-family: 'Cormorant Garamond', 'Georgia', serif;
+  text-align: center;
+}
+.ty-close {
+  position: absolute;
+  top: 10px; right: 12px;
+  background: transparent;
+  color: #f4ead9;
+  border: 1px solid rgba(184, 148, 90, 0.55);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.ty-close:hover, .ty-close:focus-visible { background: rgba(184, 148, 90, 0.2); outline: none; }
+
+.ty-ornament {
+  color: #d9bd83;
+  letter-spacing: 4px;
+  font-size: 1rem;
+  margin: 6px 0;
+}
+.ty-title {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 3px;
+  color: #d9bd83;
+  font-size: 1.8rem;
+  margin: 6px 0 10px;
+}
+.ty-lede {
+  color: rgba(244, 234, 217, 0.9);
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin: 0 auto 10px;
+  max-width: 520px;
+}
+.ty-ref {
+  color: rgba(217, 189, 131, 0.85);
+  font-family: 'Cinzel', serif;
+  font-size: 0.88rem;
+  letter-spacing: 2px;
+  margin: 8px 0 10px;
+  display: none;
+}
+
+.ty-next-title {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 2px;
+  color: #d9bd83;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  margin: 14px 0 10px;
+}
+.ty-next-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  text-align: left;
+}
+.ty-next-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px 14px;
+  min-height: 92px;
+  border: 1px solid rgba(217, 189, 131, 0.45);
+  background: rgba(184, 148, 90, 0.08);
+  color: #f4ead9;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+  font-family: 'Cormorant Garamond', serif;
+}
+.ty-next-btn:hover,
+.ty-next-btn:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(217, 189, 131, 0.2);
+  border-color: #d9bd83;
+  outline: none;
+}
+.ty-next-btn .ty-next-emoji {
+  font-size: 1.6rem;
+}
+.ty-next-btn strong {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 1.5px;
+  font-size: 0.92rem;
+  color: #f4ead9;
+}
+.ty-next-btn em {
+  font-style: italic;
+  color: rgba(244, 234, 217, 0.72);
+  font-size: 0.92rem;
+}
+
+.ty-outro {
+  margin-top: 16px;
+  color: rgba(244, 234, 217, 0.75);
+  font-style: italic;
+}
+
+@media (max-width: 520px) {
+  .ty-panel { padding: 24px 18px; }
+  .ty-title { font-size: 1.5rem; letter-spacing: 2px; }
+  .ty-next-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ty-next-btn { min-height: 84px; padding: 12px; }
+}
+
+/* Shopify badge (used on cart + checkout page when Shopify env vars are set) */
+.shopify-badge {
+  display: none;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 1.5px;
+  font-size: 0.78rem;
+  color: #d9bd83;
+  padding: 8px 12px;
+  border: 1px solid rgba(217, 189, 131, 0.4);
+  border-radius: 8px;
+  margin: 8px 0;
+  text-align: center;
+  background: rgba(184, 148, 90, 0.08);
+}
+.shopify-badge.shopify-on { display: block; }
