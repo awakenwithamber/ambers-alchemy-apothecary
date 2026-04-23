@@ -1502,8 +1502,12 @@
     </div>
 
     <!-- Custom Soap Builder CTA -->
-    <div class="soap-card soap-builder-cta-card">
-      <div class="soap-img-wrap soap-builder-cta-visual">
+    <div class="soap-card soap-builder-cta-card sb-cta-upgraded">
+      <div class="soap-img-wrap soap-builder-cta-visual sb-cta-hero-visual">
+        <div class="sb-cta-steam" aria-hidden="true"></div>
+        <div class="sb-cta-sparkles" aria-hidden="true">
+          <span>✦</span><span>✧</span><span>✦</span>
+        </div>
         <div class="soap-builder-cta-icon">⚗️</div>
         <div class="soap-builder-cta-sparkle">✦</div>
       </div>
@@ -1511,7 +1515,11 @@
         <h3 class="soap-name">Design Your Own Soap</h3>
         <p class="soap-latin">Your Vision · Your Botanicals · Your Ritual</p>
         <p class="soap-desc">Choose a botanical clear top bar, a creamy nourishing bar, or a layered bar with both — then personalize it with your favorite botanicals, natural color, and scent.</p>
-        <button class="btn-primary soap-builder-launch-btn" onclick="openSoapBuilder()">Create Your Custom Soap ✦</button>
+        <div class="sb-cta-btn-row">
+          <button class="btn-primary soap-builder-launch-btn" onclick="openSoapBuilder('guided')">Start Guided Builder ✦</button>
+          <button class="btn-secondary soap-builder-launch-btn" onclick="openSoapBuilder('manual')">Build My Own</button>
+          <button class="btn-ghost soap-builder-launch-btn" onclick="openSoapBuilder('lunna')">Let Lunna Help</button>
+        </div>
       </div>
     </div>
 
@@ -1610,75 +1618,172 @@
 
 <!-- CUSTOM SOAP BUILDER MODAL -->
 <div id="soapBuilderModal" class="soap-builder-overlay" style="display:none;">
-  <div class="soap-builder-modal">
-    <button class="soap-builder-close" onclick="closeSoapBuilder()">&times;</button>
-    <div class="soap-builder-header">
-      <div class="section-ornament">✦ ─── ✦</div>
-      <h2>Custom Soap Builder</h2>
-      <p>Build your bar your way. Choose a botanical clear top bar, a creamy nourishing bar, or a layered bar with a clear botanical top and rich creamy base. Then personalize it with your favorite botanicals, natural color, and scent.</p>
-    </div>
+  <div class="soap-builder-modal sb-modal-v2">
+    <button class="soap-builder-close" onclick="closeSoapBuilder()" aria-label="Close">&times;</button>
 
-    <div class="soap-builder-progress">
-      <div class="sb-progress-step active" data-step="1"><span>1</span> Bar Type</div>
-      <div class="sb-progress-step" data-step="2"><span>2</span> Scent</div>
-      <div class="sb-progress-step" data-step="3"><span>3</span> Benefits</div>
-      <div class="sb-progress-step" data-step="4"><span>4</span> Add-Ons</div>
-      <div class="sb-progress-step" data-step="5"><span>5</span> Review</div>
-    </div>
-
-    <div class="soap-builder-body">
-      <!-- Step 1: Base -->
-      <div class="sb-step active" id="sbStep1">
-        <h3>Choose Your Bar Type</h3>
-        <p class="sb-step-desc">Pick the style of bar you'd love. The <strong>Botanical Clear Top Bar</strong> pours from vegetable glycerin + castor oil — perfect for showcasing real botanicals. The <strong>Creamy Nourishing Bar</strong> is shea butter + goat milk for deep, velvety hydration. The <strong>Layered Bar</strong> gives you both — a clear botanical top over a creamy nourishing base. You'll personalize scent, botanicals, and color in the next steps.</p>
-        <div class="sb-options-grid" id="sbBaseOptions"></div>
+    <!-- ===== HERO / INTRO VIEW ===== -->
+    <div class="sb-view sb-view-intro active" id="sbViewIntro">
+      <div class="sb-hero">
+        <div class="sb-hero-image" role="img" aria-label="Handcrafted custom soap blend with botanicals and petals">
+          <div class="sb-hero-overlay"></div>
+          <div class="sb-hero-float sb-hero-float-1" aria-hidden="true">
+            <img src="images/soap-lavender-honey.png" alt="" loading="lazy" onerror="this.style.display='none'" />
+          </div>
+          <div class="sb-hero-float sb-hero-float-2" aria-hidden="true">
+            <img src="images/soap-rose-clay.png" alt="" loading="lazy" onerror="this.style.display='none'" />
+          </div>
+          <div class="sb-hero-float sb-hero-float-3" aria-hidden="true">
+            <img src="images/soap-calendula-oat.png" alt="" loading="lazy" onerror="this.style.display='none'" />
+          </div>
+        </div>
+        <div class="sb-hero-content">
+          <div class="sb-hero-badge">✦ Apothecary Workshop ✦</div>
+          <h2 class="sb-hero-title">Create Your Custom Soap Blend</h2>
+          <p class="sb-hero-sub">Crafted for your skin, senses &amp; intention. Choose ingredients, scent, purpose, and energy — then create something made just for you.</p>
+          <div class="sb-hero-meta">
+            <span>🌿 Botanical</span>
+            <span>✋ Handcrafted</span>
+            <span>🕯️ Small-batch</span>
+            <span>🌙 Intention-led</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Step 2: Scent Profile -->
-      <div class="sb-step" id="sbStep2">
-        <h3>Choose Your Scent Profile</h3>
-        <p class="sb-step-desc">Select the scents that speak to your soul — all crafted with pure doTERRA essential oils.</p>
-        <div class="sb-options-grid" id="sbScentOptions"></div>
+      <div class="sb-paths">
+        <button class="sb-path-card" data-path="guided" onclick="sbStartPath('guided')">
+          <div class="sb-path-icon">🌙</div>
+          <h3>Start Guided Builder</h3>
+          <p>A gentle step-by-step flow. Answer a few questions and we'll suggest a soul-matched blend.</p>
+          <span class="sb-path-cta">Begin the journey →</span>
+        </button>
+        <button class="sb-path-card sb-path-featured" data-path="manual" onclick="sbStartPath('manual')">
+          <div class="sb-path-icon">⚗️</div>
+          <h3>Build My Own Soap</h3>
+          <p>Hand-pick base, scents, benefits, and botanicals. Full creative control, live preview.</p>
+          <span class="sb-path-cta">Open the workshop →</span>
+        </button>
+        <button class="sb-path-card" data-path="lunna" onclick="sbStartPath('lunna')">
+          <div class="sb-path-icon">✦</div>
+          <h3>Let Lunna Help Me Choose</h3>
+          <p>Tell her how you'd like to feel. Lunna intuits your blend with warmth and a little magic.</p>
+          <span class="sb-path-cta">Meet Lunna →</span>
+        </button>
       </div>
 
-      <!-- Step 3: Benefits -->
-      <div class="sb-step" id="sbStep3">
-        <h3>Choose Your Benefits</h3>
-        <p class="sb-step-desc">What do you want your soap to do for you?</p>
-        <div class="sb-options-grid" id="sbBenefitOptions"></div>
-      </div>
-
-      <!-- Step 4: Add-Ons -->
-      <div class="sb-step" id="sbStep4">
-        <h3>Optional Botanicals &amp; Color</h3>
-        <p class="sb-step-desc">Pick real botanicals and natural plant-based color for your bar — no synthetic dyes, ever.</p>
-        <div class="sb-options-grid" id="sbAddonOptions"></div>
-      </div>
-
-      <!-- Step 5: Review -->
-      <div class="sb-step" id="sbStep5">
-        <h3>Your Custom Soap</h3>
-        <p class="sb-step-desc">Review your selections and add to cart</p>
-        <div class="sb-review-panel" id="sbReviewPanel"></div>
-        <div class="sb-suggestion-box" id="sbSuggestionBox"></div>
-      </div>
-    </div>
-
-    <!-- Live Summary Sidebar -->
-    <div class="sb-live-summary">
-      <h4>Your Soap So Far</h4>
-      <div id="sbLiveSummary"><p class="sb-empty">No selections yet</p></div>
-      <div class="sb-live-price">
-        <span>Estimated Price:</span>
-        <strong id="sbLivePrice">$13.99</strong>
+      <div class="sb-trust-row">
+        <div><strong>$13.99</strong><span>per custom bar</span></div>
+        <div><strong>100%</strong><span>plant-based color</span></div>
+        <div><strong>7–10 days</strong><span>handcrafted ship</span></div>
       </div>
     </div>
 
-    <div class="soap-builder-actions">
-      <button class="btn-ghost" id="sbPrevBtn" onclick="sbPrevStep()" style="display:none;">Back</button>
-      <button class="btn-secondary" id="sbStartNewBtn" onclick="sbStartNew()">Start New</button>
-      <button class="btn-primary" id="sbAddCartBtn" onclick="sbAddToCart()">Add to Cart</button>
-      <button class="btn-primary" id="sbNextBtn" onclick="sbNextStep()">Next Step ✦</button>
+    <!-- ===== GUIDED QUIZ VIEW ===== -->
+    <div class="sb-view sb-view-guided" id="sbViewGuided">
+      <div class="sb-view-header">
+        <button class="sb-back-to-intro" onclick="sbBackToIntro()">← Start Over</button>
+        <div class="sb-view-title">
+          <h2>Guided Soap Journey</h2>
+          <p>A few gentle questions to find your blend.</p>
+        </div>
+      </div>
+      <div class="sb-quiz-progress" id="sbQuizProgress"></div>
+      <div class="sb-quiz-stage" id="sbQuizStage"></div>
+    </div>
+
+    <!-- ===== LUNNA GUIDE VIEW ===== -->
+    <div class="sb-view sb-view-lunna" id="sbViewLunna">
+      <div class="sb-view-header">
+        <button class="sb-back-to-intro" onclick="sbBackToIntro()">← Start Over</button>
+        <div class="sb-view-title">
+          <h2>Lunna's Soap Guide</h2>
+          <p>Your intuitive blend companion.</p>
+        </div>
+      </div>
+      <div class="sb-lunna-chat" id="sbLunnaChat"></div>
+      <div class="sb-lunna-input" id="sbLunnaInput"></div>
+    </div>
+
+    <!-- ===== MANUAL BUILDER VIEW (5-step wizard) ===== -->
+    <div class="sb-view sb-view-manual" id="sbViewManual">
+      <div class="sb-view-header">
+        <button class="sb-back-to-intro" onclick="sbBackToIntro()">← Start Over</button>
+        <div class="sb-view-title">
+          <h2>Build Your Own Soap</h2>
+          <p>Full creative control. Choose base, scent, benefits, and botanicals.</p>
+        </div>
+      </div>
+
+      <div class="soap-builder-progress">
+        <div class="sb-progress-step active" data-step="1"><span>1</span> Bar Type</div>
+        <div class="sb-progress-step" data-step="2"><span>2</span> Scent</div>
+        <div class="sb-progress-step" data-step="3"><span>3</span> Benefits</div>
+        <div class="sb-progress-step" data-step="4"><span>4</span> Add-Ons</div>
+        <div class="sb-progress-step" data-step="5"><span>5</span> Review</div>
+      </div>
+
+      <div class="soap-builder-body">
+        <div class="sb-step active" id="sbStep1">
+          <h3>Choose Your Bar Type</h3>
+          <p class="sb-step-desc">Pick the style of bar you'd love. The <strong>Botanical Clear Top Bar</strong> pours from vegetable glycerin + castor oil — perfect for showcasing real botanicals. The <strong>Creamy Nourishing Bar</strong> is shea butter + goat milk for deep, velvety hydration. The <strong>Layered Bar</strong> gives you both — a clear botanical top over a creamy nourishing base. You'll personalize scent, botanicals, and color in the next steps.</p>
+          <div class="sb-options-grid" id="sbBaseOptions"></div>
+        </div>
+
+        <div class="sb-step" id="sbStep2">
+          <h3>Choose Your Scent Profile</h3>
+          <p class="sb-step-desc">Select the scents that speak to your soul — all crafted with pure doTERRA essential oils.</p>
+          <div class="sb-options-grid" id="sbScentOptions"></div>
+        </div>
+
+        <div class="sb-step" id="sbStep3">
+          <h3>Choose Your Benefits</h3>
+          <p class="sb-step-desc">What do you want your soap to do for you?</p>
+          <div class="sb-options-grid" id="sbBenefitOptions"></div>
+        </div>
+
+        <div class="sb-step" id="sbStep4">
+          <h3>Optional Botanicals &amp; Color</h3>
+          <p class="sb-step-desc">Pick real botanicals and natural plant-based color for your bar — no synthetic dyes, ever.</p>
+          <div class="sb-options-grid" id="sbAddonOptions"></div>
+        </div>
+
+        <div class="sb-step" id="sbStep5">
+          <h3>Your Custom Soap</h3>
+          <p class="sb-step-desc">Review your selections and add to cart</p>
+          <div class="sb-review-panel" id="sbReviewPanel"></div>
+          <div class="sb-suggestion-box" id="sbSuggestionBox"></div>
+        </div>
+      </div>
+
+      <div class="sb-live-summary">
+        <h4>Your Soap So Far</h4>
+        <div id="sbLiveSummary"><p class="sb-empty">No selections yet</p></div>
+        <div class="sb-live-price">
+          <span>Estimated Price:</span>
+          <strong id="sbLivePrice">$13.99</strong>
+        </div>
+      </div>
+
+      <div class="soap-builder-actions">
+        <button class="btn-ghost" id="sbPrevBtn" onclick="sbPrevStep()" style="display:none;">Back</button>
+        <button class="btn-secondary" id="sbStartNewBtn" onclick="sbStartNew()">Reset</button>
+        <button class="btn-primary" id="sbAddCartBtn" onclick="sbAddToCart()">Add to Cart</button>
+        <button class="btn-primary" id="sbNextBtn" onclick="sbNextStep()">Next Step ✦</button>
+      </div>
+    </div>
+
+    <!-- ===== RECOMMENDATION / FINAL VIEW ===== -->
+    <div class="sb-view sb-view-result" id="sbViewResult">
+      <div class="sb-result-hero" id="sbResultHero"></div>
+      <div class="sb-result-body" id="sbResultBody"></div>
+      <div class="sb-result-actions">
+        <button class="btn-primary" onclick="sbResultAddToCart()">✦ Add to Cart</button>
+        <button class="btn-secondary" onclick="sbResultCustomize()">Customize Further</button>
+        <button class="btn-secondary" onclick="sbResultSave()">Save My Blend</button>
+        <button class="btn-ghost" onclick="sbResultAnother()">Build Another</button>
+        <button class="btn-ghost" onclick="sbResultLunnaRefine()">Let Lunna Refine</button>
+        <button class="btn-ghost" onclick="sbResultBookConsult()">Book Consultation</button>
+        <button class="btn-ghost" onclick="closeSoapBuilder()">Continue Shopping</button>
+      </div>
     </div>
   </div>
 </div>
