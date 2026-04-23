@@ -646,20 +646,24 @@
 <!-- HOME SECTION -->
 <section id="home" class="page-section active">
 
-  <!-- HERO (Simplified: 1 headline, 2 CTAs) -->
+  <!-- HERO (Calm, curated gateway) -->
   <div class="hero">
     <div class="hero-content">
-      <p class="hero-eyebrow">✦ AWAKEN WITH AMBER LLC ✦</p>
-      <h1 class="hero-headline">Discover Your Personal<br>Herbal Allies</h1>
-      <p class="hero-sub">Answer a few thoughtful questions and receive your personalized herbal match — in under two minutes.</p>
+      <p class="hero-eyebrow">✦ AWAKEN AGAIN · AMBER'S ALCHEMY APOTHECARY ✦</p>
+      <h1 class="hero-headline">Healing, Ritual, Remedies &amp; Renewal</h1>
+      <p class="hero-sub">A healing apothecary, wellness sanctuary, and guided experience — small-batch botanical remedies and soul-led care, gently matched to you.</p>
       <div class="hero-trust-bar">
         <span class="hero-trust-item">🌿 Herbalist Formulated</span>
         <span class="hero-trust-item">🫙 Small-Batch Crafted</span>
         <span class="hero-trust-item">✦ Personalized to You</span>
       </div>
-      <div class="hero-btns hero-two-paths">
-        <button class="btn-primary hero-cta hero-cta-main" onclick="openHerbalAdvisor()">✦ Start My Wellness Quiz</button>
-        <button class="btn-secondary hero-cta" data-section="shop">Shop by Goal</button>
+      <div class="hero-btns hero-two-paths hero-four-paths">
+        <button class="btn-primary hero-cta hero-cta-main" data-section="shop">Enter the Apothecary Shop</button>
+        <button class="btn-secondary hero-cta" data-section="services">Explore Services</button>
+        <button class="btn-secondary hero-cta" onclick="openHerbalAdvisor()">Take the Herbal Quiz</button>
+      </div>
+      <div class="hero-secondary-cta">
+        <a class="hero-booking-link" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">✦ Book a Consultation with Amber →</a>
       </div>
     </div>
     <div class="hero-scroll-hint">↓</div>
@@ -677,73 +681,128 @@
     </div>
   </div>
 
-  <!-- WHAT CAN WE HELP YOU WITH — primary beginner entry path -->
-  <div class="results-section pane-bg">
+  <!-- CHOOSE YOUR PATH — 6 curated intent cards -->
+  <div class="choose-path-section pane-bg">
     <div class="section-ornament">✦ ─────────────── ✦</div>
-    <h2 class="section-title">What Can We Help You With?</h2>
-    <p class="section-sub">Click your goal to go straight to the recommended formula.</p>
-    <div class="results-grid">
-      <a class="result-card result-card-link" href="#" data-product-link="dreamease-capsules" onclick="event.preventDefault();navigateToProduct('dreamease-capsules')">
-        <div class="result-icon">😴</div>
-        <span class="result-badge">Best for beginners</span>
-        <h4>Better Sleep</h4>
-        <p>Helps you fall asleep faster and stay asleep — without grogginess.</p>
-        <span class="result-micro-label">Go to recommended formula</span>
-        <span class="result-cta">Shop DreamEase →</span>
+    <h2 class="section-title">Choose Your Path</h2>
+    <p class="section-sub">Six gentle doorways — pick the one that meets you today.</p>
+    <div class="choose-path-grid">
+      <a class="path-card" href="#" data-section="services">
+        <div class="path-icon">🤲</div>
+        <h4>I Need Support</h4>
+        <p>Personalized guidance &amp; healing sessions with Amber.</p>
+        <span class="path-cta">Explore Services →</span>
       </a>
-      <a class="result-card result-card-link" href="#" data-product-link="chill-pill" onclick="event.preventDefault();navigateToProduct('chill-pill')">
-        <div class="result-icon">🧘</div>
-        <span class="result-badge">Most popular</span>
-        <h4>Reduced Stress</h4>
-        <p>Calms anxiety and eases tension with adaptogens (stress-supporting herbs that help your body stay balanced).</p>
-        <span class="result-micro-label">Go to recommended formula</span>
-        <span class="result-cta">Shop Chill Pill →</span>
+      <a class="path-card" href="#" onclick="event.preventDefault();navigateToProduct('dreamease-capsules')">
+        <div class="path-icon">🌙</div>
+        <h4>I Need Rest</h4>
+        <p>Sleep, calm, and nervous-system support — gentle botanicals.</p>
+        <span class="path-cta">Find My Calm →</span>
       </a>
-      <a class="result-card result-card-link" href="#" data-product-link="sacred-balance" onclick="event.preventDefault();navigateToProduct('sacred-balance')">
-        <div class="result-icon">🌸</div>
-        <h4>Balanced Hormones</h4>
-        <p>Supports hormone balance, eases PMS, and helps regulate your endocrine system naturally.</p>
-        <span class="result-micro-label">Go to recommended formula</span>
-        <span class="result-cta">Shop Sacred Balance →</span>
+      <a class="path-card" href="#" data-section="custom-formula">
+        <div class="path-icon">⚗️</div>
+        <h4>I Need Custom Remedies</h4>
+        <p>Handcrafted formulas built for your body and intention.</p>
+        <span class="path-cta">Build My Blend →</span>
       </a>
-      <a class="result-card result-card-link" href="#" data-product-link="hair-serum" onclick="event.preventDefault();navigateToProduct('hair-serum')">
-        <div class="result-icon">💇</div>
-        <h4>Stronger Hair</h4>
-        <p>Promotes thicker, healthier hair with botanical scalp nourishment.</p>
-        <span class="result-micro-label">Go to recommended formula</span>
-        <span class="result-cta">Shop Hair Serum →</span>
+      <a class="path-card" href="#" data-section="shop">
+        <div class="path-icon">🫙</div>
+        <h4>I Want to Shop</h4>
+        <p>Browse the full apothecary — capsules, balms, teas, soaps.</p>
+        <span class="path-cta">Enter the Shop →</span>
       </a>
-      <a class="result-card result-card-link" href="#" data-product-link="vital-connect" onclick="event.preventDefault();navigateToProduct('vital-connect')">
-        <div class="result-icon">⚡</div>
-        <h4>Natural Energy</h4>
-        <p>Sustained energy from adaptogenic herbs — no crashes, no jitters.</p>
-        <span class="result-micro-label">Go to recommended formula</span>
-        <span class="result-cta">Shop Vital Connect →</span>
+      <a class="path-card" href="#" onclick="event.preventDefault();openHerbalAdvisor()">
+        <div class="path-icon">✦</div>
+        <h4>I Want Guidance</h4>
+        <p>Take the short herbal quiz — we'll match you to your allies.</p>
+        <span class="path-cta">Start the Quiz →</span>
       </a>
-      <a class="result-card result-card-link" href="#" data-product-link="beauty-balm" onclick="event.preventDefault();navigateToProduct('beauty-balm')">
-        <div class="result-icon">✨</div>
-        <h4>Younger Skin</h4>
-        <p>Restores glow and firmness with rich botanical balms.</p>
-        <span class="result-micro-label">Go to recommended formula</span>
-        <span class="result-cta">Shop Age Reversal Balm →</span>
-      </a>
-      <a class="result-card result-card-link" href="#" data-product-link="pain-balm" onclick="event.preventDefault();navigateToProduct('pain-balm')">
-        <div class="result-icon">🌿</div>
-        <h4>Pain Relief</h4>
-        <p>Targeted botanical relief for sore muscles, joints, and everyday aches.</p>
-        <span class="result-micro-label">Go to recommended formula</span>
-        <span class="result-cta">Shop Pain Relief Balm →</span>
+      <a class="path-card" href="#" data-section="herbal-wisdom">
+        <div class="path-icon">📖</div>
+        <h4>I Want to Learn</h4>
+        <p>Articles, rituals, and the 316-herb Living Grimoire.</p>
+        <span class="path-cta">Open the Library →</span>
       </a>
     </div>
   </div>
 
   <!-- FEATURED PRODUCTS (direct links with beginner-friendly descriptions) -->
-  <div class="best-sellers-section pane-bg">
+  <div class="best-sellers-section pane-bg best-sellers-limited">
     <div class="section-ornament">✦ ─────────────── ✦</div>
-    <h2 class="section-title">Best Sellers</h2>
-    <p class="section-sub">Trusted by hundreds of customers — handcrafted with pure botanical ingredients.</p>
+    <h2 class="section-title">Featured Apothecary</h2>
+    <p class="section-sub">Two signature remedies — hand-picked favorites from the shop.</p>
     <div class="best-sellers-grid" id="bestSellersGrid"></div>
     <div class="best-sellers-soaps-grid" id="bestSellersSoapsGrid"></div>
+    <div class="home-more-link-wrap">
+      <a class="home-more-link" href="#" data-section="shop">View Full Shop →</a>
+    </div>
+  </div>
+
+  <!-- SERVICES SNAPSHOT -->
+  <div class="services-snapshot-section pane-bg">
+    <div class="section-ornament">✦ ─────────────── ✦</div>
+    <h2 class="section-title">Services Snapshot</h2>
+    <p class="section-sub">Two featured healing paths with Amber — book when you're ready.</p>
+    <div class="services-snapshot-grid">
+      <a class="snapshot-card" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">
+        <div class="snapshot-icon">🕊️</div>
+        <h4>Personalized Consultation</h4>
+        <p>A one-on-one session with Amber to map your symptoms, goals, and the botanicals best suited to your body.</p>
+        <span class="snapshot-cta">Book a Consultation →</span>
+      </a>
+      <a class="snapshot-card" href="#" data-section="services">
+        <div class="snapshot-icon">✦</div>
+        <h4>Spiritual Healing</h4>
+        <p>Chakra balancing, past-life regression, crystal rebirthing, and intuitive readings — remote or in-person.</p>
+        <span class="snapshot-cta">See Healing Services →</span>
+      </a>
+    </div>
+    <div class="home-more-link-wrap">
+      <a class="home-more-link" href="#" data-section="services">View All Services →</a>
+    </div>
+  </div>
+
+  <!-- LIVING GRIMOIRE PREVIEW -->
+  <div class="grimoire-preview-section pane-bg">
+    <div class="section-ornament">✦ ─────────────── ✦</div>
+    <h2 class="section-title">The Living Grimoire</h2>
+    <p class="section-sub">An illuminated book of rituals, moon work, and plant wisdom — one page at a time.</p>
+    <a class="grimoire-preview-card" href="#" data-section="herb-index">
+      <div class="grimoire-preview-inner">
+        <div class="grimoire-page-visual">📖</div>
+        <div class="grimoire-preview-copy">
+          <h4>Sacred Pages, Turned Gently</h4>
+          <p>Cleansing, moon rituals, grounding, sleep, self-love, seasonal practices — paired with the remedies that carry them.</p>
+          <span class="snapshot-cta">Enter the Living Grimoire →</span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- ABOUT AMBER PREVIEW -->
+  <div class="about-preview-section pane-bg">
+    <div class="section-ornament">✦ ─────────────── ✦</div>
+    <h2 class="section-title">Meet Amber</h2>
+    <div class="about-preview-inner">
+      <div class="about-preview-photo" aria-hidden="true">
+        <div class="about-preview-initial">A</div>
+      </div>
+      <div class="about-preview-copy">
+        <h4>Amber Lynn Patten</h4>
+        <p class="about-preview-role">Herbalist · Spiritual Healer · Botanical Alchemist</p>
+        <p>Amber crafts small-batch remedies with reverence for the plants — drawing from Ayurveda, TCM, Western herbalism, and Indigenous plant wisdom. Every formula is made by hand, with intention.</p>
+        <a class="snapshot-cta" href="#" data-section="about">Meet Amber →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL CTA BAR -->
+  <div class="final-cta-bar pane-bg">
+    <div class="final-cta-inner">
+      <a class="btn-primary final-cta-btn" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">Book Consultation</a>
+      <button class="btn-secondary final-cta-btn" data-section="shop">Shop Now</button>
+      <button class="btn-ghost final-cta-btn" onclick="if(window.openLunna){window.openLunna();}else if(window.openHerbalAdvisor){window.openHerbalAdvisor();}">Ask Lunna</button>
+    </div>
   </div>
 
 
@@ -834,7 +893,10 @@
 
   <!-- COMMUNITY REVIEWS — Real, verified, honest -->
   <div class="testimonials-section pane-bg" id="reviews-home">
-    <div class="rv-home-featured" data-rv-featured data-limit="6"></div>
+    <div class="rv-home-featured" data-rv-featured data-limit="2"></div>
+    <div class="home-reviews-more">
+      <a class="home-more-link" href="#reviews-home">Read All Reviews →</a>
+    </div>
   </div>
 
   <!-- NEWSLETTER (compact) -->
