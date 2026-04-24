@@ -8,6 +8,26 @@
   status = 200
 
 [[redirects]]
+  from = "/reviews"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/grimior"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/grimoire"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/real-magic"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
   from = "/home"
   to = "/index.html"
   status = 200

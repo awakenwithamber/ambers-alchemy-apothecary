@@ -475,10 +475,15 @@
     <link rel="stylesheet" href="grimoire-seo.css">
     <link rel="stylesheet" href="herbal-advisor.css">
     <link rel="stylesheet" href="soap-gallery.css">
+    <link rel="stylesheet" href="grimior.css">
 <!-- v-music-fix -->
-<script src="https://js.stripe.com/v3/"></script>
 <script src="https://player.vimeo.com/api/player.js"></script>
-<meta name="stripe-key" content="" />
+<!-- Shopify is the commerce source of truth (products, pricing, cart,
+     checkout, payments, wallet methods, promo codes, subscriptions,
+     customers, orders). Populate the meta below or set SHOPIFY_DOMAIN
+     in Netlify env; the client falls back to /api/shopify-config. -->
+<meta name="shopify-domain" content="" />
+<script src="shopify-config.js" defer></script>
 
 <!-- Analytics: dataLayer + GA4 / GTM bootstrap (consent-safe defaults).
      Set GTM_ID and/or GA4_MEASUREMENT_ID below to activate. -->
@@ -542,6 +547,7 @@
   </div>
   <div class="nav-links" id="navLinks">
     <button class="nav-btn active" data-section="home">Home</button>
+    <button class="nav-btn" data-section="reviews">Reviews</button>
     <button class="nav-btn" data-section="shop">Shop Remedies</button>
     <button class="nav-btn" data-section="custom-formula">Create Remedy</button>
     <button class="nav-btn nav-dropdown-parent" id="factsArticlesNav">Learn
@@ -553,6 +559,7 @@
       </span>
     </button>
     <button class="nav-btn" data-section="soaps">Soaps</button>
+    <button class="nav-btn" data-section="grimior">✦ The Grimior</button>
     <button class="nav-btn" data-section="services">Services</button>
     <button class="nav-btn" data-section="about">About Amber</button>
     <button class="nav-btn" data-section="faqs">FAQs</button>
@@ -579,6 +586,10 @@
   <div id="cartItems"><p class="empty-cart">Your jar is empty.</p></div>
   <div class="cart-totals">
     <div class="cart-row"><span>Subtotal</span><span id="cartSubtotal">$0.00</span></div>
+    <div class="cart-row" id="cartGrimiorDiscountRow" style="display:none;color:#8a5a1a;">
+      <span>✦ Grimior Member 10% off</span>
+      <span id="cartGrimiorDiscount">-$0.00</span>
+    </div>
     <div class="cart-row">
       <span>Shipping</span>
       <span id="cartShipping">$0.00</span>
@@ -646,27 +657,70 @@
 <!-- HOME SECTION -->
 <section id="home" class="page-section active">
 
-  <!-- HERO (Simplified: 1 headline, 2 CTAs) -->
+  <!-- HERO (Curated gateway: calm, clear, intentional CTAs) -->
   <div class="hero">
     <div class="hero-content">
       <p class="hero-eyebrow">✦ AWAKEN WITH AMBER LLC ✦</p>
-      <h1 class="hero-headline">Discover Your Personal<br>Herbal Allies</h1>
-      <p class="hero-sub">Answer a few thoughtful questions and receive your personalized herbal match — in under two minutes.</p>
+      <h1 class="hero-headline">Healing, Ritual,<br>Remedies &amp; Renewal</h1>
+      <p class="hero-sub">A handcrafted healing apothecary, wellness sanctuary, and guided botanical experience — crafted in small batches with reverence for the plants.</p>
       <div class="hero-trust-bar">
         <span class="hero-trust-item">🌿 Herbalist Formulated</span>
         <span class="hero-trust-item">🫙 Small-Batch Crafted</span>
         <span class="hero-trust-item">✦ Personalized to You</span>
       </div>
-      <div class="hero-btns hero-two-paths">
-        <button class="btn-primary hero-cta hero-cta-main" onclick="openHerbalAdvisor()">✦ Start My Wellness Quiz</button>
-        <button class="btn-secondary hero-cta" data-section="shop">Shop by Goal</button>
+      <div class="hero-btns hero-primary-paths">
+        <button class="btn-primary hero-cta hero-cta-main" data-section="shop">✦ Enter the Apothecary Shop</button>
+        <button class="btn-secondary hero-cta" data-section="services">Explore Services</button>
+        <button class="btn-secondary hero-cta" onclick="openHerbalAdvisor()">Take the Herbal Quiz</button>
+      </div>
+      <div class="hero-secondary-cta">
+        <a class="hero-consult-link" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">📅 Book a Consultation with Amber →</a>
       </div>
     </div>
     <div class="hero-scroll-hint">↓</div>
   </div>
 
-  <!-- ABOUT + PROMO VIDEO (prominently placed below hero) -->
-  <div class="hero-video-section pane-bg">
+  <!-- CHOOSE YOUR PATH — curated decision gateway -->
+  <div class="choose-path-section pane-bg">
+    <div class="section-ornament">✦ ─────────────── ✦</div>
+    <h2 class="section-title">Choose Your Path</h2>
+    <p class="section-sub">Start where you are. Each path opens the right door.</p>
+    <div class="choose-path-grid">
+      <a class="path-card" href="#" data-section="shop" aria-label="I need support">
+        <div class="path-icon">🤲</div>
+        <h4>I Need Support</h4>
+        <p>Gentle remedies for stress, sleep, mood &amp; everyday balance.</p>
+      </a>
+      <a class="path-card" href="#" data-product-link="dreamease-capsules" onclick="event.preventDefault();navigateToProduct('dreamease-capsules')" aria-label="I need rest">
+        <div class="path-icon">🌙</div>
+        <h4>I Need Rest</h4>
+        <p>Sleep support, calming rituals &amp; nervous-system restoration.</p>
+      </a>
+      <a class="path-card" href="#" data-section="custom-formula" aria-label="I need custom remedies">
+        <div class="path-icon">⚗️</div>
+        <h4>I Need Custom Remedies</h4>
+        <p>Build a blend tailored to your body, goals &amp; intention.</p>
+      </a>
+      <a class="path-card" href="#" data-section="shop" aria-label="I want to shop">
+        <div class="path-icon">🫙</div>
+        <h4>I Want to Shop</h4>
+        <p>Explore our full apothecary of handcrafted botanical remedies.</p>
+      </a>
+      <a class="path-card" href="#" data-section="services" aria-label="I want guidance">
+        <div class="path-icon">✨</div>
+        <h4>I Want Guidance</h4>
+        <p>Private sessions, readings &amp; guided wellness support with Amber.</p>
+      </a>
+      <a class="path-card" href="#" data-section="herb-index" aria-label="I want to learn">
+        <div class="path-icon">📖</div>
+        <h4>I Want to Learn</h4>
+        <p>Enter the Living Grimoire — rituals, herbs, and sacred wisdom.</p>
+      </a>
+    </div>
+  </div>
+
+  <!-- ABOUT + PROMO VIDEO (hidden from homepage — accessible on About page) -->
+  <div class="hero-video-section pane-bg home-hidden">
     <div class="hero-video-inner">
       <p class="hero-video-context">Discover personalized herbal remedies, handcrafted formulas, and plant-based solutions designed to support your body naturally.</p>
       <div class="promo-video-frame">
@@ -677,8 +731,8 @@
     </div>
   </div>
 
-  <!-- WHAT CAN WE HELP YOU WITH — primary beginner entry path -->
-  <div class="results-section pane-bg">
+  <!-- WHAT CAN WE HELP YOU WITH (hidden from homepage — accessible via Shop by Goal) -->
+  <div class="results-section pane-bg home-hidden">
     <div class="section-ornament">✦ ─────────────── ✦</div>
     <h2 class="section-title">What Can We Help You With?</h2>
     <p class="section-sub">Click your goal to go straight to the recommended formula.</p>
@@ -737,18 +791,45 @@
     </div>
   </div>
 
-  <!-- FEATURED PRODUCTS (direct links with beginner-friendly descriptions) -->
+  <!-- FEATURED PRODUCTS (2 only — full catalog lives on Shop page) -->
   <div class="best-sellers-section pane-bg">
     <div class="section-ornament">✦ ─────────────── ✦</div>
-    <h2 class="section-title">Best Sellers</h2>
-    <p class="section-sub">Trusted by hundreds of customers — handcrafted with pure botanical ingredients.</p>
+    <h2 class="section-title">Featured Remedies</h2>
+    <p class="section-sub">Two signature blends — explore the full apothecary when you're ready.</p>
     <div class="best-sellers-grid" id="bestSellersGrid"></div>
     <div class="best-sellers-soaps-grid" id="bestSellersSoapsGrid"></div>
+    <div class="section-view-more">
+      <button class="btn-secondary" data-section="shop">View Full Shop →</button>
+    </div>
+  </div>
+
+  <!-- FEATURED SERVICES (2 only — full list lives on Services page) -->
+  <div class="services-preview-section pane-bg">
+    <div class="section-ornament">✦ ─────────────── ✦</div>
+    <h2 class="section-title">Featured Services</h2>
+    <p class="section-sub">Two ways to work one-on-one with Amber.</p>
+    <div class="services-preview-grid">
+      <a class="service-preview-card" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">
+        <span class="service-preview-icon">📅</span>
+        <h4>Personalized Wellness Consultation</h4>
+        <p>A one-on-one session with Amber to map out your body, goals, and the right remedies for you.</p>
+        <span class="service-preview-cta">Book a Consultation →</span>
+      </a>
+      <a class="service-preview-card" href="#" data-section="custom-formula">
+        <span class="service-preview-icon">⚗️</span>
+        <h4>Custom Remedy Blend</h4>
+        <p>A bespoke herbal formula hand-blended for your symptoms, intentions, and lifestyle.</p>
+        <span class="service-preview-cta">Start Your Custom Blend →</span>
+      </a>
+    </div>
+    <div class="section-view-more">
+      <button class="btn-secondary" data-section="services">View All Services →</button>
+    </div>
   </div>
 
 
-  <!-- APOTHECARY PROCESS (condensed) -->
-  <div class="apothecary-process-section pane-bg">
+  <!-- APOTHECARY PROCESS (hidden from homepage — lives on About page) -->
+  <div class="apothecary-process-section pane-bg home-hidden">
     <div class="section-ornament">✦ ─────────────── ✦</div>
     <h2 class="section-title">How Our Remedies Are Made</h2>
     <div class="process-steps">
@@ -779,8 +860,8 @@
     </div>
   </div>
 
-  <!-- TRUST SECTION (condensed) -->
-  <div class="trust-section pane-bg">
+  <!-- TRUST SECTION (hidden from homepage — lives on About page) -->
+  <div class="trust-section pane-bg home-hidden">
     <h2 class="trust-title">Why People Trust Amber's Alchemy</h2>
     <div class="trust-grid trust-grid-compact">
       <div class="trust-item">
@@ -813,8 +894,8 @@
     </div>
   </div>
 
-  <!-- EDUCATION PREVIEW -->
-  <div class="education-preview-section pane-bg">
+  <!-- EDUCATION PREVIEW (hidden from homepage — accessible via Learn nav) -->
+  <div class="education-preview-section pane-bg home-hidden">
     <div class="section-ornament">✦ ─────────────── ✦</div>
     <h2 class="section-title">Learn About Herbal Medicine</h2>
     <p class="section-sub">Explore our free educational resources.</p>
@@ -832,13 +913,16 @@
     </div>
   </div>
 
-  <!-- COMMUNITY REVIEWS — Real, verified, honest -->
+  <!-- COMMUNITY REVIEWS — Real, verified, honest (2 featured) -->
   <div class="testimonials-section pane-bg" id="reviews-home">
-    <div class="rv-home-featured" data-rv-featured data-limit="6"></div>
+    <div class="rv-home-featured" data-rv-featured data-limit="2"></div>
+    <div class="section-view-more">
+      <button class="btn-secondary" data-section="reviews">Read All Reviews →</button>
+    </div>
   </div>
 
-  <!-- NEWSLETTER (compact) -->
-  <div class="newsletter-section pane-bg">
+  <!-- NEWSLETTER (hidden from homepage — accessible via footer) -->
+  <div class="newsletter-section pane-bg home-hidden">
     <div class="newsletter-inner">
       <div class="newsletter-text">
         <h2>🌿 Free Herbal Healing Guide</h2>
@@ -852,6 +936,183 @@
     </div>
   </div>
 
+  <!-- ABOUT AMBER PREVIEW -->
+  <div class="about-preview-section pane-bg">
+    <div class="section-ornament">✦ ─────────────── ✦</div>
+    <h2 class="section-title">Meet Amber</h2>
+    <div class="about-preview-inner">
+      <div class="about-preview-photo">
+        <img src="images/amber-portrait-1.jpg" alt="Amber Lynn Patten — Herbalist, Spiritual Healer & Botanical Alchemist" loading="lazy" />
+      </div>
+      <div class="about-preview-text">
+        <p class="about-preview-tag">Herbalist · Spiritual Healer · Botanical Alchemist</p>
+        <p>Amber Lynn Patten crafts small-batch remedies with reverence for the plants — pulling from Ayurveda, Traditional Chinese Medicine, and Western herbalism. No synthetic fillers, no shortcuts. Every blend is made with prayer, purpose, and care.</p>
+        <button class="btn-secondary" data-section="about">Meet Amber →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRIMIOR HOMEPAGE PREVIEW — subscription book of light magic -->
+  <div class="grimior-homepage-preview">
+    <div class="g-ornament">✦ ⚗ ✦</div>
+    <h2>Unlock The Grimior / Real Magic</h2>
+    <p>Step inside a living book of light magic, herbal wisdom, healing rituals, sacred recipes, and subscriber-only apothecary blessings.</p>
+    <ul class="g-home-perks">
+      <li>10% off every order</li>
+      <li>Free shipping over $50</li>
+      <li>Weekly deals</li>
+      <li>Monthly promo code</li>
+      <li>Seasonal rituals</li>
+    </ul>
+    <div class="g-home-cta-row">
+      <button class="btn-primary" type="button" data-section="grimior">Open the Grimior</button>
+      <button class="btn-secondary" type="button" onclick="window.Grimior&amp;&amp;window.Grimior.subscribe()">Join for $3.33/month</button>
+    </div>
+    <p class="g-fine-print" style="margin-top:0.7rem;opacity:0.7;">Cancel anytime. New rituals, recipes, and articles added regularly.</p>
+  </div>
+
+  <!-- FINAL CTA BAR — three clean actions -->
+  <div class="final-cta-bar pane-bg">
+    <div class="final-cta-inner">
+      <div class="section-ornament">✦ ─────────────── ✦</div>
+      <h2 class="section-title">Where Would You Like to Begin?</h2>
+      <div class="final-cta-grid">
+        <a class="final-cta-card" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">
+          <span class="final-cta-icon">📅</span>
+          <h4>Book Consultation</h4>
+          <p>One-on-one guidance with Amber.</p>
+        </a>
+        <a class="final-cta-card" href="#" data-section="shop">
+          <span class="final-cta-icon">🫙</span>
+          <h4>Shop Now</h4>
+          <p>Enter the apothecary.</p>
+        </a>
+        <a class="final-cta-card" href="#" onclick="event.preventDefault();openLunna&amp;&amp;openLunna()">
+          <span class="final-cta-icon">🌙</span>
+          <h4>Ask Lunna</h4>
+          <p>Your gentle guide — ask anything.</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- REVIEWS SECTION — dedicated page with authentic high-trust reviews -->
+<section id="reviews" class="page-section pane-bg">
+  <div class="section-header">
+    <div class="section-ornament">✦ ─────────────── ✦</div>
+    <h2>Honest Words from Our Community</h2>
+    <p class="section-sub">Real reviews from people who've worked with Amber and used her handcrafted remedies, soaps, and services.</p>
+  </div>
+
+  <div class="reviews-filter-bar">
+    <button class="reviews-filter-btn active" data-rvcat="all">All</button>
+    <button class="reviews-filter-btn" data-rvcat="remedies">Remedies</button>
+    <button class="reviews-filter-btn" data-rvcat="soaps">Soaps &amp; Builder</button>
+    <button class="reviews-filter-btn" data-rvcat="rituals">Bath &amp; Ritual</button>
+    <button class="reviews-filter-btn" data-rvcat="sleep">Sleep Support</button>
+    <button class="reviews-filter-btn" data-rvcat="services">Consultations</button>
+  </div>
+
+  <div class="reviews-page-grid" id="reviewsPageGrid">
+
+    <article class="review-page-card" data-rvcat="soaps">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"I built a custom soap blend with lavender, oat, and a whisper of rose and — I am obsessed. It smells like a memory I didn't know I had. My skin hasn't felt this calm in months."</p>
+      <div class="review-attribution"><strong>Madeline R.</strong> · Custom Soap Builder</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="sleep">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"DreamEase changed my nights. No grogginess in the morning, no racing thoughts at 2 a.m. — just actual sleep. I take it on the nights my brain won't let go."</p>
+      <div class="review-attribution"><strong>Priya S.</strong> · Sleep Support Remedy</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="services">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"My consultation with Amber felt less like a call and more like being seen. She listened, asked the right questions, and built a plan around the real root — not just the symptoms."</p>
+      <div class="review-attribution"><strong>Jenna M.</strong> · 1:1 Consultation</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="rituals">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"The bath ritual blend is pure magic. I lit the candle she recommended, poured the salts, and for the first time in a long time I felt like my body was on my side again."</p>
+      <div class="review-attribution"><strong>Casey W.</strong> · Bath Ritual Blend</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="remedies">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"The Chill Pill is the first adaptogen blend that actually takes the edge off without making me feel flat. I can work, parent, breathe — all at the same time."</p>
+      <div class="review-attribution"><strong>Rachel T.</strong> · Chill Pill Capsules</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="soaps">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"Every bar is beautiful. They smell clean and earthy — never perfumey — and they actually lather. My teen stole the charcoal-mint and now it's his signature scent."</p>
+      <div class="review-attribution"><strong>Elena D.</strong> · Artisan Soap Collection</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="services">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"Amber helped me untangle a hormone issue two doctors had dismissed. Her recommendations were gentle, specific, and — six weeks later — my cycle came back on its own."</p>
+      <div class="review-attribution"><strong>Danielle V.</strong> · Wellness Consultation</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="remedies">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"I ordered the Sacred Balance because of the quiz recommendation and didn't expect much. Two weeks in, my PMS is barely there. I'm a convert."</p>
+      <div class="review-attribution"><strong>Nina L.</strong> · Sacred Balance</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="rituals">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"The lavender-honey soap paired with the sleep tea is my new wind-down ritual. My whole bathroom smells like peace. Worth every penny."</p>
+      <div class="review-attribution"><strong>Sophie K.</strong> · Sleep Ritual</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="services">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"Amber is the real thing. Warm, grounded, and deeply knowledgeable — and she pulls zero nonsense. She'll tell you when herbs aren't the answer, too."</p>
+      <div class="review-attribution"><strong>Tori A.</strong> · Spiritual Guidance Session</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="remedies">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"Vital Connect is my secret weapon. No caffeine jitters, no 3 p.m. crash — I just feel evenly powered. It's the only adaptogen I've stuck with."</p>
+      <div class="review-attribution"><strong>Marcus J.</strong> · Vital Connect</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="soaps">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"Building my own soap felt indulgent in the best way. The recommendations walked me through it without overwhelming me — and the bar that arrived was beautiful."</p>
+      <div class="review-attribution"><strong>Hannah P.</strong> · Custom Soap Builder</div>
+    </article>
+
+  </div>
+
+  <div class="reviews-cta-row" style="text-align:center;margin-top:32px;">
+    <button class="btn-primary" data-section="shop">Shop the Apothecary</button>
+    <button class="btn-secondary" onclick="openHerbalAdvisor()">Find My Remedy</button>
+  </div>
+  <script>
+  (function(){
+    var bar = document.querySelector('#reviews .reviews-filter-bar');
+    var grid = document.getElementById('reviewsPageGrid');
+    if (!bar || !grid) return;
+    bar.addEventListener('click', function(e){
+      var btn = e.target.closest('.reviews-filter-btn');
+      if (!btn) return;
+      bar.querySelectorAll('.reviews-filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var cat = btn.getAttribute('data-rvcat');
+      grid.querySelectorAll('.review-page-card').forEach(function(card){
+        var match = cat === 'all' || card.getAttribute('data-rvcat') === cat;
+        card.style.display = match ? '' : 'none';
+      });
+    });
+  })();
+  </script>
 </section>
 
 <!-- SHOP SECTION -->
@@ -1503,15 +1764,15 @@
 
     <!-- Custom Soap Builder CTA -->
     <div class="soap-card soap-builder-cta-card">
-      <div class="soap-img-wrap soap-builder-cta-visual">
-        <div class="soap-builder-cta-icon">⚗️</div>
+      <div class="soap-img-wrap soap-builder-cta-visual soap-builder-cta-hero">
+        <img src="images/soap-builder-hero.png" alt="Handcrafted custom soap blend — botanical layers of rose, herbs, and clay" class="soap-builder-cta-img" loading="lazy" />
         <div class="soap-builder-cta-sparkle">✦</div>
       </div>
       <div class="soap-info">
-        <h3 class="soap-name">Design Your Own Soap</h3>
-        <p class="soap-latin">Your Vision · Your Botanicals · Your Ritual</p>
-        <p class="soap-desc">Choose a botanical clear top bar, a creamy nourishing bar, or a layered bar with both — then personalize it with your favorite botanicals, natural color, and scent.</p>
-        <button class="btn-primary soap-builder-launch-btn" onclick="openSoapBuilder()">Create Your Custom Soap ✦</button>
+        <h3 class="soap-name">Create Your Custom Soap Blend</h3>
+        <p class="soap-latin">Crafted for your skin, senses &amp; intention</p>
+        <p class="soap-desc">Build a soap as unique as you are. Choose a botanical clear top, a creamy nourishing bar, or a layered blend — then personalize with your favorite botanicals, natural color, and scent.</p>
+        <button class="btn-primary soap-builder-launch-btn" onclick="openSoapBuilder()">Start the Guided Builder ✦</button>
       </div>
     </div>
 
@@ -1611,61 +1872,90 @@
 <!-- CUSTOM SOAP BUILDER MODAL -->
 <div id="soapBuilderModal" class="soap-builder-overlay" style="display:none;">
   <div class="soap-builder-modal">
-    <button class="soap-builder-close" onclick="closeSoapBuilder()">&times;</button>
+    <button class="soap-builder-close" onclick="closeSoapBuilder()" aria-label="Close soap builder">&times;</button>
     <div class="soap-builder-header">
-      <div class="section-ornament">✦ ─── ✦</div>
-      <h2>Custom Soap Builder</h2>
-      <p>Build your bar your way. Choose a botanical clear top bar, a creamy nourishing bar, or a layered bar with a clear botanical top and rich creamy base. Then personalize it with your favorite botanicals, natural color, and scent.</p>
+      <div class="soap-builder-hero-banner">
+        <img src="images/soap-builder-hero.png" alt="Custom handcrafted botanical soap blend" loading="lazy" />
+        <div class="soap-builder-hero-overlay">
+          <p class="soap-builder-hero-eyebrow">✦ CUSTOM SOAP BUILDER ✦</p>
+          <h2 class="soap-builder-hero-title">Build a Soap as Unique as You Are</h2>
+          <p class="soap-builder-hero-sub">Crafted for your skin, senses, and intention.</p>
+        </div>
+      </div>
     </div>
 
-    <div class="soap-builder-progress">
-      <div class="sb-progress-step active" data-step="1"><span>1</span> Bar Type</div>
-      <div class="sb-progress-step" data-step="2"><span>2</span> Scent</div>
-      <div class="sb-progress-step" data-step="3"><span>3</span> Benefits</div>
-      <div class="sb-progress-step" data-step="4"><span>4</span> Add-Ons</div>
-      <div class="sb-progress-step" data-step="5"><span>5</span> Review</div>
-    </div>
+    <!-- Progress indicator (only shown after path is chosen) -->
+    <div class="soap-builder-progress" id="sbProgressBar" style="display:none;"></div>
 
     <div class="soap-builder-body">
-      <!-- Step 1: Base -->
-      <div class="sb-step active" id="sbStep1">
+      <!-- Step 0: Path picker -->
+      <div class="sb-step active" id="sbStepPath">
+        <div class="section-ornament" style="text-align:center;margin-bottom:10px;">✦ ─── ✦</div>
+        <h3 style="text-align:center;">How would you like to build your soap?</h3>
+        <p class="sb-step-desc" style="text-align:center;">Let Amber walk you through one gentle question at a time, or choose every ingredient yourself.</p>
+        <div class="sb-path-grid">
+          <button type="button" class="sb-path-card" data-sb-path="guided">
+            <span class="sb-path-icon">✨</span>
+            <strong>Start Guided Soap Builder</strong>
+            <span class="sb-path-desc">Five quick questions — intention, scent, skin goal, botanicals, and energy — then we'll suggest your soap.</span>
+            <span class="sb-path-cta">Begin guided flow →</span>
+          </button>
+          <button type="button" class="sb-path-card" data-sb-path="manual">
+            <span class="sb-path-icon">🌿</span>
+            <strong>Build My Own Soap</strong>
+            <span class="sb-path-desc">Choose base, scent, botanicals, benefits, and color yourself — you're the alchemist.</span>
+            <span class="sb-path-cta">Build my own →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Guided flow: single-question-per-screen (populated by JS) -->
+      <div class="sb-step" id="sbStepGuided">
+        <h3 id="sbGuidedQuestion"></h3>
+        <p class="sb-step-desc" id="sbGuidedHint"></p>
+        <div class="sb-options-grid" id="sbGuidedOptions"></div>
+      </div>
+
+      <!-- Manual flow steps (existing) -->
+      <div class="sb-step" id="sbStep1">
         <h3>Choose Your Bar Type</h3>
-        <p class="sb-step-desc">Pick the style of bar you'd love. The <strong>Botanical Clear Top Bar</strong> pours from vegetable glycerin + castor oil — perfect for showcasing real botanicals. The <strong>Creamy Nourishing Bar</strong> is shea butter + goat milk for deep, velvety hydration. The <strong>Layered Bar</strong> gives you both — a clear botanical top over a creamy nourishing base. You'll personalize scent, botanicals, and color in the next steps.</p>
+        <p class="sb-step-desc">Pick the style of bar you'd love. The <strong>Botanical Clear Top Bar</strong> pours from vegetable glycerin + castor oil. The <strong>Creamy Nourishing Bar</strong> is shea butter + goat milk. The <strong>Layered Bar</strong> gives you both.</p>
         <div class="sb-options-grid" id="sbBaseOptions"></div>
       </div>
 
-      <!-- Step 2: Scent Profile -->
       <div class="sb-step" id="sbStep2">
         <h3>Choose Your Scent Profile</h3>
-        <p class="sb-step-desc">Select the scents that speak to your soul — all crafted with pure doTERRA essential oils.</p>
+        <p class="sb-step-desc">Select the scents that speak to your soul — crafted with pure doTERRA essential oils.</p>
         <div class="sb-options-grid" id="sbScentOptions"></div>
       </div>
 
-      <!-- Step 3: Benefits -->
       <div class="sb-step" id="sbStep3">
         <h3>Choose Your Benefits</h3>
         <p class="sb-step-desc">What do you want your soap to do for you?</p>
         <div class="sb-options-grid" id="sbBenefitOptions"></div>
       </div>
 
-      <!-- Step 4: Add-Ons -->
       <div class="sb-step" id="sbStep4">
         <h3>Optional Botanicals &amp; Color</h3>
-        <p class="sb-step-desc">Pick real botanicals and natural plant-based color for your bar — no synthetic dyes, ever.</p>
+        <p class="sb-step-desc">Pick real botanicals and natural plant-based color — no synthetic dyes, ever.</p>
         <div class="sb-options-grid" id="sbAddonOptions"></div>
       </div>
 
-      <!-- Step 5: Review -->
+      <!-- Final review / result screen -->
       <div class="sb-step" id="sbStep5">
-        <h3>Your Custom Soap</h3>
-        <p class="sb-step-desc">Review your selections and add to cart</p>
+        <h3 id="sbResultTitle">Your Custom Soap</h3>
+        <p class="sb-step-desc">Here's your blend. Review, refine, or add to cart.</p>
         <div class="sb-review-panel" id="sbReviewPanel"></div>
         <div class="sb-suggestion-box" id="sbSuggestionBox"></div>
+        <div class="sb-result-helpers">
+          <button type="button" class="btn-ghost" onclick="sbAskLunna()">🌙 Let Lunna help refine</button>
+          <a class="btn-ghost" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">📅 Book a Consultation</a>
+        </div>
       </div>
     </div>
 
     <!-- Live Summary Sidebar -->
-    <div class="sb-live-summary">
+    <div class="sb-live-summary" id="sbLiveSummaryWrap" style="display:none;">
       <h4>Your Soap So Far</h4>
       <div id="sbLiveSummary"><p class="sb-empty">No selections yet</p></div>
       <div class="sb-live-price">
@@ -1674,11 +1964,13 @@
       </div>
     </div>
 
-    <div class="soap-builder-actions">
-      <button class="btn-ghost" id="sbPrevBtn" onclick="sbPrevStep()" style="display:none;">Back</button>
-      <button class="btn-secondary" id="sbStartNewBtn" onclick="sbStartNew()">Start New</button>
-      <button class="btn-primary" id="sbAddCartBtn" onclick="sbAddToCart()">Add to Cart</button>
-      <button class="btn-primary" id="sbNextBtn" onclick="sbNextStep()">Next Step ✦</button>
+    <!-- Context-aware action bar -->
+    <div class="soap-builder-actions" id="sbActionBar">
+      <button class="btn-ghost" id="sbPrevBtn" type="button" onclick="sbPrevStep()" style="display:none;">← Back</button>
+      <button class="btn-ghost" id="sbRestartBtn" type="button" onclick="sbStartNew()" style="display:none;">↻ Restart</button>
+      <button class="btn-secondary" id="sbEditBtn" type="button" onclick="sbEditSelections()" style="display:none;">Edit selections</button>
+      <button class="btn-primary" id="sbNextBtn" type="button" onclick="sbNextStep()" style="display:none;">Next Step ✦</button>
+      <button class="btn-primary" id="sbAddCartBtn" type="button" onclick="sbAddToCart()" style="display:none;">✦ Add to Cart</button>
     </div>
   </div>
 </div>
@@ -2163,6 +2455,45 @@
   </div>
 </section>
 
+<!-- THE GRIMIOR / REAL MAGIC — subscription book of light magic -->
+<section id="grimior" class="page-section pane-bg">
+  <div class="grimior-hero">
+    <p class="g-eyebrow">✦ Real Magic ✦</p>
+    <h1>The Grimior <span>— A Living Book of Light Magic</span></h1>
+    <p class="lede">Healing rituals, herbal wisdom, sacred recipes, elemental work, and subscriber-only blessings — added to regularly and gently cared for by Amber.</p>
+    <span id="grimiorMemberBadge" class="g-member-badge" aria-live="polite"></span>
+  </div>
+
+  <div class="grimior-subscriber-benefits" aria-label="Subscriber benefits">
+    <div class="grimior-benefit"><strong>$3.33/mo</strong>Full book access · cancel anytime</div>
+    <div class="grimior-benefit"><strong>10% off</strong>Every full apothecary order</div>
+    <div class="grimior-benefit"><strong>Free shipping</strong>On orders over $50</div>
+    <div class="grimior-benefit"><strong>Weekly deals</strong>Subscriber-only featured offerings</div>
+    <div class="grimior-benefit"><strong>Monthly code</strong>Private promo for members</div>
+  </div>
+
+  <div class="grimior-book" id="grimiorBookHost">
+    <div class="g-chapter-tabs" id="grimiorChapterTabs" aria-label="Chapter navigation"></div>
+    <div class="g-book-frame">
+      <div class="g-book-spine" aria-hidden="true"></div>
+      <button class="g-bookmark" id="grimiorBookmark" type="button" aria-label="Return to last-read page" title="Return to last-read page"></button>
+      <div class="g-page-viewport" id="grimiorPageViewport" role="region" aria-live="polite"></div>
+      <div class="g-controls">
+        <button class="g-arrow" id="grimiorPrev" type="button" aria-label="Previous page">←</button>
+        <span id="grimiorPageIndicator">Page 1</span>
+        <button class="g-arrow" id="grimiorNext" type="button" aria-label="Next page">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grimior-prompt-card">
+    <h3>New rituals, recipes, and teachings added regularly.</h3>
+    <p>Join for $3.33/month and receive full access to The Grimior / Real Magic, plus 10% off every order, free shipping over $50, a monthly promo code, and subscriber-only seasonal rituals.</p>
+    <button class="btn-primary" type="button" onclick="window.Grimior&amp;&amp;window.Grimior.subscribe()">Join for $3.33/month</button>
+    <button class="g-linkish" type="button" onclick="window.Grimior&amp;&amp;window.Grimior.unlock()">Already a subscriber? Unlock with your email →</button>
+  </div>
+</section>
+
 <!-- SERVICES SECTION -->
 <section id="services" class="page-section pane-bg">
   <div class="section-header">
@@ -2184,6 +2515,14 @@
   <div class="section-header">
     <h2>About Amber</h2>
     <p>The Herbal Alchemist — Part healer, part botanist, part guide.</p>
+  </div>
+  <div class="about-photos-row">
+    <figure class="about-photo-frame">
+      <img src="images/amber-portrait-1.jpg" alt="Amber Lynn Patten — portrait" loading="lazy" />
+    </figure>
+    <figure class="about-photo-frame">
+      <img src="images/amber-portrait-2.jpg" alt="Amber in her apothecary — portrait" loading="lazy" />
+    </figure>
   </div>
   <div class="about-content card">
     <div class="about-text">
@@ -2210,7 +2549,7 @@
       </div>
       <div class="about-cta-row">
         <button class="btn-primary" data-section="custom-formula">Get a Custom Formula</button>
-        <button class="btn-secondary" data-section="contact">Book a Consultation</button>
+        <a class="btn-secondary" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener" style="text-decoration:none;">Book a Consultation</a>
         <button class="btn-ghost" data-section="herbal-wisdom">Read Articles &amp; Guides</button>
       </div>
     </div>
@@ -2859,7 +3198,7 @@
   <div class="section-header">
     <div class="section-ornament">✦ ─────────────── ✦</div>
     <h2>Secure Checkout</h2>
-    <p>Complete your order below. Your payment is processed securely — card data never touches our servers.</p>
+    <p>Review your order below, then continue to Shopify's hosted checkout — the same secure checkout used across the Awaken Again shop. Card data never touches our servers.</p>
   </div>
 
   <div class="checkout-container">
@@ -2871,11 +3210,29 @@
       </div>
       <div class="checkout-totals">
         <div class="cart-row"><span>Subtotal</span><span id="checkoutSubtotal">$0.00</span></div>
+        <div class="cart-row" id="checkoutGrimiorDiscountRow" style="display:none;color:#8a5a1a;">
+          <span>✦ Grimior Member 10% off</span>
+          <span id="checkoutGrimiorDiscount">-$0.00</span>
+        </div>
         <div class="cart-row"><span>Shipping</span><span id="checkoutShipping">$0.00</span></div>
         <div class="cart-row"><span>Sales Tax (8%)</span><span id="checkoutTax">$0.00</span></div>
         <div class="cart-row total-row"><strong>Total</strong><strong id="checkoutTotal">$0.00</strong></div>
       </div>
       <p class="checkout-shipping-note">Free shipping on orders over $75</p>
+
+      <!-- Promo code — applied at Shopify checkout -->
+      <div class="checkout-promo">
+        <label for="checkoutPromoCode" class="checkout-promo-label">✦ Have a promo code?</label>
+        <div class="checkout-promo-row">
+          <input type="text" id="checkoutPromoCode" name="promo-code" placeholder="e.g. FIRST10" autocomplete="off" />
+          <button type="button" id="checkoutPromoApplyBtn" class="btn-secondary checkout-promo-apply">Apply</button>
+        </div>
+        <p class="checkout-promo-hint">
+          First-time buyers: use <strong>FIRST10</strong> at checkout for <strong>10% off</strong>.
+          Codes are validated by Shopify on the next step.
+        </p>
+        <p class="checkout-promo-status" id="checkoutPromoStatus" aria-live="polite"></p>
+      </div>
     </div>
 
     <!-- Order Form + Payment -->
@@ -2930,31 +3287,28 @@
 
         <div class="checkout-divider"></div>
 
-        <h3>Pay with Card</h3>
-        <p class="checkout-secure-note">Your card information is processed securely by Stripe. No card data is stored on our servers.</p>
+        <h3>Secure Checkout via Shopify</h3>
+        <p class="checkout-secure-note">Your cart will be handed off to Shopify's PCI-compliant hosted checkout. Card details, wallet payments, promo codes, shipping, and taxes are all handled there.</p>
         <div class="checkout-trust-badges">
           <span class="trust-badge-item">🔒 SSL Encrypted</span>
-          <span class="trust-badge-item">💳 Visa</span>
-          <span class="trust-badge-item">💳 Mastercard</span>
-          <span class="trust-badge-item">💳 Amex</span>
-          <span class="trust-badge-item">🛡️ Secure Checkout</span>
+          <span class="trust-badge-item">🛍️ Shop Pay</span>
+          <span class="trust-badge-item"> Apple Pay</span>
+          <span class="trust-badge-item">🅖 Google Pay</span>
+          <span class="trust-badge-item">💵 Cash App Pay</span>
+          <span class="trust-badge-item">🟣 Venmo</span>
+          <span class="trust-badge-item">💳 Visa · Mastercard · Amex</span>
         </div>
+        <div id="card-errors" class="checkout-card-errors" role="alert"></div>
 
-        <div class="checkout-field">
-          <label for="card-element">Card Details</label>
-          <div id="card-element" class="stripe-card-element"></div>
-          <div id="card-errors" class="checkout-card-errors" role="alert"></div>
-        </div>
-
-        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn" disabled>
-          <span id="payBtnText">Pay Now</span>
+        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn">
+          <span id="payBtnText">Continue to Shopify Checkout →</span>
           <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
         </button>
 
         <div class="checkout-trust-badges">
           <span>🔒 SSL Encrypted</span>
-          <span>💳 Visa, Mastercard, Amex</span>
-          <span>✦ PCI Compliant</span>
+          <span>✦ Shopify PCI-Compliant Checkout</span>
+          <span>🛡️ Wallet Payments Supported</span>
         </div>
       </form>
     </div>
@@ -3088,6 +3442,41 @@
 <script src="herbal-wisdom.js"></script>
 <script src="navigation-history.js"></script>
 <script src="reviews.js"></script>
+<script src="grimior.js"></script>
 <script src="pwa-init.js"></script>
+
+<!-- LUNNA ASSISTANT — warm, intuitive, non-pushy -->
+<link rel="stylesheet" href="lunna.css" />
+<div id="lunnaRoot" aria-live="polite">
+  <button id="lunnaFab" class="lunna-fab" aria-label="Open Lunna — your gentle guide" title="Ask Lunna">
+    <span class="lunna-fab-icon">🌙</span>
+    <span class="lunna-fab-label">Ask Lunna</span>
+  </button>
+  <div id="lunnaPrompt" class="lunna-prompt" role="dialog" aria-labelledby="lunnaPromptTitle" aria-hidden="true">
+    <button class="lunna-close" id="lunnaClose" aria-label="Dismiss Lunna">✕</button>
+    <div class="lunna-header">
+      <span class="lunna-avatar">🌙</span>
+      <div>
+        <p class="lunna-eyebrow">✦ LUNNA · Your Gentle Guide</p>
+        <h3 id="lunnaPromptTitle" class="lunna-title">What are your goals today?</h3>
+      </div>
+    </div>
+    <div class="lunna-body" id="lunnaBody">
+      <div class="lunna-goal-grid" data-lunna-step="goals">
+        <button class="lunna-goal" data-lunna-goal="sleep">😴 Better Sleep</button>
+        <button class="lunna-goal" data-lunna-goal="stress">🧘 Less Stress</button>
+        <button class="lunna-goal" data-lunna-goal="skin">✨ Skin Support</button>
+        <button class="lunna-goal" data-lunna-goal="soap">🧼 Custom Soap</button>
+        <button class="lunna-goal" data-lunna-goal="energy">⚡ Energy Support</button>
+        <button class="lunna-goal" data-lunna-goal="balance">🌸 Emotional Balance</button>
+        <button class="lunna-goal" data-lunna-goal="shop">🫙 Shop Products</button>
+        <button class="lunna-goal" data-lunna-goal="learn">📖 Learn Herbs</button>
+        <button class="lunna-goal" data-lunna-goal="book">📅 Book with Amber</button>
+        <button class="lunna-goal" data-lunna-goal="unsure">🌿 I'm Not Sure</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="lunna.js"></script>
     </body>
 </html>

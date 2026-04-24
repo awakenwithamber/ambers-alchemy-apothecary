@@ -14,19 +14,22 @@ var STATIC_ASSETS = [
   '/grimoire-seo.css',
   '/herbal-advisor.css',
   '/navigation-history.js',
-  '/images/icon-192.png',
-  '/images/icon-512.png'
+  '/images/icon-192.svg',
+  '/images/icon-512.svg'
 ];
 
 // Never cache these patterns
 var NEVER_CACHE = [
   '/api/',
-  'stripe.com',
+  'myshopify.com',
+  'shopify.com',
+  'shop.app',
   'venmo.com',
   'cash.app',
   'checkout',
   'payment',
-  'create-payment-intent'
+  'grimior-subscribe',
+  'grimior-webhook'
 ];
 
 self.addEventListener('install', function(e) {

@@ -1,0 +1,555 @@
+/* ============================================================
+   THE GRIMIOR / REAL MAGIC — parchment book UI
+   Designed to live alongside the existing mystical/botanical theme.
+   ============================================================ */
+
+#grimior.page-section { padding-bottom: 4rem; }
+
+.grimior-hero {
+  text-align: center;
+  padding: 3rem 1.25rem 1.5rem;
+  position: relative;
+}
+.grimior-hero .g-eyebrow {
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  color: var(--accent, #b08d57);
+  margin-bottom: 0.4rem;
+}
+.grimior-hero h1 {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.1rem, 5vw, 3.4rem);
+  margin: 0.1rem 0 0.4rem;
+  letter-spacing: 0.02em;
+}
+.grimior-hero h1 span { display: block; font-style: italic; font-size: 0.6em; opacity: 0.75; }
+.grimior-hero p.lede {
+  max-width: 640px;
+  margin: 0.6rem auto 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+.grimior-hero .g-member-badge {
+  display: none;
+  margin: 1rem auto 0;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid rgba(176, 141, 87, 0.5);
+  border-radius: 999px;
+  background: rgba(255, 248, 228, 0.25);
+  font-size: 0.85rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+.grimior-hero .gb-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: radial-gradient(circle, #f1d68c, #b08d57);
+  box-shadow: 0 0 10px rgba(240, 200, 120, 0.8);
+}
+.grimior-hero .gb-signout {
+  margin-left: 0.4rem;
+  background: transparent;
+  border: 1px solid rgba(176, 141, 87, 0.5);
+  border-radius: 999px;
+  color: inherit;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.grimior-subscriber-benefits {
+  max-width: 960px;
+  margin: 0 auto 2rem;
+  padding: 1.25rem 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  text-align: center;
+}
+.grimior-benefit {
+  padding: 0.85rem 0.75rem;
+  border: 1px solid rgba(176, 141, 87, 0.35);
+  border-radius: 10px;
+  background: rgba(255, 248, 228, 0.25);
+  font-size: 0.9rem;
+}
+.grimior-benefit strong { display: block; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.15rem; margin-bottom: 0.2rem; }
+
+/* ---- BOOK FRAME ---- */
+.grimior-book {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  position: relative;
+}
+
+.g-chapter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  padding: 0 0.25rem;
+}
+.g-chapter-tab {
+  background: rgba(255, 248, 228, 0.3);
+  border: 1px solid rgba(176, 141, 87, 0.35);
+  color: inherit;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 200ms ease, border-color 200ms ease, transform 150ms ease;
+}
+.g-chapter-tab:hover { background: rgba(240, 220, 170, 0.4); transform: translateY(-1px); }
+.g-chapter-tab.active {
+  background: linear-gradient(180deg, #f1d68c, #d1a962);
+  color: #3a2a18;
+  border-color: #b08d57;
+  box-shadow: 0 0 14px rgba(240, 200, 120, 0.35);
+}
+
+.g-book-frame {
+  position: relative;
+  background:
+    radial-gradient(120% 80% at 50% 50%, #faf1d8 0%, #f2e4bf 55%, #d8c38a 100%);
+  border: 1px solid rgba(120, 90, 45, 0.45);
+  border-radius: 14px;
+  padding: clamp(1.25rem, 2.5vw, 2.5rem);
+  box-shadow:
+    0 20px 60px rgba(40, 20, 5, 0.35),
+    inset 0 0 40px rgba(120, 80, 30, 0.25),
+    inset 0 0 4px rgba(255, 240, 200, 0.7);
+  overflow: hidden;
+}
+.g-book-frame::before,
+.g-book-frame::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+}
+.g-book-frame::before {
+  background:
+    radial-gradient(ellipse at top left, rgba(120, 80, 30, 0.25), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(120, 80, 30, 0.25), transparent 55%),
+    radial-gradient(ellipse at bottom left, rgba(90, 50, 10, 0.2), transparent 50%);
+}
+.g-book-frame::after {
+  /* candle-warm glow */
+  background: radial-gradient(60% 40% at 50% 0%, rgba(255, 214, 140, 0.35), transparent 70%);
+  mix-blend-mode: screen;
+}
+.g-book-spine {
+  position: absolute;
+  top: 0; bottom: 0; left: 50%;
+  width: 2px;
+  background: linear-gradient(180deg, rgba(110, 70, 25, 0.0), rgba(110, 70, 25, 0.4), rgba(110, 70, 25, 0.0));
+  opacity: 0.6;
+  pointer-events: none;
+}
+@media (max-width: 720px) { .g-book-spine { display: none; } }
+
+.g-bookmark {
+  position: absolute;
+  top: -8px;
+  right: 28px;
+  width: 34px;
+  height: 96px;
+  background: linear-gradient(180deg, #a0202a, #6f121a);
+  border-radius: 3px 3px 0 0;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  transition: transform 180ms ease;
+}
+.g-bookmark::after {
+  content: "";
+  position: absolute;
+  bottom: -12px; left: 0; right: 0;
+  height: 14px;
+  background:
+    linear-gradient(135deg, transparent 50%, #6f121a 50%) left / 50% 100% no-repeat,
+    linear-gradient(-135deg, transparent 50%, #6f121a 50%) right / 50% 100% no-repeat;
+}
+.g-bookmark:hover { transform: translateY(2px); }
+
+/* ---- PAGE VIEWPORT ---- */
+.g-page-viewport {
+  position: relative;
+  min-height: 580px;
+  color: #3a2a18;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  line-height: 1.55;
+  font-size: 1.05rem;
+  transform-origin: left center;
+}
+.g-page-viewport.is-turning-forward { animation: g-turn-fwd 450ms ease both; }
+.g-page-viewport.is-turning-back    { animation: g-turn-back 450ms ease both; }
+
+@keyframes g-turn-fwd {
+  0%   { transform: perspective(1400px) rotateY(-28deg); opacity: 0.0; filter: blur(1.5px); }
+  60%  { transform: perspective(1400px) rotateY(-4deg);  opacity: 0.9; filter: blur(0); }
+  100% { transform: perspective(1400px) rotateY(0deg);    opacity: 1; }
+}
+@keyframes g-turn-back {
+  0%   { transform: perspective(1400px) rotateY(28deg); opacity: 0.0; filter: blur(1.5px); }
+  60%  { transform: perspective(1400px) rotateY(4deg);  opacity: 0.9; filter: blur(0); }
+  100% { transform: perspective(1400px) rotateY(0deg);    opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .g-page-viewport.is-turning-forward,
+  .g-page-viewport.is-turning-back { animation: none; }
+}
+
+.g-page {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0.25rem 0.25rem 1rem;
+}
+.g-ornament { text-align: center; letter-spacing: 0.5em; color: #8a5a1a; opacity: 0.7; margin: 0.5rem 0 0.75rem; }
+
+/* COVER */
+.g-page-cover {
+  text-align: center;
+  padding: 2rem 1rem 1.5rem;
+}
+.g-cover-frame {
+  border: 2px solid rgba(120, 80, 30, 0.45);
+  padding: 2.5rem 1.25rem;
+  position: relative;
+  background: rgba(255, 248, 228, 0.4);
+  box-shadow: inset 0 0 40px rgba(120, 80, 30, 0.18);
+}
+.g-cover-frame::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(120, 80, 30, 0.35);
+  pointer-events: none;
+}
+.g-cover-ornament { font-size: 1.4rem; letter-spacing: 0.4em; color: #8a5a1a; }
+.g-cover-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2.4rem, 7vw, 4.2rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin: 0.5rem 0 0.2rem;
+}
+.g-cover-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.5em;
+  font-size: 0.85rem;
+  color: #8a5a1a;
+  margin: 0;
+}
+.g-cover-subtitle { font-style: italic; font-size: 1.2rem; margin: 1.25rem 0 1rem; }
+.g-cover-dedication { max-width: 32ch; margin: 1.25rem auto 0; opacity: 0.85; }
+.g-cover-byline { margin-top: 2rem; font-size: 0.85rem; letter-spacing: 0.1em; opacity: 0.7; }
+
+/* TOC */
+.g-page-toc { padding: 1rem 0; }
+.g-toc-header { text-align: center; margin-bottom: 1rem; }
+.g-toc-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin: 0.2rem 0; }
+.g-toc-list { list-style: none; padding: 0; margin: 0.5rem auto; max-width: 520px; }
+.g-toc-list li { margin: 0.35rem 0; }
+.g-toc-list a {
+  display: flex; align-items: baseline;
+  color: #3a2a18;
+  text-decoration: none;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  transition: background 160ms ease, transform 160ms ease;
+  font-size: 1.05rem;
+}
+.g-toc-list a:hover { background: rgba(176, 141, 87, 0.15); transform: translateX(2px); }
+.g-toc-num { width: 2.25em; color: #8a5a1a; font-variant-numeric: tabular-nums; }
+.g-toc-label { flex: 0 0 auto; }
+.g-toc-dots { flex: 1 1 auto; border-bottom: 1px dotted rgba(120, 80, 30, 0.5); margin: 0 0.4rem 0.3em; }
+.g-toc-page { color: #8a5a1a; font-variant-numeric: tabular-nums; }
+.g-toc-footer { text-align: center; margin-top: 1rem; font-style: italic; opacity: 0.8; font-size: 0.95rem; }
+
+/* RITUAL PAGE */
+.g-ritual-header { text-align: center; margin-bottom: 1rem; }
+.g-chapter-kicker { letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.8rem; color: #8a5a1a; }
+.g-ritual-title { font-family: 'Cormorant Garamond', serif; font-size: 2.1rem; margin: 0.2rem 0 0.4rem; }
+.g-preview-badge {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(176, 141, 87, 0.18);
+  border: 1px solid rgba(176, 141, 87, 0.4);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #8a5a1a;
+  margin-top: 0.35rem;
+}
+
+.g-section { margin: 1rem 0; }
+.g-section h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
+  color: #5b3914;
+  border-bottom: 1px solid rgba(120, 80, 30, 0.35);
+  padding-bottom: 0.2rem;
+  margin: 0 0 0.5rem;
+  letter-spacing: 0.02em;
+}
+.g-intention { font-style: italic; font-size: 1.08rem; }
+.g-list { padding-left: 1.2rem; margin: 0.3rem 0; }
+.g-list li { margin: 0.3rem 0; }
+.g-list-ordered { list-style: decimal; }
+.g-two-col {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 640px) { .g-two-col { grid-template-columns: 1fr; } }
+.g-tag-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.g-tag {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(120, 170, 120, 0.18);
+  border: 1px solid rgba(80, 120, 70, 0.4);
+  font-size: 0.86rem;
+}
+
+.g-affirmation blockquote {
+  margin: 0;
+  padding: 0.8rem 1rem;
+  border-left: 3px solid #b08d57;
+  background: rgba(255, 248, 228, 0.55);
+  font-style: italic;
+  font-size: 1.15rem;
+  border-radius: 4px;
+}
+
+.g-product-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.g-product-chip {
+  background: linear-gradient(180deg, #fff5d8, #e8d4a0);
+  border: 1px solid rgba(120, 80, 30, 0.4);
+  color: #3a2a18;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-family: inherit;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.g-product-chip:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(120, 80, 30, 0.2); }
+
+.g-safety p {
+  background: rgba(190, 80, 40, 0.08);
+  border: 1px solid rgba(190, 80, 40, 0.25);
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.92rem;
+}
+
+.g-page-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 1.5rem;
+  font-size: 0.8rem;
+  color: #8a5a1a;
+  letter-spacing: 0.1em;
+}
+
+/* LOCKED PAGE */
+.g-page-locked { position: relative; min-height: 500px; padding: 0.5rem 0; }
+.g-locked-blur {
+  filter: blur(6px);
+  opacity: 0.55;
+  pointer-events: none;
+  user-select: none;
+  padding: 1rem 1.5rem;
+}
+.g-locked-blur h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; margin: 0; }
+.g-locked-card {
+  position: absolute;
+  inset: 1.5rem 1rem;
+  margin: auto;
+  max-width: 520px;
+  max-height: max-content;
+  background: rgba(255, 248, 228, 0.96);
+  border: 1px solid rgba(120, 80, 30, 0.55);
+  border-radius: 12px;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  box-shadow: 0 10px 32px rgba(40, 20, 5, 0.25), 0 0 50px rgba(240, 200, 120, 0.45);
+}
+.g-locked-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  margin: 0.3rem 0 0.4rem;
+  color: #3a2a18;
+}
+.g-locked-sub { margin: 0.3rem 0 0.8rem; opacity: 0.85; }
+.g-locked-price { display: flex; align-items: baseline; justify-content: center; gap: 0.3rem; margin: 0.5rem 0; }
+.g-price-big { font-size: 2.4rem; font-family: 'Cormorant Garamond', serif; color: #5b3914; }
+.g-price-per { font-size: 1rem; color: #8a5a1a; }
+.g-locked-perks { list-style: none; padding: 0; margin: 0.5rem 0 0.9rem; text-align: left; font-size: 0.95rem; }
+.g-locked-perks li { margin: 0.25rem 0; }
+.g-cta {
+  display: inline-block;
+  font-size: 1rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  cursor: pointer;
+  margin: 0.3rem 0;
+}
+.g-linkish {
+  background: transparent; border: none; color: #5b3914;
+  text-decoration: underline; cursor: pointer;
+  font-size: 0.88rem; margin-top: 0.3rem;
+  font-family: inherit;
+  display: block; width: 100%;
+}
+.g-locked-note { font-size: 0.8rem; opacity: 0.7; margin: 0.5rem 0 0; }
+
+/* ---- ARROW CONTROLS ---- */
+.g-controls {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0 0.25rem;
+}
+.g-arrow {
+  background: rgba(255, 248, 228, 0.6);
+  border: 1px solid rgba(120, 80, 30, 0.45);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #5b3914;
+  transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+.g-arrow:hover { background: rgba(240, 220, 170, 0.8); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(120, 80, 30, 0.2); }
+.g-arrow:disabled { opacity: 0.35; cursor: default; transform: none; box-shadow: none; }
+#grimiorPageIndicator { font-size: 0.85rem; color: #8a5a1a; letter-spacing: 0.08em; }
+
+/* ---- SUBSCRIBE PROMPT CARD (below book for free users) ---- */
+.grimior-prompt-card {
+  max-width: 680px;
+  margin: 2rem auto 0;
+  padding: 1.4rem 1.2rem;
+  text-align: center;
+  background: rgba(255, 248, 228, 0.35);
+  border: 1px solid rgba(120, 80, 30, 0.35);
+  border-radius: 12px;
+}
+.grimior-prompt-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; margin: 0.2rem 0 0.3rem; }
+.grimior-prompt-card p  { margin: 0.25rem auto 0.8rem; max-width: 50ch; }
+.grimior-prompt-card .btn-primary { padding: 0.65rem 1.4rem; }
+
+/* ---- MODAL ---- */
+.g-modal {
+  position: fixed; inset: 0;
+  display: none;
+  z-index: 10000;
+  align-items: center; justify-content: center;
+  padding: 1rem;
+}
+.g-modal.is-open { display: flex; }
+.g-modal-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(20, 10, 5, 0.65);
+  backdrop-filter: blur(4px);
+}
+.g-modal-panel {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background:
+    radial-gradient(120% 80% at 50% 0%, #faf1d8 0%, #f2e4bf 60%, #d8c38a 100%);
+  color: #3a2a18;
+  border: 1px solid rgba(120, 80, 30, 0.55);
+  border-radius: 14px;
+  padding: 1.4rem 1.25rem;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5), inset 0 0 40px rgba(120, 80, 30, 0.18);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+.g-modal-close {
+  position: absolute; top: 6px; right: 10px;
+  background: transparent; border: none; color: #5b3914;
+  font-size: 1.2rem; cursor: pointer;
+}
+.g-modal-head { text-align: center; }
+.g-modal-head h3 { font-size: 1.7rem; margin: 0.3rem 0; }
+.g-modal-sub { margin: 0 0 0.8rem; opacity: 0.85; }
+.g-form { display: flex; flex-direction: column; gap: 0.7rem; }
+.g-field { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.9rem; }
+.g-field input {
+  padding: 0.6rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid rgba(120, 80, 30, 0.5);
+  border-radius: 8px;
+  background: rgba(255, 253, 240, 0.9);
+  color: #3a2a18;
+  font-family: inherit;
+}
+.g-field input:focus { outline: 2px solid rgba(176, 141, 87, 0.6); outline-offset: 1px; }
+.g-inline-perks { list-style: none; padding: 0; margin: 0.3rem 0; font-size: 0.88rem; text-align: left; }
+.g-inline-perks li { margin: 0.15rem 0; }
+.g-fine-print { font-size: 0.78rem; opacity: 0.7; text-align: center; }
+.g-form-status { text-align: center; margin-top: 0.5rem; font-size: 0.95rem; min-height: 1.2em; }
+.g-form-status.g-form-error   { color: #8b2b2b; }
+.g-form-status.g-form-success { color: #2f6b2f; }
+
+body.g-modal-open { overflow: hidden; }
+
+/* ---- SUBSCRIBER ribbon over existing cart/shop for active members ---- */
+body.grimior-member #grimior .grimior-hero .g-member-badge { display: inline-flex; }
+
+/* ---- MOBILE ---- */
+@media (max-width: 720px) {
+  .g-page-viewport { min-height: 500px; font-size: 1.02rem; }
+  .g-book-frame { padding: 1.25rem 1rem; border-radius: 10px; }
+  .g-chapter-tabs { gap: 0.3rem; }
+  .g-chapter-tab { font-size: 0.72rem; padding: 0.3rem 0.6rem; }
+  .g-bookmark { right: 14px; width: 26px; height: 72px; }
+  .g-locked-card { inset: 1rem 0.5rem; padding: 1.1rem 1rem; }
+  .g-cta { width: 100%; }
+}
+
+/* ---- HOMEPAGE GRIMIOR PREVIEW CARD ---- */
+.grimior-homepage-preview {
+  max-width: 960px;
+  margin: 1.5rem auto;
+  padding: 2rem 1.25rem;
+  text-align: center;
+  background:
+    radial-gradient(120% 80% at 50% 0%, #faf1d8 0%, #f2e4bf 60%, #d8c38a 100%);
+  color: #3a2a18;
+  border: 1px solid rgba(120, 80, 30, 0.45);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(40, 20, 5, 0.25), inset 0 0 40px rgba(120, 80, 30, 0.18);
+  position: relative;
+}
+.grimior-homepage-preview .g-ornament { letter-spacing: 0.5em; color: #8a5a1a; }
+.grimior-homepage-preview h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  margin: 0.2rem 0 0.5rem;
+}
+.grimior-homepage-preview p { max-width: 55ch; margin: 0.3rem auto 1rem; font-size: 1.02rem; }
+.grimior-homepage-preview .g-home-perks {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem;
+  margin: 0.5rem 0 1rem;
+  list-style: none; padding: 0;
+  font-size: 0.85rem;
+}
+.grimior-homepage-preview .g-home-perks li {
+  padding: 0.25rem 0.7rem;
+  border: 1px solid rgba(120, 80, 30, 0.45);
+  border-radius: 999px;
+  background: rgba(255, 248, 228, 0.55);
+}
+.grimior-homepage-preview .g-home-cta-row {
+  display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 0.5rem;
+}
