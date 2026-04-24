@@ -21,12 +21,15 @@ var STATIC_ASSETS = [
 // Never cache these patterns
 var NEVER_CACHE = [
   '/api/',
-  'stripe.com',
+  'myshopify.com',
+  'shopify.com',
+  'shop.app',
   'venmo.com',
   'cash.app',
   'checkout',
   'payment',
-  'create-payment-intent'
+  'grimior-subscribe',
+  'grimior-webhook'
 ];
 
 self.addEventListener('install', function(e) {

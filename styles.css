@@ -880,12 +880,6 @@ footer { border-top: 1px solid var(--border); padding: 50px 24px 30px; text-alig
 .checkout-divider { height: 1px; background: var(--border); margin: 10px 0; }
 .checkout-secure-note { font-family: var(--font-body); font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 4px; }
 
-.stripe-card-element {
-  padding: 14px; border-radius: var(--radius); border: 1px solid var(--border);
-  background: rgba(30,17,40,0.65); transition: border-color var(--transition);
-}
-.stripe-card-element.StripeElement--focus { border-color: var(--amethyst); }
-.stripe-card-element.StripeElement--invalid { border-color: #c0392b; }
 .checkout-card-errors { font-family: var(--font-body); font-size: 13px; color: #e74c3c; min-height: 20px; margin-top: 4px; }
 
 .checkout-pay-btn {

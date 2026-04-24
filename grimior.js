@@ -641,8 +641,8 @@
       '    <li>✦ 10% off every order · free shipping over $50</li>',
       '    <li>✦ Weekly deals · monthly promo code · seasonal rituals</li>',
       '  </ul>',
-      '  <button class="btn-primary g-cta" type="submit">Continue to Secure Checkout</button>',
-      '  <p class="g-fine-print">You will be redirected to secure Stripe checkout for a recurring $3.33/month subscription. Admin is notified on every join, renewal, or cancellation.</p>',
+      '  <button class="btn-primary g-cta" type="submit">Continue to Shopify Checkout</button>',
+      '  <p class="g-fine-print">You will be redirected to Shopify’s secure checkout for a recurring $3.33/month subscription. Admin is notified on every join, renewal, or cancellation.</p>',
       '  <button class="g-linkish" type="button" id="grimiorHasEmail">I already subscribed — unlock with my email</button>',
       '</form>',
       '<div class="g-form-status" id="grimiorSubscribeStatus" role="status" aria-live="polite"></div>'
@@ -667,6 +667,11 @@
     status.className = 'g-form-status';
     var successUrl = window.location.origin + '/?grimior=success';
     var cancelUrl  = window.location.origin + '/?grimior=cancelled';
+    // Remember who this subscriber is so we can activate them after the
+    // Shopify redirect comes back with ?grimior=success.
+    try {
+      localStorage.setItem('grimior.pendingEmail', JSON.stringify({ email: email, name: name, at: Date.now() }));
+    } catch (_) {}
     fetch('/.netlify/functions/grimior-subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -813,24 +818,34 @@
     try {
       var params = new URLSearchParams(window.location.search);
       var status = params.get('grimior');
-      var session = params.get('session_id');
       if (!status) return;
       if (status === 'success') {
-        // Activate + auto-unlock via function (server verifies with Stripe when configured)
+        // Look up the pending subscriber — we stored their email when they
+        // started the Shopify checkout. The Shopify webhook flips status to
+        // active once the payment clears; this call reads that server-side
+        // state and sends the welcome email on first unlock.
+        var pending = null;
+        try { pending = JSON.parse(localStorage.getItem('grimior.pendingEmail') || 'null'); } catch (_) {}
+        var pendingEmail = (pending && pending.email) || '';
         fetch('/.netlify/functions/grimior-activate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId: session || null })
+          body: JSON.stringify({ email: pendingEmail })
         })
           .then(function (r) { return r.json().catch(function () { return {}; }); })
           .then(function (data) {
-            if (data && data.email && data.active) {
-              saveMember({ email: data.email, status: 'active', expiresAt: data.expiresAt || null, promoCode: data.promoCode || null });
+            if (data && data.active && pendingEmail) {
+              saveMember({ email: pendingEmail, status: 'active', expiresAt: data.expiresAt || null, promoCode: data.promoCode || null });
+              try { localStorage.removeItem('grimior.pendingEmail'); } catch (_) {}
             }
             if (typeof window.showSection === 'function') window.showSection('grimior');
             state.pageIndex = 2; // first unlocked content page
             render();
-            if (typeof window.showToast === 'function') window.showToast('Welcome to The Grimior ✦');
+            if (typeof window.showToast === 'function') {
+              window.showToast(data && data.active
+                ? 'Welcome to The Grimior ✦'
+                : 'Thank you — your membership is being confirmed. We will unlock your access the moment Shopify confirms the payment.');
+            }
           })
           .catch(function () {
             if (typeof window.showSection === 'function') window.showSection('grimior');

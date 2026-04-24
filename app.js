@@ -363,10 +363,17 @@ function renderCart() {
   calcCartTotals();
 }
 
-function addToCart(name, price, qty = 1) {
+function addToCart(name, price, qty = 1, options = {}) {
   const existing = cart.find(i => i.name === name);
   if (existing) { existing.qty += qty; }
-  else { cart.push({ name, price, qty }); }
+  else {
+    const line = { name, price, qty };
+    if (options.productId) line.productId = options.productId;
+    if (options.size) line.size = options.size;
+    if (options.variant) line.size = options.variant;
+    if (options.kind) line.kind = options.kind;
+    cart.push(line);
+  }
   renderCart();
   showToast(`✦ Added to cart: ${name}`);
   openCart();
@@ -398,7 +405,6 @@ document.getElementById('proceedToCheckoutBtn').addEventListener('click', () => 
   closeCartFn();
   showSection('checkout');
   renderCheckoutSummary();
-  initStripe();
 });
 
 // Venmo/CashApp dynamic total — accepts debit & credit cards
@@ -423,8 +429,13 @@ document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
   this.href = `https://cash.app/$AmberAlchemy/${total.toFixed(2)}`;
 });
 
-// ---- SECURE CHECKOUT (Stripe) ----
-let stripe, cardElement, stripeReady = false;
+// ---- SECURE CHECKOUT (Shopify) ----
+// All customer payments, promo codes, subscriptions, wallet methods
+// (Shop Pay, Apple Pay, Google Pay, Cash App Pay, Venmo, standard card),
+// order confirmations, and recurring billing flow through Shopify's
+// hosted checkout. The cart summary below is a client-side preview only —
+// the authoritative totals, tax, and shipping are calculated inside
+// Shopify checkout based on the cart permalink we redirect to.
 
 function renderCheckoutSummary() {
   const el = document.getElementById('checkoutItems');
@@ -462,55 +473,7 @@ function renderCheckoutSummary() {
   } catch (_) {}
 }
 
-async function initStripe() {
-  if (stripeReady) return;
-
-  // Try meta tag first, then fetch from API
-  let pk = '';
-  const stripeKey = document.querySelector('meta[name="stripe-key"]');
-  if (stripeKey && stripeKey.content) {
-    pk = stripeKey.content;
-  } else {
-    try {
-      const res = await fetch('/api/stripe-config');
-      const data = await res.json();
-      pk = data.publishableKey || '';
-    } catch (e) { /* ignore */ }
-  }
-
-  if (!pk) {
-    document.getElementById('card-errors').textContent = 'Card payments are being set up. You may also use Venmo or Cash App from the cart.';
-    document.getElementById('checkoutPayBtn').disabled = false;
-    document.getElementById('payBtnText').textContent = 'Submit Order';
-    return;
-  }
-  try {
-    stripe = Stripe(pk);
-    const elements = stripe.elements();
-    cardElement = elements.create('card', {
-      style: {
-        base: {
-          color: '#F3EBDD',
-          fontFamily: 'Lora, Georgia, serif',
-          fontSize: '15px',
-          '::placeholder': { color: '#B8A898' },
-        },
-        invalid: { color: '#e74c3c' },
-      },
-    });
-    cardElement.mount('#card-element');
-    cardElement.on('change', function(event) {
-      const errEl = document.getElementById('card-errors');
-      errEl.textContent = event.error ? event.error.message : '';
-      document.getElementById('checkoutPayBtn').disabled = !event.complete;
-    });
-    stripeReady = true;
-  } catch (e) {
-    document.getElementById('card-errors').textContent = 'Could not initialize payment form.';
-  }
-}
-
-// Handle checkout form submission
+// Handle checkout form submission — redirect to Shopify hosted checkout.
 document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
@@ -530,7 +493,8 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
   }
   if (cart.length === 0) { errEl.textContent = 'Your cart is empty.'; return; }
 
-  // Calculate total in cents for Stripe
+  // Client-side preview of the total for the order record only — Shopify
+  // recalculates authoritatively at checkout.
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const isMember = !!window.GRIMIOR_ACTIVE;
   const shipThreshold = isMember ? 50 : 75;
@@ -539,71 +503,71 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
   const shipping = discountedSubtotal >= shipThreshold ? 0 : 6.99;
   const tax = discountedSubtotal * 0.08;
   const total = discountedSubtotal + shipping + tax;
-  const amountCents = Math.round(total * 100);
 
-  // Ensure order total is set on hidden field
   document.getElementById('orderTotalField').value = formatPrice(total);
 
   payBtn.disabled = true;
-  btnText.textContent = 'Processing...';
+  btnText.textContent = 'Preparing Shopify checkout…';
   spinner.style.display = 'inline-block';
   errEl.textContent = '';
 
+  // Always mirror the order submission to Netlify Forms so Amber sees the
+  // attempt + the customer's shipping address. Both admin emails are
+  // delivered by the existing submission-created function.
+  const notes = (document.getElementById('checkoutNotes').value || '').trim();
+  const orderNote = [
+    'Awaken Again website order — ' + name,
+    notes ? ('Notes: ' + notes) : '',
+    'Shipping: ' + address + ', ' + cityZip,
+  ].filter(Boolean).join(' | ');
+
   try {
-    // If Stripe is not initialized, submit form as order (payment via Venmo/CashApp)
-    if (!stripe || !cardElement) {
-      document.getElementById('transactionId').value = 'PENDING-' + Date.now();
-      document.getElementById('paymentStatus').value = 'pending-external-payment';
+    // Try Shopify first.
+    const shop = window.ShopifyCheckout;
+    let shopifyResult = null;
+    if (shop && typeof shop.redirectToCheckout === 'function') {
+      shopifyResult = await shop.redirectToCheckout(cart, {
+        email,
+        note: orderNote,
+        attributes: {
+          'Customer Name': name,
+          'Shipping Address': address,
+          'City/State/ZIP': cityZip,
+          'Source': 'awakenagain-site',
+          'Grimior Member': isMember ? 'yes' : 'no',
+        },
+      });
+    }
+
+    if (shopifyResult && shopifyResult.ok && shopifyResult.url) {
+      // Record the order intent in Netlify Forms before leaving the page.
+      document.getElementById('transactionId').value = 'SHOPIFY-PENDING-' + Date.now();
+      document.getElementById('paymentStatus').value = 'redirected-to-shopify';
       document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-      await submitNetlifyForm();
-      showConfirmation('PENDING — Complete payment via Venmo or Cash App in the cart', 'pending');
+      try { await submitNetlifyForm(); } catch (_) { /* non-fatal */ }
+      btnText.textContent = 'Redirecting to Shopify…';
+      window.location.href = shopifyResult.url;
       return;
     }
 
-    // Create PaymentIntent on server
-    const piResponse = await fetch('/api/create-payment-intent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: amountCents,
-        currency: 'usd',
-        description: `Order from ${name} — Amber's Alchemy Apothecary`,
-        metadata: {
-          customer_name: name,
-          email: email,
-          items: cart.map(i => `${i.name} x${i.qty}`).join(', ').substring(0, 500),
-        },
-      }),
-    });
-
-    const piData = await piResponse.json();
-    if (piData.error) { throw new Error(piData.error); }
-
-    // Confirm payment with Stripe
-    const { error, paymentIntent } = await stripe.confirmCardPayment(piData.clientSecret, {
-      payment_method: {
-        card: cardElement,
-        billing_details: {
-          name: name,
-          email: email,
-          address: { postal_code: cityZip.split(/\s+/).pop() || '' },
-        },
-      },
-    });
-
-    if (error) { throw new Error(error.message); }
-
-    if (paymentIntent.status === 'succeeded') {
-      // Set transaction info and submit Netlify Form
-      document.getElementById('transactionId').value = paymentIntent.id;
-      document.getElementById('paymentStatus').value = 'paid';
-      await submitNetlifyForm();
-      showConfirmation(paymentIntent.id, 'paid');
-    }
+    // Shopify not configured yet (or some items are unmapped): fall back to
+    // the existing Netlify-form + manual-processing + Venmo/Cash App flow
+    // so the order is never lost.
+    document.getElementById('transactionId').value = 'PENDING-' + Date.now();
+    document.getElementById('paymentStatus').value = 'pending-manual-processing';
+    document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+    await submitNetlifyForm();
+    const reason = shopifyResult && shopifyResult.reason;
+    showConfirmation(
+      reason === 'no-mapped-variants'
+        ? 'PENDING — Amber will email you a secure Shopify checkout link shortly, or you may complete payment via Venmo or Cash App from the cart.'
+        : 'PENDING — Shopify checkout is finalizing. Amber has received your order details and will confirm payment by email, or you may use Venmo or Cash App from the cart.',
+      'pending'
+    );
   } catch (err) {
-    errEl.textContent = err.message || 'Payment failed. Please try again.';
+    errEl.textContent = err.message || 'Checkout could not be started. Please try again.';
     payBtn.disabled = false;
-    btnText.textContent = 'Pay Now';
+    btnText.textContent = 'Continue to Shopify Checkout →';
     spinner.style.display = 'none';
   }
 });
@@ -702,7 +666,7 @@ function renderProducts(filterCat = 'all') {
       const sel = document.getElementById(`size-${p.id}`);
       const price = parseFloat(sel.value);
       const label = sel.options[sel.selectedIndex].text;
-      addToCart(`${p.name} (${label.split('—')[0].trim()})`, price);
+      addToCart(`${p.name} (${label.split('—')[0].trim()})`, price, 1, { productId: p.id, size: label });
     });
   });
 }
@@ -840,7 +804,7 @@ function renderServices() {
   `).join('');
   grid.querySelectorAll('.product-add-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      addToCart(btn.dataset.name, parseFloat(btn.dataset.price));
+      addToCart(btn.dataset.name, parseFloat(btn.dataset.price), 1, { productId: btn.dataset.id, kind: 'service' });
     });
   });
 }
@@ -948,7 +912,10 @@ document.getElementById('herbAddToCart').addEventListener('click', () => {
   const useType = useEl.value === 'all' ? 'Custom Blend' : useEl.options[useEl.selectedIndex].text;
   const prices = { tea: 22, capsule: 32, balm: 26, serum: 28, all: 25 };
   const price = prices[useEl.value] || 25;
-  addToCart(`Custom ${useType}: ${names.substring(0, 60)}${names.length > 60 ? '...' : ''}`, price);
+  addToCart(`Custom ${useType}: ${names.substring(0, 60)}${names.length > 60 ? '...' : ''}`, price, 1, {
+    productId: '__custom_remedy_builder',
+    kind: 'custom-remedy',
+  });
   selectedHerbs = [];
   updateHerbSelectionBar();
   filterHerbs();
@@ -1260,7 +1227,7 @@ function renderBestSellers() {
       const sel = document.getElementById('bs-size-' + p.id);
       const price = parseFloat(sel.value);
       const label = sel.options[sel.selectedIndex].text;
-      addToCart(p.name + ' (' + label.split('—')[0].trim() + ')', price);
+      addToCart(p.name + ' (' + label.split('—')[0].trim() + ')', price, 1, { productId: p.id, size: label });
     });
   });
 

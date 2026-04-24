@@ -477,9 +477,13 @@
     <link rel="stylesheet" href="soap-gallery.css">
     <link rel="stylesheet" href="grimior.css">
 <!-- v-music-fix -->
-<script src="https://js.stripe.com/v3/"></script>
 <script src="https://player.vimeo.com/api/player.js"></script>
-<meta name="stripe-key" content="" />
+<!-- Shopify is the commerce source of truth (products, pricing, cart,
+     checkout, payments, wallet methods, promo codes, subscriptions,
+     customers, orders). Populate the meta below or set SHOPIFY_DOMAIN
+     in Netlify env; the client falls back to /api/shopify-config. -->
+<meta name="shopify-domain" content="" />
+<script src="shopify-config.js" defer></script>
 
 <!-- Analytics: dataLayer + GA4 / GTM bootstrap (consent-safe defaults).
      Set GTM_ID and/or GA4_MEASUREMENT_ID below to activate. -->
@@ -3141,7 +3145,7 @@
   <div class="section-header">
     <div class="section-ornament">✦ ─────────────── ✦</div>
     <h2>Secure Checkout</h2>
-    <p>Complete your order below. Your payment is processed securely — card data never touches our servers.</p>
+    <p>Review your order below, then continue to Shopify's hosted checkout — the same secure checkout used across the Awaken Again shop. Card data never touches our servers.</p>
   </div>
 
   <div class="checkout-container">
@@ -3216,31 +3220,28 @@
 
         <div class="checkout-divider"></div>
 
-        <h3>Pay with Card</h3>
-        <p class="checkout-secure-note">Your card information is processed securely by Stripe. No card data is stored on our servers.</p>
+        <h3>Secure Checkout via Shopify</h3>
+        <p class="checkout-secure-note">Your cart will be handed off to Shopify's PCI-compliant hosted checkout. Card details, wallet payments, promo codes, shipping, and taxes are all handled there.</p>
         <div class="checkout-trust-badges">
           <span class="trust-badge-item">🔒 SSL Encrypted</span>
-          <span class="trust-badge-item">💳 Visa</span>
-          <span class="trust-badge-item">💳 Mastercard</span>
-          <span class="trust-badge-item">💳 Amex</span>
-          <span class="trust-badge-item">🛡️ Secure Checkout</span>
+          <span class="trust-badge-item">🛍️ Shop Pay</span>
+          <span class="trust-badge-item"> Apple Pay</span>
+          <span class="trust-badge-item">🅖 Google Pay</span>
+          <span class="trust-badge-item">💵 Cash App Pay</span>
+          <span class="trust-badge-item">🟣 Venmo</span>
+          <span class="trust-badge-item">💳 Visa · Mastercard · Amex</span>
         </div>
+        <div id="card-errors" class="checkout-card-errors" role="alert"></div>
 
-        <div class="checkout-field">
-          <label for="card-element">Card Details</label>
-          <div id="card-element" class="stripe-card-element"></div>
-          <div id="card-errors" class="checkout-card-errors" role="alert"></div>
-        </div>
-
-        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn" disabled>
-          <span id="payBtnText">Pay Now</span>
+        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn">
+          <span id="payBtnText">Continue to Shopify Checkout →</span>
           <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
         </button>
 
         <div class="checkout-trust-badges">
           <span>🔒 SSL Encrypted</span>
-          <span>💳 Visa, Mastercard, Amex</span>
-          <span>✦ PCI Compliant</span>
+          <span>✦ Shopify PCI-Compliant Checkout</span>
+          <span>🛡️ Wallet Payments Supported</span>
         </div>
       </form>
     </div>

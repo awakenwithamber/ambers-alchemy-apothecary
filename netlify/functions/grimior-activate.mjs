@@ -1,38 +1,27 @@
-// Grimior / Real Magic — activation handler.
-// Called after Stripe redirects the subscriber back to the site with
-// ?grimior=success&session_id=... We verify the session with Stripe
-// (when configured), mark the subscriber as active in Netlify Blobs,
-// assign a one-time welcome promo code, and dual-notify admins.
+// Grimior / Real Magic — activation handler (Shopify).
+// Called after Shopify redirects the subscriber back to the site with
+// ?grimior=success (and optionally ?email=…). We look up the blob record
+// written by the grimior-webhook (orders/paid, subscription_contracts/*)
+// and, if active, send the welcome email with the monthly promo code.
+// Access status itself is the webhook's responsibility — this endpoint
+// never marks someone active without server-side confirmation.
 //
-// Works safely even when Stripe is not configured — in that case we
-// simply return the best-effort state we already have on file.
+// Works safely even when Shopify isn't configured — in that case it just
+// returns {active:false} and the client renders a friendly "we're setting
+// up your membership" message.
 import { getStore } from '@netlify/blobs';
 import { sendToAll, sendToCustomer, escapeHtml } from './_email.mjs';
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function safeKey(email) { return String(email).replace(/[^a-z0-9]+/gi, '_').toLowerCase(); }
 
 function monthCode() {
-  // Build a month-tagged code like GRIMIOR-2026-04-A1B2
   const d = new Date();
   const yy = d.getUTCFullYear();
   const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
   const suffix = Math.random().toString(36).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4) || 'MOON';
   return `GRIMIOR-${yy}${mm}-${suffix}`;
-}
-
-async function fetchStripeSession(sessionId) {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key || !sessionId) return null;
-  try {
-    const res = await fetch('https://api.stripe.com/v1/checkout/sessions/' + encodeURIComponent(sessionId), {
-      headers: { 'Authorization': 'Bearer ' + key },
-    });
-    if (!res.ok) return null;
-    return await res.json();
-  } catch (err) {
-    console.error('stripe session fetch failed', err);
-    return null;
-  }
 }
 
 export default async (req) => {
@@ -44,18 +33,10 @@ export default async (req) => {
 
   let body = {};
   try { body = await req.json(); } catch { /* ignore */ }
-  const sessionId = String(body.sessionId || '').slice(0, 200);
+  const email = String(body.email || '').trim().toLowerCase();
 
-  const session = await fetchStripeSession(sessionId);
-  const email = (session && session.customer_details && session.customer_details.email) ||
-                (session && session.customer_email) || '';
-  const name  = (session && session.customer_details && session.customer_details.name) || '';
-  const paid  = session && (session.payment_status === 'paid' || session.status === 'complete');
-
-  if (!email) {
-    // Without Stripe verification we still try to return state for any
-    // client-provided email, but we never grant access without a record.
-    return Response.json({ active: false, error: 'no-email-on-session' }, { status: 200 });
+  if (!EMAIL_RE.test(email)) {
+    return Response.json({ active: false, error: 'invalid-email' }, { status: 200 });
   }
 
   try {
@@ -63,46 +44,47 @@ export default async (req) => {
     const key = safeKey(email);
     const prior = await subs.get(key, { type: 'json' }).catch(() => null);
 
-    // Set 35-day soft expiration; real source of truth is Stripe
-    // subscription lifecycle (webhook can extend when wired up).
-    const expiresAt = new Date(Date.now() + 35 * 24 * 60 * 60 * 1000).toISOString();
-    const promoCode = (prior && prior.promoCode) || monthCode();
+    const isActive = !!(prior && prior.status === 'active' &&
+      (!prior.expiresAt || Date.parse(prior.expiresAt) > Date.now()));
 
-    const record = {
-      ...(prior || {}),
-      email,
-      name: name || (prior && prior.name) || '',
-      status: paid ? 'active' : (prior && prior.status) || 'pending',
-      stripeSessionId: sessionId || (prior && prior.stripeSessionId) || null,
-      stripeSubscriptionId: (session && session.subscription) || (prior && prior.stripeSubscriptionId) || null,
-      stripeCustomerId: (session && session.customer) || (prior && prior.stripeCustomerId) || null,
-      activatedAt: paid ? new Date().toISOString() : (prior && prior.activatedAt) || null,
-      expiresAt: paid ? expiresAt : (prior && prior.expiresAt) || null,
+    if (!isActive) {
+      return Response.json({
+        active: false,
+        status: (prior && prior.status) || 'pending',
+        message: 'Your Shopify subscription is still being processed. You will have access as soon as the payment is confirmed.',
+      });
+    }
+
+    // First-time activation-from-client: assign promo code + send welcome emails.
+    const promoCode = prior.promoCode || monthCode();
+    const name = prior.name || '';
+    const expiresAt = prior.expiresAt;
+    const alreadyWelcomed = !!prior.welcomeSentAt;
+
+    await subs.setJSON(key, {
+      ...prior,
       promoCode,
+      welcomeSentAt: alreadyWelcomed ? prior.welcomeSentAt : new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-    };
-    await subs.setJSON(key, record);
+    });
 
-    if (paid) {
-      // Notify admins (dual delivery, independent, audited).
+    if (!alreadyWelcomed) {
       await sendToAll({
         subject: '✦ New Grimior subscriber — welcome them!',
         purpose: 'grimior-subscription-activated',
         orderId: email,
         html: `
           <h2>New Grimior / Real Magic subscriber</h2>
-          <p>A visitor has successfully subscribed to The Grimior.</p>
+          <p>A visitor has successfully subscribed to The Grimior via Shopify.</p>
           <ul>
             <li><strong>Email:</strong> ${escapeHtml(email)}</li>
             <li><strong>Name:</strong> ${escapeHtml(name || '—')}</li>
-            <li><strong>Subscription:</strong> ${escapeHtml(record.stripeSubscriptionId || 'unknown')}</li>
             <li><strong>Welcome promo code:</strong> ${escapeHtml(promoCode)}</li>
-            <li><strong>Access expires:</strong> ${escapeHtml(expiresAt)}</li>
+            <li><strong>Access expires:</strong> ${escapeHtml(expiresAt || '—')}</li>
           </ul>`,
         text: `New Grimior subscriber: ${email} ${name ? '(' + name + ')' : ''} — promo ${promoCode}`,
       });
 
-      // Customer welcome email.
       await sendToCustomer({
         to: email,
         subject: '✦ Welcome to The Grimior / Real Magic',
@@ -121,18 +103,18 @@ export default async (req) => {
           </ul>
           <h3>Your first promo code</h3>
           <p><strong style="font-size:1.1rem;letter-spacing:0.08em;">${escapeHtml(promoCode)}</strong></p>
-          <p>Use it at checkout for 10% off your first order as a member.</p>
-          <p style="opacity:0.7;font-size:0.85rem;">Cancel anytime from your Stripe receipt email. Questions? Reply to this note or write to Amber at awaken@consultant.com.</p>
+          <p>Use it at checkout for 10% off your next order.</p>
+          <p style="opacity:0.7;font-size:0.85rem;">Cancel or manage your subscription any time from your Shopify account or the confirmation email. Questions? Reply to this note or write to Amber at awaken@consultant.com.</p>
         `,
         text: `Welcome to The Grimior / Real Magic. Your first promo code: ${promoCode}`,
       });
     }
 
     return Response.json({
-      active: !!paid,
+      active: true,
       email,
-      expiresAt: paid ? expiresAt : null,
-      promoCode: paid ? promoCode : null,
+      expiresAt: expiresAt || null,
+      promoCode,
     });
   } catch (err) {
     console.error('grimior-activate error', err);

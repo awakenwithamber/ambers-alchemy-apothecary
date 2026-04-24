@@ -279,7 +279,7 @@
         existing.qty += 1;
         if (typeof renderCart === 'function') renderCart();
       } else {
-        var item = { name: name, price: price, qty: 1 };
+        var item = { name: name, price: price, qty: 1, productId: '__custom_soap_builder', kind: 'custom-soap' };
         if (parts.length > 0) item.herbs = parts.join(' | ');
         if (typeof cart !== 'undefined') cart.push(item);
         if (typeof renderCart === 'function') renderCart();

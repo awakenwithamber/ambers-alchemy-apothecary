@@ -65,9 +65,9 @@ caches invalidate cleanly.
    `page_view`, `scroll_depth`, `outbound_click`, `video_play`,
    `add_to_cart`, `begin_checkout`, `newsletter_signup`,
    `contact_form_submit`.
-5. Wire the Stripe success callback to `window.AAA.purchase(orderId, cart,
-   total)` when the receipt screen mounts so `purchase` fires with the real
-   `transaction_id`.
+5. Wire the Shopify checkout return callback (`?grimior=success` / `thank_you`)
+   to `window.AAA.purchase(orderId, cart, total)` when the receipt screen
+   mounts so `purchase` fires with the real `transaction_id`.
 
 ## 5. Consent Mode v2
 
