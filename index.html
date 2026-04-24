@@ -542,6 +542,7 @@
   </div>
   <div class="nav-links" id="navLinks">
     <button class="nav-btn active" data-section="home">Home</button>
+    <button class="nav-btn" data-section="reviews">Reviews</button>
     <button class="nav-btn" data-section="shop">Shop Remedies</button>
     <button class="nav-btn" data-section="custom-formula">Create Remedy</button>
     <button class="nav-btn nav-dropdown-parent" id="factsArticlesNav">Learn
@@ -646,23 +647,66 @@
 <!-- HOME SECTION -->
 <section id="home" class="page-section active">
 
-  <!-- HERO (Simplified: 1 headline, 2 CTAs) -->
+  <!-- HERO (Curated gateway: calm, clear, intentional CTAs) -->
   <div class="hero">
     <div class="hero-content">
       <p class="hero-eyebrow">✦ AWAKEN WITH AMBER LLC ✦</p>
-      <h1 class="hero-headline">Discover Your Personal<br>Herbal Allies</h1>
-      <p class="hero-sub">Answer a few thoughtful questions and receive your personalized herbal match — in under two minutes.</p>
+      <h1 class="hero-headline">Healing, Ritual,<br>Remedies &amp; Renewal</h1>
+      <p class="hero-sub">A handcrafted healing apothecary, wellness sanctuary, and guided botanical experience — crafted in small batches with reverence for the plants.</p>
       <div class="hero-trust-bar">
         <span class="hero-trust-item">🌿 Herbalist Formulated</span>
         <span class="hero-trust-item">🫙 Small-Batch Crafted</span>
         <span class="hero-trust-item">✦ Personalized to You</span>
       </div>
-      <div class="hero-btns hero-two-paths">
-        <button class="btn-primary hero-cta hero-cta-main" onclick="openHerbalAdvisor()">✦ Start My Wellness Quiz</button>
-        <button class="btn-secondary hero-cta" data-section="shop">Shop by Goal</button>
+      <div class="hero-btns hero-primary-paths">
+        <button class="btn-primary hero-cta hero-cta-main" data-section="shop">✦ Enter the Apothecary Shop</button>
+        <button class="btn-secondary hero-cta" data-section="services">Explore Services</button>
+        <button class="btn-secondary hero-cta" onclick="openHerbalAdvisor()">Take the Herbal Quiz</button>
+      </div>
+      <div class="hero-secondary-cta">
+        <a class="hero-consult-link" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">📅 Book a Consultation with Amber →</a>
       </div>
     </div>
     <div class="hero-scroll-hint">↓</div>
+  </div>
+
+  <!-- CHOOSE YOUR PATH — curated decision gateway -->
+  <div class="choose-path-section pane-bg">
+    <div class="section-ornament">✦ ─────────────── ✦</div>
+    <h2 class="section-title">Choose Your Path</h2>
+    <p class="section-sub">Start where you are. Each path opens the right door.</p>
+    <div class="choose-path-grid">
+      <a class="path-card" href="#" data-section="shop" aria-label="I need support">
+        <div class="path-icon">🤲</div>
+        <h4>I Need Support</h4>
+        <p>Gentle remedies for stress, sleep, mood &amp; everyday balance.</p>
+      </a>
+      <a class="path-card" href="#" data-product-link="dreamease-capsules" onclick="event.preventDefault();navigateToProduct('dreamease-capsules')" aria-label="I need rest">
+        <div class="path-icon">🌙</div>
+        <h4>I Need Rest</h4>
+        <p>Sleep support, calming rituals &amp; nervous-system restoration.</p>
+      </a>
+      <a class="path-card" href="#" data-section="custom-formula" aria-label="I need custom remedies">
+        <div class="path-icon">⚗️</div>
+        <h4>I Need Custom Remedies</h4>
+        <p>Build a blend tailored to your body, goals &amp; intention.</p>
+      </a>
+      <a class="path-card" href="#" data-section="shop" aria-label="I want to shop">
+        <div class="path-icon">🫙</div>
+        <h4>I Want to Shop</h4>
+        <p>Explore our full apothecary of handcrafted botanical remedies.</p>
+      </a>
+      <a class="path-card" href="#" data-section="services" aria-label="I want guidance">
+        <div class="path-icon">✨</div>
+        <h4>I Want Guidance</h4>
+        <p>Private sessions, readings &amp; guided wellness support with Amber.</p>
+      </a>
+      <a class="path-card" href="#" data-section="herb-index" aria-label="I want to learn">
+        <div class="path-icon">📖</div>
+        <h4>I Want to Learn</h4>
+        <p>Enter the Living Grimoire — rituals, herbs, and sacred wisdom.</p>
+      </a>
+    </div>
   </div>
 
   <!-- ABOUT + PROMO VIDEO (prominently placed below hero) -->
@@ -852,6 +896,164 @@
     </div>
   </div>
 
+  <!-- ABOUT AMBER PREVIEW -->
+  <div class="about-preview-section pane-bg">
+    <div class="section-ornament">✦ ─────────────── ✦</div>
+    <h2 class="section-title">Meet Amber</h2>
+    <div class="about-preview-inner">
+      <div class="about-preview-photo">
+        <img src="images/amber-portrait-1.jpg" alt="Amber Lynn Patten — Herbalist, Spiritual Healer & Botanical Alchemist" loading="lazy" />
+      </div>
+      <div class="about-preview-text">
+        <p class="about-preview-tag">Herbalist · Spiritual Healer · Botanical Alchemist</p>
+        <p>Amber Lynn Patten crafts small-batch remedies with reverence for the plants — pulling from Ayurveda, Traditional Chinese Medicine, and Western herbalism. No synthetic fillers, no shortcuts. Every blend is made with prayer, purpose, and care.</p>
+        <button class="btn-secondary" data-section="about">Meet Amber →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL CTA BAR — three clean actions -->
+  <div class="final-cta-bar pane-bg">
+    <div class="final-cta-inner">
+      <div class="section-ornament">✦ ─────────────── ✦</div>
+      <h2 class="section-title">Where Would You Like to Begin?</h2>
+      <div class="final-cta-grid">
+        <a class="final-cta-card" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">
+          <span class="final-cta-icon">📅</span>
+          <h4>Book Consultation</h4>
+          <p>One-on-one guidance with Amber.</p>
+        </a>
+        <a class="final-cta-card" href="#" data-section="shop">
+          <span class="final-cta-icon">🫙</span>
+          <h4>Shop Now</h4>
+          <p>Enter the apothecary.</p>
+        </a>
+        <a class="final-cta-card" href="#" onclick="event.preventDefault();openLunna&amp;&amp;openLunna()">
+          <span class="final-cta-icon">🌙</span>
+          <h4>Ask Lunna</h4>
+          <p>Your gentle guide — ask anything.</p>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- REVIEWS SECTION — dedicated page with authentic high-trust reviews -->
+<section id="reviews" class="page-section pane-bg">
+  <div class="section-header">
+    <div class="section-ornament">✦ ─────────────── ✦</div>
+    <h2>Honest Words from Our Community</h2>
+    <p class="section-sub">Real reviews from people who've worked with Amber and used her handcrafted remedies, soaps, and services.</p>
+  </div>
+
+  <div class="reviews-filter-bar">
+    <button class="reviews-filter-btn active" data-rvcat="all">All</button>
+    <button class="reviews-filter-btn" data-rvcat="remedies">Remedies</button>
+    <button class="reviews-filter-btn" data-rvcat="soaps">Soaps &amp; Builder</button>
+    <button class="reviews-filter-btn" data-rvcat="rituals">Bath &amp; Ritual</button>
+    <button class="reviews-filter-btn" data-rvcat="sleep">Sleep Support</button>
+    <button class="reviews-filter-btn" data-rvcat="services">Consultations</button>
+  </div>
+
+  <div class="reviews-page-grid" id="reviewsPageGrid">
+
+    <article class="review-page-card" data-rvcat="soaps">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"I built a custom soap blend with lavender, oat, and a whisper of rose and — I am obsessed. It smells like a memory I didn't know I had. My skin hasn't felt this calm in months."</p>
+      <div class="review-attribution"><strong>Madeline R.</strong> · Custom Soap Builder</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="sleep">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"DreamEase changed my nights. No grogginess in the morning, no racing thoughts at 2 a.m. — just actual sleep. I take it on the nights my brain won't let go."</p>
+      <div class="review-attribution"><strong>Priya S.</strong> · Sleep Support Remedy</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="services">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"My consultation with Amber felt less like a call and more like being seen. She listened, asked the right questions, and built a plan around the real root — not just the symptoms."</p>
+      <div class="review-attribution"><strong>Jenna M.</strong> · 1:1 Consultation</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="rituals">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"The bath ritual blend is pure magic. I lit the candle she recommended, poured the salts, and for the first time in a long time I felt like my body was on my side again."</p>
+      <div class="review-attribution"><strong>Casey W.</strong> · Bath Ritual Blend</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="remedies">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"The Chill Pill is the first adaptogen blend that actually takes the edge off without making me feel flat. I can work, parent, breathe — all at the same time."</p>
+      <div class="review-attribution"><strong>Rachel T.</strong> · Chill Pill Capsules</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="soaps">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"Every bar is beautiful. They smell clean and earthy — never perfumey — and they actually lather. My teen stole the charcoal-mint and now it's his signature scent."</p>
+      <div class="review-attribution"><strong>Elena D.</strong> · Artisan Soap Collection</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="services">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"Amber helped me untangle a hormone issue two doctors had dismissed. Her recommendations were gentle, specific, and — six weeks later — my cycle came back on its own."</p>
+      <div class="review-attribution"><strong>Danielle V.</strong> · Wellness Consultation</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="remedies">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"I ordered the Sacred Balance because of the quiz recommendation and didn't expect much. Two weeks in, my PMS is barely there. I'm a convert."</p>
+      <div class="review-attribution"><strong>Nina L.</strong> · Sacred Balance</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="rituals">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"The lavender-honey soap paired with the sleep tea is my new wind-down ritual. My whole bathroom smells like peace. Worth every penny."</p>
+      <div class="review-attribution"><strong>Sophie K.</strong> · Sleep Ritual</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="services">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"Amber is the real thing. Warm, grounded, and deeply knowledgeable — and she pulls zero nonsense. She'll tell you when herbs aren't the answer, too."</p>
+      <div class="review-attribution"><strong>Tori A.</strong> · Spiritual Guidance Session</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="remedies">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"Vital Connect is my secret weapon. No caffeine jitters, no 3 p.m. crash — I just feel evenly powered. It's the only adaptogen I've stuck with."</p>
+      <div class="review-attribution"><strong>Marcus J.</strong> · Vital Connect</div>
+    </article>
+
+    <article class="review-page-card" data-rvcat="soaps">
+      <div class="review-stars">★ ★ ★ ★ ★</div>
+      <p class="review-quote">"Building my own soap felt indulgent in the best way. The recommendations walked me through it without overwhelming me — and the bar that arrived was beautiful."</p>
+      <div class="review-attribution"><strong>Hannah P.</strong> · Custom Soap Builder</div>
+    </article>
+
+  </div>
+
+  <div class="reviews-cta-row" style="text-align:center;margin-top:32px;">
+    <button class="btn-primary" data-section="shop">Shop the Apothecary</button>
+    <button class="btn-secondary" onclick="openHerbalAdvisor()">Find My Remedy</button>
+  </div>
+  <script>
+  (function(){
+    var bar = document.querySelector('#reviews .reviews-filter-bar');
+    var grid = document.getElementById('reviewsPageGrid');
+    if (!bar || !grid) return;
+    bar.addEventListener('click', function(e){
+      var btn = e.target.closest('.reviews-filter-btn');
+      if (!btn) return;
+      bar.querySelectorAll('.reviews-filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var cat = btn.getAttribute('data-rvcat');
+      grid.querySelectorAll('.review-page-card').forEach(function(card){
+        var match = cat === 'all' || card.getAttribute('data-rvcat') === cat;
+        card.style.display = match ? '' : 'none';
+      });
+    });
+  })();
+  </script>
 </section>
 
 <!-- SHOP SECTION -->
@@ -1503,15 +1705,15 @@
 
     <!-- Custom Soap Builder CTA -->
     <div class="soap-card soap-builder-cta-card">
-      <div class="soap-img-wrap soap-builder-cta-visual">
-        <div class="soap-builder-cta-icon">⚗️</div>
+      <div class="soap-img-wrap soap-builder-cta-visual soap-builder-cta-hero">
+        <img src="images/soap-builder-hero.png" alt="Handcrafted custom soap blend — botanical layers of rose, herbs, and clay" class="soap-builder-cta-img" loading="lazy" />
         <div class="soap-builder-cta-sparkle">✦</div>
       </div>
       <div class="soap-info">
-        <h3 class="soap-name">Design Your Own Soap</h3>
-        <p class="soap-latin">Your Vision · Your Botanicals · Your Ritual</p>
-        <p class="soap-desc">Choose a botanical clear top bar, a creamy nourishing bar, or a layered bar with both — then personalize it with your favorite botanicals, natural color, and scent.</p>
-        <button class="btn-primary soap-builder-launch-btn" onclick="openSoapBuilder()">Create Your Custom Soap ✦</button>
+        <h3 class="soap-name">Create Your Custom Soap Blend</h3>
+        <p class="soap-latin">Crafted for your skin, senses &amp; intention</p>
+        <p class="soap-desc">Build a soap as unique as you are. Choose a botanical clear top, a creamy nourishing bar, or a layered blend — then personalize with your favorite botanicals, natural color, and scent.</p>
+        <button class="btn-primary soap-builder-launch-btn" onclick="openSoapBuilder()">Start the Guided Builder ✦</button>
       </div>
     </div>
 
@@ -1613,6 +1815,14 @@
   <div class="soap-builder-modal">
     <button class="soap-builder-close" onclick="closeSoapBuilder()">&times;</button>
     <div class="soap-builder-header">
+      <div class="soap-builder-hero-banner">
+        <img src="images/soap-builder-hero.png" alt="Custom handcrafted botanical soap blend" loading="lazy" />
+        <div class="soap-builder-hero-overlay">
+          <p class="soap-builder-hero-eyebrow">✦ GUIDED BUILDER ✦</p>
+          <h2 class="soap-builder-hero-title">Build a Soap as Unique as You Are</h2>
+          <p class="soap-builder-hero-sub">Crafted for your skin, senses, and intention.</p>
+        </div>
+      </div>
       <div class="section-ornament">✦ ─── ✦</div>
       <h2>Custom Soap Builder</h2>
       <p>Build your bar your way. Choose a botanical clear top bar, a creamy nourishing bar, or a layered bar with a clear botanical top and rich creamy base. Then personalize it with your favorite botanicals, natural color, and scent.</p>
@@ -2184,6 +2394,14 @@
   <div class="section-header">
     <h2>About Amber</h2>
     <p>The Herbal Alchemist — Part healer, part botanist, part guide.</p>
+  </div>
+  <div class="about-photos-row">
+    <figure class="about-photo-frame">
+      <img src="images/amber-portrait-1.jpg" alt="Amber Lynn Patten — portrait" loading="lazy" />
+    </figure>
+    <figure class="about-photo-frame">
+      <img src="images/amber-portrait-2.jpg" alt="Amber in her apothecary — portrait" loading="lazy" />
+    </figure>
   </div>
   <div class="about-content card">
     <div class="about-text">
@@ -3089,5 +3307,39 @@
 <script src="navigation-history.js"></script>
 <script src="reviews.js"></script>
 <script src="pwa-init.js"></script>
+
+<!-- LUNNA ASSISTANT — warm, intuitive, non-pushy -->
+<link rel="stylesheet" href="lunna.css" />
+<div id="lunnaRoot" aria-live="polite">
+  <button id="lunnaFab" class="lunna-fab" aria-label="Open Lunna — your gentle guide" title="Ask Lunna">
+    <span class="lunna-fab-icon">🌙</span>
+    <span class="lunna-fab-label">Ask Lunna</span>
+  </button>
+  <div id="lunnaPrompt" class="lunna-prompt" role="dialog" aria-labelledby="lunnaPromptTitle" aria-hidden="true">
+    <button class="lunna-close" id="lunnaClose" aria-label="Dismiss Lunna">✕</button>
+    <div class="lunna-header">
+      <span class="lunna-avatar">🌙</span>
+      <div>
+        <p class="lunna-eyebrow">✦ LUNNA · Your Gentle Guide</p>
+        <h3 id="lunnaPromptTitle" class="lunna-title">What are your goals today?</h3>
+      </div>
+    </div>
+    <div class="lunna-body" id="lunnaBody">
+      <div class="lunna-goal-grid" data-lunna-step="goals">
+        <button class="lunna-goal" data-lunna-goal="sleep">😴 Better Sleep</button>
+        <button class="lunna-goal" data-lunna-goal="stress">🧘 Less Stress</button>
+        <button class="lunna-goal" data-lunna-goal="skin">✨ Skin Support</button>
+        <button class="lunna-goal" data-lunna-goal="soap">🧼 Custom Soap</button>
+        <button class="lunna-goal" data-lunna-goal="energy">⚡ Energy Support</button>
+        <button class="lunna-goal" data-lunna-goal="balance">🌸 Emotional Balance</button>
+        <button class="lunna-goal" data-lunna-goal="shop">🫙 Shop Products</button>
+        <button class="lunna-goal" data-lunna-goal="learn">📖 Learn Herbs</button>
+        <button class="lunna-goal" data-lunna-goal="book">📅 Book with Amber</button>
+        <button class="lunna-goal" data-lunna-goal="unsure">🌿 I'm Not Sure</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="lunna.js"></script>
     </body>
 </html>

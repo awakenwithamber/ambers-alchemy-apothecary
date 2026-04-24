@@ -1,0 +1,151 @@
+/* LUNNA ASSISTANT — floating guide widget */
+#lunnaRoot { position: fixed; bottom: 20px; right: 20px; z-index: 9500; font-family: 'Lora', Georgia, serif; }
+
+.lunna-fab {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: linear-gradient(145deg, #3b2a5e 0%, #5b3d8a 100%);
+  color: #f7f1ea;
+  border: 1px solid rgba(212, 168, 67, 0.45);
+  border-radius: 999px;
+  padding: 12px 18px 12px 14px;
+  box-shadow: 0 10px 28px rgba(60, 30, 110, 0.35), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  cursor: pointer;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+.lunna-fab:hover { transform: translateY(-1px); box-shadow: 0 14px 32px rgba(60, 30, 110, 0.45); }
+.lunna-fab-icon { font-size: 1.2rem; filter: drop-shadow(0 0 6px rgba(247, 223, 160, 0.6)); animation: lunnaGlow 4s ease-in-out infinite; }
+.lunna-fab-label { white-space: nowrap; }
+
+@keyframes lunnaGlow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(247, 223, 160, 0.4)); }
+  50% { filter: drop-shadow(0 0 10px rgba(247, 223, 160, 0.85)); }
+}
+
+.lunna-prompt {
+  position: absolute;
+  bottom: 68px;
+  right: 0;
+  width: min(360px, calc(100vw - 32px));
+  background: #fdf9f2;
+  color: #3b2a5e;
+  border-radius: 18px;
+  border: 1px solid rgba(60, 30, 110, 0.12);
+  box-shadow: 0 24px 50px rgba(60, 30, 110, 0.25);
+  padding: 20px 18px 18px;
+  transform: translateY(8px) scale(0.98);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 220ms ease, opacity 220ms ease;
+}
+.lunna-prompt.lunna-open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+
+.lunna-close {
+  position: absolute; top: 8px; right: 8px;
+  background: transparent; border: 0; color: #6b4f9b;
+  font-size: 1.1rem; cursor: pointer; padding: 6px 8px; border-radius: 8px;
+}
+.lunna-close:hover { background: rgba(60, 30, 110, 0.08); }
+
+.lunna-header { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+.lunna-avatar {
+  font-size: 1.6rem; line-height: 1;
+  background: linear-gradient(145deg, #3b2a5e, #5b3d8a);
+  color: #f7f1ea;
+  width: 40px; height: 40px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 14px rgba(60, 30, 110, 0.3);
+  flex-shrink: 0;
+}
+.lunna-eyebrow {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 0.68rem; letter-spacing: 0.18em;
+  color: #6b4f9b; margin: 0; text-transform: uppercase;
+}
+.lunna-title {
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 1rem; margin: 2px 0 0; color: #3b2a5e;
+}
+
+.lunna-body { max-height: 60vh; overflow-y: auto; }
+
+.lunna-goal-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.lunna-goal {
+  background: #fff;
+  border: 1px solid rgba(60, 30, 110, 0.15);
+  color: #3b2a5e;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 0.86rem;
+  border-radius: 12px;
+  padding: 10px 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 160ms ease, border-color 160ms ease, transform 120ms ease;
+}
+.lunna-goal:hover { background: #f4edde; border-color: rgba(212, 168, 67, 0.6); transform: translateY(-1px); }
+
+.lunna-msg {
+  background: #f4edde;
+  border-left: 3px solid #d4a843;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin: 10px 0;
+  font-size: 0.88rem;
+  color: #3b2a5e;
+  line-height: 1.5;
+}
+.lunna-followup-group { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.lunna-followup {
+  background: #fff;
+  border: 1px solid rgba(60, 30, 110, 0.15);
+  color: #3b2a5e;
+  font-family: 'Lora', Georgia, serif;
+  font-size: 0.86rem;
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+}
+.lunna-followup:hover { background: #f4edde; }
+.lunna-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.lunna-action {
+  background: linear-gradient(145deg, #3b2a5e, #5b3d8a);
+  color: #f7f1ea;
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+.lunna-action.lunna-action-ghost {
+  background: transparent;
+  color: #3b2a5e;
+  border: 1px solid rgba(60, 30, 110, 0.2);
+}
+.lunna-back {
+  margin-top: 10px;
+  background: transparent; border: 0; color: #6b4f9b;
+  cursor: pointer; font-size: 0.82rem;
+}
+.lunna-back:hover { text-decoration: underline; }
+
+@media (max-width: 520px) {
+  #lunnaRoot { bottom: 14px; right: 14px; }
+  .lunna-fab-label { display: none; }
+  .lunna-fab { padding: 12px; }
+  .lunna-prompt { right: 0; width: calc(100vw - 28px); }
+}
+
+/* Respect user reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .lunna-fab-icon { animation: none; }
+  .lunna-prompt { transition: opacity 100ms linear; }
+}

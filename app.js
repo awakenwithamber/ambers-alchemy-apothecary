@@ -949,6 +949,16 @@ document.getElementById('nlSubmitBtn').addEventListener('click', () => {
   const name = document.getElementById('nlName').value.trim();
   const email = document.getElementById('nlEmail').value.trim();
   if (!email) { showToast('Please enter your email address.'); return; }
+
+  // Persist subscriber in Netlify Blobs via serverless endpoint (fire-and-forget).
+  try {
+    fetch('/.netlify/functions/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, name, source: 'homepage-newsletter' }),
+    }).catch(() => {});
+  } catch (_) {}
+
   const body = encodeURIComponent(
     `New Newsletter Subscriber — Amber's Alchemy Apothecary\n\n` +
     `Name: ${name || 'Not provided'}\nEmail: ${email}\n\n` +

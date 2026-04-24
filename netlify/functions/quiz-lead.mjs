@@ -11,7 +11,10 @@
 import { getStore } from "@netlify/blobs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const ADMIN_NOTIFY_TO = 'awaken@consultant.com';
+const ADMIN_NOTIFY_TO = [
+  process.env.ADMIN_ORDER_EMAIL_1 || 'awaken@consultant.com',
+  process.env.ADMIN_ORDER_EMAIL_2 || 'perfectlyme347@gmail.com',
+].filter(Boolean);
 const GUEST_FROM = process.env.QUIZ_LEAD_FROM_EMAIL || 'Amber\u2019s Alchemy Apothecary <hello@awakenagain.com>';
 const EXTENDED_DEDUPE_WINDOW_MS = 6 * 60 * 60 * 1000; // 6 hours
 
@@ -255,9 +258,14 @@ export default async (req) => {
         const guest = buildGuestEmail({ firstName, resultSummary });
         const admin = buildAdminEmail({ firstName, email, record });
 
-        const [guestSend, adminSend] = await Promise.all([
+        const adminSends = ADMIN_NOTIFY_TO.map((addr) =>
+          sendViaResend({ to: addr, subject: admin.subject, html: admin.html, text: admin.text })
+            .then((r) => ({ to: addr, ...r }))
+        );
+
+        const [guestSend, ...adminResults] = await Promise.all([
           sendViaResend({ to: email, subject: guest.subject, html: guest.html, text: guest.text }),
-          sendViaResend({ to: ADMIN_NOTIFY_TO, subject: admin.subject, html: admin.html, text: admin.text })
+          ...adminSends,
         ]);
 
         await extendedIndex.setJSON(email, {
@@ -265,7 +273,7 @@ export default async (req) => {
           sentAt: now.toISOString(),
           firstName,
           guestSend,
-          adminSend
+          adminResults,
         });
       } else {
         console.log('quiz-lead: extended-results dedupe hit for', email);

@@ -1,10 +1,28 @@
 // Triggered automatically when a Netlify Form submission is created.
-// Stores order data in Netlify Blobs for record-keeping and queues a polite
-// review request to be sent after the customer has had time with the product.
+// Stores order data in Netlify Blobs for record-keeping, queues a polite
+// review request, and (critically) always dispatches an admin notification
+// to BOTH required addresses — no silent failure. Delivery attempts are
+// logged in the `email-delivery-log` blob store.
 
-import { getStore } from "@netlify/blobs";
+import { getStore } from '@netlify/blobs';
+import { sendToAll, escapeHtml } from './_email.mjs';
 
 const REVIEW_REQUEST_DELAY_DAYS = 10;
+
+function buildAdminHtml(order) {
+  return `<!doctype html><html><body style="font-family:Georgia,serif;color:#3b2a5e;background:#f7f1ea;padding:24px;">
+    <h2 style="font-family:'Cinzel',Georgia,serif;">Checkout Order — ${escapeHtml(order.orderId)}</h2>
+    <p><strong>Customer:</strong> ${escapeHtml(order.customerName || '—')} &lt;${escapeHtml(order.email || '—')}&gt;</p>
+    <p><strong>Phone:</strong> ${escapeHtml(order.phone || '—')}</p>
+    <p><strong>Shipping:</strong> ${escapeHtml(order.shippingAddress || '—')}</p>
+    <p><strong>Product:</strong> ${escapeHtml(order.product || '—')}</p>
+    <p><strong>Quantity:</strong> ${escapeHtml(String(order.quantity || '—'))}</p>
+    <p><strong>Total:</strong> ${escapeHtml(order.orderTotal || '—')}</p>
+    <p><strong>Payment:</strong> ${escapeHtml(order.paymentStatus || '—')} (txn ${escapeHtml(order.transactionId || '—')})</p>
+    ${order.notes ? `<p><strong>Notes:</strong> ${escapeHtml(order.notes)}</p>` : ''}
+    <p style="color:#6b4f9b;font-size:0.85rem;">Submitted at ${escapeHtml(order.submittedAt)}</p>
+  </body></html>`;
+}
 
 export default async (req) => {
   try {
@@ -26,7 +44,7 @@ export default async (req) => {
       customerName: data['customer-name'],
       email,
       phone: data['phone'],
-      shippingAddress: `${data['shipping-address']}, ${data['city-state-zip']}`,
+      shippingAddress: `${data['shipping-address'] || ''}, ${data['city-state-zip'] || ''}`.replace(/^, |, $/g, ''),
       product: data['product-ordered'],
       quantity: data['quantity'],
       notes: data['order-notes'],
@@ -54,6 +72,15 @@ export default async (req) => {
         createdAt: now.toISOString(),
       });
     }
+
+    // Dual-address admin notification — non-negotiable.
+    await sendToAll({
+      subject: `New Checkout Order — ${orderId}${order.customerName ? ` (${order.customerName})` : ''}`,
+      html: buildAdminHtml(order),
+      text: `New Order ${orderId}\nCustomer: ${order.customerName || '—'} <${email}>\nProduct: ${order.product || '—'}\nTotal: ${order.orderTotal || '—'}`,
+      orderId,
+      purpose: 'form-order-admin-notify',
+    });
 
     return new Response('OK');
   } catch (err) {
