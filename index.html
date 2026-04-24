@@ -719,8 +719,8 @@
     </div>
   </div>
 
-  <!-- ABOUT + PROMO VIDEO (prominently placed below hero) -->
-  <div class="hero-video-section pane-bg">
+  <!-- ABOUT + PROMO VIDEO (hidden from homepage — accessible on About page) -->
+  <div class="hero-video-section pane-bg home-hidden">
     <div class="hero-video-inner">
       <p class="hero-video-context">Discover personalized herbal remedies, handcrafted formulas, and plant-based solutions designed to support your body naturally.</p>
       <div class="promo-video-frame">
@@ -731,8 +731,8 @@
     </div>
   </div>
 
-  <!-- WHAT CAN WE HELP YOU WITH — primary beginner entry path -->
-  <div class="results-section pane-bg">
+  <!-- WHAT CAN WE HELP YOU WITH (hidden from homepage — accessible via Shop by Goal) -->
+  <div class="results-section pane-bg home-hidden">
     <div class="section-ornament">✦ ─────────────── ✦</div>
     <h2 class="section-title">What Can We Help You With?</h2>
     <p class="section-sub">Click your goal to go straight to the recommended formula.</p>
@@ -791,18 +791,45 @@
     </div>
   </div>
 
-  <!-- FEATURED PRODUCTS (direct links with beginner-friendly descriptions) -->
+  <!-- FEATURED PRODUCTS (2 only — full catalog lives on Shop page) -->
   <div class="best-sellers-section pane-bg">
     <div class="section-ornament">✦ ─────────────── ✦</div>
-    <h2 class="section-title">Best Sellers</h2>
-    <p class="section-sub">Trusted by hundreds of customers — handcrafted with pure botanical ingredients.</p>
+    <h2 class="section-title">Featured Remedies</h2>
+    <p class="section-sub">Two signature blends — explore the full apothecary when you're ready.</p>
     <div class="best-sellers-grid" id="bestSellersGrid"></div>
     <div class="best-sellers-soaps-grid" id="bestSellersSoapsGrid"></div>
+    <div class="section-view-more">
+      <button class="btn-secondary" data-section="shop">View Full Shop →</button>
+    </div>
+  </div>
+
+  <!-- FEATURED SERVICES (2 only — full list lives on Services page) -->
+  <div class="services-preview-section pane-bg">
+    <div class="section-ornament">✦ ─────────────── ✦</div>
+    <h2 class="section-title">Featured Services</h2>
+    <p class="section-sub">Two ways to work one-on-one with Amber.</p>
+    <div class="services-preview-grid">
+      <a class="service-preview-card" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">
+        <span class="service-preview-icon">📅</span>
+        <h4>Personalized Wellness Consultation</h4>
+        <p>A one-on-one session with Amber to map out your body, goals, and the right remedies for you.</p>
+        <span class="service-preview-cta">Book a Consultation →</span>
+      </a>
+      <a class="service-preview-card" href="#" data-section="custom-formula">
+        <span class="service-preview-icon">⚗️</span>
+        <h4>Custom Remedy Blend</h4>
+        <p>A bespoke herbal formula hand-blended for your symptoms, intentions, and lifestyle.</p>
+        <span class="service-preview-cta">Start Your Custom Blend →</span>
+      </a>
+    </div>
+    <div class="section-view-more">
+      <button class="btn-secondary" data-section="services">View All Services →</button>
+    </div>
   </div>
 
 
-  <!-- APOTHECARY PROCESS (condensed) -->
-  <div class="apothecary-process-section pane-bg">
+  <!-- APOTHECARY PROCESS (hidden from homepage — lives on About page) -->
+  <div class="apothecary-process-section pane-bg home-hidden">
     <div class="section-ornament">✦ ─────────────── ✦</div>
     <h2 class="section-title">How Our Remedies Are Made</h2>
     <div class="process-steps">
@@ -833,8 +860,8 @@
     </div>
   </div>
 
-  <!-- TRUST SECTION (condensed) -->
-  <div class="trust-section pane-bg">
+  <!-- TRUST SECTION (hidden from homepage — lives on About page) -->
+  <div class="trust-section pane-bg home-hidden">
     <h2 class="trust-title">Why People Trust Amber's Alchemy</h2>
     <div class="trust-grid trust-grid-compact">
       <div class="trust-item">
@@ -867,8 +894,8 @@
     </div>
   </div>
 
-  <!-- EDUCATION PREVIEW -->
-  <div class="education-preview-section pane-bg">
+  <!-- EDUCATION PREVIEW (hidden from homepage — accessible via Learn nav) -->
+  <div class="education-preview-section pane-bg home-hidden">
     <div class="section-ornament">✦ ─────────────── ✦</div>
     <h2 class="section-title">Learn About Herbal Medicine</h2>
     <p class="section-sub">Explore our free educational resources.</p>
@@ -886,13 +913,16 @@
     </div>
   </div>
 
-  <!-- COMMUNITY REVIEWS — Real, verified, honest -->
+  <!-- COMMUNITY REVIEWS — Real, verified, honest (2 featured) -->
   <div class="testimonials-section pane-bg" id="reviews-home">
-    <div class="rv-home-featured" data-rv-featured data-limit="6"></div>
+    <div class="rv-home-featured" data-rv-featured data-limit="2"></div>
+    <div class="section-view-more">
+      <button class="btn-secondary" data-section="reviews">Read All Reviews →</button>
+    </div>
   </div>
 
-  <!-- NEWSLETTER (compact) -->
-  <div class="newsletter-section pane-bg">
+  <!-- NEWSLETTER (hidden from homepage — accessible via footer) -->
+  <div class="newsletter-section pane-bg home-hidden">
     <div class="newsletter-inner">
       <div class="newsletter-text">
         <h2>🌿 Free Herbal Healing Guide</h2>
@@ -1842,69 +1872,90 @@
 <!-- CUSTOM SOAP BUILDER MODAL -->
 <div id="soapBuilderModal" class="soap-builder-overlay" style="display:none;">
   <div class="soap-builder-modal">
-    <button class="soap-builder-close" onclick="closeSoapBuilder()">&times;</button>
+    <button class="soap-builder-close" onclick="closeSoapBuilder()" aria-label="Close soap builder">&times;</button>
     <div class="soap-builder-header">
       <div class="soap-builder-hero-banner">
         <img src="images/soap-builder-hero.png" alt="Custom handcrafted botanical soap blend" loading="lazy" />
         <div class="soap-builder-hero-overlay">
-          <p class="soap-builder-hero-eyebrow">✦ GUIDED BUILDER ✦</p>
+          <p class="soap-builder-hero-eyebrow">✦ CUSTOM SOAP BUILDER ✦</p>
           <h2 class="soap-builder-hero-title">Build a Soap as Unique as You Are</h2>
           <p class="soap-builder-hero-sub">Crafted for your skin, senses, and intention.</p>
         </div>
       </div>
-      <div class="section-ornament">✦ ─── ✦</div>
-      <h2>Custom Soap Builder</h2>
-      <p>Build your bar your way. Choose a botanical clear top bar, a creamy nourishing bar, or a layered bar with a clear botanical top and rich creamy base. Then personalize it with your favorite botanicals, natural color, and scent.</p>
     </div>
 
-    <div class="soap-builder-progress">
-      <div class="sb-progress-step active" data-step="1"><span>1</span> Bar Type</div>
-      <div class="sb-progress-step" data-step="2"><span>2</span> Scent</div>
-      <div class="sb-progress-step" data-step="3"><span>3</span> Benefits</div>
-      <div class="sb-progress-step" data-step="4"><span>4</span> Add-Ons</div>
-      <div class="sb-progress-step" data-step="5"><span>5</span> Review</div>
-    </div>
+    <!-- Progress indicator (only shown after path is chosen) -->
+    <div class="soap-builder-progress" id="sbProgressBar" style="display:none;"></div>
 
     <div class="soap-builder-body">
-      <!-- Step 1: Base -->
-      <div class="sb-step active" id="sbStep1">
+      <!-- Step 0: Path picker -->
+      <div class="sb-step active" id="sbStepPath">
+        <div class="section-ornament" style="text-align:center;margin-bottom:10px;">✦ ─── ✦</div>
+        <h3 style="text-align:center;">How would you like to build your soap?</h3>
+        <p class="sb-step-desc" style="text-align:center;">Let Amber walk you through one gentle question at a time, or choose every ingredient yourself.</p>
+        <div class="sb-path-grid">
+          <button type="button" class="sb-path-card" data-sb-path="guided">
+            <span class="sb-path-icon">✨</span>
+            <strong>Start Guided Soap Builder</strong>
+            <span class="sb-path-desc">Five quick questions — intention, scent, skin goal, botanicals, and energy — then we'll suggest your soap.</span>
+            <span class="sb-path-cta">Begin guided flow →</span>
+          </button>
+          <button type="button" class="sb-path-card" data-sb-path="manual">
+            <span class="sb-path-icon">🌿</span>
+            <strong>Build My Own Soap</strong>
+            <span class="sb-path-desc">Choose base, scent, botanicals, benefits, and color yourself — you're the alchemist.</span>
+            <span class="sb-path-cta">Build my own →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Guided flow: single-question-per-screen (populated by JS) -->
+      <div class="sb-step" id="sbStepGuided">
+        <h3 id="sbGuidedQuestion"></h3>
+        <p class="sb-step-desc" id="sbGuidedHint"></p>
+        <div class="sb-options-grid" id="sbGuidedOptions"></div>
+      </div>
+
+      <!-- Manual flow steps (existing) -->
+      <div class="sb-step" id="sbStep1">
         <h3>Choose Your Bar Type</h3>
-        <p class="sb-step-desc">Pick the style of bar you'd love. The <strong>Botanical Clear Top Bar</strong> pours from vegetable glycerin + castor oil — perfect for showcasing real botanicals. The <strong>Creamy Nourishing Bar</strong> is shea butter + goat milk for deep, velvety hydration. The <strong>Layered Bar</strong> gives you both — a clear botanical top over a creamy nourishing base. You'll personalize scent, botanicals, and color in the next steps.</p>
+        <p class="sb-step-desc">Pick the style of bar you'd love. The <strong>Botanical Clear Top Bar</strong> pours from vegetable glycerin + castor oil. The <strong>Creamy Nourishing Bar</strong> is shea butter + goat milk. The <strong>Layered Bar</strong> gives you both.</p>
         <div class="sb-options-grid" id="sbBaseOptions"></div>
       </div>
 
-      <!-- Step 2: Scent Profile -->
       <div class="sb-step" id="sbStep2">
         <h3>Choose Your Scent Profile</h3>
-        <p class="sb-step-desc">Select the scents that speak to your soul — all crafted with pure doTERRA essential oils.</p>
+        <p class="sb-step-desc">Select the scents that speak to your soul — crafted with pure doTERRA essential oils.</p>
         <div class="sb-options-grid" id="sbScentOptions"></div>
       </div>
 
-      <!-- Step 3: Benefits -->
       <div class="sb-step" id="sbStep3">
         <h3>Choose Your Benefits</h3>
         <p class="sb-step-desc">What do you want your soap to do for you?</p>
         <div class="sb-options-grid" id="sbBenefitOptions"></div>
       </div>
 
-      <!-- Step 4: Add-Ons -->
       <div class="sb-step" id="sbStep4">
         <h3>Optional Botanicals &amp; Color</h3>
-        <p class="sb-step-desc">Pick real botanicals and natural plant-based color for your bar — no synthetic dyes, ever.</p>
+        <p class="sb-step-desc">Pick real botanicals and natural plant-based color — no synthetic dyes, ever.</p>
         <div class="sb-options-grid" id="sbAddonOptions"></div>
       </div>
 
-      <!-- Step 5: Review -->
+      <!-- Final review / result screen -->
       <div class="sb-step" id="sbStep5">
-        <h3>Your Custom Soap</h3>
-        <p class="sb-step-desc">Review your selections and add to cart</p>
+        <h3 id="sbResultTitle">Your Custom Soap</h3>
+        <p class="sb-step-desc">Here's your blend. Review, refine, or add to cart.</p>
         <div class="sb-review-panel" id="sbReviewPanel"></div>
         <div class="sb-suggestion-box" id="sbSuggestionBox"></div>
+        <div class="sb-result-helpers">
+          <button type="button" class="btn-ghost" onclick="sbAskLunna()">🌙 Let Lunna help refine</button>
+          <a class="btn-ghost" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">📅 Book a Consultation</a>
+        </div>
       </div>
     </div>
 
     <!-- Live Summary Sidebar -->
-    <div class="sb-live-summary">
+    <div class="sb-live-summary" id="sbLiveSummaryWrap" style="display:none;">
       <h4>Your Soap So Far</h4>
       <div id="sbLiveSummary"><p class="sb-empty">No selections yet</p></div>
       <div class="sb-live-price">
@@ -1913,11 +1964,13 @@
       </div>
     </div>
 
-    <div class="soap-builder-actions">
-      <button class="btn-ghost" id="sbPrevBtn" onclick="sbPrevStep()" style="display:none;">Back</button>
-      <button class="btn-secondary" id="sbStartNewBtn" onclick="sbStartNew()">Start New</button>
-      <button class="btn-primary" id="sbAddCartBtn" onclick="sbAddToCart()">Add to Cart</button>
-      <button class="btn-primary" id="sbNextBtn" onclick="sbNextStep()">Next Step ✦</button>
+    <!-- Context-aware action bar -->
+    <div class="soap-builder-actions" id="sbActionBar">
+      <button class="btn-ghost" id="sbPrevBtn" type="button" onclick="sbPrevStep()" style="display:none;">← Back</button>
+      <button class="btn-ghost" id="sbRestartBtn" type="button" onclick="sbStartNew()" style="display:none;">↻ Restart</button>
+      <button class="btn-secondary" id="sbEditBtn" type="button" onclick="sbEditSelections()" style="display:none;">Edit selections</button>
+      <button class="btn-primary" id="sbNextBtn" type="button" onclick="sbNextStep()" style="display:none;">Next Step ✦</button>
+      <button class="btn-primary" id="sbAddCartBtn" type="button" onclick="sbAddToCart()" style="display:none;">✦ Add to Cart</button>
     </div>
   </div>
 </div>
@@ -2496,7 +2549,7 @@
       </div>
       <div class="about-cta-row">
         <button class="btn-primary" data-section="custom-formula">Get a Custom Formula</button>
-        <button class="btn-secondary" data-section="contact">Book a Consultation</button>
+        <a class="btn-secondary" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener" style="text-decoration:none;">Book a Consultation</a>
         <button class="btn-ghost" data-section="herbal-wisdom">Read Articles &amp; Guides</button>
       </div>
     </div>
@@ -3166,6 +3219,20 @@
         <div class="cart-row total-row"><strong>Total</strong><strong id="checkoutTotal">$0.00</strong></div>
       </div>
       <p class="checkout-shipping-note">Free shipping on orders over $75</p>
+
+      <!-- Promo code — applied at Shopify checkout -->
+      <div class="checkout-promo">
+        <label for="checkoutPromoCode" class="checkout-promo-label">✦ Have a promo code?</label>
+        <div class="checkout-promo-row">
+          <input type="text" id="checkoutPromoCode" name="promo-code" placeholder="e.g. FIRST10" autocomplete="off" />
+          <button type="button" id="checkoutPromoApplyBtn" class="btn-secondary checkout-promo-apply">Apply</button>
+        </div>
+        <p class="checkout-promo-hint">
+          First-time buyers: use <strong>FIRST10</strong> at checkout for <strong>10% off</strong>.
+          Codes are validated by Shopify on the next step.
+        </p>
+        <p class="checkout-promo-status" id="checkoutPromoStatus" aria-live="polite"></p>
+      </div>
     </div>
 
     <!-- Order Form + Payment -->

@@ -473,6 +473,35 @@ function renderCheckoutSummary() {
   } catch (_) {}
 }
 
+// Promo code: give customers friendly preview feedback before checkout.
+// The authoritative validation happens at Shopify's hosted checkout —
+// this is a UX nudge that reassures first-time buyers they typed it
+// correctly and that the code will be applied on the next step.
+(function wireCheckoutPromo() {
+  const apply = document.getElementById('checkoutPromoApplyBtn');
+  const input = document.getElementById('checkoutPromoCode');
+  const status = document.getElementById('checkoutPromoStatus');
+  if (!apply || !input || !status) return;
+  const KNOWN = {
+    FIRST10: 'FIRST10 accepted — 10% off for first-time buyers will apply at checkout.',
+  };
+  function check() {
+    const code = (input.value || '').trim().toUpperCase();
+    if (!code) { status.textContent = ''; status.className = 'checkout-promo-status'; return; }
+    input.value = code;
+    if (KNOWN[code]) {
+      status.textContent = '✦ ' + KNOWN[code];
+      status.className = 'checkout-promo-status is-ok';
+    } else {
+      status.textContent = 'Code will be validated by Shopify at the next step.';
+      status.className = 'checkout-promo-status is-info';
+    }
+  }
+  apply.addEventListener('click', check);
+  input.addEventListener('change', check);
+  input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); check(); } });
+})();
+
 // Handle checkout form submission — redirect to Shopify hosted checkout.
 document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -525,16 +554,20 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
     // Try Shopify first.
     const shop = window.ShopifyCheckout;
     let shopifyResult = null;
+    const promoEl = document.getElementById('checkoutPromoCode');
+    const enteredPromo = (promoEl && promoEl.value ? promoEl.value.trim().toUpperCase() : '') || null;
     if (shop && typeof shop.redirectToCheckout === 'function') {
       shopifyResult = await shop.redirectToCheckout(cart, {
         email,
         note: orderNote,
+        discount: enteredPromo,
         attributes: {
           'Customer Name': name,
           'Shipping Address': address,
           'City/State/ZIP': cityZip,
           'Source': 'awakenagain-site',
           'Grimior Member': isMember ? 'yes' : 'no',
+          'Promo Code Entered': enteredPromo || 'none',
         },
       });
     }
@@ -944,7 +977,7 @@ document.getElementById('contactSubmitBtn').addEventListener('click', () => {
   if (!name || !email || !message) { showToast('Please fill in all fields.'); return; }
   const body = encodeURIComponent(`From: ${name} (${email})\n\n${message}`);
   try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
+  window.location.href = `mailto:awaken@consultant.com?cc=${encodeURIComponent('perfectlyme347@gmail.com,' + email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
   showToast('Opening email client...');
 });
 
@@ -1193,7 +1226,13 @@ function renderBestSellers() {
   const grid = document.getElementById('bestSellersGrid');
   if (!grid) return;
   // Feature specific best-selling products: new signature products + favorites
-  const featuredIds = ['vital-connect', 'sacred-balance', 'chill-pill', 'vital-flow', 'happy-pill', 'alchemy-tea'];
+  // Homepage shows only 2 featured products for a calm, curated gateway
+  // (the full catalogue lives on the Shop page). Non-home sections
+  // retrieve the full list by passing data-full="true".
+  const homeOnly = !grid.dataset || grid.dataset.full !== 'true';
+  const featuredIds = homeOnly
+    ? ['vital-connect', 'chill-pill']
+    : ['vital-connect', 'sacred-balance', 'chill-pill', 'vital-flow', 'happy-pill', 'alchemy-tea'];
   const featured = featuredIds.map(id => PRODUCTS.find(p => p.id === id)).filter(Boolean);
   grid.innerHTML = featured.map(p => {
     const herbChips = (p.keyHerbs || []).map(h => {
@@ -1233,8 +1272,17 @@ function renderBestSellers() {
 
   // Featured Soaps in Best Sellers — pull descriptions from central SOAPS data,
   // with graceful fallbacks if a soap isn't yet in the data source.
+  // Homepage hides the soap grid (soap catalog lives on the dedicated
+  // Soaps page) — when rendered on a non-homepage context, passing
+  // data-full="true" on the grid element shows the full soap lineup.
   const soapsGrid = document.getElementById('bestSellersSoapsGrid');
   if (!soapsGrid) return;
+  if (homeOnly) {
+    soapsGrid.innerHTML = '';
+    soapsGrid.style.display = 'none';
+    return;
+  }
+  soapsGrid.style.display = '';
   const featuredSoapSpecs = [
     { name: "Gaia's Rose", displayName: "Gaia's Rose Garden", img: 'images/soap-rose-clay.png', emoji: '🌹', price: 12.99, fallbackDesc: 'A romantic bar inspired by nature\'s sacred bloom. Rose petals soften skin while creamy shea butter and goat milk restore moisture and leave skin glowing.' },
     { name: "Lavender Fairy Dream", img: 'images/soap-lavender-honey.png', emoji: '💜', price: 12.99, fallbackDesc: 'A gentle floral escape inspired by twilight gardens. Calming lavender soothes the mind while goat milk and shea butter soften and hydrate the skin.' },
@@ -1345,7 +1393,7 @@ window.addSoapToCart = addSoapToCart;
         'Quantity: ' + quantity + '\n' +
         'Notes: ' + notes
       );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
+      window.location.href = 'mailto:awaken@consultant.com?cc=perfectlyme347@gmail.com&subject=' + subject + '&body=' + body;
       showToast('✦ Opening email to send your custom soap request...');
       soapSubmitBtn.textContent = '✓ Request Sent!';
       setTimeout(() => { soapSubmitBtn.textContent = 'Send My Custom Soap Request ✦'; }, 3000);
