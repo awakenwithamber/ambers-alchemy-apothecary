@@ -289,16 +289,33 @@ cartOverlay.addEventListener('click', closeCartFn);
 
 function calcCartTotals() {
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal === 0 ? 0 : (subtotal >= 75 ? 0 : 6.99);
+  const isMember = !!window.GRIMIOR_ACTIVE;
+  const shipThreshold = isMember ? 50 : 75;
+  const memberDiscount = isMember ? +(subtotal * 0.10).toFixed(2) : 0;
+  const discountedSubtotal = Math.max(0, subtotal - memberDiscount);
+  const shipping = subtotal === 0 ? 0 : (discountedSubtotal >= shipThreshold ? 0 : 6.99);
   const taxRate = 0.08;
-  const tax = subtotal * taxRate;
-  const total = subtotal + shipping + tax;
+  const tax = discountedSubtotal * taxRate;
+  const total = discountedSubtotal + shipping + tax;
   document.getElementById('cartSubtotal').textContent = formatPrice(subtotal);
   document.getElementById('cartShipping').textContent = shipping === 0 && subtotal > 0 ? 'FREE' : formatPrice(shipping);
   document.getElementById('cartTax').textContent = formatPrice(tax);
   document.getElementById('cartTotal').textContent = formatPrice(total);
   document.getElementById('cartCount').textContent = cart.reduce((s, i) => s + i.qty, 0);
-  return { subtotal, shipping, tax, total };
+  // Show/hide Grimior member discount line if present in the DOM
+  try {
+    const row = document.getElementById('cartGrimiorDiscountRow');
+    const val = document.getElementById('cartGrimiorDiscount');
+    if (row && val) {
+      if (isMember && memberDiscount > 0) {
+        row.style.display = '';
+        val.textContent = '-' + formatPrice(memberDiscount);
+      } else {
+        row.style.display = 'none';
+      }
+    }
+  } catch (_) {}
+  return { subtotal, discountedSubtotal, shipping, tax, total, memberDiscount, isMember };
 }
 
 function renderCart() {
@@ -423,14 +440,26 @@ function renderCheckoutSummary() {
   `).join('');
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  const isMember = !!window.GRIMIOR_ACTIVE;
+  const shipThreshold = isMember ? 50 : 75;
+  const memberDiscount = isMember ? +(subtotal * 0.10).toFixed(2) : 0;
+  const discountedSubtotal = Math.max(0, subtotal - memberDiscount);
+  const shipping = discountedSubtotal >= shipThreshold ? 0 : 6.99;
+  const tax = discountedSubtotal * 0.08;
+  const total = discountedSubtotal + shipping + tax;
   document.getElementById('checkoutSubtotal').textContent = formatPrice(subtotal);
   document.getElementById('checkoutShipping').textContent = shipping === 0 ? 'FREE' : formatPrice(shipping);
   document.getElementById('checkoutTax').textContent = formatPrice(tax);
   document.getElementById('checkoutTotal').textContent = formatPrice(total);
   document.getElementById('orderTotalField').value = formatPrice(total);
+  try {
+    const row = document.getElementById('checkoutGrimiorDiscountRow');
+    const val = document.getElementById('checkoutGrimiorDiscount');
+    if (row && val) {
+      if (isMember && memberDiscount > 0) { row.style.display = ''; val.textContent = '-' + formatPrice(memberDiscount); }
+      else { row.style.display = 'none'; }
+    }
+  } catch (_) {}
 }
 
 async function initStripe() {
@@ -503,9 +532,13 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
 
   // Calculate total in cents for Stripe
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  const isMember = !!window.GRIMIOR_ACTIVE;
+  const shipThreshold = isMember ? 50 : 75;
+  const memberDiscount = isMember ? +(subtotal * 0.10).toFixed(2) : 0;
+  const discountedSubtotal = Math.max(0, subtotal - memberDiscount);
+  const shipping = discountedSubtotal >= shipThreshold ? 0 : 6.99;
+  const tax = discountedSubtotal * 0.08;
+  const total = discountedSubtotal + shipping + tax;
   const amountCents = Math.round(total * 100);
 
   // Ensure order total is set on hidden field
@@ -587,9 +620,13 @@ async function submitNetlifyForm() {
 
 function showConfirmation(transactionId, status) {
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  const isMember = !!window.GRIMIOR_ACTIVE;
+  const shipThreshold = isMember ? 50 : 75;
+  const memberDiscount = isMember ? +(subtotal * 0.10).toFixed(2) : 0;
+  const discountedSubtotal = Math.max(0, subtotal - memberDiscount);
+  const shipping = discountedSubtotal >= shipThreshold ? 0 : 6.99;
+  const tax = discountedSubtotal * 0.08;
+  const total = discountedSubtotal + shipping + tax;
   const name = document.getElementById('checkoutCustomerName').value.trim();
   const email = document.getElementById('checkoutEmail').value.trim();
 

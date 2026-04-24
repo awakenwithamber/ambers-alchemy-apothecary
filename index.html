@@ -475,6 +475,7 @@
     <link rel="stylesheet" href="grimoire-seo.css">
     <link rel="stylesheet" href="herbal-advisor.css">
     <link rel="stylesheet" href="soap-gallery.css">
+    <link rel="stylesheet" href="grimior.css">
 <!-- v-music-fix -->
 <script src="https://js.stripe.com/v3/"></script>
 <script src="https://player.vimeo.com/api/player.js"></script>
@@ -554,6 +555,7 @@
       </span>
     </button>
     <button class="nav-btn" data-section="soaps">Soaps</button>
+    <button class="nav-btn" data-section="grimior">✦ The Grimior</button>
     <button class="nav-btn" data-section="services">Services</button>
     <button class="nav-btn" data-section="about">About Amber</button>
     <button class="nav-btn" data-section="faqs">FAQs</button>
@@ -580,6 +582,10 @@
   <div id="cartItems"><p class="empty-cart">Your jar is empty.</p></div>
   <div class="cart-totals">
     <div class="cart-row"><span>Subtotal</span><span id="cartSubtotal">$0.00</span></div>
+    <div class="cart-row" id="cartGrimiorDiscountRow" style="display:none;color:#8a5a1a;">
+      <span>✦ Grimior Member 10% off</span>
+      <span id="cartGrimiorDiscount">-$0.00</span>
+    </div>
     <div class="cart-row">
       <span>Shipping</span>
       <span id="cartShipping">$0.00</span>
@@ -910,6 +916,25 @@
         <button class="btn-secondary" data-section="about">Meet Amber →</button>
       </div>
     </div>
+  </div>
+
+  <!-- GRIMIOR HOMEPAGE PREVIEW — subscription book of light magic -->
+  <div class="grimior-homepage-preview">
+    <div class="g-ornament">✦ ⚗ ✦</div>
+    <h2>Unlock The Grimior / Real Magic</h2>
+    <p>Step inside a living book of light magic, herbal wisdom, healing rituals, sacred recipes, and subscriber-only apothecary blessings.</p>
+    <ul class="g-home-perks">
+      <li>10% off every order</li>
+      <li>Free shipping over $50</li>
+      <li>Weekly deals</li>
+      <li>Monthly promo code</li>
+      <li>Seasonal rituals</li>
+    </ul>
+    <div class="g-home-cta-row">
+      <button class="btn-primary" type="button" data-section="grimior">Open the Grimior</button>
+      <button class="btn-secondary" type="button" onclick="window.Grimior&amp;&amp;window.Grimior.subscribe()">Join for $3.33/month</button>
+    </div>
+    <p class="g-fine-print" style="margin-top:0.7rem;opacity:0.7;">Cancel anytime. New rituals, recipes, and articles added regularly.</p>
   </div>
 
   <!-- FINAL CTA BAR — three clean actions -->
@@ -2373,6 +2398,45 @@
   </div>
 </section>
 
+<!-- THE GRIMIOR / REAL MAGIC — subscription book of light magic -->
+<section id="grimior" class="page-section pane-bg">
+  <div class="grimior-hero">
+    <p class="g-eyebrow">✦ Real Magic ✦</p>
+    <h1>The Grimior <span>— A Living Book of Light Magic</span></h1>
+    <p class="lede">Healing rituals, herbal wisdom, sacred recipes, elemental work, and subscriber-only blessings — added to regularly and gently cared for by Amber.</p>
+    <span id="grimiorMemberBadge" class="g-member-badge" aria-live="polite"></span>
+  </div>
+
+  <div class="grimior-subscriber-benefits" aria-label="Subscriber benefits">
+    <div class="grimior-benefit"><strong>$3.33/mo</strong>Full book access · cancel anytime</div>
+    <div class="grimior-benefit"><strong>10% off</strong>Every full apothecary order</div>
+    <div class="grimior-benefit"><strong>Free shipping</strong>On orders over $50</div>
+    <div class="grimior-benefit"><strong>Weekly deals</strong>Subscriber-only featured offerings</div>
+    <div class="grimior-benefit"><strong>Monthly code</strong>Private promo for members</div>
+  </div>
+
+  <div class="grimior-book" id="grimiorBookHost">
+    <div class="g-chapter-tabs" id="grimiorChapterTabs" aria-label="Chapter navigation"></div>
+    <div class="g-book-frame">
+      <div class="g-book-spine" aria-hidden="true"></div>
+      <button class="g-bookmark" id="grimiorBookmark" type="button" aria-label="Return to last-read page" title="Return to last-read page"></button>
+      <div class="g-page-viewport" id="grimiorPageViewport" role="region" aria-live="polite"></div>
+      <div class="g-controls">
+        <button class="g-arrow" id="grimiorPrev" type="button" aria-label="Previous page">←</button>
+        <span id="grimiorPageIndicator">Page 1</span>
+        <button class="g-arrow" id="grimiorNext" type="button" aria-label="Next page">→</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grimior-prompt-card">
+    <h3>New rituals, recipes, and teachings added regularly.</h3>
+    <p>Join for $3.33/month and receive full access to The Grimior / Real Magic, plus 10% off every order, free shipping over $50, a monthly promo code, and subscriber-only seasonal rituals.</p>
+    <button class="btn-primary" type="button" onclick="window.Grimior&amp;&amp;window.Grimior.subscribe()">Join for $3.33/month</button>
+    <button class="g-linkish" type="button" onclick="window.Grimior&amp;&amp;window.Grimior.unlock()">Already a subscriber? Unlock with your email →</button>
+  </div>
+</section>
+
 <!-- SERVICES SECTION -->
 <section id="services" class="page-section pane-bg">
   <div class="section-header">
@@ -3089,6 +3153,10 @@
       </div>
       <div class="checkout-totals">
         <div class="cart-row"><span>Subtotal</span><span id="checkoutSubtotal">$0.00</span></div>
+        <div class="cart-row" id="checkoutGrimiorDiscountRow" style="display:none;color:#8a5a1a;">
+          <span>✦ Grimior Member 10% off</span>
+          <span id="checkoutGrimiorDiscount">-$0.00</span>
+        </div>
         <div class="cart-row"><span>Shipping</span><span id="checkoutShipping">$0.00</span></div>
         <div class="cart-row"><span>Sales Tax (8%)</span><span id="checkoutTax">$0.00</span></div>
         <div class="cart-row total-row"><strong>Total</strong><strong id="checkoutTotal">$0.00</strong></div>
@@ -3306,6 +3374,7 @@
 <script src="herbal-wisdom.js"></script>
 <script src="navigation-history.js"></script>
 <script src="reviews.js"></script>
+<script src="grimior.js"></script>
 <script src="pwa-init.js"></script>
 
 <!-- LUNNA ASSISTANT — warm, intuitive, non-pushy -->
