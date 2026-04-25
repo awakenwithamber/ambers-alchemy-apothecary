@@ -57,45 +57,39 @@ document.getElementById('consultClose').addEventListener('click', () => {
   document.getElementById('consultBanner').style.display = 'none';
 });
 
-// ---- MUSIC (modal welcome + persistent toggle) ----
+// ---- MUSIC (audio pill — fades in 6s after page load, no upfront modal) ----
 
 const bgMusic = document.getElementById('bgMusic');
 const musicToggleBtn = document.getElementById('musicToggleBtn');
-const musicModal = document.getElementById('musicModal');
-const musicYesBtn = document.getElementById('musicYesBtn');
-const musicNoBtn = document.getElementById('musicNoBtn');
+const audioPill = document.getElementById('audioPill');
+const audioPillYes = document.getElementById('audioPillYes');
+const audioPillNo = document.getElementById('audioPillNo');
 let musicPlaying = false;
 
-bgMusic.volume = 0; // Start silent — fade in after user opts in
+bgMusic.volume = 0;
 bgMusic.loop = true;
 
-// Fade-in helper: ramps volume from 0 to target over ~4 seconds
 function fadeInMusic(targetVol) {
   bgMusic.volume = 0;
   var current = 0;
   var step = 0.005;
-  var interval = 120; // ~33 steps over ~4s to reach 0.07
+  var interval = 120;
   var fade = setInterval(function() {
     current += step;
-    if (current >= targetVol) {
-      current = targetVol;
-      clearInterval(fade);
-    }
+    if (current >= targetVol) { current = targetVol; clearInterval(fade); }
     bgMusic.volume = current;
   }, interval);
 }
 
-// Determine start volume: saved preference (capped at 12%) or default 7%
 function getStartVolume() {
   var saved = Number(localStorage.getItem('siteVolume'));
-  if (saved && saved > 0) {
-    return Math.min(saved, 0.12);
-  }
+  if (saved && saved > 0) return Math.min(saved, 0.12);
   return 0.07;
 }
 
 function setMusicUI(playing) {
   musicPlaying = playing;
+  if (!musicToggleBtn) return;
   if (playing) {
     musicToggleBtn.innerHTML = '&#9834; ON';
     musicToggleBtn.classList.add('playing');
@@ -107,48 +101,57 @@ function setMusicUI(playing) {
   }
 }
 
-function dismissModal() {
-  musicModal.classList.add('music-modal-hidden');
-  setTimeout(function() { musicModal.style.display = 'none'; }, 400);
+// Audio pill: fade in 6s after load, dismiss after first interaction.
+function showAudioPill() {
+  if (!audioPill) return;
+  if (sessionStorage.getItem('audioPillDismissed')) return;
+  audioPill.style.display = 'flex';
+  // next frame to trigger transition
+  requestAnimationFrame(function() { audioPill.style.opacity = '1'; });
 }
+function hideAudioPill() {
+  if (!audioPill) return;
+  audioPill.style.opacity = '0';
+  setTimeout(function() { audioPill.style.display = 'none'; }, 600);
+  try { sessionStorage.setItem('audioPillDismissed', '1'); } catch (e) {}
+}
+setTimeout(showAudioPill, 6000);
 
-// "Get the Full Experience" — fade in music gently and dismiss
-musicYesBtn.addEventListener('click', function() {
-  dismissModal();
-  var target = getStartVolume();
-  bgMusic.volume = 0;
-  if (volumeSlider) volumeSlider.value = Math.round(target * 100);
-  bgMusic.load();
-  bgMusic.play().then(function() {
-    fadeInMusic(target);
-    setMusicUI(true);
-  }).catch(function() {
-    setMusicUI(false);
-  });
-});
-
-// "Browse without Music" — just dismiss
-musicNoBtn.addEventListener('click', function() {
-  dismissModal();
-  setMusicUI(false);
-});
-
-// Persistent nav toggle: ON <-> OFF
-musicToggleBtn.addEventListener('click', function(e) {
-  e.stopPropagation();
-  if (musicPlaying) {
-    bgMusic.pause();
-    setMusicUI(false);
-  } else {
+if (audioPillYes) {
+  audioPillYes.addEventListener('click', function() {
     var target = getStartVolume();
     bgMusic.volume = 0;
     if (volumeSlider) volumeSlider.value = Math.round(target * 100);
+    bgMusic.load();
     bgMusic.play().then(function() {
       fadeInMusic(target);
       setMusicUI(true);
-    }).catch(function() {});
-  }
-});
+    }).catch(function() { setMusicUI(false); });
+    hideAudioPill();
+  });
+}
+if (audioPillNo) {
+  audioPillNo.addEventListener('click', hideAudioPill);
+}
+
+// Persistent nav toggle: ON <-> OFF
+if (musicToggleBtn) {
+  musicToggleBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (musicPlaying) {
+      bgMusic.pause();
+      setMusicUI(false);
+    } else {
+      var target = getStartVolume();
+      bgMusic.volume = 0;
+      if (volumeSlider) volumeSlider.value = Math.round(target * 100);
+      bgMusic.play().then(function() {
+        fadeInMusic(target);
+        setMusicUI(true);
+      }).catch(function() {});
+    }
+  });
+}
 
 // Volume slider
 const volumeSlider = document.getElementById('volumeSlider');
@@ -165,11 +168,6 @@ if (volumeSlider) {
     }
   });
 }
-
-// Show modal on load (after short delay for page to render)
-setTimeout(function() {
-  musicModal.style.display = 'flex';
-}, 600);
 
 // ---- AUDIO LIFECYCLE: stop music on tab hide/close/background ----
 document.addEventListener('visibilitychange', function() {
@@ -372,8 +370,6 @@ document.getElementById('proceedToCheckoutBtn').addEventListener('click', () => 
   document.getElementById('checkoutAddress').value = address;
   document.getElementById('checkoutCityStateZip').value = cityState;
   document.getElementById('checkoutNotes').value = notes;
-  document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-  document.getElementById('checkoutQuantity').value = cart.reduce((s, i) => s + i.qty, 0);
 
   const cartTotal = cart.reduce((s, i) => s + (parseFloat(i.price) || 0) * i.qty, 0);
   try { window.AAA && window.AAA.beginCheckout && window.AAA.beginCheckout(cart, cartTotal); } catch (e) {}
@@ -381,7 +377,6 @@ document.getElementById('proceedToCheckoutBtn').addEventListener('click', () => 
   closeCartFn();
   showSection('checkout');
   renderCheckoutSummary();
-  initStripe();
 });
 
 // Venmo/CashApp dynamic total — accepts debit & credit cards
@@ -398,90 +393,80 @@ document.getElementById('venmoPayBtn').addEventListener('click', function(e) {
   const { total } = calcCartTotals();
   if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
   const note = getOrderNote();
-  this.href = `https://venmo.com/AmberLynnPatten?txn=pay&amount=${total.toFixed(2)}&note=${encodeURIComponent(note)}`;
+  this.href = `https://venmo.com/u/Ambers-Alchemy?txn=pay&amount=${total.toFixed(2)}&note=${encodeURIComponent(note)}`;
 });
 document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
   const { total } = calcCartTotals();
   if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  this.href = `https://cash.app/$AmberAlchemy/${total.toFixed(2)}`;
+  this.href = `https://cash.app/$AmberPatten92/${total.toFixed(2)}`;
 });
 
-// ---- SECURE CHECKOUT (Stripe) ----
-let stripe, cardElement, stripeReady = false;
-
+// ---- SECURE CHECKOUT (EmailJS — sends order to Amber + receipt to customer) ----
 function renderCheckoutSummary() {
   const el = document.getElementById('checkoutItems');
-  if (cart.length === 0) {
-    el.innerHTML = '<p class="empty-cart">No items in cart.</p>';
-    return;
-  }
-  el.innerHTML = cart.map(i => `
-    <div class="checkout-item">
-      <span>${i.name} x${i.qty}</span>
-      <span class="checkout-item-price">${formatPrice(i.price * i.qty)}</span>
-    </div>
-  `).join('');
+  const yourEl = document.getElementById('yourOrderItems');
+  const itemsHtml = cart.length === 0
+    ? '<p class="empty-cart">No items in cart.</p>'
+    : cart.map(i => `
+        <div class="checkout-item" style="display:flex;justify-content:space-between;padding:0.3rem 0;">
+          <span>${i.name} <small style="opacity:0.75;">×${i.qty}</small></span>
+          <span class="checkout-item-price">${formatPrice(i.price * i.qty)}</span>
+        </div>
+      `).join('');
+
+  if (el) el.innerHTML = itemsHtml;
+  if (yourEl) yourEl.innerHTML = cart.length === 0 ? '<p class="empty-cart" style="opacity:0.8;">Your cart is empty.</p>' : itemsHtml;
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
+  const shipping = subtotal === 0 ? 0 : (subtotal >= 75 ? 0 : 6.99);
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
-  document.getElementById('checkoutSubtotal').textContent = formatPrice(subtotal);
-  document.getElementById('checkoutShipping').textContent = shipping === 0 ? 'FREE' : formatPrice(shipping);
-  document.getElementById('checkoutTax').textContent = formatPrice(tax);
-  document.getElementById('checkoutTotal').textContent = formatPrice(total);
-  document.getElementById('orderTotalField').value = formatPrice(total);
+  const setText = (id, txt) => { const e = document.getElementById(id); if (e) e.textContent = txt; };
+
+  setText('checkoutSubtotal', formatPrice(subtotal));
+  setText('checkoutShipping', shipping === 0 && subtotal > 0 ? 'FREE' : formatPrice(shipping));
+  setText('checkoutTax', formatPrice(tax));
+  setText('checkoutTotal', formatPrice(total));
+
+  setText('yourOrderSubtotal', formatPrice(subtotal));
+  setText('yourOrderShipping', shipping === 0 && subtotal > 0 ? 'FREE' : formatPrice(shipping));
+  setText('yourOrderTax', formatPrice(tax));
+  setText('yourOrderTotal', formatPrice(total));
+  setText('amountDueDisplay', formatPrice(total));
+
+  const totalField = document.getElementById('orderTotalField');
+  if (totalField) totalField.value = formatPrice(total);
+  const itemsField = document.getElementById('orderItemsField');
+  if (itemsField) itemsField.value = cart.map(i => `${i.name} ×${i.qty} — ${formatPrice(i.price * i.qty)}`).join(' | ');
 }
 
-async function initStripe() {
-  if (stripeReady) return;
+// Re-render summary whenever the cart changes
+const _origRenderCart = renderCart;
+renderCart = function() { _origRenderCart(); renderCheckoutSummary(); };
 
-  // Try meta tag first, then fetch from API
-  let pk = '';
-  const stripeKey = document.querySelector('meta[name="stripe-key"]');
-  if (stripeKey && stripeKey.content) {
-    pk = stripeKey.content;
+// Stub kept so any older inline handlers don't throw
+async function initStripe() { /* deprecated — payment now via Venmo/Cash App + EmailJS */ }
+
+// "Copy Amount" — copies the live total to clipboard
+document.addEventListener('click', function(e) {
+  if (!e.target || e.target.id !== 'copyAmountBtn') return;
+  const totalText = (document.getElementById('amountDueDisplay') || {}).textContent || '';
+  const amount = totalText.replace(/[^0-9.]/g, '');
+  if (!amount) { showToast('Cart is empty.'); return; }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(amount).then(() => showToast('✦ Amount $' + amount + ' copied'));
   } else {
-    try {
-      const res = await fetch('/api/stripe-config');
-      const data = await res.json();
-      pk = data.publishableKey || '';
-    } catch (e) { /* ignore */ }
+    const ta = document.createElement('textarea');
+    ta.value = amount; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); showToast('✦ Amount $' + amount + ' copied'); } catch (err) {}
+    document.body.removeChild(ta);
   }
+});
 
-  if (!pk) {
-    document.getElementById('card-errors').textContent = 'Card payments are being set up. You may also use Venmo or Cash App from the cart.';
-    document.getElementById('checkoutPayBtn').disabled = false;
-    document.getElementById('payBtnText').textContent = 'Submit Order';
-    return;
-  }
-  try {
-    stripe = Stripe(pk);
-    const elements = stripe.elements();
-    cardElement = elements.create('card', {
-      style: {
-        base: {
-          color: '#F3EBDD',
-          fontFamily: 'Lora, Georgia, serif',
-          fontSize: '15px',
-          '::placeholder': { color: '#B8A898' },
-        },
-        invalid: { color: '#e74c3c' },
-      },
-    });
-    cardElement.mount('#card-element');
-    cardElement.on('change', function(event) {
-      const errEl = document.getElementById('card-errors');
-      errEl.textContent = event.error ? event.error.message : '';
-      document.getElementById('checkoutPayBtn').disabled = !event.complete;
-    });
-    stripeReady = true;
-  } catch (e) {
-    document.getElementById('card-errors').textContent = 'Could not initialize payment form.';
-  }
-}
+// Email validation helper
+function isValidEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
 
-// Handle checkout form submission
+// Checkout submit — sends two EmailJS templates, then shows success screen
 document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
   e.preventDefault();
 
@@ -490,87 +475,76 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
   const spinner = document.getElementById('payBtnSpinner');
   const errEl = document.getElementById('card-errors');
 
-  // Validate required fields
   const name = document.getElementById('checkoutCustomerName').value.trim();
   const email = document.getElementById('checkoutEmail').value.trim();
+  const phone = (document.getElementById('checkoutPhone') || {}).value || '';
   const address = document.getElementById('checkoutAddress').value.trim();
   const cityZip = document.getElementById('checkoutCityStateZip').value.trim();
-  if (!name || !email || !address || !cityZip) {
-    errEl.textContent = 'Please fill in all required fields.';
+  const notes = (document.getElementById('checkoutNotes') || {}).value || '';
+  const legal = document.getElementById('checkoutLegal');
+
+  errEl.textContent = '';
+  if (!name) { errEl.textContent = 'Please enter your full name.'; return; }
+  if (!email || !isValidEmail(email)) { errEl.textContent = 'Please enter a valid email address.'; return; }
+  if (!address) { errEl.textContent = 'Please enter your shipping address.'; return; }
+  if (!cityZip) { errEl.textContent = 'Please enter your city, state, and ZIP.'; return; }
+  if (legal && !legal.checked) { errEl.textContent = 'Please agree to the disclaimer to continue.'; return; }
+  if (cart.length === 0) {
+    errEl.textContent = 'Your cart is empty. Add items before checking out.';
     return;
   }
-  if (cart.length === 0) { errEl.textContent = 'Your cart is empty.'; return; }
 
-  // Calculate total in cents for Stripe
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
+  const shipping = subtotal === 0 ? 0 : (subtotal >= 75 ? 0 : 6.99);
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
-  const amountCents = Math.round(total * 100);
 
-  // Ensure order total is set on hidden field
-  document.getElementById('orderTotalField').value = formatPrice(total);
+  const orderItemsList = cart
+    .map(i => `• ${i.name} ×${i.qty} — ${formatPrice(i.price * i.qty)}` + (i.herbs ? ` (${i.herbs})` : ''))
+    .join('\n');
+
+  const params = {
+    customer_name: name,
+    customer_email: email,
+    customer_phone: phone,
+    shipping_address: address,
+    city_state_zip: cityZip,
+    order_items: orderItemsList,
+    subtotal: formatPrice(subtotal),
+    shipping: shipping === 0 && subtotal > 0 ? 'FREE' : formatPrice(shipping),
+    tax: formatPrice(tax),
+    order_total: formatPrice(total),
+    payment_method: 'Venmo (Amber\'s Alchemy) or Cash App ($AmberPatten92)',
+    order_notes: notes,
+    timestamp: new Date().toLocaleString()
+  };
 
   payBtn.disabled = true;
-  btnText.textContent = 'Processing...';
+  btnText.textContent = 'Sending order…';
   spinner.style.display = 'inline-block';
-  errEl.textContent = '';
 
   try {
-    // If Stripe is not initialized, submit form as order (payment via Venmo/CashApp)
-    if (!stripe || !cardElement) {
-      document.getElementById('transactionId').value = 'PENDING-' + Date.now();
-      document.getElementById('paymentStatus').value = 'pending-external-payment';
-      document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-      await submitNetlifyForm();
-      showConfirmation('PENDING — Complete payment via Venmo or Cash App in the cart', 'pending');
-      return;
+    if (!window.emailjs || typeof emailjs.send !== 'function') {
+      throw new Error('Email service not loaded');
+    }
+    if (!window.EMAILJS_SERVICE_ID || window.EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID') {
+      throw new Error('EmailJS is not configured yet. Please screenshot your order and email awaken@consultant.com');
     }
 
-    // Create PaymentIntent on server
-    const piResponse = await fetch('/api/create-payment-intent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: amountCents,
-        currency: 'usd',
-        description: `Order from ${name} — Amber's Alchemy Apothecary`,
-        metadata: {
-          customer_name: name,
-          email: email,
-          items: cart.map(i => `${i.name} x${i.qty}`).join(', ').substring(0, 500),
-        },
-      }),
-    });
+    // 1) Notify Amber
+    await emailjs.send(window.EMAILJS_SERVICE_ID, window.EMAILJS_TPL_AMBER, params);
 
-    const piData = await piResponse.json();
-    if (piData.error) { throw new Error(piData.error); }
+    // 2) Receipt to customer (sent via "to_email" / "customer_email" var in template)
+    await emailjs.send(window.EMAILJS_SERVICE_ID, window.EMAILJS_TPL_CUSTOMER, params);
 
-    // Confirm payment with Stripe
-    const { error, paymentIntent } = await stripe.confirmCardPayment(piData.clientSecret, {
-      payment_method: {
-        card: cardElement,
-        billing_details: {
-          name: name,
-          email: email,
-          address: { postal_code: cityZip.split(/\s+/).pop() || '' },
-        },
-      },
-    });
-
-    if (error) { throw new Error(error.message); }
-
-    if (paymentIntent.status === 'succeeded') {
-      // Set transaction info and submit Netlify Form
-      document.getElementById('transactionId').value = paymentIntent.id;
-      document.getElementById('paymentStatus').value = 'paid';
-      await submitNetlifyForm();
-      showConfirmation(paymentIntent.id, 'paid');
-    }
+    // Both succeeded — show confirmation
+    document.getElementById('transactionId').value = 'EMAIL-' + Date.now();
+    document.getElementById('paymentStatus').value = 'awaiting-payment';
+    showConfirmation('EMAIL-' + Date.now(), 'pending');
   } catch (err) {
-    errEl.textContent = err.message || 'Payment failed. Please try again.';
+    errEl.textContent = 'There was an issue sending your confirmation. Please screenshot your order and email awaken@consultant.com';
     payBtn.disabled = false;
-    btnText.textContent = 'Pay Now';
+    btnText.textContent = 'Submit Order ✦';
     spinner.style.display = 'none';
   }
 });
@@ -587,7 +561,7 @@ async function submitNetlifyForm() {
 
 function showConfirmation(transactionId, status) {
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
+  const shipping = subtotal === 0 ? 0 : (subtotal >= 75 ? 0 : 6.99);
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
   const name = document.getElementById('checkoutCustomerName').value.trim();
@@ -598,15 +572,17 @@ function showConfirmation(transactionId, status) {
     <p><strong>Email:</strong> ${email}</p>
     <p><strong>Items:</strong> ${cart.map(i => `${i.name} x${i.qty}`).join(', ')}</p>
     <p><strong>Total:</strong> ${formatPrice(total)}</p>
-    <p><strong>Transaction ID:</strong> ${transactionId}</p>
-    <p><strong>Status:</strong> ${status === 'paid' ? 'Payment Confirmed' : 'Awaiting Payment'}</p>
+    <p><strong>Reference:</strong> ${transactionId}</p>
+    <p>Send <strong>${formatPrice(total)}</strong> to Cash App <strong>$AmberPatten92</strong> or Venmo <strong>"Amber's Alchemy"</strong> — include your name in the note.</p>
+    <p>Your order ships once Amber confirms payment — typically within 24 hours.</p>
   `;
 
-  // Show confirmation, hide form
   document.querySelector('.checkout-container').style.display = 'none';
   document.getElementById('checkoutConfirmation').style.display = 'block';
 
-  // Clear cart
+  // Best-effort Netlify Form submission for backup record
+  try { submitNetlifyForm(); } catch (e) {}
+
   cart = [];
   renderCart();
   showToast('Order submitted successfully!');
@@ -1302,44 +1278,153 @@ function addSoapToCart(name, price, btnEl) {
 window.addSoapToCart = addSoapToCart;
 
 // ---- SOAP CUSTOM ORDER FORM ----
+// Legacy dropdown soap-form was removed in FIX 7. Stub kept so any older
+// inline references don't throw during boot.
 (function() {
-  function bindSoapForm() {
-    const soapSubmitBtn = document.getElementById('soapSubmitBtn');
-    if (!soapSubmitBtn) return;
-    soapSubmitBtn.addEventListener('click', function() {
-      const name = (document.getElementById('soapName') || {}).value?.trim() || '';
-      const email = (document.getElementById('soapEmail') || {}).value?.trim() || '';
-      if (!name || !email) {
-        showToast('Please enter your name and email to submit a custom soap request.');
-        return;
-      }
-      const scent = (document.getElementById('soapScent') || {}).value || 'Not specified';
-      const color = (document.getElementById('soapColor') || {}).value || 'Not specified';
-      const shape = (document.getElementById('soapShape') || {}).value || 'Not specified';
-      const botanical = (document.getElementById('soapBotanical') || {}).value || 'Not specified';
-      const quantity = (document.getElementById('soapQuantity') || {}).value || 'Not specified';
-      const notes = (document.getElementById('soapNotes') || {}).value?.trim() || '';
-      const subject = encodeURIComponent('Custom Soap Order from ' + name);
-      const body = encodeURIComponent(
-        'Custom Soap Order Request\n\n' +
-        'Name: ' + name + '\n' +
-        'Email: ' + email + '\n' +
-        'Scent: ' + scent + '\n' +
-        'Color: ' + color + '\n' +
-        'Shape: ' + shape + '\n' +
-        'Botanical: ' + botanical + '\n' +
-        'Quantity: ' + quantity + '\n' +
-        'Notes: ' + notes
-      );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
-      showToast('✦ Opening email to send your custom soap request...');
-      soapSubmitBtn.textContent = '✓ Request Sent!';
-      setTimeout(() => { soapSubmitBtn.textContent = 'Send My Custom Soap Request ✦'; }, 3000);
-    });
-  }
+  function bindSoapForm() { /* no-op — feature removed */ }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bindSoapForm);
   } else {
     bindSoapForm();
   }
 })();
+
+// ---- ANCHOR ALIASES + SCROLL HELPER (FIX 4) ----
+// Maps the spec-required IDs onto the actual section IDs used in the markup.
+const SECTION_ALIASES = {
+  'grimoire': 'herb-index',
+  'articles': 'herbal-wisdom',
+  'herb-encyclopedia': 'herbal-library',
+  'create-remedy': 'custom-formula',
+  'consultation-form': 'contact'
+};
+
+function scrollToAnchor(id) {
+  if (!id) return;
+  // First try actual id on the page
+  let el = document.getElementById(id);
+  let resolvedId = id;
+  if (!el && SECTION_ALIASES[id]) {
+    resolvedId = SECTION_ALIASES[id];
+    el = document.getElementById(resolvedId);
+  }
+  if (!el) return;
+  // If the target is a separate page-section, activate it first
+  if (el.classList && el.classList.contains('page-section')) {
+    showSection(resolvedId);
+    return;
+  }
+  // Otherwise, find the page-section ancestor and activate it, then scroll
+  const parentSection = el.closest && el.closest('.page-section');
+  if (parentSection && !parentSection.classList.contains('active')) {
+    showSection(parentSection.id);
+  }
+  setTimeout(() => {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList && el.classList.add('product-highlight');
+    setTimeout(() => { el.classList && el.classList.remove('product-highlight'); }, 1800);
+  }, 100);
+}
+window.scrollToAnchor = scrollToAnchor;
+
+// ---- BUNDLE ADD-TO-CART (FIX 4) ----
+function addBundleToCart(name, price) {
+  const cleanName = (name || '').replace(/&amp;/g, '&');
+  const existing = cart.find(i => i.name === cleanName);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ name: cleanName, price: price, qty: 1, type: 'bundle' });
+  }
+  renderCart();
+  showToast('Added to cart! ✦');
+  openCart();
+  try { window.AAA && window.AAA.addToCart && window.AAA.addToCart({ name: cleanName, price: price, quantity: 1, type: 'bundle' }, 1); } catch (e) {}
+}
+window.addBundleToCart = addBundleToCart;
+
+// ---- "MEET AMBER" toggle for trimmed about section ----
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.id === 'meetAmberBtn') {
+    const bio = document.getElementById('aboutFullBio');
+    if (bio) {
+      const isHidden = bio.style.display === 'none';
+      bio.style.display = isHidden ? 'block' : 'none';
+      e.target.textContent = isHidden ? 'Hide Full Bio' : 'Meet Amber →';
+    }
+  }
+});
+
+// ---- ID ALIAS ANCHORS — invisible duplicates so spec'd IDs always resolve ----
+(function ensureAliasAnchors() {
+  function add(aliasId, targetId) {
+    if (document.getElementById(aliasId)) return;
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    const anchor = document.createElement('span');
+    anchor.id = aliasId;
+    anchor.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;';
+    target.parentNode.insertBefore(anchor, target);
+  }
+  function run() {
+    Object.keys(SECTION_ALIASES).forEach(function(aliasId) {
+      add(aliasId, SECTION_ALIASES[aliasId]);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else { run(); }
+})();
+
+// ---- GOOGLE REVIEW LINK FALLBACK (FIX 4) ----
+// Until Amber pastes her Google Place ID into the meta tag, fall back to a
+// search-for-business URL. Once set, every "Leave a Review on Google" link
+// across the site picks up the canonical write-review URL automatically.
+(function setReviewLinks() {
+  function apply() {
+    const meta = document.querySelector('meta[name="google-place-id"]');
+    const placeId = meta && meta.content ? meta.content.trim() : '';
+    const url = placeId
+      ? 'https://search.google.com/local/writereview?placeid=' + encodeURIComponent(placeId)
+      : 'https://www.google.com/search?q=Amber%27s+Alchemy+Apothecary+Awaken+Again#lrd=,1';
+    document.querySelectorAll('[data-rv-google], a[data-rv-google]').forEach(function(a) {
+      if (a.tagName === 'A') {
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+      }
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', apply);
+  } else { apply(); }
+})();
+
+// Tag the contact form card with id="consultation-form" so the spec'd
+// "Book a Free Consultation" CTA scrolls to a meaningful target.
+(function tagConsultationForm() {
+  function run() {
+    const card = document.querySelector('#contact .contact-form');
+    if (card && !card.id) card.id = 'consultation-form';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else { run(); }
+})();
+
+// Make "Book a Free Consultation" / "Contact Amber" / "Get a Custom Formula"
+// hash links resolve via scrollToAnchor.
+document.addEventListener('click', function(e) {
+  const a = e.target.closest && e.target.closest('a[href^="#"]');
+  if (!a) return;
+  const href = a.getAttribute('href') || '';
+  if (href.length < 2) return;
+  const id = href.slice(1);
+  // skip if it's already wired to data-section / data-rv-* etc.
+  if (a.hasAttribute('data-section') || a.hasAttribute('data-rv-open') || a.hasAttribute('data-rv-google') || a.hasAttribute('data-rv-open-all')) return;
+  // only intercept if a matching id or alias exists
+  if (document.getElementById(id) || SECTION_ALIASES[id]) {
+    e.preventDefault();
+    scrollToAnchor(id);
+  }
+});
