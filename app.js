@@ -409,10 +409,54 @@ document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
 // ---- SECURE CHECKOUT (Stripe) ----
 let stripe, cardElement, stripeReady = false;
 
+const PROMO_CODES = {
+  FIRST10: { type: 'percent', value: 10, label: '10% off (first-time)', firstTimeOnly: true },
+};
+let activePromo = null;
+
+function getPromoUsage() {
+  try { return JSON.parse(localStorage.getItem('aaa_promo_usage') || '{}'); }
+  catch (e) { return {}; }
+}
+function savePromoUsage(usage) {
+  try { localStorage.setItem('aaa_promo_usage', JSON.stringify(usage)); } catch (e) {}
+}
+function applyPromoCode(rawCode) {
+  const feedback = document.getElementById('promoFeedback');
+  const code = (rawCode || '').trim().toUpperCase();
+  const setMsg = (msg, ok) => {
+    if (!feedback) return;
+    feedback.textContent = msg;
+    feedback.style.display = msg ? 'block' : 'none';
+    feedback.style.color = ok ? 'var(--gold,#d4a843)' : '#d97a7a';
+  };
+  if (!code) { activePromo = null; setMsg('', true); renderCheckoutSummary(); return; }
+  const promo = PROMO_CODES[code];
+  if (!promo) { activePromo = null; setMsg('That promo code is not valid.', false); renderCheckoutSummary(); return; }
+  if (promo.firstTimeOnly) {
+    const usage = getPromoUsage();
+    if (usage[code]) { activePromo = null; setMsg('FIRST10 has already been used on this device.', false); renderCheckoutSummary(); return; }
+  }
+  activePromo = { code, ...promo };
+  setMsg(`✦ ${code} applied — ${promo.label}.`, true);
+  renderCheckoutSummary();
+}
+window.applyPromoCode = applyPromoCode;
+window.consumeActivePromo = function() {
+  if (!activePromo) return;
+  if (activePromo.firstTimeOnly) {
+    const usage = getPromoUsage();
+    usage[activePromo.code] = new Date().toISOString();
+    savePromoUsage(usage);
+  }
+};
+
 function renderCheckoutSummary() {
   const el = document.getElementById('checkoutItems');
   if (cart.length === 0) {
     el.innerHTML = '<p class="empty-cart">No items in cart.</p>';
+    const dRow = document.getElementById('checkoutDiscountRow');
+    if (dRow) dRow.style.display = 'none';
     return;
   }
   el.innerHTML = cart.map(i => `
@@ -423,15 +467,49 @@ function renderCheckoutSummary() {
   `).join('');
 
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  let discount = 0;
+  if (activePromo) {
+    if (activePromo.type === 'percent') discount = subtotal * (activePromo.value / 100);
+    else if (activePromo.type === 'amount') discount = Math.min(activePromo.value, subtotal);
+  }
+  const discountedSubtotal = Math.max(0, subtotal - discount);
+  const shipping = discountedSubtotal >= 75 ? 0 : 6.99;
+  const tax = discountedSubtotal * 0.08;
+  const total = discountedSubtotal + shipping + tax;
+
   document.getElementById('checkoutSubtotal').textContent = formatPrice(subtotal);
+  const dRow = document.getElementById('checkoutDiscountRow');
+  const dEl = document.getElementById('checkoutDiscount');
+  const dLabel = document.getElementById('checkoutDiscountLabel');
+  if (dRow && dEl) {
+    if (discount > 0 && activePromo) {
+      dRow.style.display = '';
+      dEl.textContent = '-' + formatPrice(discount);
+      if (dLabel) dLabel.textContent = `(${activePromo.code})`;
+    } else {
+      dRow.style.display = 'none';
+    }
+  }
   document.getElementById('checkoutShipping').textContent = shipping === 0 ? 'FREE' : formatPrice(shipping);
   document.getElementById('checkoutTax').textContent = formatPrice(tax);
   document.getElementById('checkoutTotal').textContent = formatPrice(total);
   document.getElementById('orderTotalField').value = formatPrice(total);
+  const promoField = document.getElementById('promoCodeField');
+  if (promoField) promoField.value = activePromo ? activePromo.code : '';
+  const discField = document.getElementById('discountAmountField');
+  if (discField) discField.value = discount > 0 ? formatPrice(discount) : '';
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  const applyBtn = document.getElementById('promoApplyBtn');
+  const input = document.getElementById('promoCodeInput');
+  if (applyBtn && input) {
+    applyBtn.addEventListener('click', function() { applyPromoCode(input.value); });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); applyPromoCode(input.value); }
+    });
+  }
+});
 
 async function initStripe() {
   if (stripeReady) return;
@@ -503,13 +581,23 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
 
   // Calculate total in cents for Stripe
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
+  let discount = 0;
+  if (activePromo) {
+    if (activePromo.type === 'percent') discount = subtotal * (activePromo.value / 100);
+    else if (activePromo.type === 'amount') discount = Math.min(activePromo.value, subtotal);
+  }
+  const discountedSubtotal = Math.max(0, subtotal - discount);
+  const shipping = discountedSubtotal >= 75 ? 0 : 6.99;
+  const tax = discountedSubtotal * 0.08;
+  const total = discountedSubtotal + shipping + tax;
   const amountCents = Math.round(total * 100);
 
   // Ensure order total is set on hidden field
   document.getElementById('orderTotalField').value = formatPrice(total);
+  const promoField = document.getElementById('promoCodeField');
+  if (promoField) promoField.value = activePromo ? activePromo.code : '';
+  const discField = document.getElementById('discountAmountField');
+  if (discField) discField.value = discount > 0 ? formatPrice(discount) : '';
 
   payBtn.disabled = true;
   btnText.textContent = 'Processing...';
@@ -523,6 +611,7 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
       document.getElementById('paymentStatus').value = 'pending-external-payment';
       document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
       await submitNetlifyForm();
+      try { window.consumeActivePromo && window.consumeActivePromo(); } catch (e) {}
       showConfirmation('PENDING — Complete payment via Venmo or Cash App in the cart', 'pending');
       return;
     }
@@ -565,6 +654,7 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
       document.getElementById('transactionId').value = paymentIntent.id;
       document.getElementById('paymentStatus').value = 'paid';
       await submitNetlifyForm();
+      try { window.consumeActivePromo && window.consumeActivePromo(); } catch (e) {}
       showConfirmation(paymentIntent.id, 'paid');
     }
   } catch (err) {
@@ -932,34 +1022,72 @@ function updateTeaSelected() {}
 // Handled by the DOMContentLoaded listener below — no duplicate needed here.
 
 // ---- CONTACT FORM ----
-document.getElementById('contactSubmitBtn').addEventListener('click', () => {
-  const name = document.getElementById('contactName').value.trim();
-  const email = document.getElementById('contactEmail').value.trim();
-  const subject = document.getElementById('contactSubject').value;
-  const message = document.getElementById('contactMessage').value.trim();
-  if (!name || !email || !message) { showToast('Please fill in all fields.'); return; }
-  const body = encodeURIComponent(`From: ${name} (${email})\n\n${message}`);
-  try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
-  showToast('Opening email client...');
-});
+(function() {
+  const form = document.getElementById('contactForm');
+  if (!form) return;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = (document.getElementById('contactName') || {}).value?.trim() || '';
+    const email = (document.getElementById('contactEmail') || {}).value?.trim() || '';
+    const subject = (document.getElementById('contactSubject') || {}).value || 'General Question';
+    const message = (document.getElementById('contactMessage') || {}).value?.trim() || '';
+    if (!name || !email || !message) { showToast('Please fill in all fields.'); return; }
+    const btn = document.getElementById('contactSubmitBtn');
+    const original = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+    try {
+      const formData = new FormData(form);
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString(),
+      });
+      if (!res.ok) throw new Error('Network response not ok');
+      try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
+      showToast('✦ Message sent! Amber will reply within 24–48 hours.');
+      form.reset();
+      if (btn) btn.textContent = '✓ Message Sent';
+    } catch (err) {
+      console.error('Contact form submission failed:', err);
+      showToast('Something went wrong. Please email awaken@consultant.com directly.');
+      if (btn) btn.textContent = original || 'Send Message ✦';
+    } finally {
+      setTimeout(() => { if (btn) { btn.disabled = false; btn.textContent = original || 'Send Message ✦'; } }, 3000);
+    }
+  });
+})();
 
 // ---- NEWSLETTER FORM ----
-document.getElementById('nlSubmitBtn').addEventListener('click', () => {
-  const name = document.getElementById('nlName').value.trim();
-  const email = document.getElementById('nlEmail').value.trim();
-  if (!email) { showToast('Please enter your email address.'); return; }
-  const body = encodeURIComponent(
-    `New Newsletter Subscriber — Amber's Alchemy Apothecary\n\n` +
-    `Name: ${name || 'Not provided'}\nEmail: ${email}\n\n` +
-    `Please add this subscriber to the mailing list and send the Free Herbal Healing Guide.`
-  );
-  try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?subject=${encodeURIComponent('New Subscriber — ' + (name || email))}&body=${body}`;
-  showToast('✦ Thank you! Check your email for the Herbal Healing Guide.');
-  document.getElementById('nlName').value = '';
-  document.getElementById('nlEmail').value = '';
-});
+(function() {
+  const form = document.getElementById('newsletterForm');
+  if (!form) return;
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = (document.getElementById('nlEmail') || {}).value?.trim() || '';
+    if (!email) { showToast('Please enter your email address.'); return; }
+    const btn = document.getElementById('nlSubmitBtn');
+    const original = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+    try {
+      const formData = new FormData(form);
+      const res = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString(),
+      });
+      if (!res.ok) throw new Error('Network response not ok');
+      try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
+      showToast('✦ Thank you! Check your email for the Herbal Healing Guide.');
+      form.reset();
+      if (btn) btn.textContent = '✓ Subscribed';
+    } catch (err) {
+      console.error('Newsletter submission failed:', err);
+      showToast('Something went wrong. Please try again or email awaken@consultant.com.');
+    } finally {
+      setTimeout(() => { if (btn) { btn.disabled = false; btn.textContent = original || 'Send Me the Guide ✦'; } }, 3000);
+    }
+  });
+})();
 
 // ---- FAQS ----
 function renderFAQs() {
@@ -1304,37 +1432,36 @@ window.addSoapToCart = addSoapToCart;
 // ---- SOAP CUSTOM ORDER FORM ----
 (function() {
   function bindSoapForm() {
-    const soapSubmitBtn = document.getElementById('soapSubmitBtn');
-    if (!soapSubmitBtn) return;
-    soapSubmitBtn.addEventListener('click', function() {
+    const form = document.getElementById('customSoapForm');
+    if (!form) return;
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
       const name = (document.getElementById('soapName') || {}).value?.trim() || '';
       const email = (document.getElementById('soapEmail') || {}).value?.trim() || '';
       if (!name || !email) {
         showToast('Please enter your name and email to submit a custom soap request.');
         return;
       }
-      const scent = (document.getElementById('soapScent') || {}).value || 'Not specified';
-      const color = (document.getElementById('soapColor') || {}).value || 'Not specified';
-      const shape = (document.getElementById('soapShape') || {}).value || 'Not specified';
-      const botanical = (document.getElementById('soapBotanical') || {}).value || 'Not specified';
-      const quantity = (document.getElementById('soapQuantity') || {}).value || 'Not specified';
-      const notes = (document.getElementById('soapNotes') || {}).value?.trim() || '';
-      const subject = encodeURIComponent('Custom Soap Order from ' + name);
-      const body = encodeURIComponent(
-        'Custom Soap Order Request\n\n' +
-        'Name: ' + name + '\n' +
-        'Email: ' + email + '\n' +
-        'Scent: ' + scent + '\n' +
-        'Color: ' + color + '\n' +
-        'Shape: ' + shape + '\n' +
-        'Botanical: ' + botanical + '\n' +
-        'Quantity: ' + quantity + '\n' +
-        'Notes: ' + notes
-      );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
-      showToast('✦ Opening email to send your custom soap request...');
-      soapSubmitBtn.textContent = '✓ Request Sent!';
-      setTimeout(() => { soapSubmitBtn.textContent = 'Send My Custom Soap Request ✦'; }, 3000);
+      const btn = document.getElementById('soapSubmitBtn');
+      const original = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+      try {
+        const formData = new FormData(form);
+        const res = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(formData).toString(),
+        });
+        if (!res.ok) throw new Error('Network response not ok');
+        showToast('✦ Custom soap request sent! Amber will be in touch within 1–2 days.');
+        form.reset();
+        if (btn) btn.textContent = '✓ Request Sent!';
+      } catch (err) {
+        console.error('Soap form submission failed:', err);
+        showToast('Something went wrong. Please email awaken@consultant.com with your soap details.');
+      } finally {
+        setTimeout(() => { if (btn) { btn.disabled = false; btn.textContent = original || 'Send My Custom Soap Request ✦'; } }, 3500);
+      }
     });
   }
   if (document.readyState === 'loading') {

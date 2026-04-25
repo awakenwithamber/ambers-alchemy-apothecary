@@ -757,9 +757,10 @@
 
   // ---- Consultation form ----
   function bindFormulaForm() {
-    var submitBtn = document.getElementById('formulaSubmitBtn');
-    if (!submitBtn) return;
-    submitBtn.addEventListener('click', function() {
+    var form = document.getElementById('consultationForm');
+    if (!form) return;
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
       var name = (document.getElementById('formulaName') || {}).value || '';
       var email = (document.getElementById('formulaEmail') || {}).value || '';
       var symptoms = (document.getElementById('formulaSymptoms') || {}).value || '';
@@ -779,24 +780,28 @@
         return;
       }
 
-      var type = (document.getElementById('formulaType') || {}).value || 'Not specified';
-      var meds = (document.getElementById('formulaMeds') || {}).value || 'None';
-      var supplements = (document.getElementById('formulaSupplements') || {}).value || 'None';
-      var pregnancy = (document.getElementById('formulaPregnancy') || {}).value || 'Not specified';
-      var allergies = (document.getElementById('formulaAllergies') || {}).value || 'None';
-      var fnotes = (document.getElementById('formulaNotes') || {}).value || '';
+      var btn = document.getElementById('formulaSubmitBtn');
+      var original = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
 
-      var subject = encodeURIComponent('Custom Herbal Consultation Request from ' + name);
-      var body = encodeURIComponent(
-        'Name: ' + name + '\nEmail: ' + email + '\n\nSymptoms / Goals:\n' + symptoms +
-        '\n\nRemedy Type: ' + type +
-        '\nCurrent Medications: ' + meds +
-        '\nCurrent Supplements: ' + supplements +
-        '\nPregnancy / Breastfeeding: ' + pregnancy +
-        '\nAllergies: ' + allergies +
-        '\n\nAdditional Notes:\n' + fnotes
-      );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
+      var formData = new FormData(form);
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString(),
+      }).then(function(res) {
+        if (!res.ok) throw new Error('Network response not ok');
+        if (btn) btn.textContent = '✓ Consultation Request Sent';
+        try { if (typeof showToast === 'function') showToast('✦ Consultation request sent! Amber will reply within 24–48 hours.'); } catch (e) {}
+        form.reset();
+      }).catch(function(err) {
+        console.error('Consultation submission failed:', err);
+        try { if (typeof showToast === 'function') showToast('Something went wrong. Please email awaken@consultant.com.'); } catch (e) {}
+      }).finally(function() {
+        setTimeout(function() {
+          if (btn) { btn.disabled = false; btn.textContent = original || '✦ Send My Consultation Request'; }
+        }, 4000);
+      });
     });
   }
 
