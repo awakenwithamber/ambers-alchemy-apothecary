@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Awaken Again | Amber's Alchemy Apothecary — Handcrafted Herbal Remedies</title>
-  <meta name="description" content="Discover handcrafted herbal remedies, guided wellness support, custom formulas, and botanical education designed to support your body naturally. Small-batch, plant-based apothecary by Amber Lynn Patten." />
+  <title>Awaken Again | Herbal Apothecary, Custom Remedies, Soaps & Ritual Wellness</title>
+  <meta name="description" content="Amber's Alchemy Apothecary — handcrafted herbal remedies, custom soaps, custom botanical formulas, consultations, and spiritual self-care from a small-batch apothecary devoted to ritual wellness and plant-based healing." />
   <meta name="keywords" content="herbal remedies, handcrafted apothecary, botanical wellness, custom herbal formulas, natural remedies, herbal tea, healing balms, adaptogens, hair regrowth serum, hormone balance herbs, sleep herbs, stress relief herbs, women's herbal wellness, plant medicine" />
   <meta name="author" content="Amber Lynn Patten" />
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
@@ -13,8 +13,8 @@
 
   <!-- Open Graph / Facebook / iMessage / Android Messages / Slack / Discord / LinkedIn -->
   <meta property="og:site_name" content="Amber's Alchemy Apothecary" />
-  <meta property="og:title" content="Awaken Again | Amber's Alchemy Apothecary" />
-  <meta property="og:description" content="Discover handcrafted herbal remedies, guided wellness support, custom formulas, and botanical education designed to support your body naturally." />
+  <meta property="og:title" content="Awaken Again | Herbal Apothecary, Custom Remedies, Soaps & Ritual Wellness" />
+  <meta property="og:description" content="Handcrafted herbal remedies, custom soaps, custom botanical formulas, consultations, and ritual wellness from Amber's Alchemy Apothecary." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://awakenagain.com/" />
   <meta property="og:locale" content="en_US" />
@@ -39,8 +39,8 @@
   <meta name="twitter:site" content="@awakenwithamber" />
   <meta name="twitter:creator" content="@awakenwithamber" />
   <meta name="twitter:url" content="https://awakenagain.com/" />
-  <meta name="twitter:title" content="Awaken Again | Amber's Alchemy Apothecary" />
-  <meta name="twitter:description" content="Handcrafted herbal remedies, custom formulas, and botanical education designed to support your body naturally." />
+  <meta name="twitter:title" content="Awaken Again | Herbal Apothecary, Custom Remedies, Soaps & Ritual Wellness" />
+  <meta name="twitter:description" content="Handcrafted herbal remedies, custom soaps, custom formulas, and ritual wellness from a small-batch botanical apothecary." />
   <meta name="twitter:image" content="https://awakenagain.com/images/social-preview-og.jpg" />
   <meta name="twitter:image:alt" content="The Empress Amber — Amber's Alchemy Apothecary, handcrafted herbal remedies and botanical wellness" />
 
@@ -844,11 +844,14 @@
         <h2>🌿 Free Herbal Healing Guide</h2>
         <p>Subscribe for Amber's <strong>Beginner's Guide to Herbal Healing</strong> — 20 herbs and how to use them.</p>
       </div>
-      <div class="newsletter-form">
-        <input type="text" id="nlName" placeholder="Your Name" />
-        <input type="email" id="nlEmail" placeholder="Your Email" />
-        <button class="btn-primary" id="nlSubmitBtn">Send Me the Guide ✦</button>
-      </div>
+      <form class="newsletter-form" id="newsletterForm" name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="newsletter" />
+        <input type="hidden" name="bot-field" />
+        <input type="hidden" name="subject" value="New Newsletter Subscriber — Amber's Alchemy Apothecary" />
+        <input type="text" id="nlName" name="name" placeholder="Your Name" autocomplete="name" />
+        <input type="email" id="nlEmail" name="email" placeholder="Your Email" autocomplete="email" required />
+        <button type="submit" class="btn-primary" id="nlSubmitBtn">Send Me the Guide ✦</button>
+      </form>
     </div>
   </div>
 
@@ -1530,7 +1533,10 @@
   </div>
 
   <!-- Custom Soap Order Form -->
-  <div class="custom-soap-form">
+  <form class="custom-soap-form" id="customSoapForm" name="custom-soap" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="custom-soap" />
+    <input type="hidden" name="bot-field" />
+    <input type="hidden" name="subject" value="New Custom Soap Request — Amber's Alchemy Apothecary" />
     <div class="section-header">
       <div class="section-ornament">✦ ─── ✦</div>
       <h3>✦ Order a Custom Soap</h3>
@@ -1538,9 +1544,9 @@
       <p style="font-size:1.1rem; color:var(--gold, #d4a843); font-weight:600;">$13.99 per custom bar &nbsp;|&nbsp; 5 Custom Soaps for $54.99</p>
     </div>
     <div class="soap-form-grid">
-      <input type="text" id="soapName" placeholder="Your Name" class="form-input" />
-      <input type="email" id="soapEmail" placeholder="Your Email" class="form-input" />
-      <select id="soapScent" class="form-select">
+      <input type="text" id="soapName" name="customer-name" placeholder="Your Name" class="form-input" autocomplete="name" required />
+      <input type="email" id="soapEmail" name="email" placeholder="Your Email" class="form-input" autocomplete="email" required />
+      <select id="soapScent" name="scent" class="form-select">
         <option value="">-- Preferred Scent Direction --</option>
         <option>Floral (Rose, Lavender, Jasmine)</option>
         <option>Fresh &amp; Green (Eucalyptus, Mint, Tea Tree)</option>
@@ -1549,7 +1555,7 @@
         <option>Earthy &amp; Grounding (Patchouli, Cedarwood, Vetiver)</option>
         <option>Surprise Me — Amber's Choice</option>
       </select>
-      <select id="soapColor" class="form-select">
+      <select id="soapColor" name="color" class="form-select">
         <option value="">-- Color Palette --</option>
         <option>Deep Violet &amp; Ivory</option>
         <option>Crimson &amp; Gold</option>
@@ -1559,7 +1565,7 @@
         <option>Midnight Blue &amp; Silver</option>
         <option>Earthy Terracotta &amp; Sage</option>
       </select>
-      <select id="soapShape" class="form-select">
+      <select id="soapShape" name="shape" class="form-select">
         <option value="">-- Bar Shape --</option>
         <option>Classic Rectangle Bar</option>
         <option>Floral Rose Mold (Round)</option>
@@ -1567,7 +1573,7 @@
         <option>Heart Shape</option>
         <option>Decorative Specialty Mold</option>
       </select>
-      <select id="soapBotanical" class="form-select">
+      <select id="soapBotanical" name="botanical" class="form-select">
         <option value="">-- Botanical Addition --</option>
         <option>Dried Rose Petals</option>
         <option>Lavender Buds</option>
@@ -1581,18 +1587,18 @@
         <option>Dried Citrus Peel</option>
         <option>Mugwort &amp; Herbs</option>
       </select>
-      <select id="soapQuantity" class="form-select">
+      <select id="soapQuantity" name="quantity" class="form-select">
         <option value="">-- Quantity --</option>
         <option>1 Bar</option>
         <option>3 Bars (small gift set)</option>
         <option>6 Bars (full gift set)</option>
         <option>12 Bars (bulk / event favors)</option>
       </select>
-      <textarea id="soapNotes" placeholder="Any special requests, skin concerns, allergies, gifting occasion, or shipping address..." class="form-textarea" rows="4"></textarea>
+      <textarea id="soapNotes" name="notes" placeholder="Any special requests, skin concerns, allergies, gifting occasion, or shipping address..." class="form-textarea" rows="4"></textarea>
     </div>
-    <button class="btn-primary" id="soapSubmitBtn" style="margin-top:1.5rem; width:100%;">Send My Custom Soap Request ✦</button>
+    <button type="submit" class="btn-primary" id="soapSubmitBtn" style="margin-top:1.5rem; width:100%;">Send My Custom Soap Request ✦</button>
     <p class="soap-form-note">Custom orders typically ship within 7–10 business days. Amber will contact you to confirm details before crafting your bar.</p>
-  </div>
+  </form>
 
   <!-- SOAP REVIEWS -->
   <div class="soap-reviews-section" id="reviews-soaps">
@@ -2076,18 +2082,21 @@
 
   <!-- CONSULTATION FORM (formerly Custom Blend) -->
   <div class="formula-grid">
-    <div class="formula-form card">
+    <form class="formula-form card" id="consultationForm" name="consultation" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="consultation" />
+      <input type="hidden" name="bot-field" />
+      <input type="hidden" name="subject" value="New Consultation Request — Amber's Alchemy Apothecary" />
       <h3>✦ Your Personal Herbal Consultation</h3>
       <p class="form-intro">Fill out the form below and Amber will respond within 24–48 hours with your custom formula recommendation.</p>
-      <input type="text" id="formulaName" placeholder="Your Full Name" required />
-      <input type="email" id="formulaEmail" placeholder="Your Email Address" required />
+      <input type="text" id="formulaName" name="customer-name" placeholder="Your Full Name" autocomplete="name" required />
+      <input type="email" id="formulaEmail" name="email" placeholder="Your Email Address" autocomplete="email" required />
       <div class="form-group">
         <label>What symptoms are you experiencing?</label>
-        <textarea id="formulaSymptoms" placeholder="Describe your symptoms, health concerns, or wellness goals in as much detail as you would like..." rows="4"></textarea>
+        <textarea id="formulaSymptoms" name="symptoms" placeholder="Describe your symptoms, health concerns, or wellness goals in as much detail as you would like..." rows="4" required></textarea>
       </div>
       <div class="form-group">
         <label>What type of remedy are you interested in?</label>
-        <select id="formulaType">
+        <select id="formulaType" name="remedy-type">
           <option value="">-- Select Remedy Type --</option>
           <option>Custom Tea Blend</option>
           <option>Herbal Capsule Formula</option>
@@ -2098,19 +2107,19 @@
       </div>
       <div class="form-group">
         <label>Current medications (if any)</label>
-        <input type="text" id="formulaMeds" placeholder="List any medications you are currently taking..." />
+        <input type="text" id="formulaMeds" name="medications" placeholder="List any medications you are currently taking..." />
       </div>
       <div class="form-group">
         <label>Current supplements (vitamins, herbs, or other natural products)</label>
-        <input type="text" id="formulaSupplements" placeholder="e.g. Vitamin D, fish oil, ashwagandha..." />
+        <input type="text" id="formulaSupplements" name="supplements" placeholder="e.g. Vitamin D, fish oil, ashwagandha..." />
       </div>
       <div class="form-group">
         <label>Known allergies or sensitivities</label>
-        <input type="text" id="formulaAllergies" placeholder="e.g. ragweed, nuts, specific herbs..." />
+        <input type="text" id="formulaAllergies" name="allergies" placeholder="e.g. ragweed, nuts, specific herbs..." />
       </div>
       <div class="form-group">
         <label>Pregnancy or breastfeeding status</label>
-        <select id="formulaPregnancy">
+        <select id="formulaPregnancy" name="pregnancy-status">
           <option value="">-- Please select --</option>
           <option>Not pregnant or breastfeeding</option>
           <option>Currently pregnant</option>
@@ -2121,21 +2130,21 @@
       </div>
       <div class="form-group">
         <label>Anything else Amber should know?</label>
-        <textarea id="formulaNotes" placeholder="Health history, lifestyle, dietary preferences, spiritual intentions..." rows="3"></textarea>
+        <textarea id="formulaNotes" name="notes" placeholder="Health history, lifestyle, dietary preferences, spiritual intentions..." rows="3"></textarea>
       </div>
       <div class="formula-safety-notice">
         <p>🌿 <strong>Important:</strong> The information shared in this consultation is used solely to help Amber craft a personalized botanical blend. Custom herbal formulas are designed to support general wellness and are not intended to diagnose, treat, cure, or prevent any disease or medical condition. Always consult your healthcare provider before beginning any herbal regimen, especially if you are pregnant, breastfeeding, taking prescription medications, or managing a health condition.</p>
         <label class="formula-safety-label">
-          <input type="checkbox" id="formulaInteractionCheck" required />
+          <input type="checkbox" id="formulaInteractionCheck" name="interaction-acknowledged" value="yes" required />
           I understand that herbal remedies may interact with medications or medical conditions, and I am seeking wellness support, not medical treatment.
         </label>
         <label class="formula-safety-label" style="margin-top:0.5rem;">
-          <input type="checkbox" id="formulaAgeConfirm" required />
+          <input type="checkbox" id="formulaAgeConfirm" name="age-confirmed" value="yes" required />
           I confirm that I am 18 years of age or older.
         </label>
       </div>
-      <button class="btn-primary" id="formulaSubmitBtn">✦ Send My Consultation Request</button>
-    </div>
+      <button type="submit" class="btn-primary" id="formulaSubmitBtn">✦ Send My Consultation Request</button>
+    </form>
     <div class="formula-info">
       <div class="formula-info-card card">
         <h4>🌿 How It Works</h4>
@@ -2210,7 +2219,7 @@
       </div>
       <div class="about-cta-row">
         <button class="btn-primary" data-section="custom-formula">Get a Custom Formula</button>
-        <button class="btn-secondary" data-section="contact">Book a Consultation</button>
+        <a class="btn-secondary" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener" role="button">Book a Consultation</a>
         <button class="btn-ghost" data-section="herbal-wisdom">Read Articles &amp; Guides</button>
       </div>
     </div>
@@ -2816,26 +2825,29 @@
     <p>Reach out with questions, custom requests, or to book a consultation.</p>
   </div>
   <div class="contact-grid">
-    <div class="contact-form card">
+    <form class="contact-form card" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="contact" />
+      <input type="hidden" name="bot-field" />
+      <input type="hidden" name="subject" value="New Contact Message — Amber's Alchemy Apothecary" />
       <h3>Send a Message</h3>
-      <input type="text" id="contactName" placeholder="Your Name" />
-      <input type="email" id="contactEmail" placeholder="Your Email" />
-      <select id="contactSubject">
+      <input type="text" id="contactName" name="name" placeholder="Your Name" autocomplete="name" required />
+      <input type="email" id="contactEmail" name="email" placeholder="Your Email" autocomplete="email" required />
+      <select id="contactSubject" name="topic">
         <option>General Question</option>
         <option>Custom Order Request</option>
         <option>Book a Service</option>
         <option>Wholesale Inquiry</option>
         <option>Other</option>
       </select>
-      <textarea id="contactMessage" placeholder="Your message..."></textarea>
-      <button class="btn-primary" id="contactSubmitBtn">Send Message ✦</button>
-    </div>
+      <textarea id="contactMessage" name="message" placeholder="Your message..." required></textarea>
+      <button type="submit" class="btn-primary" id="contactSubmitBtn">Send Message ✦</button>
+    </form>
     <div class="contact-info card">
       <h3>Connect With Amber</h3>
       <p>📧 <a href="mailto:awaken@consultant.com">awaken@consultant.com</a></p>
       <p>📘 <a href="https://www.facebook.com/share/1BNvSQzPiP/" target="_blank" rel="noopener">Follow on Facebook</a></p>
       <p>📸 <a href="https://www.instagram.com/awakenwithamber" target="_blank" rel="noopener">@awakenwithamber on Instagram</a></p>
-      <p>📅 <a href="#" data-section="custom-formula">Book a Free Consultation</a></p>
+      <p>📅 <a href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">Book a Free Consultation</a></p>
       <div class="rv-cta-row" style="margin-top:1rem;">
         <button type="button" class="btn-secondary" data-rv-open data-rv-open-type="site" data-rv-name="My experience with Amber's Alchemy">✦ Leave a Review Here</button>
         <a class="rv-google-link" data-rv-google target="_blank" rel="noopener">Leave a Review on Google ↗</a>
@@ -2871,10 +2883,16 @@
       </div>
       <div class="checkout-totals">
         <div class="cart-row"><span>Subtotal</span><span id="checkoutSubtotal">$0.00</span></div>
+        <div class="cart-row" id="checkoutDiscountRow" style="display:none;"><span>Discount <small id="checkoutDiscountLabel"></small></span><span id="checkoutDiscount">-$0.00</span></div>
         <div class="cart-row"><span>Shipping</span><span id="checkoutShipping">$0.00</span></div>
         <div class="cart-row"><span>Sales Tax (8%)</span><span id="checkoutTax">$0.00</span></div>
         <div class="cart-row total-row"><strong>Total</strong><strong id="checkoutTotal">$0.00</strong></div>
       </div>
+      <div class="checkout-promo" style="margin-top:0.75rem;display:flex;gap:0.5rem;align-items:center;">
+        <input type="text" id="promoCodeInput" placeholder="Promo code (e.g. FIRST10)" autocomplete="off" style="flex:1;padding:0.5rem 0.75rem;border-radius:6px;border:1px solid var(--brass,#8a6a3c);background:rgba(0,0,0,0.2);color:var(--parchment);font-family:'Lora',serif;" />
+        <button type="button" id="promoApplyBtn" class="btn-secondary" style="padding:0.5rem 1rem;">Apply</button>
+      </div>
+      <p id="promoFeedback" class="checkout-shipping-note" style="margin-top:0.5rem;display:none;"></p>
       <p class="checkout-shipping-note">Free shipping on orders over $75</p>
     </div>
 
@@ -2886,6 +2904,8 @@
         <input type="hidden" name="transaction-id" id="transactionId" value="" />
         <input type="hidden" name="payment-status" id="paymentStatus" value="" />
         <input type="hidden" name="order-total" id="orderTotalField" value="" />
+        <input type="hidden" name="promo-code" id="promoCodeField" value="" />
+        <input type="hidden" name="discount-amount" id="discountAmountField" value="" />
         <input type="hidden" name="subject" value="New Website Order – Amber's Alchemy Apothecary" />
 
         <h3>Order Information</h3>
