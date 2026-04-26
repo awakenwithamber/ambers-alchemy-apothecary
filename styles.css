@@ -784,28 +784,51 @@ button { cursor: pointer; font-family: var(--font-body); }
 /* Payment Section */
 .payment-section { padding: 20px 24px; border-top: 1px solid rgba(110,75,126,0.2); }
 .payment-section-title { font-family: var(--font-display); font-size: 15px; color: var(--brass); letter-spacing: 0.08em; text-align: center; margin-bottom: 4px; }
+.payment-section-sub { font-family: var(--font-body); font-size: 12.5px; color: var(--text-muted); text-align: center; margin-bottom: 14px; line-height: 1.55; letter-spacing: 0.02em; }
 .payment-accepts-cards { font-family: var(--font-body); font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 16px; letter-spacing: 0.03em; }
 
-.payment-method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-.payment-method-card { background: rgba(30,20,35,0.5); border: 1px solid rgba(110,75,126,0.25); border-radius: var(--radius); padding: 16px 12px; text-align: center; transition: all var(--transition); }
+/* Primary Stripe button */
+.payment-primary { background: rgba(110,75,126,0.06); }
+.pay-primary-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; padding: 15px 16px; font-size: 15px; letter-spacing: 0.06em;
+  border-radius: var(--radius); margin-bottom: 12px;
+}
+.payment-card-badges { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; }
+
+/* Alternate methods list — vertical, full-width, intentional */
+.payment-alt-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px; }
+.payment-method-card { background: rgba(30,20,35,0.5); border: 1px solid rgba(110,75,126,0.25); border-radius: var(--radius); padding: 14px 14px; transition: all var(--transition); }
 .payment-method-card:hover { border-color: rgba(110,75,126,0.5); background: rgba(40,28,48,0.6); }
-.payment-method-icon { font-size: 28px; margin-bottom: 6px; }
-.payment-method-name { font-family: var(--font-display); font-size: 14px; color: var(--parchment); letter-spacing: 0.06em; margin-bottom: 8px; }
-.payment-method-types { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-bottom: 12px; }
+.payment-method-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.payment-method-icon { font-size: 22px; line-height: 1; }
+.payment-method-name { font-family: var(--font-display); font-size: 14px; color: var(--parchment); letter-spacing: 0.06em; }
+.payment-method-types { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
 .card-badge { font-family: var(--font-body); font-size: 10px; color: var(--text-muted); background: rgba(110,75,126,0.15); border: 1px solid rgba(110,75,126,0.2); border-radius: 10px; padding: 2px 7px; white-space: nowrap; }
 
-.pay-btn { display: block; text-align: center; padding: 12px; border-radius: var(--radius); font-family: var(--font-display); font-size: 13px; letter-spacing: 0.05em; transition: all var(--transition); text-decoration: none; }
+.pay-btn { display: block; width: 100%; text-align: center; padding: 12px; border-radius: var(--radius); font-family: var(--font-display); font-size: 13px; letter-spacing: 0.05em; transition: all var(--transition); text-decoration: none; }
 .venmo-btn { background: rgba(75,46,89,0.5); border: 1px solid rgba(110,75,126,0.5); color: var(--amethyst-lt); }
 .venmo-btn:hover { background: rgba(110,75,126,0.4); color: var(--parchment); transform: translateY(-1px); }
 .cashapp-btn { background: rgba(46,89,46,0.4); border: 1px solid rgba(75,126,75,0.4); color: #7db87d; }
 .cashapp-btn:hover { background: rgba(75,126,75,0.3); color: var(--parchment); transform: translateY(-1px); }
 
-.payment-instructions { background: rgba(110,75,126,0.08); border: 1px solid rgba(110,75,126,0.15); border-radius: var(--radius); padding: 12px 14px; }
-.payment-instructions p { font-family: var(--font-body); font-size: 11px; color: var(--text-muted); margin: 3px 0; line-height: 1.5; }
+.payment-note {
+  font-family: var(--font-body); font-size: 12px; color: var(--text-muted);
+  background: rgba(110,75,126,0.08); border: 1px solid rgba(110,75,126,0.15);
+  border-radius: var(--radius); padding: 10px 12px; line-height: 1.55; text-align: center;
+}
+
+/* Trust copy block */
+.payment-trust { padding: 16px 24px 22px; border-top: 1px solid rgba(110,75,126,0.2); }
+.payment-trust .trust-line { font-family: var(--font-body); font-size: 12px; color: var(--text-muted); margin: 4px 0; line-height: 1.55; }
+.payment-trust .trust-line a { color: var(--brass-lt); text-decoration: underline; }
+.payment-trust .trust-line a:hover { color: var(--parchment); }
 
 @media (max-width: 480px) {
-  .payment-method-grid { grid-template-columns: 1fr; }
+  .payment-section { padding: 18px 18px; }
+  .payment-trust { padding: 14px 18px 20px; }
   .payment-method-types { gap: 3px; }
+  .pay-primary-btn { padding: 14px; font-size: 14.5px; }
 }
 
 /* ---- FAQ ---- */
@@ -906,6 +929,20 @@ footer { border-top: 1px solid var(--border); padding: 50px 24px 30px; text-alig
 .checkout-trust-badges span { font-family: var(--font-body); font-size: 11px; color: var(--text-muted); letter-spacing: 0.03em; }
 
 .checkout-proceed-btn { width: 100%; font-size: 15px; padding: 14px; letter-spacing: 0.06em; }
+
+/* Checkout page — alternate payments & trust copy */
+.checkout-alt-payments { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--border); }
+.checkout-alt-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.checkout-alt-divider::before, .checkout-alt-divider::after { content: ''; flex: 1; height: 1px; background: rgba(110,75,126,0.25); }
+.checkout-alt-divider span { font-family: var(--font-display); font-size: 14px; color: var(--brass); letter-spacing: 0.08em; white-space: nowrap; }
+.checkout-alt-sub { font-family: var(--font-body); font-size: 13px; color: var(--text-muted); text-align: center; margin-bottom: 14px; line-height: 1.55; }
+.checkout-alt-payments .payment-alt-list { margin-bottom: 14px; }
+.checkout-alt-payments .pay-btn { width: 100%; }
+
+.checkout-trust-copy { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border-lt); }
+.checkout-trust-copy .trust-line { font-family: var(--font-body); font-size: 13px; color: var(--text-muted); margin: 5px 0; line-height: 1.55; }
+.checkout-trust-copy .trust-line a { color: var(--brass-lt); text-decoration: underline; }
+.checkout-trust-copy .trust-line a:hover { color: var(--parchment); }
 
 /* Checkout Confirmation */
 .checkout-confirmation { max-width: 600px; margin: 0 auto; text-align: center; }

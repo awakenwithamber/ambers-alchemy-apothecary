@@ -599,17 +599,33 @@
     <input type="text" id="cartAddress" placeholder="Shipping Address" required />
     <input type="text" id="cartCityState" placeholder="City, State, ZIP" required />
     <textarea id="cartNotes" placeholder="Anything you want Amber to know about your order..."></textarea>
-    <button id="proceedToCheckoutBtn" class="btn-primary checkout-proceed-btn">✦ Proceed to Secure Checkout</button>
   </div>
 
-  <div class="payment-section">
-    <p class="payment-section-title">✦ Or Pay Directly</p>
-    <p class="payment-accepts-cards">Venmo &amp; Cash App also accept Debit &amp; Credit Cards</p>
+  <!-- Primary: Stripe -->
+  <div class="payment-section payment-primary">
+    <p class="payment-section-title">✦ Secure Card Checkout</p>
+    <p class="payment-section-sub">Pay instantly with credit card, debit card, Apple Pay, or Google Pay when available.</p>
+    <button id="proceedToCheckoutBtn" class="btn-primary pay-primary-btn">Pay Securely with Card</button>
+    <div class="payment-card-badges">
+      <span class="card-badge">💳 Visa</span>
+      <span class="card-badge">💳 Mastercard</span>
+      <span class="card-badge">💳 Amex</span>
+      <span class="card-badge">📱 Apple Pay</span>
+      <span class="card-badge">📱 Google Pay</span>
+    </div>
+  </div>
 
-    <div class="payment-method-grid">
+  <!-- Alternate: Venmo / Cash App -->
+  <div class="payment-section payment-alternate">
+    <p class="payment-section-title">More Ways to Pay</p>
+    <p class="payment-section-sub">Choose the payment method that works best for you.</p>
+
+    <div class="payment-alt-list">
       <div class="payment-method-card" id="payMethodVenmo">
-        <div class="payment-method-icon">💜</div>
-        <div class="payment-method-name">Venmo</div>
+        <div class="payment-method-header">
+          <div class="payment-method-icon">💜</div>
+          <div class="payment-method-name">Venmo</div>
+        </div>
         <div class="payment-method-types">
           <span class="card-badge">💳 Visa</span>
           <span class="card-badge">💳 Mastercard</span>
@@ -620,8 +636,10 @@
       </div>
 
       <div class="payment-method-card" id="payMethodCashApp">
-        <div class="payment-method-icon">💚</div>
-        <div class="payment-method-name">Cash App</div>
+        <div class="payment-method-header">
+          <div class="payment-method-icon">💚</div>
+          <div class="payment-method-name">Cash App</div>
+        </div>
         <div class="payment-method-types">
           <span class="card-badge">💳 Visa</span>
           <span class="card-badge">💳 Mastercard</span>
@@ -632,11 +650,15 @@
       </div>
     </div>
 
-    <div class="payment-instructions">
-      <p>✦ Click your preferred payment method above</p>
-      <p>✦ You can pay with any debit or credit card — no account needed</p>
-      <p>✦ After payment, Amber will confirm your order via email</p>
-    </div>
+    <p class="payment-note">Please include your order name or email in the payment note for faster processing.</p>
+  </div>
+
+  <!-- Trust copy -->
+  <div class="payment-trust">
+    <p class="trust-line">🔒 Secure encrypted checkout</p>
+    <p class="trust-line">📦 Orders processed within 24–48 hours</p>
+    <p class="trust-line">🌿 Small-batch herbal products made with care</p>
+    <p class="trust-line">✉️ Questions? <a href="#" data-section="contact">Contact us anytime before ordering</a></p>
   </div>
 </div>
 <div id="cartOverlay" class="cart-overlay"></div>
@@ -2930,8 +2952,8 @@
 
         <div class="checkout-divider"></div>
 
-        <h3>Pay with Card</h3>
-        <p class="checkout-secure-note">Your card information is processed securely by Stripe. No card data is stored on our servers.</p>
+        <h3>Secure Card Checkout</h3>
+        <p class="checkout-secure-note">Pay instantly with credit card, debit card, Apple Pay, or Google Pay when available. Card data is processed securely by Stripe and never touches our servers.</p>
         <div class="checkout-trust-badges">
           <span class="trust-badge-item">🔒 SSL Encrypted</span>
           <span class="trust-badge-item">💳 Visa</span>
@@ -2947,7 +2969,7 @@
         </div>
 
         <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn" disabled>
-          <span id="payBtnText">Pay Now</span>
+          <span id="payBtnText">Pay Securely with Card</span>
           <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
         </button>
 
@@ -2957,6 +2979,52 @@
           <span>✦ PCI Compliant</span>
         </div>
       </form>
+
+      <!-- Alternate payment methods -->
+      <div class="checkout-alt-payments">
+        <div class="checkout-alt-divider"><span>More Ways to Pay</span></div>
+        <p class="checkout-alt-sub">Choose the payment method that works best for you.</p>
+
+        <div class="payment-alt-list">
+          <div class="payment-method-card">
+            <div class="payment-method-header">
+              <div class="payment-method-icon">💜</div>
+              <div class="payment-method-name">Venmo</div>
+            </div>
+            <div class="payment-method-types">
+              <span class="card-badge">💳 Visa</span>
+              <span class="card-badge">💳 Mastercard</span>
+              <span class="card-badge">💳 Debit</span>
+              <span class="card-badge">📱 Venmo Balance</span>
+            </div>
+            <a href="https://venmo.com/AmberLynnPatten" target="_blank" rel="noopener" class="pay-btn venmo-btn">Pay with Venmo</a>
+          </div>
+
+          <div class="payment-method-card">
+            <div class="payment-method-header">
+              <div class="payment-method-icon">💚</div>
+              <div class="payment-method-name">Cash App</div>
+            </div>
+            <div class="payment-method-types">
+              <span class="card-badge">💳 Visa</span>
+              <span class="card-badge">💳 Mastercard</span>
+              <span class="card-badge">💳 Debit</span>
+              <span class="card-badge">📱 Cash App Balance</span>
+            </div>
+            <a href="https://cash.app/$AmberAlchemy" target="_blank" rel="noopener" class="pay-btn cashapp-btn">Pay with Cash App</a>
+          </div>
+        </div>
+
+        <p class="payment-note">Please include your order name or email in the payment note for faster processing.</p>
+      </div>
+
+      <!-- Trust copy -->
+      <div class="checkout-trust-copy">
+        <p class="trust-line">🔒 Secure encrypted checkout</p>
+        <p class="trust-line">📦 Orders processed within 24–48 hours</p>
+        <p class="trust-line">🌿 Small-batch herbal products made with care</p>
+        <p class="trust-line">✉️ Questions? <a href="#" data-section="contact">Contact us anytime before ordering</a></p>
+      </div>
     </div>
   </div>
 
