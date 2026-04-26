@@ -32,16 +32,53 @@
   to = "/index.html"
   status = 200
 
-# Legacy library URLs — both old paths now redirect to the merged Herb & Ingredient Library.
+# Legacy library URLs — all old paths now redirect to the merged Herb & Ingredient Library.
 [[redirects]]
   from = "/herb-encyclopedia"
-  to = "/index.html#herbal-library"
+  to = "/herb-ingredient-library"
   status = 301
   force = true
 
 [[redirects]]
   from = "/ingredient-library"
+  to = "/herb-ingredient-library"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/herbs"
+  to = "/herb-ingredient-library"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/ingredients"
+  to = "/herb-ingredient-library"
+  status = 301
+  force = true
+
+# Canonical Herb & Ingredient Library — internally rewrites to the merged section anchor.
+[[redirects]]
+  from = "/herb-ingredient-library"
   to = "/index.html#herbal-library"
+  status = 200
+
+# Legacy custom-soap order URLs — redirect to the Soap Builder.
+[[redirects]]
+  from = "/custom-soap-order"
+  to = "/soap-builder"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/order-soap"
+  to = "/soap-builder"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/order-a-custom-soap"
+  to = "/soap-builder"
   status = 301
   force = true
 
@@ -105,6 +142,14 @@
   from = "/checkout"
   to = "/index.html"
   status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
 [[headers]]
   for = "/sw.js"

@@ -755,10 +755,11 @@
     showStep(1);
   }
 
-  // ---- Consultation form ----
+  // ---- Consultation form (Netlify Forms — name="herbal-quiz") ----
   function bindFormulaForm() {
+    var form = document.getElementById('formulaForm');
     var submitBtn = document.getElementById('formulaSubmitBtn');
-    if (!submitBtn) return;
+    if (!form || !submitBtn) return;
 
     function setStatus(msg, kind) {
       var card = submitBtn.closest('.formula-form');
@@ -777,7 +778,25 @@
       el.style.display = msg ? 'block' : 'none';
     }
 
-    submitBtn.addEventListener('click', async function() {
+    function setState(state) {
+      if (state === 'loading') {
+        submitBtn.disabled = true;
+        submitBtn.dataset.originalLabel = submitBtn.dataset.originalLabel || submitBtn.textContent;
+        submitBtn.textContent = 'Sending your results...';
+        setStatus('Sending your results...', 'ok');
+      } else if (state === 'success') {
+        submitBtn.disabled = false;
+        submitBtn.textContent = submitBtn.dataset.originalLabel || '✦ Send My Consultation Request';
+        setStatus('✦ Your remedy recommendations are on their way to your inbox.', 'ok');
+      } else if (state === 'error') {
+        submitBtn.disabled = false;
+        submitBtn.textContent = submitBtn.dataset.originalLabel || '✦ Send My Consultation Request';
+        setStatus('Something went wrong. Please try again.', 'error');
+      }
+    }
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
       var name = (document.getElementById('formulaName') || {}).value || '';
       var email = (document.getElementById('formulaEmail') || {}).value || '';
       var symptoms = (document.getElementById('formulaSymptoms') || {}).value || '';
@@ -798,36 +817,22 @@
         return;
       }
 
-      var params = {
-        customer_name: name,
-        customer_email: email,
-        symptoms: symptoms,
-        remedy_type: (document.getElementById('formulaType') || {}).value || 'Not specified',
-        medications: (document.getElementById('formulaMeds') || {}).value || 'None',
-        supplements: (document.getElementById('formulaSupplements') || {}).value || 'None',
-        allergies: (document.getElementById('formulaAllergies') || {}).value || 'None',
-        pregnancy_status: (document.getElementById('formulaPregnancy') || {}).value || 'Not specified',
-        additional_notes: (document.getElementById('formulaNotes') || {}).value || ''
-      };
-
-      var originalLabel = submitBtn.textContent;
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending...';
+      setState('loading');
       try {
-        if (!window.emailjs || typeof emailjs.send !== 'function') {
-          throw new Error('EmailJS not loaded');
+        var formData = new FormData(form);
+        var response = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(formData).toString(),
+        });
+        if (response.ok) {
+          setState('success');
+        } else {
+          setState('error');
         }
-        if (!window.EMAILJS_SERVICE_ID || window.EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID') {
-          throw new Error('EmailJS not configured');
-        }
-        await emailjs.send(window.EMAILJS_SERVICE_ID, window.EMAILJS_TPL_CONSULTATION, params);
-        setStatus('Sent! Amber will reply within 24–48 hours. ✦', 'ok');
       } catch (err) {
-        console.error('[Consultation] EmailJS send failed', err);
-        setStatus('Something went wrong. Please email awaken@consultant.com directly.', 'error');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalLabel;
+        console.error('[Consultation] submission failed', err);
+        setState('error');
       }
     });
   }

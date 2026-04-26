@@ -415,6 +415,13 @@
       summary.innerHTML = '<strong style="display:block;margin-bottom:0.4rem;font-family:Cinzel,serif;letter-spacing:1px;font-size:0.78rem;color:#d4a843;">YOUR SELECTIONS</strong>' +
         buildSummaryText().split('\n').map(function(l) { return '<div>' + l + '</div>'; }).join('');
     }
+    // Mirror the live builder selections into the form's hidden inputs so they are part of FormData.
+    var setHidden = function(id, value) { var el = document.getElementById(id); if (el) el.value = value || ''; };
+    setHidden('sbRequestBase', soapConfig.barType);
+    setHidden('sbRequestScent', (soapConfig.scents || []).join(', '));
+    setHidden('sbRequestColor', soapConfig.color);
+    setHidden('sbRequestBotanical', (soapConfig.botanicals || []).join(', '));
+    setHidden('sbRequestShape', soapConfig.shape || '');
     var status = document.getElementById('sbRequestStatus');
     if (status) { status.textContent = ''; status.style.color = ''; }
     modal.style.display = 'flex';
@@ -425,12 +432,12 @@
     if (modal) modal.style.display = 'none';
   };
 
-  window.sbSubmitCustomRequest = function() {
-    var name = (document.getElementById('sbRequestName') || {}).value || '';
-    var email = (document.getElementById('sbRequestEmail') || {}).value || '';
-    var notes = (document.getElementById('sbRequestNotes') || {}).value || '';
-    var statusEl = document.getElementById('sbRequestStatus');
+  // Wire the form to Netlify Forms + SendGrid confirmation.
+  (function bindSoapRequestForm() {
+    var form = document.getElementById('sbRequestForm');
+    if (!form) return;
     var submitBtn = document.getElementById('sbRequestSubmit');
+    var statusEl = document.getElementById('sbRequestStatus');
 
     function setStatus(msg, color) {
       if (!statusEl) return;
@@ -438,77 +445,79 @@
       statusEl.style.color = color || '';
     }
 
-    if (!name.trim() || !email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setStatus('Please enter a name and a valid email.', '#ffb29b');
-      return;
-    }
-    if (!soapConfig.barType) {
-      setStatus('Please pick a bar type before sending.', '#ffb29b');
-      return;
-    }
-
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
-    setStatus('Sending your request to Amber…', '');
-
-    var recipients = (window.SOAP_REQUEST_RECIPIENTS && window.SOAP_REQUEST_RECIPIENTS.length)
-      ? window.SOAP_REQUEST_RECIPIENTS
-      : ['awaken@consultant.com', 'dare2be4ree@gmail.com'];
-
-    var summaryText = buildSummaryText();
-    var templateParams = {
-      to_email: recipients.join(','),
-      customer_name: name,
-      customer_email: email,
-      bar_type: soapConfig.barType || '',
-      scent_profile: soapConfig.scents.join(', '),
-      benefits: soapConfig.benefits.join(', '),
-      botanicals: soapConfig.botanicals.join(', '),
-      color: soapConfig.color || '',
-      notes: notes,
-      summary: summaryText,
-      submitted_at: new Date().toISOString()
-    };
-
-    function showSuccess() {
-      setStatus('✦ Request sent! Amber will confirm by email within 24 hours.', '#aef0c4');
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send Request ✦'; }
-      setTimeout(function() {
-        window.sbCloseCustomRequest();
-        if (typeof showToast === 'function') showToast('Custom request sent! ✦');
-      }, 1800);
-    }
-    function showFailure() {
-      setStatus('Could not send. Please email awaken@consultant.com directly with your selections.', '#ffb29b');
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send Request ✦'; }
-    }
-
-    var hasEmailJS = window.emailjs && typeof emailjs.send === 'function';
-    var configuredKey = window.EMAILJS_PUBLIC_KEY && window.EMAILJS_PUBLIC_KEY.indexOf('YOUR_') !== 0;
-    var configuredService = window.EMAILJS_SERVICE_ID && window.EMAILJS_SERVICE_ID.indexOf('YOUR_') !== 0;
-    var configuredTpl = window.EMAILJS_TPL_SOAP_REQUEST && window.EMAILJS_TPL_SOAP_REQUEST.indexOf('YOUR_') !== 0;
-
-    if (hasEmailJS && configuredKey && configuredService && configuredTpl) {
-      emailjs.send(window.EMAILJS_SERVICE_ID, window.EMAILJS_TPL_SOAP_REQUEST, templateParams)
-        .then(showSuccess)
-        .catch(showFailure);
-    } else {
-      // Fallback path when EmailJS credentials are not configured: open user's mail client
-      // pre-populated with the spec so the request still reaches Amber.
-      try {
-        var subject = encodeURIComponent('Custom Soap Request — ' + name);
-        var body = encodeURIComponent(
-          'Hi Amber,\n\nI\'d like to request a custom soap with these selections:\n\n' +
-          summaryText +
-          '\n\nNotes: ' + (notes || '(none)') +
-          '\n\nName: ' + name +
-          '\nEmail: ' + email
-        );
-        window.location.href = 'mailto:' + recipients.join(',') + '?subject=' + subject + '&body=' + body;
-        showSuccess();
-      } catch (e) {
-        showFailure();
+    function setState(state) {
+      if (state === 'loading') {
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.dataset.originalLabel = submitBtn.dataset.originalLabel || submitBtn.textContent; submitBtn.textContent = 'Sending your request...'; }
+        setStatus('Sending your request...', '');
+      } else if (state === 'success') {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitBtn.dataset.originalLabel || 'Send Request ✦'; }
+        setStatus('✦ Your custom soap request is in. We\'ll confirm your selections within 1–2 days.', '#aef0c4');
+      } else if (state === 'error') {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitBtn.dataset.originalLabel || 'Send Request ✦'; }
+        setStatus('Something went wrong. Please try again or email awaken@consultant.com.', '#ffb29b');
       }
     }
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var name = (document.getElementById('sbRequestName') || {}).value || '';
+      var email = (document.getElementById('sbRequestEmail') || {}).value || '';
+      var notes = (document.getElementById('sbRequestNotes') || {}).value || '';
+
+      if (!name.trim() || !email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setStatus('Please enter a name and a valid email.', '#ffb29b');
+        return;
+      }
+      if (!soapConfig.barType) {
+        setStatus('Please pick a bar type before sending.', '#ffb29b');
+        return;
+      }
+
+      setState('loading');
+      try {
+        var formData = new FormData(form);
+        var response = await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(formData).toString(),
+        });
+        if (response.ok) {
+          setState('success');
+          try {
+            await fetch('/.netlify/functions/send-soap-confirmation', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                name: name,
+                email: email,
+                base: soapConfig.barType || '',
+                scent: (soapConfig.scents || []).join(', '),
+                color: soapConfig.color || '',
+                botanical: (soapConfig.botanicals || []).join(', '),
+                shape: soapConfig.shape || '',
+                notes: notes
+              })
+            });
+          } catch (e) { console.warn('[SoapBuilder] confirmation email failed', e); }
+          setTimeout(function() {
+            window.sbCloseCustomRequest();
+            if (typeof showToast === 'function') showToast('Custom request sent! ✦');
+          }, 1800);
+        } else {
+          setState('error');
+        }
+      } catch (err) {
+        console.error('[SoapBuilder] submission failed', err);
+        setState('error');
+      }
+    });
+  })();
+
+  // Legacy entry point — submit the form so all logic flows through one path.
+  window.sbSubmitCustomRequest = function() {
+    var form = document.getElementById('sbRequestForm');
+    if (form && typeof form.requestSubmit === 'function') form.requestSubmit();
+    else if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
   };
 
   // Close on backdrop click for the request modal

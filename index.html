@@ -951,11 +951,15 @@
         <h2>🌿 Free Herbal Healing Guide</h2>
         <p>Subscribe for Amber's <strong>Beginner's Guide to Herbal Healing</strong> — 20 herbs and how to use them.</p>
       </div>
-      <div class="newsletter-form">
-        <input type="text" id="nlName" placeholder="Your Name" />
-        <input type="email" id="nlEmail" placeholder="Your Email" />
-        <button class="btn-primary" id="nlSubmitBtn">Send Me the Guide ✦</button>
-      </div>
+      <form class="newsletter-form" id="newsletterForm" name="newsletter" method="POST" data-netlify="true" data-netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="newsletter" />
+        <p style="position: absolute; left: -9999px;">
+          <label>Leave this empty: <input name="bot-field" /></label>
+        </p>
+        <input type="text" id="nlName" name="firstName" placeholder="Your Name" />
+        <input type="email" id="nlEmail" name="email" placeholder="Your Email" />
+        <button type="submit" class="btn-primary" id="nlSubmitBtn">Send Me the Guide ✦</button>
+      </form>
     </div>
   </div>
 
@@ -1746,23 +1750,32 @@
   </div>
 </div>
 
-<!-- CUSTOM SOAP REQUEST FALLBACK FORM — emails awaken@consultant.com + dare2be4ree@gmail.com -->
+<!-- CUSTOM SOAP REQUEST FALLBACK FORM — Netlify Form: soap-builder -->
 <div id="sbRequestModal" style="display:none;position:fixed;inset:0;background:rgba(20,12,26,0.85);z-index:10100;align-items:center;justify-content:center;backdrop-filter:blur(6px);font-family:'Lora',serif;color:#F3EBDD;">
-  <div style="max-width:520px;width:92%;background:linear-gradient(160deg,rgba(42,26,46,0.98),rgba(31,19,38,0.98));border:1px solid rgba(184,148,90,0.5);border-radius:16px;padding:1.8rem 1.5rem;box-shadow:0 16px 48px rgba(0,0,0,0.55);position:relative;max-height:90vh;overflow-y:auto;">
-    <button onclick="sbCloseCustomRequest()" aria-label="Close" style="position:absolute;top:12px;right:14px;background:transparent;border:none;color:#F3EBDD;font-size:1.4rem;cursor:pointer;">&times;</button>
+  <form id="sbRequestForm" name="soap-builder" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" style="max-width:520px;width:92%;background:linear-gradient(160deg,rgba(42,26,46,0.98),rgba(31,19,38,0.98));border:1px solid rgba(184,148,90,0.5);border-radius:16px;padding:1.8rem 1.5rem;box-shadow:0 16px 48px rgba(0,0,0,0.55);position:relative;max-height:90vh;overflow-y:auto;">
+    <input type="hidden" name="form-name" value="soap-builder" />
+    <p style="position: absolute; left: -9999px;">
+      <label>Leave this empty: <input name="bot-field" /></label>
+    </p>
+    <button type="button" onclick="sbCloseCustomRequest()" aria-label="Close" style="position:absolute;top:12px;right:14px;background:transparent;border:none;color:#F3EBDD;font-size:1.4rem;cursor:pointer;">&times;</button>
     <div style="text-align:center;font-family:'Cinzel',serif;letter-spacing:3px;color:#d4a843;font-size:0.78rem;margin-bottom:0.4rem;">✦ CUSTOM REQUEST ✦</div>
     <h3 style="text-align:center;font-family:'Cinzel',serif;margin:0 0 0.8rem;font-size:1.25rem;letter-spacing:1.2px;">Send Your Soap Spec to Amber</h3>
     <p style="text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;opacity:0.8;font-size:1rem;margin:0 0 1rem;">We'll forward your selections to Amber and confirm by email within 24 hours.</p>
     <div id="sbRequestSummary" style="background:rgba(0,0,0,0.25);border:1px dashed rgba(184,148,90,0.4);border-radius:10px;padding:0.85rem 1rem;font-size:0.88rem;margin-bottom:1rem;"></div>
+    <input type="hidden" id="sbRequestBase" name="base" value="" />
+    <input type="hidden" id="sbRequestScent" name="scent" value="" />
+    <input type="hidden" id="sbRequestColor" name="color" value="" />
+    <input type="hidden" id="sbRequestBotanical" name="botanical" value="" />
+    <input type="hidden" id="sbRequestShape" name="shape" value="" />
     <label style="display:block;font-size:0.85rem;margin-bottom:0.3rem;">Your Name</label>
-    <input id="sbRequestName" type="text" required style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(184,148,90,0.4);background:rgba(0,0,0,0.25);color:#F3EBDD;margin-bottom:0.7rem;font-family:inherit;" />
+    <input id="sbRequestName" name="name" type="text" required style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(184,148,90,0.4);background:rgba(0,0,0,0.25);color:#F3EBDD;margin-bottom:0.7rem;font-family:inherit;" />
     <label style="display:block;font-size:0.85rem;margin-bottom:0.3rem;">Your Email</label>
-    <input id="sbRequestEmail" type="email" required style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(184,148,90,0.4);background:rgba(0,0,0,0.25);color:#F3EBDD;margin-bottom:0.7rem;font-family:inherit;" />
+    <input id="sbRequestEmail" name="email" type="email" required style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(184,148,90,0.4);background:rgba(0,0,0,0.25);color:#F3EBDD;margin-bottom:0.7rem;font-family:inherit;" />
     <label style="display:block;font-size:0.85rem;margin-bottom:0.3rem;">Notes (optional)</label>
-    <textarea id="sbRequestNotes" rows="3" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(184,148,90,0.4);background:rgba(0,0,0,0.25);color:#F3EBDD;margin-bottom:1rem;font-family:inherit;resize:vertical;"></textarea>
-    <button id="sbRequestSubmit" onclick="sbSubmitCustomRequest()" class="btn-primary" style="width:100%;padding:13px 18px;font-family:'Cinzel',serif;letter-spacing:1.3px;">Send Request ✦</button>
+    <textarea id="sbRequestNotes" name="notes" rows="3" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(184,148,90,0.4);background:rgba(0,0,0,0.25);color:#F3EBDD;margin-bottom:1rem;font-family:inherit;resize:vertical;"></textarea>
+    <button type="submit" id="sbRequestSubmit" class="btn-primary" style="width:100%;padding:13px 18px;font-family:'Cinzel',serif;letter-spacing:1.3px;">Send Request ✦</button>
     <p id="sbRequestStatus" style="text-align:center;font-size:0.86rem;margin:0.8rem 0 0;min-height:1.2em;"></p>
-  </div>
+  </form>
 </div>
 
 <!-- HERB INDEX / HERBAL LIBRARY SECTION -->
@@ -1788,16 +1801,20 @@
     </div>
   </div>
 
-  <!-- GRIMOIRE SUBSCRIBER GATE — fallback (no API). Submits an access request to Amber.
+  <!-- GRIMOIRE SUBSCRIBER GATE — Netlify Form: grimoire-access. Submits an access request to Amber.
        TODO: Replace email fallback with subscriber API check. Needs: API base URL, API key, List ID -->
   <div id="grimoireGate" style="max-width:640px;margin:1.5rem auto 2rem;padding:1.4rem 1.5rem;border:1px solid rgba(184,148,90,0.5);border-radius:14px;background:linear-gradient(160deg,rgba(42,26,46,0.6),rgba(31,19,38,0.7));box-shadow:0 8px 24px rgba(0,0,0,0.35);text-align:center;color:#F3EBDD;font-family:'Lora',serif;">
     <div style="font-family:'Cinzel',serif;letter-spacing:3px;color:#d4a843;font-size:0.78rem;margin-bottom:0.3rem;">✦ SUBSCRIBER ACCESS ✦</div>
     <h3 style="font-family:'Cinzel',serif;letter-spacing:1.5px;font-size:1.15rem;margin:0 0 0.5rem;">Already subscribed? Unlock your Grimoire.</h3>
     <p style="font-family:'Cormorant Garamond',serif;font-style:italic;opacity:0.8;font-size:1rem;margin:0 0 1rem;">Enter the email tied to your subscription. Not subscribed yet? Your request still reaches Amber and she'll get back to you.</p>
-    <div id="grimoireGateForm" style="display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;align-items:center;">
-      <input id="grimoireGateEmail" type="email" placeholder="you@email.com" aria-label="Subscriber email" style="flex:1 1 240px;min-width:220px;padding:11px 14px;border-radius:999px;border:1px solid rgba(184,148,90,0.4);background:rgba(0,0,0,0.25);color:#F3EBDD;font-family:inherit;" />
-      <button id="grimoireGateBtn" onclick="grimoireGateSubmit()" class="btn-primary" style="padding:11px 22px;border-radius:999px;font-family:'Cinzel',serif;letter-spacing:1.3px;font-size:0.85rem;min-height:44px;">Unlock Access</button>
-    </div>
+    <form id="grimoireGateForm" name="grimoire-access" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" style="display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;align-items:center;">
+      <input type="hidden" name="form-name" value="grimoire-access" />
+      <p style="position: absolute; left: -9999px;">
+        <label>Leave this empty: <input name="bot-field" /></label>
+      </p>
+      <input id="grimoireGateEmail" name="email" type="email" placeholder="you@email.com" aria-label="Subscriber email" style="flex:1 1 240px;min-width:220px;padding:11px 14px;border-radius:999px;border:1px solid rgba(184,148,90,0.4);background:rgba(0,0,0,0.25);color:#F3EBDD;font-family:inherit;" />
+      <button type="submit" id="grimoireGateBtn" class="btn-primary" style="padding:11px 22px;border-radius:999px;font-family:'Cinzel',serif;letter-spacing:1.3px;font-size:0.85rem;min-height:44px;">Unlock Access</button>
+    </form>
     <p id="grimoireGateStatus" style="margin:0.8rem 0 0;font-size:0.88rem;min-height:1.2em;"></p>
   </div>
 
@@ -2171,18 +2188,22 @@
 
   <!-- CONSULTATION FORM (formerly Custom Blend) -->
   <div class="formula-grid">
-    <div class="formula-form card">
+    <form class="formula-form card" id="formulaForm" name="herbal-quiz" method="POST" data-netlify="true" data-netlify-honeypot="bot-field">
       <h3>✦ Your Personal Herbal Consultation</h3>
       <p class="form-intro">Fill out the form below and Amber will respond within 24–48 hours with your custom formula recommendation.</p>
-      <input type="text" id="formulaName" placeholder="Your Full Name" required />
-      <input type="email" id="formulaEmail" placeholder="Your Email Address" required />
+      <input type="hidden" name="form-name" value="herbal-quiz" />
+      <p style="position: absolute; left: -9999px;">
+        <label>Leave this empty: <input name="bot-field" /></label>
+      </p>
+      <input type="text" id="formulaName" name="name" placeholder="Your Full Name" required />
+      <input type="email" id="formulaEmail" name="email" placeholder="Your Email Address" required />
       <div class="form-group">
         <label>What symptoms are you experiencing?</label>
-        <textarea id="formulaSymptoms" placeholder="Describe your symptoms, health concerns, or wellness goals in as much detail as you would like..." rows="4"></textarea>
+        <textarea id="formulaSymptoms" name="symptoms" placeholder="Describe your symptoms, health concerns, or wellness goals in as much detail as you would like..." rows="4"></textarea>
       </div>
       <div class="form-group">
         <label>What type of remedy are you interested in?</label>
-        <select id="formulaType">
+        <select id="formulaType" name="remedy_type">
           <option value="">-- Select Remedy Type --</option>
           <option>Custom Tea Blend</option>
           <option>Herbal Capsule Formula</option>
@@ -2193,19 +2214,19 @@
       </div>
       <div class="form-group">
         <label>Current medications (if any)</label>
-        <input type="text" id="formulaMeds" placeholder="List any medications you are currently taking..." />
+        <input type="text" id="formulaMeds" name="medications" placeholder="List any medications you are currently taking..." />
       </div>
       <div class="form-group">
         <label>Current supplements (vitamins, herbs, or other natural products)</label>
-        <input type="text" id="formulaSupplements" placeholder="e.g. Vitamin D, fish oil, ashwagandha..." />
+        <input type="text" id="formulaSupplements" name="supplements" placeholder="e.g. Vitamin D, fish oil, ashwagandha..." />
       </div>
       <div class="form-group">
         <label>Known allergies or sensitivities</label>
-        <input type="text" id="formulaAllergies" placeholder="e.g. ragweed, nuts, specific herbs..." />
+        <input type="text" id="formulaAllergies" name="allergies" placeholder="e.g. ragweed, nuts, specific herbs..." />
       </div>
       <div class="form-group">
         <label>Pregnancy or breastfeeding status</label>
-        <select id="formulaPregnancy">
+        <select id="formulaPregnancy" name="pregnancy_status">
           <option value="">-- Please select --</option>
           <option>Not pregnant or breastfeeding</option>
           <option>Currently pregnant</option>
@@ -2216,21 +2237,21 @@
       </div>
       <div class="form-group">
         <label>Anything else Amber should know?</label>
-        <textarea id="formulaNotes" placeholder="Health history, lifestyle, dietary preferences, spiritual intentions..." rows="3"></textarea>
+        <textarea id="formulaNotes" name="additional_notes" placeholder="Health history, lifestyle, dietary preferences, spiritual intentions..." rows="3"></textarea>
       </div>
       <div class="formula-safety-notice">
         <p>🌿 <strong>Important:</strong> The information shared in this consultation is used solely to help Amber craft a personalized botanical blend. Custom herbal formulas are designed to support general wellness and are not intended to diagnose, treat, cure, or prevent any disease or medical condition. Always consult your healthcare provider before beginning any herbal regimen, especially if you are pregnant, breastfeeding, taking prescription medications, or managing a health condition.</p>
         <label class="formula-safety-label">
-          <input type="checkbox" id="formulaInteractionCheck" required />
+          <input type="checkbox" id="formulaInteractionCheck" name="interaction_acknowledged" required />
           I understand that herbal remedies may interact with medications or medical conditions, and I am seeking wellness support, not medical treatment.
         </label>
         <label class="formula-safety-label" style="margin-top:0.5rem;">
-          <input type="checkbox" id="formulaAgeConfirm" required />
+          <input type="checkbox" id="formulaAgeConfirm" name="age_confirmed" required />
           I confirm that I am 18 years of age or older.
         </label>
       </div>
-      <button class="btn-primary" id="formulaSubmitBtn">✦ Send My Consultation Request</button>
-    </div>
+      <button type="submit" class="btn-primary" id="formulaSubmitBtn">✦ Send My Consultation Request</button>
+    </form>
     <div class="formula-info">
       <div class="formula-info-card card">
         <h4>🌿 How It Works</h4>
@@ -2452,20 +2473,24 @@
     <p>Reach out with questions, custom requests, or to book a consultation.</p>
   </div>
   <div class="contact-grid">
-    <div class="contact-form card">
+    <form class="contact-form card" id="contactForm" name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field">
       <h3>Send a Message</h3>
-      <input type="text" id="contactName" placeholder="Your Name" />
-      <input type="email" id="contactEmail" placeholder="Your Email" />
-      <select id="contactSubject">
+      <input type="hidden" name="form-name" value="contact" />
+      <p style="position: absolute; left: -9999px;">
+        <label>Leave this empty: <input name="bot-field" /></label>
+      </p>
+      <input type="text" id="contactName" name="name" placeholder="Your Name" />
+      <input type="email" id="contactEmail" name="email" placeholder="Your Email" />
+      <select id="contactSubject" name="subject">
         <option>General Question</option>
         <option>Custom Order Request</option>
         <option>Book a Service</option>
         <option>Wholesale Inquiry</option>
         <option>Other</option>
       </select>
-      <textarea id="contactMessage" placeholder="Your message..."></textarea>
-      <button class="btn-primary" id="contactSubmitBtn">Send Message ✦</button>
-    </div>
+      <textarea id="contactMessage" name="message" placeholder="Your message..."></textarea>
+      <button type="submit" class="btn-primary" id="contactSubmitBtn">Send Message ✦</button>
+    </form>
     <div class="contact-info card">
       <h3>Connect With Amber</h3>
       <p>📧 <a href="mailto:awaken@consultant.com">awaken@consultant.com</a></p>

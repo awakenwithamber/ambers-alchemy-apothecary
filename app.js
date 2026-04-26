@@ -873,60 +873,132 @@ function showInlineFormStatus(form, msg, kind) {
   el.style.border = kind === 'error' ? '1px solid rgba(180,60,60,0.5)' : '1px solid rgba(184,148,90,0.45)';
 }
 
-document.getElementById('contactSubmitBtn').addEventListener('click', async function() {
-  const btn = this;
-  const card = btn.closest('.contact-form');
-  const name = document.getElementById('contactName').value.trim();
-  const email = document.getElementById('contactEmail').value.trim();
-  const subject = document.getElementById('contactSubject').value;
-  const message = document.getElementById('contactMessage').value.trim();
+// ---- CONTACT FORM (Netlify Forms + SendGrid confirmation) ----
+(function bindContactForm() {
+  const form = document.getElementById('contactForm');
+  if (!form) return;
+  const btn = document.getElementById('contactSubmitBtn');
+  const card = form;
 
-  showInlineFormStatus(card, '', 'ok');
-  if (!name || !email || !message) { showInlineFormStatus(card, 'Please fill in your name, email, and message.', 'error'); return; }
-  if (!isValidEmail(email)) { showInlineFormStatus(card, 'Please enter a valid email address.', 'error'); return; }
-
-  const params = { name: name, email: email, subject_type: subject, message: message };
-  const originalLabel = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Sending...';
-  try {
-    if (!window.emailjs || typeof emailjs.send !== 'function') {
-      throw new Error('EmailJS not loaded');
+  function setState(state) {
+    if (state === 'loading') {
+      btn.disabled = true;
+      btn.dataset.originalLabel = btn.dataset.originalLabel || btn.textContent;
+      btn.textContent = 'Sending your message...';
+      showInlineFormStatus(card, 'Sending your message...', 'ok');
+    } else if (state === 'success') {
+      btn.disabled = false;
+      btn.textContent = btn.dataset.originalLabel || 'Send Message ✦';
+      showInlineFormStatus(card, '✦ Your message has been received. Amber will be in touch within 1–2 business days.', 'ok');
+    } else if (state === 'error') {
+      btn.disabled = false;
+      btn.textContent = btn.dataset.originalLabel || 'Send Message ✦';
+      showInlineFormStatus(card, 'Something went wrong. Please try again or email awaken@consultant.com directly.', 'error');
     }
-    if (!window.EMAILJS_SERVICE_ID || window.EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID') {
-      throw new Error('EmailJS not configured');
-    }
-    await emailjs.send(window.EMAILJS_SERVICE_ID, window.EMAILJS_TPL_CONTACT, params);
-    try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
-    showInlineFormStatus(card, 'Sent! Amber will reply within 24–48 hours. ✦', 'ok');
-    document.getElementById('contactName').value = '';
-    document.getElementById('contactEmail').value = '';
-    document.getElementById('contactMessage').value = '';
-  } catch (err) {
-    console.error('[Contact] EmailJS send failed', err);
-    showInlineFormStatus(card, 'Something went wrong. Please email awaken@consultant.com directly.', 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = originalLabel;
   }
-});
 
-// ---- NEWSLETTER FORM ----
-document.getElementById('nlSubmitBtn').addEventListener('click', () => {
-  const name = document.getElementById('nlName').value.trim();
-  const email = document.getElementById('nlEmail').value.trim();
-  if (!email) { showToast('Please enter your email address.'); return; }
-  const body = encodeURIComponent(
-    `New Newsletter Subscriber — Amber's Alchemy Apothecary\n\n` +
-    `Name: ${name || 'Not provided'}\nEmail: ${email}\n\n` +
-    `Please add this subscriber to the mailing list and send the Free Herbal Healing Guide.`
-  );
-  try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?subject=${encodeURIComponent('New Subscriber — ' + (name || email))}&body=${body}`;
-  showToast('✦ Thank you! Check your email for the Herbal Healing Guide.');
-  document.getElementById('nlName').value = '';
-  document.getElementById('nlEmail').value = '';
-});
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const name = (document.getElementById('contactName').value || '').trim();
+    const email = (document.getElementById('contactEmail').value || '').trim();
+    const subject = document.getElementById('contactSubject').value;
+    const message = (document.getElementById('contactMessage').value || '').trim();
+
+    showInlineFormStatus(card, '', 'ok');
+    if (!name || !email || !message) { showInlineFormStatus(card, 'Please fill in your name, email, and message.', 'error'); return; }
+    if (!isValidEmail(email)) { showInlineFormStatus(card, 'Please enter a valid email address.', 'error'); return; }
+
+    setState('loading');
+    try {
+      const formData = new FormData(form);
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString(),
+      });
+      if (response.ok) {
+        setState('success');
+        try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
+        // Trigger confirmation email via SendGrid
+        try {
+          await fetch('/.netlify/functions/send-contact-confirmation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, email: email, message: message })
+          });
+        } catch (e) { console.warn('[Contact] confirmation email failed', e); }
+        document.getElementById('contactName').value = '';
+        document.getElementById('contactEmail').value = '';
+        document.getElementById('contactMessage').value = '';
+      } else {
+        setState('error');
+      }
+    } catch (err) {
+      console.error('[Contact] submission failed', err);
+      setState('error');
+    }
+  });
+})();
+
+// ---- NEWSLETTER FORM (Netlify Forms + SendGrid welcome) ----
+(function bindNewsletterForm() {
+  const form = document.getElementById('newsletterForm');
+  if (!form) return;
+  const btn = document.getElementById('nlSubmitBtn');
+
+  function setState(state) {
+    if (state === 'loading') {
+      btn.disabled = true;
+      btn.dataset.originalLabel = btn.dataset.originalLabel || btn.textContent;
+      btn.textContent = 'Signing you up...';
+      showToast('Signing you up...');
+    } else if (state === 'success') {
+      btn.disabled = false;
+      btn.textContent = btn.dataset.originalLabel || 'Send Me the Guide ✦';
+      showToast('✦ Welcome to the apothecary. Check your inbox for a note from us.');
+    } else if (state === 'error') {
+      btn.disabled = false;
+      btn.textContent = btn.dataset.originalLabel || 'Send Me the Guide ✦';
+      showToast('Something went wrong. Please try again.');
+    }
+  }
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const firstName = (document.getElementById('nlName').value || '').trim();
+    const email = (document.getElementById('nlEmail').value || '').trim();
+    if (!email) { showToast('Please enter your email address.'); return; }
+    if (!isValidEmail(email)) { showToast('Please enter a valid email address.'); return; }
+
+    setState('loading');
+    try {
+      const formData = new FormData(form);
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString(),
+      });
+      if (response.ok) {
+        setState('success');
+        try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
+        try {
+          await fetch('/.netlify/functions/send-newsletter-welcome', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ firstName: firstName, email: email })
+          });
+        } catch (e) { console.warn('[Newsletter] welcome email failed', e); }
+        document.getElementById('nlName').value = '';
+        document.getElementById('nlEmail').value = '';
+      } else {
+        setState('error');
+      }
+    } catch (err) {
+      console.error('[Newsletter] submission failed', err);
+      setState('error');
+    }
+  });
+})();
 
 // ---- FAQS ----
 function renderFAQs() {
@@ -1422,62 +1494,67 @@ document.addEventListener('click', function(e) {
   }
 });
 
-// ---- GRIMOIRE SUBSCRIBER GATE (email fallback; replace with API check when credentials available) ----
-window.grimoireGateSubmit = function() {
-  var input = document.getElementById("grimoireGateEmail");
-  var statusEl = document.getElementById("grimoireGateStatus");
-  var btn = document.getElementById("grimoireGateBtn");
-  if (!input || !statusEl) return;
-  var email = (input.value || "").trim();
-  function setStatus(msg, color) { statusEl.textContent = msg; statusEl.style.color = color || ""; }
+// ---- GRIMOIRE SUBSCRIBER GATE (Netlify Forms + SendGrid request notification) ----
+(function bindGrimoireGate() {
+  const form = document.getElementById('grimoireGateForm');
+  if (!form) return;
+  const input = document.getElementById('grimoireGateEmail');
+  const statusEl = document.getElementById('grimoireGateStatus');
+  const btn = document.getElementById('grimoireGateBtn');
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    setStatus("Please enter a valid email address.", "#ffb29b");
-    return;
-  }
+  function setStatus(msg, color) { if (statusEl) { statusEl.textContent = msg; statusEl.style.color = color || ''; } }
 
-  if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
-  setStatus("Sending your access request…", "");
-
-  var recipients = (window.SOAP_REQUEST_RECIPIENTS && window.SOAP_REQUEST_RECIPIENTS.length)
-    ? window.SOAP_REQUEST_RECIPIENTS
-    : ["awaken@consultant.com", "dare2be4ree@gmail.com"];
-
-  function done(success) {
-    if (btn) { btn.disabled = false; btn.textContent = "Unlock Access"; }
-    if (success) {
-      setStatus("✦ Request sent — we’ll confirm your access within 24 hours.", "#aef0c4");
-      input.value = "";
-    } else {
-      setStatus("Could not send. Email awaken@consultant.com directly with your subscriber email.", "#ffb29b");
+  function setState(state) {
+    if (state === 'loading') {
+      if (btn) { btn.disabled = true; btn.dataset.originalLabel = btn.dataset.originalLabel || btn.textContent; btn.textContent = 'Checking your access...'; }
+      setStatus('Checking your access...', '');
+    } else if (state === 'success') {
+      if (btn) { btn.disabled = false; btn.textContent = btn.dataset.originalLabel || 'Unlock Access'; }
+      setStatus('✦ Your access request has been sent. Expect a response within 24 hours.', '#aef0c4');
+    } else if (state === 'error') {
+      if (btn) { btn.disabled = false; btn.textContent = btn.dataset.originalLabel || 'Unlock Access'; }
+      setStatus('Something went wrong. Please try again or email awaken@consultant.com.', '#ffb29b');
     }
   }
 
-  var hasEmailJS = window.emailjs && typeof emailjs.send === "function";
-  var configuredKey = window.EMAILJS_PUBLIC_KEY && window.EMAILJS_PUBLIC_KEY.indexOf("YOUR_") !== 0;
-  var configuredService = window.EMAILJS_SERVICE_ID && window.EMAILJS_SERVICE_ID.indexOf("YOUR_") !== 0;
-  var tplId = window.EMAILJS_TPL_CONTACT;
-  var configuredTpl = tplId && tplId.indexOf("YOUR_") !== 0;
-
-  var params = {
-    to_email: recipients.join(","),
-    name: "Grimoire Access Request",
-    email: email,
-    subject_type: "Grimoire Access Request",
-    message: "Subscriber-access request for the Grimoire from " + email + ". Verify against subscriber list and reply with access."
-  };
-
-  if (hasEmailJS && configuredKey && configuredService && configuredTpl) {
-    emailjs.send(window.EMAILJS_SERVICE_ID, tplId, params).then(function() { done(true); }).catch(function() { done(false); });
-  } else {
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const email = (input && input.value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setStatus('Please enter a valid email address.', '#ffb29b');
+      return;
+    }
+    setState('loading');
     try {
-      var subject = encodeURIComponent("Grimoire Access Request");
-      var body = encodeURIComponent(
-        "A visitor requested Grimoire access.\n\nEmail: " + email + "\n\nPlease verify against subscriber list."
-      );
-      window.location.href = "mailto:" + recipients.join(",") + "?subject=" + subject + "&body=" + body;
-      done(true);
-    } catch (e) { done(false); }
-  }
+      const formData = new FormData(form);
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString(),
+      });
+      if (response.ok) {
+        setState('success');
+        try {
+          await fetch('/.netlify/functions/send-grimoire-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+          });
+        } catch (e) { console.warn('[Grimoire] request notification failed', e); }
+        if (input) input.value = '';
+      } else {
+        setState('error');
+      }
+    } catch (err) {
+      console.error('[Grimoire] submission failed', err);
+      setState('error');
+    }
+  });
+})();
+window.grimoireGateSubmit = function() {
+  // Legacy entry point — submit the form so all logic flows through one path.
+  var form = document.getElementById('grimoireGateForm');
+  if (form && typeof form.requestSubmit === 'function') form.requestSubmit();
+  else if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
 };
 
