@@ -384,26 +384,12 @@ document.getElementById('proceedToCheckoutBtn').addEventListener('click', () => 
   initStripe();
 });
 
-// Venmo/CashApp dynamic total — accepts debit & credit cards
-function getOrderNote() {
-  const name = document.getElementById('cartName').value.trim();
-  const items = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-  let note = "Amber's Alchemy Order";
-  if (name) note += ` - ${name}`;
-  if (items) note += ` | ${items}`;
-  return note;
-}
-
+// Venmo/CashApp payment buttons — open static account links
 document.getElementById('venmoPayBtn').addEventListener('click', function(e) {
-  const { total } = calcCartTotals();
   if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  const note = getOrderNote();
-  this.href = `https://venmo.com/AmberLynnPatten?txn=pay&amount=${total.toFixed(2)}&note=${encodeURIComponent(note)}`;
 });
 document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
-  const { total } = calcCartTotals();
   if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  this.href = `https://cash.app/$AmberAlchemy/${total.toFixed(2)}`;
 });
 
 // ---- SECURE CHECKOUT (Stripe) ----
