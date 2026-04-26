@@ -57,45 +57,39 @@ document.getElementById('consultClose').addEventListener('click', () => {
   document.getElementById('consultBanner').style.display = 'none';
 });
 
-// ---- MUSIC (modal welcome + persistent toggle) ----
+// ---- MUSIC (audio pill — fades in 6s after page load, no upfront modal) ----
 
 const bgMusic = document.getElementById('bgMusic');
 const musicToggleBtn = document.getElementById('musicToggleBtn');
-const musicModal = document.getElementById('musicModal');
-const musicYesBtn = document.getElementById('musicYesBtn');
-const musicNoBtn = document.getElementById('musicNoBtn');
+const audioPill = document.getElementById('audioPill');
+const audioPillYes = document.getElementById('audioPillYes');
+const audioPillNo = document.getElementById('audioPillNo');
 let musicPlaying = false;
 
-bgMusic.volume = 0; // Start silent — fade in after user opts in
+bgMusic.volume = 0;
 bgMusic.loop = true;
 
-// Fade-in helper: ramps volume from 0 to target over ~4 seconds
 function fadeInMusic(targetVol) {
   bgMusic.volume = 0;
   var current = 0;
   var step = 0.005;
-  var interval = 120; // ~33 steps over ~4s to reach 0.07
+  var interval = 120;
   var fade = setInterval(function() {
     current += step;
-    if (current >= targetVol) {
-      current = targetVol;
-      clearInterval(fade);
-    }
+    if (current >= targetVol) { current = targetVol; clearInterval(fade); }
     bgMusic.volume = current;
   }, interval);
 }
 
-// Determine start volume: saved preference (capped at 12%) or default 7%
 function getStartVolume() {
   var saved = Number(localStorage.getItem('siteVolume'));
-  if (saved && saved > 0) {
-    return Math.min(saved, 0.12);
-  }
+  if (saved && saved > 0) return Math.min(saved, 0.12);
   return 0.07;
 }
 
 function setMusicUI(playing) {
   musicPlaying = playing;
+  if (!musicToggleBtn) return;
   if (playing) {
     musicToggleBtn.innerHTML = '&#9834; ON';
     musicToggleBtn.classList.add('playing');
@@ -107,48 +101,119 @@ function setMusicUI(playing) {
   }
 }
 
-function dismissModal() {
-  musicModal.classList.add('music-modal-hidden');
-  setTimeout(function() { musicModal.style.display = 'none'; }, 400);
+// Audio pill: fade in 6s after load, dismiss after first interaction.
+function showAudioPill() {
+  if (!audioPill) return;
+  if (sessionStorage.getItem('audioPillDismissed')) return;
+  audioPill.style.display = 'flex';
+  // next frame to trigger transition
+  requestAnimationFrame(function() { audioPill.style.opacity = '1'; });
+}
+function hideAudioPill() {
+  if (!audioPill) return;
+  audioPill.style.opacity = '0';
+  setTimeout(function() { audioPill.style.display = 'none'; }, 600);
+  try { sessionStorage.setItem('audioPillDismissed', '1'); } catch (e) {}
 }
 
-// "Get the Full Experience" — fade in music gently and dismiss
-musicYesBtn.addEventListener('click', function() {
-  dismissModal();
-  var target = getStartVolume();
-  bgMusic.volume = 0;
-  if (volumeSlider) volumeSlider.value = Math.round(target * 100);
-  bgMusic.load();
-  bgMusic.play().then(function() {
-    fadeInMusic(target);
-    setMusicUI(true);
-  }).catch(function() {
-    setMusicUI(false);
-  });
-});
+// ---- ENTRANCE OVERLAY (sessionStorage key: awakenMusicChoice) ----
+// Persists per-session — choice survives navigation between pages within the same tab.
+(function() {
+  var overlay = document.getElementById('entranceOverlay');
+  if (!overlay) return;
+  var withMusicBtn = document.getElementById('entranceWithMusic');
+  var silentBtn = document.getElementById('entranceSilent');
 
-// "Browse without Music" — just dismiss
-musicNoBtn.addEventListener('click', function() {
-  dismissModal();
-  setMusicUI(false);
-});
-
-// Persistent nav toggle: ON <-> OFF
-musicToggleBtn.addEventListener('click', function(e) {
-  e.stopPropagation();
-  if (musicPlaying) {
-    bgMusic.pause();
-    setMusicUI(false);
-  } else {
+  function startMusicFromOverlay() {
     var target = getStartVolume();
     bgMusic.volume = 0;
     if (volumeSlider) volumeSlider.value = Math.round(target * 100);
+    bgMusic.load();
     bgMusic.play().then(function() {
       fadeInMusic(target);
       setMusicUI(true);
-    }).catch(function() {});
+    }).catch(function() { setMusicUI(false); });
   }
-});
+
+  function closeOverlay() {
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.45s ease';
+    setTimeout(function() { overlay.style.display = 'none'; }, 450);
+  }
+
+  var existingChoice = null;
+  try { existingChoice = sessionStorage.getItem('awakenMusicChoice'); } catch (e) {}
+
+  if (!existingChoice) {
+    // First visit this session — show overlay
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '1';
+    // Suppress audio pill since the overlay covers that decision
+    try { sessionStorage.setItem('audioPillDismissed', '1'); } catch (e) {}
+  } else if (existingChoice === 'music') {
+    // Returning page within session — auto-resume music silently
+    setTimeout(function() {
+      bgMusic.play().then(function() {
+        fadeInMusic(getStartVolume());
+        setMusicUI(true);
+      }).catch(function() { /* browser blocked — user can use nav toggle */ });
+    }, 300);
+  }
+
+  if (withMusicBtn) {
+    withMusicBtn.addEventListener('click', function() {
+      try { sessionStorage.setItem('awakenMusicChoice', 'music'); } catch (e) {}
+      startMusicFromOverlay();
+      closeOverlay();
+    });
+  }
+  if (silentBtn) {
+    silentBtn.addEventListener('click', function() {
+      try { sessionStorage.setItem('awakenMusicChoice', 'silent'); } catch (e) {}
+      closeOverlay();
+    });
+  }
+})();
+
+// Audio pill only appears when overlay was already answered AND user picked silent (gives them
+// a soft second-chance to enable music) — the overlay handler suppresses it on first visit.
+setTimeout(showAudioPill, 6000);
+
+if (audioPillYes) {
+  audioPillYes.addEventListener('click', function() {
+    var target = getStartVolume();
+    bgMusic.volume = 0;
+    if (volumeSlider) volumeSlider.value = Math.round(target * 100);
+    bgMusic.load();
+    bgMusic.play().then(function() {
+      fadeInMusic(target);
+      setMusicUI(true);
+    }).catch(function() { setMusicUI(false); });
+    hideAudioPill();
+  });
+}
+if (audioPillNo) {
+  audioPillNo.addEventListener('click', hideAudioPill);
+}
+
+// Persistent nav toggle: ON <-> OFF
+if (musicToggleBtn) {
+  musicToggleBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (musicPlaying) {
+      bgMusic.pause();
+      setMusicUI(false);
+    } else {
+      var target = getStartVolume();
+      bgMusic.volume = 0;
+      if (volumeSlider) volumeSlider.value = Math.round(target * 100);
+      bgMusic.play().then(function() {
+        fadeInMusic(target);
+        setMusicUI(true);
+      }).catch(function() {});
+    }
+  });
+}
 
 // Volume slider
 const volumeSlider = document.getElementById('volumeSlider');
@@ -165,11 +230,6 @@ if (volumeSlider) {
     }
   });
 }
-
-// Show modal on load (after short delay for page to render)
-setTimeout(function() {
-  musicModal.style.display = 'flex';
-}, 600);
 
 // ---- AUDIO LIFECYCLE: stop music on tab hide/close/background ----
 document.addEventListener('visibilitychange', function() {
@@ -289,16 +349,11 @@ cartOverlay.addEventListener('click', closeCartFn);
 
 function calcCartTotals() {
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal === 0 ? 0 : (subtotal >= 75 ? 0 : 6.99);
-  const taxRate = 0.08;
-  const tax = subtotal * taxRate;
-  const total = subtotal + shipping + tax;
-  document.getElementById('cartSubtotal').textContent = formatPrice(subtotal);
-  document.getElementById('cartShipping').textContent = shipping === 0 && subtotal > 0 ? 'FREE' : formatPrice(shipping);
-  document.getElementById('cartTax').textContent = formatPrice(tax);
-  document.getElementById('cartTotal').textContent = formatPrice(total);
-  document.getElementById('cartCount').textContent = cart.reduce((s, i) => s + i.qty, 0);
-  return { subtotal, shipping, tax, total };
+  const totalEl = document.getElementById('cartTotal');
+  if (totalEl) totalEl.textContent = formatPrice(subtotal);
+  const countEl = document.getElementById('cartCount');
+  if (countEl) countEl.textContent = cart.reduce((s, i) => s + i.qty, 0);
+  return { subtotal, total: subtotal };
 }
 
 function renderCart() {
@@ -346,271 +401,142 @@ function renderCart() {
   calcCartTotals();
 }
 
-function addToCart(name, price, qty = 1) {
-  const existing = cart.find(i => i.name === name);
+function addToCart(name, price, qty = 1, opts) {
+  opts = opts || {};
+  const variantKey = opts.variantKey || ShopifyCart.guessKey(name);
+  const customAttributes = opts.customAttributes || null;
+
+  // Local cart powers the sidebar UI. Shopify holds the source of truth for checkout.
+  const existing = cart.find(i => i.name === name && !customAttributes);
   if (existing) { existing.qty += qty; }
-  else { cart.push({ name, price, qty }); }
+  else {
+    const item = { name, price, qty };
+    if (opts.herbs) item.herbs = opts.herbs;
+    if (variantKey) item.variantKey = variantKey;
+    if (customAttributes) item.customAttributes = customAttributes;
+    cart.push(item);
+  }
   renderCart();
+  ShopifyCart.add(variantKey, qty, customAttributes);
   showToast(`✦ Added to cart: ${name}`);
   openCart();
   try { window.AAA && window.AAA.addToCart && window.AAA.addToCart({ name: name, price: price, quantity: qty }, qty); } catch (e) {}
 }
 
-// Email checkout — now redirects to secure checkout page
-document.getElementById('proceedToCheckoutBtn').addEventListener('click', () => {
-  const name = document.getElementById('cartName').value.trim();
-  const email = document.getElementById('cartEmail').value.trim();
-  const address = document.getElementById('cartAddress').value.trim();
-  const cityState = document.getElementById('cartCityState').value.trim();
-  const notes = document.getElementById('cartNotes').value.trim();
-  if (!name || !email || !address) { showToast('Please fill in your name, email, and address.'); return; }
-  if (cart.length === 0) { showToast('Your cart is empty!'); return; }
+// ---- SHOPIFY CHECKOUT INTEGRATION ----
+// Source of truth for checkout & payment. Local cart still powers the sidebar UI.
+const ShopifyCart = (function() {
+  let client = null;
+  let checkout = null;
+  let ready = null;
 
-  // Pre-fill checkout form with cart info
-  document.getElementById('checkoutCustomerName').value = name;
-  document.getElementById('checkoutEmail').value = email;
-  document.getElementById('checkoutAddress').value = address;
-  document.getElementById('checkoutCityStateZip').value = cityState;
-  document.getElementById('checkoutNotes').value = notes;
-  document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-  document.getElementById('checkoutQuantity').value = cart.reduce((s, i) => s + i.qty, 0);
-
-  const cartTotal = cart.reduce((s, i) => s + (parseFloat(i.price) || 0) * i.qty, 0);
-  try { window.AAA && window.AAA.beginCheckout && window.AAA.beginCheckout(cart, cartTotal); } catch (e) {}
-
-  closeCartFn();
-  showSection('checkout');
-  renderCheckoutSummary();
-  initStripe();
-});
-
-// Venmo/CashApp dynamic total — accepts debit & credit cards
-function getOrderNote() {
-  const name = document.getElementById('cartName').value.trim();
-  const items = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-  let note = "Amber's Alchemy Order";
-  if (name) note += ` - ${name}`;
-  if (items) note += ` | ${items}`;
-  return note;
-}
-
-document.getElementById('venmoPayBtn').addEventListener('click', function(e) {
-  const { total } = calcCartTotals();
-  if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  const note = getOrderNote();
-  this.href = `https://venmo.com/AmberLynnPatten?txn=pay&amount=${total.toFixed(2)}&note=${encodeURIComponent(note)}`;
-});
-document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
-  const { total } = calcCartTotals();
-  if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  this.href = `https://cash.app/$AmberAlchemy/${total.toFixed(2)}`;
-});
-
-// ---- SECURE CHECKOUT (Stripe) ----
-let stripe, cardElement, stripeReady = false;
-
-function renderCheckoutSummary() {
-  const el = document.getElementById('checkoutItems');
-  if (cart.length === 0) {
-    el.innerHTML = '<p class="empty-cart">No items in cart.</p>';
-    return;
-  }
-  el.innerHTML = cart.map(i => `
-    <div class="checkout-item">
-      <span>${i.name} x${i.qty}</span>
-      <span class="checkout-item-price">${formatPrice(i.price * i.qty)}</span>
-    </div>
-  `).join('');
-
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
-  document.getElementById('checkoutSubtotal').textContent = formatPrice(subtotal);
-  document.getElementById('checkoutShipping').textContent = shipping === 0 ? 'FREE' : formatPrice(shipping);
-  document.getElementById('checkoutTax').textContent = formatPrice(tax);
-  document.getElementById('checkoutTotal').textContent = formatPrice(total);
-  document.getElementById('orderTotalField').value = formatPrice(total);
-}
-
-async function initStripe() {
-  if (stripeReady) return;
-
-  // Try meta tag first, then fetch from API
-  let pk = '';
-  const stripeKey = document.querySelector('meta[name="stripe-key"]');
-  if (stripeKey && stripeKey.content) {
-    pk = stripeKey.content;
-  } else {
-    try {
-      const res = await fetch('/api/stripe-config');
-      const data = await res.json();
-      pk = data.publishableKey || '';
-    } catch (e) { /* ignore */ }
+  function variantId(key) {
+    if (!key) return null;
+    const map = window.SHOPIFY_VARIANTS || {};
+    return map[key] || null;
   }
 
-  if (!pk) {
-    document.getElementById('card-errors').textContent = 'Card payments are being set up. You may also use Venmo or Cash App from the cart.';
-    document.getElementById('checkoutPayBtn').disabled = false;
-    document.getElementById('payBtnText').textContent = 'Submit Order';
-    return;
+  function guessKey(name) {
+    if (!name) return null;
+    const map = window.SHOPIFY_VARIANTS || {};
+    const direct = Object.keys(map).find(k => k.toLowerCase() === String(name).toLowerCase());
+    if (direct) return direct;
+    const slug = String(name).toLowerCase().replace(/&amp;/g, '&').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    if (map[slug]) return slug;
+    const aliases = {
+      'dreamease-capsules': 'dreamease',
+      'chill-pill-serenity-capsules': 'chill-pill',
+      'the-gentle-detox-ritual': 'bundle-detox',
+      'the-stress-relief-ritual': 'bundle-stress',
+      'the-focus-clarity-ritual': 'bundle-focus',
+      'the-happy-calm-ritual': 'bundle-mood',
+      'the-energized-focused-ritual': 'bundle-energy'
+    };
+    return aliases[slug] || null;
   }
-  try {
-    stripe = Stripe(pk);
-    const elements = stripe.elements();
-    cardElement = elements.create('card', {
-      style: {
-        base: {
-          color: '#F3EBDD',
-          fontFamily: 'Lora, Georgia, serif',
-          fontSize: '15px',
-          '::placeholder': { color: '#B8A898' },
-        },
-        invalid: { color: '#e74c3c' },
-      },
+
+  function init() {
+    if (ready) return ready;
+    ready = new Promise(function(resolve) {
+      function done() { resolve({ client: client, checkout: checkout }); }
+      try {
+        if (!window.ShopifyBuy || !window.SHOPIFY_DOMAIN || !window.SHOPIFY_STOREFRONT_TOKEN
+            || window.SHOPIFY_STOREFRONT_TOKEN === 'YOUR_STOREFRONT_API_TOKEN') {
+          console.warn('[Shopify] SDK or credentials not configured — checkout disabled until Amber pastes them in.');
+          return done();
+        }
+        client = window.ShopifyBuy.buildClient({
+          domain: window.SHOPIFY_DOMAIN,
+          storefrontAccessToken: window.SHOPIFY_STOREFRONT_TOKEN
+        });
+        client.checkout.create().then(function(c) {
+          checkout = c;
+          window.shopifyCheckout = c;
+          console.log('[Shopify] Checkout ready', c.id, c.webUrl);
+          done();
+        }).catch(function(err) {
+          console.error('[Shopify] Failed to create checkout', err);
+          done();
+        });
+      } catch (e) {
+        console.error('[Shopify] init error', e);
+        done();
+      }
     });
-    cardElement.mount('#card-element');
-    cardElement.on('change', function(event) {
-      const errEl = document.getElementById('card-errors');
-      errEl.textContent = event.error ? event.error.message : '';
-      document.getElementById('checkoutPayBtn').disabled = !event.complete;
-    });
-    stripeReady = true;
-  } catch (e) {
-    document.getElementById('card-errors').textContent = 'Could not initialize payment form.';
+    return ready;
   }
-}
 
-// Handle checkout form submission
-document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+  function add(key, qty, customAttributes) {
+    init().then(function(ctx) {
+      if (!ctx.client || !ctx.checkout) return;
+      const id = variantId(key);
+      if (!id) {
+        console.warn('[Shopify] No variant ID configured for "' + key + '" — paste it into SHOPIFY_VARIANTS in index.html.');
+        return;
+      }
+      const lineItem = { variantId: id, quantity: qty || 1 };
+      if (customAttributes && customAttributes.length) lineItem.customAttributes = customAttributes;
+      ctx.client.checkout.addLineItems(ctx.checkout.id, [lineItem]).then(function(updated) {
+        checkout = updated;
+        window.shopifyCheckout = updated;
+      }).catch(function(err) {
+        console.error('[Shopify] addLineItems error', err);
+      });
+    });
+  }
+
+  function redirectToCheckout() {
+    init().then(function(ctx) {
+      if (!ctx.checkout || !ctx.checkout.webUrl) {
+        showToast('Checkout is not configured yet. Please email awaken@consultant.com.');
+        return;
+      }
+      try { window.AAA && window.AAA.beginCheckout && window.AAA.beginCheckout(cart, cart.reduce((s,i) => s + i.price * i.qty, 0)); } catch (e) {}
+      window.location.href = ctx.checkout.webUrl;
+    });
+  }
+
+  // Boot on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+
+  return { add: add, redirectToCheckout: redirectToCheckout, guessKey: guessKey, variantId: variantId, init: init };
+})();
+window.ShopifyCart = ShopifyCart;
+
+// ---- "Proceed to Checkout ✦" button — redirects to Shopify ----
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest && e.target.closest('#checkout-btn');
+  if (!btn) return;
   e.preventDefault();
-
-  const payBtn = document.getElementById('checkoutPayBtn');
-  const btnText = document.getElementById('payBtnText');
-  const spinner = document.getElementById('payBtnSpinner');
-  const errEl = document.getElementById('card-errors');
-
-  // Validate required fields
-  const name = document.getElementById('checkoutCustomerName').value.trim();
-  const email = document.getElementById('checkoutEmail').value.trim();
-  const address = document.getElementById('checkoutAddress').value.trim();
-  const cityZip = document.getElementById('checkoutCityStateZip').value.trim();
-  if (!name || !email || !address || !cityZip) {
-    errEl.textContent = 'Please fill in all required fields.';
-    return;
-  }
-  if (cart.length === 0) { errEl.textContent = 'Your cart is empty.'; return; }
-
-  // Calculate total in cents for Stripe
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
-  const amountCents = Math.round(total * 100);
-
-  // Ensure order total is set on hidden field
-  document.getElementById('orderTotalField').value = formatPrice(total);
-
-  payBtn.disabled = true;
-  btnText.textContent = 'Processing...';
-  spinner.style.display = 'inline-block';
-  errEl.textContent = '';
-
-  try {
-    // If Stripe is not initialized, submit form as order (payment via Venmo/CashApp)
-    if (!stripe || !cardElement) {
-      document.getElementById('transactionId').value = 'PENDING-' + Date.now();
-      document.getElementById('paymentStatus').value = 'pending-external-payment';
-      document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-      await submitNetlifyForm();
-      showConfirmation('PENDING — Complete payment via Venmo or Cash App in the cart', 'pending');
-      return;
-    }
-
-    // Create PaymentIntent on server
-    const piResponse = await fetch('/api/create-payment-intent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: amountCents,
-        currency: 'usd',
-        description: `Order from ${name} — Amber's Alchemy Apothecary`,
-        metadata: {
-          customer_name: name,
-          email: email,
-          items: cart.map(i => `${i.name} x${i.qty}`).join(', ').substring(0, 500),
-        },
-      }),
-    });
-
-    const piData = await piResponse.json();
-    if (piData.error) { throw new Error(piData.error); }
-
-    // Confirm payment with Stripe
-    const { error, paymentIntent } = await stripe.confirmCardPayment(piData.clientSecret, {
-      payment_method: {
-        card: cardElement,
-        billing_details: {
-          name: name,
-          email: email,
-          address: { postal_code: cityZip.split(/\s+/).pop() || '' },
-        },
-      },
-    });
-
-    if (error) { throw new Error(error.message); }
-
-    if (paymentIntent.status === 'succeeded') {
-      // Set transaction info and submit Netlify Form
-      document.getElementById('transactionId').value = paymentIntent.id;
-      document.getElementById('paymentStatus').value = 'paid';
-      await submitNetlifyForm();
-      showConfirmation(paymentIntent.id, 'paid');
-    }
-  } catch (err) {
-    errEl.textContent = err.message || 'Payment failed. Please try again.';
-    payBtn.disabled = false;
-    btnText.textContent = 'Pay Now';
-    spinner.style.display = 'none';
-  }
+  if (cart.length === 0) { showToast('Your cart is empty!'); return; }
+  ShopifyCart.redirectToCheckout();
 });
 
-async function submitNetlifyForm() {
-  const form = document.getElementById('checkoutForm');
-  const formData = new FormData(form);
-  await fetch('/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(formData).toString(),
-  });
-}
+// Email validation helper
+function isValidEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
 
-function showConfirmation(transactionId, status) {
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
-  const name = document.getElementById('checkoutCustomerName').value.trim();
-  const email = document.getElementById('checkoutEmail').value.trim();
-
-  document.getElementById('confirmationDetails').innerHTML = `
-    <p><strong>Order for:</strong> ${name}</p>
-    <p><strong>Email:</strong> ${email}</p>
-    <p><strong>Items:</strong> ${cart.map(i => `${i.name} x${i.qty}`).join(', ')}</p>
-    <p><strong>Total:</strong> ${formatPrice(total)}</p>
-    <p><strong>Transaction ID:</strong> ${transactionId}</p>
-    <p><strong>Status:</strong> ${status === 'paid' ? 'Payment Confirmed' : 'Awaiting Payment'}</p>
-  `;
-
-  // Show confirmation, hide form
-  document.querySelector('.checkout-container').style.display = 'none';
-  document.getElementById('checkoutConfirmation').style.display = 'block';
-
-  // Clear cart
-  cart = [];
-  renderCart();
-  showToast('Order submitted successfully!');
-}
 
 // ---- RENDER PRODUCTS (with category filter) ----
 function renderProducts(filterCat = 'all') {
@@ -665,7 +591,7 @@ function renderProducts(filterCat = 'all') {
       const sel = document.getElementById(`size-${p.id}`);
       const price = parseFloat(sel.value);
       const label = sel.options[sel.selectedIndex].text;
-      addToCart(`${p.name} (${label.split('—')[0].trim()})`, price);
+      addToCart(`${p.name} (${label.split('—')[0].trim()})`, price, 1, { variantKey: p.id });
     });
   });
 }
@@ -931,35 +857,148 @@ function updateTeaSelected() {}
 // ---- SOAP FORM ----
 // Handled by the DOMContentLoaded listener below — no duplicate needed here.
 
-// ---- CONTACT FORM ----
-document.getElementById('contactSubmitBtn').addEventListener('click', () => {
-  const name = document.getElementById('contactName').value.trim();
-  const email = document.getElementById('contactEmail').value.trim();
-  const subject = document.getElementById('contactSubject').value;
-  const message = document.getElementById('contactMessage').value.trim();
-  if (!name || !email || !message) { showToast('Please fill in all fields.'); return; }
-  const body = encodeURIComponent(`From: ${name} (${email})\n\n${message}`);
-  try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
-  showToast('Opening email client...');
-});
+// ---- CONTACT FORM (EmailJS → awaken@consultant.com) ----
+function showInlineFormStatus(form, msg, kind) {
+  if (!form) return;
+  let el = form.querySelector('.inline-form-status');
+  if (!el) {
+    el = document.createElement('p');
+    el.className = 'inline-form-status';
+    el.style.cssText = 'margin-top:0.75rem;padding:0.65rem 0.85rem;border-radius:8px;font-family:Lora,serif;font-size:0.9rem;line-height:1.5;';
+    form.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.background = kind === 'error' ? 'rgba(180,60,60,0.15)' : 'rgba(184,148,90,0.15)';
+  el.style.color = kind === 'error' ? '#ffb3b3' : '#F3EBDD';
+  el.style.border = kind === 'error' ? '1px solid rgba(180,60,60,0.5)' : '1px solid rgba(184,148,90,0.45)';
+}
 
-// ---- NEWSLETTER FORM ----
-document.getElementById('nlSubmitBtn').addEventListener('click', () => {
-  const name = document.getElementById('nlName').value.trim();
-  const email = document.getElementById('nlEmail').value.trim();
-  if (!email) { showToast('Please enter your email address.'); return; }
-  const body = encodeURIComponent(
-    `New Newsletter Subscriber — Amber's Alchemy Apothecary\n\n` +
-    `Name: ${name || 'Not provided'}\nEmail: ${email}\n\n` +
-    `Please add this subscriber to the mailing list and send the Free Herbal Healing Guide.`
-  );
-  try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?subject=${encodeURIComponent('New Subscriber — ' + (name || email))}&body=${body}`;
-  showToast('✦ Thank you! Check your email for the Herbal Healing Guide.');
-  document.getElementById('nlName').value = '';
-  document.getElementById('nlEmail').value = '';
-});
+// ---- CONTACT FORM (Netlify Forms + SendGrid confirmation) ----
+(function bindContactForm() {
+  const form = document.getElementById('contactForm');
+  if (!form) return;
+  const btn = document.getElementById('contactSubmitBtn');
+  const card = form;
+
+  function setState(state) {
+    if (state === 'loading') {
+      btn.disabled = true;
+      btn.dataset.originalLabel = btn.dataset.originalLabel || btn.textContent;
+      btn.textContent = 'Sending your message...';
+      showInlineFormStatus(card, 'Sending your message...', 'ok');
+    } else if (state === 'success') {
+      btn.disabled = false;
+      btn.textContent = btn.dataset.originalLabel || 'Send Message ✦';
+      showInlineFormStatus(card, '✦ Your message has been received. Amber will be in touch within 1–2 business days.', 'ok');
+    } else if (state === 'error') {
+      btn.disabled = false;
+      btn.textContent = btn.dataset.originalLabel || 'Send Message ✦';
+      showInlineFormStatus(card, 'Something went wrong. Please try again or email awaken@consultant.com directly.', 'error');
+    }
+  }
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const name = (document.getElementById('contactName').value || '').trim();
+    const email = (document.getElementById('contactEmail').value || '').trim();
+    const subject = document.getElementById('contactSubject').value;
+    const message = (document.getElementById('contactMessage').value || '').trim();
+
+    showInlineFormStatus(card, '', 'ok');
+    if (!name || !email || !message) { showInlineFormStatus(card, 'Please fill in your name, email, and message.', 'error'); return; }
+    if (!isValidEmail(email)) { showInlineFormStatus(card, 'Please enter a valid email address.', 'error'); return; }
+
+    setState('loading');
+    try {
+      const formData = new FormData(form);
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString(),
+      });
+      if (response.ok) {
+        setState('success');
+        try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
+        // Trigger confirmation email via SendGrid
+        try {
+          await fetch('/.netlify/functions/send-contact-confirmation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, email: email, message: message })
+          });
+        } catch (e) { console.warn('[Contact] confirmation email failed', e); }
+        document.getElementById('contactName').value = '';
+        document.getElementById('contactEmail').value = '';
+        document.getElementById('contactMessage').value = '';
+      } else {
+        setState('error');
+      }
+    } catch (err) {
+      console.error('[Contact] submission failed', err);
+      setState('error');
+    }
+  });
+})();
+
+// ---- NEWSLETTER FORM (Netlify Forms + SendGrid welcome) ----
+(function bindNewsletterForm() {
+  const form = document.getElementById('newsletterForm');
+  if (!form) return;
+  const btn = document.getElementById('nlSubmitBtn');
+
+  function setState(state) {
+    if (state === 'loading') {
+      btn.disabled = true;
+      btn.dataset.originalLabel = btn.dataset.originalLabel || btn.textContent;
+      btn.textContent = 'Signing you up...';
+      showToast('Signing you up...');
+    } else if (state === 'success') {
+      btn.disabled = false;
+      btn.textContent = btn.dataset.originalLabel || 'Send Me the Guide ✦';
+      showToast('✦ Welcome to the apothecary. Check your inbox for a note from us.');
+    } else if (state === 'error') {
+      btn.disabled = false;
+      btn.textContent = btn.dataset.originalLabel || 'Send Me the Guide ✦';
+      showToast('Something went wrong. Please try again.');
+    }
+  }
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const firstName = (document.getElementById('nlName').value || '').trim();
+    const email = (document.getElementById('nlEmail').value || '').trim();
+    if (!email) { showToast('Please enter your email address.'); return; }
+    if (!isValidEmail(email)) { showToast('Please enter a valid email address.'); return; }
+
+    setState('loading');
+    try {
+      const formData = new FormData(form);
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString(),
+      });
+      if (response.ok) {
+        setState('success');
+        try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
+        try {
+          await fetch('/.netlify/functions/send-newsletter-welcome', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ firstName: firstName, email: email })
+          });
+        } catch (e) { console.warn('[Newsletter] welcome email failed', e); }
+        document.getElementById('nlName').value = '';
+        document.getElementById('nlEmail').value = '';
+      } else {
+        setState('error');
+      }
+    } catch (err) {
+      console.error('[Newsletter] submission failed', err);
+      setState('error');
+    }
+  });
+})();
 
 // ---- FAQS ----
 function renderFAQs() {
@@ -1286,9 +1325,20 @@ if (typeof BOTANICALS !== 'undefined') {
 // SOAP CART INTEGRATION
 // ============================================================
 function addSoapToCart(name, price, btnEl) {
-  // Use the main addToCart function which handles cart state, toast, and drawer
-  addToCart(name, price);
-  // Visual feedback on the button
+  // Map the friendly soap name to the SHOPIFY_VARIANTS key used in index.html
+  const SOAP_KEYS = {
+    'Lavender Fairy Dream': 'soap-lavender-fairy-dream',
+    "Gaia's Rose": 'soap-gaias-rose',
+    'Eucalyptus Mint Spa Renewal': 'soap-eucalyptus-mint',
+    'Warm Cinnamon Comfort': 'soap-warm-cinnamon',
+    'Orange Lily Goddess': 'soap-orange-lily',
+    'Citrus Goddess Glow': 'soap-citrus-goddess',
+    'Sacred Forest Ritual': 'soap-sacred-forest',
+    'Fresh Mountain Air': 'soap-fresh-mountain-air',
+    'Sunlit Garden Bloom': 'soap-sunlit-garden-bloom'
+  };
+  const variantKey = SOAP_KEYS[name] || ShopifyCart.guessKey(name);
+  addToCart(name, price, 1, { variantKey: variantKey });
   if (btnEl) {
     const orig = btnEl.textContent;
     btnEl.textContent = '✓ Added!';
@@ -1302,44 +1352,209 @@ function addSoapToCart(name, price, btnEl) {
 window.addSoapToCart = addSoapToCart;
 
 // ---- SOAP CUSTOM ORDER FORM ----
+// Legacy dropdown soap-form was removed in FIX 7. Stub kept so any older
+// inline references don't throw during boot.
 (function() {
-  function bindSoapForm() {
-    const soapSubmitBtn = document.getElementById('soapSubmitBtn');
-    if (!soapSubmitBtn) return;
-    soapSubmitBtn.addEventListener('click', function() {
-      const name = (document.getElementById('soapName') || {}).value?.trim() || '';
-      const email = (document.getElementById('soapEmail') || {}).value?.trim() || '';
-      if (!name || !email) {
-        showToast('Please enter your name and email to submit a custom soap request.');
-        return;
-      }
-      const scent = (document.getElementById('soapScent') || {}).value || 'Not specified';
-      const color = (document.getElementById('soapColor') || {}).value || 'Not specified';
-      const shape = (document.getElementById('soapShape') || {}).value || 'Not specified';
-      const botanical = (document.getElementById('soapBotanical') || {}).value || 'Not specified';
-      const quantity = (document.getElementById('soapQuantity') || {}).value || 'Not specified';
-      const notes = (document.getElementById('soapNotes') || {}).value?.trim() || '';
-      const subject = encodeURIComponent('Custom Soap Order from ' + name);
-      const body = encodeURIComponent(
-        'Custom Soap Order Request\n\n' +
-        'Name: ' + name + '\n' +
-        'Email: ' + email + '\n' +
-        'Scent: ' + scent + '\n' +
-        'Color: ' + color + '\n' +
-        'Shape: ' + shape + '\n' +
-        'Botanical: ' + botanical + '\n' +
-        'Quantity: ' + quantity + '\n' +
-        'Notes: ' + notes
-      );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
-      showToast('✦ Opening email to send your custom soap request...');
-      soapSubmitBtn.textContent = '✓ Request Sent!';
-      setTimeout(() => { soapSubmitBtn.textContent = 'Send My Custom Soap Request ✦'; }, 3000);
-    });
-  }
+  function bindSoapForm() { /* no-op — feature removed */ }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bindSoapForm);
   } else {
     bindSoapForm();
   }
 })();
+
+// ---- ANCHOR ALIASES + SCROLL HELPER (FIX 4) ----
+// Maps the spec-required IDs onto the actual section IDs used in the markup.
+const SECTION_ALIASES = {
+  'grimoire': 'herb-index',
+  'articles': 'herbal-wisdom',
+  'herb-encyclopedia': 'herbal-library',
+  'create-remedy': 'custom-formula',
+  'consultation-form': 'contact'
+};
+
+function scrollToAnchor(id) {
+  if (!id) return;
+  // First try actual id on the page
+  let el = document.getElementById(id);
+  let resolvedId = id;
+  if (!el && SECTION_ALIASES[id]) {
+    resolvedId = SECTION_ALIASES[id];
+    el = document.getElementById(resolvedId);
+  }
+  if (!el) return;
+  // If the target is a separate page-section, activate it first
+  if (el.classList && el.classList.contains('page-section')) {
+    showSection(resolvedId);
+    return;
+  }
+  // Otherwise, find the page-section ancestor and activate it, then scroll
+  const parentSection = el.closest && el.closest('.page-section');
+  if (parentSection && !parentSection.classList.contains('active')) {
+    showSection(parentSection.id);
+  }
+  setTimeout(() => {
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    el.classList && el.classList.add('product-highlight');
+    setTimeout(() => { el.classList && el.classList.remove('product-highlight'); }, 1800);
+  }, 100);
+}
+window.scrollToAnchor = scrollToAnchor;
+
+// ---- BUNDLE ADD-TO-CART (FIX 4) ----
+function addBundleToCart(name, price, variantKey) {
+  const cleanName = (name || '').replace(/&amp;/g, '&');
+  addToCart(cleanName, price, 1, { variantKey: variantKey || ShopifyCart.guessKey(cleanName) });
+}
+window.addBundleToCart = addBundleToCart;
+
+// ---- "MEET AMBER" toggle for trimmed about section ----
+document.addEventListener('click', function(e) {
+  if (e.target && e.target.id === 'meetAmberBtn') {
+    const bio = document.getElementById('aboutFullBio');
+    if (bio) {
+      const isHidden = bio.style.display === 'none';
+      bio.style.display = isHidden ? 'block' : 'none';
+      e.target.textContent = isHidden ? 'Hide Full Bio' : 'Meet Amber →';
+    }
+  }
+});
+
+// ---- ID ALIAS ANCHORS — invisible duplicates so spec'd IDs always resolve ----
+(function ensureAliasAnchors() {
+  function add(aliasId, targetId) {
+    if (document.getElementById(aliasId)) return;
+    const target = document.getElementById(targetId);
+    if (!target) return;
+    const anchor = document.createElement('span');
+    anchor.id = aliasId;
+    anchor.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;';
+    target.parentNode.insertBefore(anchor, target);
+  }
+  function run() {
+    Object.keys(SECTION_ALIASES).forEach(function(aliasId) {
+      add(aliasId, SECTION_ALIASES[aliasId]);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else { run(); }
+})();
+
+// ---- GOOGLE REVIEW LINK FALLBACK (FIX 4) ----
+// Until Amber pastes her Google Place ID into the meta tag, fall back to a
+// search-for-business URL. Once set, every "Leave a Review on Google" link
+// across the site picks up the canonical write-review URL automatically.
+(function setReviewLinks() {
+  function apply() {
+    const meta = document.querySelector('meta[name="google-place-id"]');
+    const placeId = meta && meta.content ? meta.content.trim() : '';
+    const url = placeId
+      ? 'https://search.google.com/local/writereview?placeid=' + encodeURIComponent(placeId)
+      : 'https://www.google.com/search?q=Amber%27s+Alchemy+Apothecary+Awaken+Again#lrd=,1';
+    document.querySelectorAll('[data-rv-google], a[data-rv-google]').forEach(function(a) {
+      if (a.tagName === 'A') {
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+      }
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', apply);
+  } else { apply(); }
+})();
+
+// Tag the contact form card with id="consultation-form" so the spec'd
+// "Book a Free Consultation" CTA scrolls to a meaningful target.
+(function tagConsultationForm() {
+  function run() {
+    const card = document.querySelector('#contact .contact-form');
+    if (card && !card.id) card.id = 'consultation-form';
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', run);
+  } else { run(); }
+})();
+
+// Make "Book a Free Consultation" / "Contact Amber" / "Get a Custom Formula"
+// hash links resolve via scrollToAnchor.
+document.addEventListener('click', function(e) {
+  const a = e.target.closest && e.target.closest('a[href^="#"]');
+  if (!a) return;
+  const href = a.getAttribute('href') || '';
+  if (href.length < 2) return;
+  const id = href.slice(1);
+  // skip if it's already wired to data-section / data-rv-* etc.
+  if (a.hasAttribute('data-section') || a.hasAttribute('data-rv-open') || a.hasAttribute('data-rv-google') || a.hasAttribute('data-rv-open-all')) return;
+  // only intercept if a matching id or alias exists
+  if (document.getElementById(id) || SECTION_ALIASES[id]) {
+    e.preventDefault();
+    scrollToAnchor(id);
+  }
+});
+
+// ---- GRIMOIRE SUBSCRIBER GATE (Netlify Forms + SendGrid request notification) ----
+(function bindGrimoireGate() {
+  const form = document.getElementById('grimoireGateForm');
+  if (!form) return;
+  const input = document.getElementById('grimoireGateEmail');
+  const statusEl = document.getElementById('grimoireGateStatus');
+  const btn = document.getElementById('grimoireGateBtn');
+
+  function setStatus(msg, color) { if (statusEl) { statusEl.textContent = msg; statusEl.style.color = color || ''; } }
+
+  function setState(state) {
+    if (state === 'loading') {
+      if (btn) { btn.disabled = true; btn.dataset.originalLabel = btn.dataset.originalLabel || btn.textContent; btn.textContent = 'Checking your access...'; }
+      setStatus('Checking your access...', '');
+    } else if (state === 'success') {
+      if (btn) { btn.disabled = false; btn.textContent = btn.dataset.originalLabel || 'Unlock Access'; }
+      setStatus('✦ Your access request has been sent. Expect a response within 24 hours.', '#aef0c4');
+    } else if (state === 'error') {
+      if (btn) { btn.disabled = false; btn.textContent = btn.dataset.originalLabel || 'Unlock Access'; }
+      setStatus('Something went wrong. Please try again or email awaken@consultant.com.', '#ffb29b');
+    }
+  }
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const email = (input && input.value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setStatus('Please enter a valid email address.', '#ffb29b');
+      return;
+    }
+    setState('loading');
+    try {
+      const formData = new FormData(form);
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString(),
+      });
+      if (response.ok) {
+        setState('success');
+        try {
+          await fetch('/.netlify/functions/send-grimoire-request', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+          });
+        } catch (e) { console.warn('[Grimoire] request notification failed', e); }
+        if (input) input.value = '';
+      } else {
+        setState('error');
+      }
+    } catch (err) {
+      console.error('[Grimoire] submission failed', err);
+      setState('error');
+    }
+  });
+})();
+window.grimoireGateSubmit = function() {
+  // Legacy entry point — submit the form so all logic flows through one path.
+  var form = document.getElementById('grimoireGateForm');
+  if (form && typeof form.requestSubmit === 'function') form.requestSubmit();
+  else if (form) form.dispatchEvent(new Event('submit', { cancelable: true }));
+};
+

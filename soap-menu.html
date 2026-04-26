@@ -1202,5 +1202,27 @@ section.block:first-of-type{border-top:none}
 
 </article>
 
+<!-- STICKY "BUILD YOUR BAR" CTA — bottom of viewport on /soap-menu (FIX 7) -->
+<div id="soapMenuStickyBar" style="position:fixed;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(31,19,38,0.92),rgba(31,19,38,0.98));backdrop-filter:blur(8px);border-top:1px solid rgba(184,148,90,0.5);padding:0.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;z-index:9000;font-family:'Lora',serif;color:#F3EBDD;flex-wrap:wrap;">
+  <div style="display:flex;align-items:baseline;gap:0.5rem;flex-wrap:wrap;">
+    <strong style="font-family:'Cinzel',serif;color:#d4a843;letter-spacing:1.5px;font-size:0.95rem;">Build Your Bar</strong>
+    <span style="opacity:0.85;font-size:0.9rem;">Choose scent, color, botanicals · $13.99</span>
+  </div>
+  <div style="display:flex;gap:0.5rem;">
+    <a href="/#soaps" class="btn-secondary" style="padding:0.55rem 1rem;text-decoration:none;border-radius:999px;border:1px solid rgba(184,148,90,0.6);color:#F3EBDD;font-size:0.85rem;">View Bars ✦</a>
+    <a href="/#soaps?builder=1" id="soapMenuBuildBtn" class="btn-primary" style="padding:0.55rem 1.1rem;text-decoration:none;border-radius:999px;background:linear-gradient(135deg,#B8945A,#8C6B3A);color:#1f1326;font-weight:600;font-size:0.85rem;">Build Mine →</a>
+  </div>
+</div>
+<script>
+  // Open the soap builder when navigating from /soap-menu with ?builder=1
+  document.getElementById('soapMenuBuildBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    window.location.href = '/#soaps';
+    setTimeout(function() {
+      if (typeof window.openSoapBuilder === 'function') window.openSoapBuilder();
+    }, 400);
+  });
+</script>
+
 </body>
 </html>
