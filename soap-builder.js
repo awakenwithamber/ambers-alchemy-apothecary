@@ -374,25 +374,21 @@
     if (soapConfig.botanicals.length) details.push('Botanicals: ' + soapConfig.botanicals.join(', '));
     if (soapConfig.color) details.push('Color: ' + soapConfig.color);
 
-    var item = {
-      name: name,
-      price: SB_BASE_PRICE,
-      qty: 1,
-      type: 'custom-soap',
-      herbs: details.join(' | '),
-      config: {
-        barType: soapConfig.barType,
-        scents: soapConfig.scents.slice(),
-        benefits: soapConfig.benefits.slice(),
-        botanicals: soapConfig.botanicals.slice(),
-        color: soapConfig.color
-      }
-    };
+    // Line item properties — Shopify shows these on the order so Amber sees the full spec
+    var customAttributes = [
+      { key: 'Bar Type', value: soapConfig.barType }
+    ];
+    if (soapConfig.scents.length) customAttributes.push({ key: 'Scent Profile', value: soapConfig.scents.join(', ') });
+    if (soapConfig.benefits.length) customAttributes.push({ key: 'Benefits', value: soapConfig.benefits.join(', ') });
+    if (soapConfig.botanicals.length) customAttributes.push({ key: 'Botanicals', value: soapConfig.botanicals.join(', ') });
+    if (soapConfig.color) customAttributes.push({ key: 'Color', value: soapConfig.color });
 
-    if (typeof window.addItemToCart === 'function') {
-      window.addItemToCart(item);
-    } else if (typeof addToCart === 'function') {
-      addToCart(name, SB_BASE_PRICE, 1);
+    if (typeof addToCart === 'function') {
+      addToCart(name, SB_BASE_PRICE, 1, {
+        variantKey: 'soap-custom',
+        customAttributes: customAttributes,
+        herbs: details.join(' | ')
+      });
     }
     if (typeof showToast === 'function') showToast('Added to cart! ✦');
     closeSoapBuilder();

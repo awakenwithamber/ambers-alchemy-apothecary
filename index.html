@@ -480,21 +480,59 @@
 <script src="https://player.vimeo.com/api/player.js"></script>
 <meta name="stripe-key" content="" />
 
-<!-- EmailJS — order notification + customer receipt -->
+<!-- Shopify Buy SDK — handles cart, checkout, payment, order emails -->
+<script src="https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js"></script>
+<script>
+  // Amber: paste your Shopify domain + Storefront API token here.
+  window.SHOPIFY_DOMAIN = "ambers-alchemy.myshopify.com";
+  window.SHOPIFY_STOREFRONT_TOKEN = "YOUR_STOREFRONT_API_TOKEN";
+
+  // Amber: paste each product's Variant ID from Shopify admin (numeric or
+  // base64 GID — both work with Buy SDK). Keys must match exactly the keys
+  // used by addToCart() throughout the site.
+  window.SHOPIFY_VARIANTS = {
+    // Capsules / remedies — $28.99
+    'dreamease': '',
+    'chill-pill': '',
+    'sacred-balance': '',
+    'vital-connect': '',
+    'hair-serum': '',
+    'age-reversal-balm': '',
+    'pain-relief-balm': '',
+    // Soaps — $12.99
+    'soap-lavender-fairy-dream': '',
+    'soap-gaias-rose': '',
+    'soap-eucalyptus-mint': '',
+    'soap-warm-cinnamon': '',
+    'soap-orange-lily': '',
+    'soap-citrus-goddess': '',
+    'soap-sacred-forest': '',
+    'soap-fresh-mountain-air': '',
+    'soap-sunlit-garden-bloom': '',
+    // Custom Soap — $13.99 (configuration travels via line item properties)
+    'soap-custom': '',
+    // Ritual Bundles
+    'bundle-detox': '',
+    'bundle-stress': '',
+    'bundle-focus': '',
+    'bundle-mood': '',
+    'bundle-energy': ''
+  };
+</script>
+
+<!-- EmailJS — consultation + contact forms only (orders go through Shopify) -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
-  // Amber: replace these placeholders with your EmailJS credentials.
-  // PUBLIC KEY  = your EmailJS account public key
-  // SERVICE ID  = your connected mail service (e.g. Gmail) ID
-  // TPL_AMBER   = template that emails YOU (awaken@consultant.com) the order
-  // TPL_CUSTOMER= template that emails the customer their receipt
+  // Amber: replace with your EmailJS credentials.
   window.EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY";
   window.EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID";
-  window.EMAILJS_TPL_AMBER = "YOUR_AMBER_TEMPLATE_ID";
-  window.EMAILJS_TPL_CUSTOMER = "YOUR_CUSTOMER_TEMPLATE_ID";
-  if (window.emailjs && typeof emailjs.init === 'function') {
-    emailjs.init(window.EMAILJS_PUBLIC_KEY);
-  }
+  window.EMAILJS_TPL_CONSULTATION = "YOUR_CONSULTATION_TEMPLATE_ID";
+  window.EMAILJS_TPL_CONTACT = "YOUR_CONTACT_TEMPLATE_ID";
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.emailjs && typeof emailjs.init === 'function') {
+      emailjs.init(window.EMAILJS_PUBLIC_KEY);
+    }
+  });
 </script>
 
 <!-- Analytics: dataLayer + GA4 / GTM bootstrap (consent-safe defaults).
@@ -569,13 +607,6 @@
     <button class="nav-btn" data-section="faqs">FAQs</button>
     <button class="nav-btn" data-section="contact">Contact</button>
     <button class="nav-btn nav-btn-start" onclick="openHerbalAdvisor()">Find My Remedy</button>
-    <button class="nav-btn" data-section="checkout" id="navCheckoutBtn" style="display:none">Checkout</button>
-  </div>
-  <div class="audio-controls">
-    <button id="musicToggleBtn" class="music-toggle-btn" aria-label="Toggle music" title="Toggle background music">♪</button>
-    <div class="volume-control">
-      <input type="range" id="volumeSlider" min="0" max="100" value="7" class="volume-slider" aria-label="Volume" />
-    </div>
   </div>
   <button id="cartBtn" class="cart-btn">🛒 Cart (<span id="cartCount">0</span>)</button>
   <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
@@ -589,65 +620,14 @@
   </div>
   <div id="cartItems"><p class="empty-cart">Your jar is empty.</p></div>
   <div class="cart-totals">
-    <div class="cart-row"><span>Subtotal</span><span id="cartSubtotal">$0.00</span></div>
-    <div class="cart-row">
-      <span>Shipping</span>
-      <span id="cartShipping">$0.00</span>
-    </div>
-    <div class="cart-row">
-      <span>Sales Tax <small id="taxRateLabel">(8%)</small></span>
-      <span id="cartTax">$0.00</span>
-    </div>
     <div class="cart-row total-row"><strong>Total</strong><strong id="cartTotal">$0.00</strong></div>
   </div>
   <div class="cart-shipping-note">
-    <p>🚚 Standard shipping $6.99 | Free on orders over $75</p>
-    <p>📍 Sales tax calculated at 8% (may vary by state)</p>
+    <p>🚚 Free shipping on orders over $75</p>
+    <p style="opacity:0.75;font-size:0.85rem;">Tax + shipping calculated at secure checkout.</p>
   </div>
   <div class="cart-form">
-    <input type="text" id="cartName" placeholder="Your Name" required />
-    <input type="email" id="cartEmail" placeholder="Your Email" required />
-    <input type="text" id="cartAddress" placeholder="Shipping Address" required />
-    <input type="text" id="cartCityState" placeholder="City, State, ZIP" required />
-    <textarea id="cartNotes" placeholder="Anything you want Amber to know about your order..."></textarea>
-    <button id="proceedToCheckoutBtn" class="btn-primary checkout-proceed-btn">✦ Proceed to Secure Checkout</button>
-  </div>
-
-  <div class="payment-section">
-    <p class="payment-section-title">✦ Or Pay Directly</p>
-    <p class="payment-accepts-cards">Venmo &amp; Cash App also accept Debit &amp; Credit Cards</p>
-
-    <div class="payment-method-grid">
-      <div class="payment-method-card" id="payMethodVenmo">
-        <div class="payment-method-icon">💜</div>
-        <div class="payment-method-name">Venmo</div>
-        <div class="payment-method-types">
-          <span class="card-badge">💳 Visa</span>
-          <span class="card-badge">💳 Mastercard</span>
-          <span class="card-badge">💳 Debit</span>
-          <span class="card-badge">📱 Venmo Balance</span>
-        </div>
-        <a id="venmoPayBtn" href="https://venmo.com/u/Ambers-Alchemy" target="_blank" rel="noopener" class="pay-btn venmo-btn">Pay with Venmo</a>
-      </div>
-
-      <div class="payment-method-card" id="payMethodCashApp">
-        <div class="payment-method-icon">💚</div>
-        <div class="payment-method-name">Cash App</div>
-        <div class="payment-method-types">
-          <span class="card-badge">💳 Visa</span>
-          <span class="card-badge">💳 Mastercard</span>
-          <span class="card-badge">💳 Debit</span>
-          <span class="card-badge">📱 Cash App Balance</span>
-        </div>
-        <a id="cashAppPayBtn" href="https://cash.app/$AmberPatten92" target="_blank" rel="noopener" class="pay-btn cashapp-btn">Pay with Cash App</a>
-      </div>
-    </div>
-
-    <div class="payment-instructions">
-      <p>✦ Click your preferred payment method above</p>
-      <p>✦ You can pay with any debit or credit card — no account needed</p>
-      <p>✦ After payment, Amber will confirm your order via email</p>
-    </div>
+    <button id="checkout-btn" class="btn-primary checkout-proceed-btn">Proceed to Checkout ✦</button>
   </div>
 </div>
 <div id="cartOverlay" class="cart-overlay"></div>
@@ -1049,7 +1029,7 @@
         <span>Debloat</span>
         <span>Refresh</span>
       </div>
-      <button class="btn-primary bundle-add-btn" onclick="addBundleToCart('The Gentle Detox Ritual', 47.99)">Begin the Ritual ✦</button>
+      <button class="btn-primary bundle-add-btn" onclick="addBundleToCart('The Gentle Detox Ritual', 47.99, 'bundle-detox')">Begin the Ritual ✦</button>
     </article>
 
     <!-- 2. STRESS RELIEF RITUAL -->
@@ -1114,7 +1094,7 @@
         <span>Regulate</span>
         <span>Restore</span>
       </div>
-      <button class="btn-primary bundle-add-btn" onclick="addBundleToCart('The Stress Relief Ritual', 49.99)">Begin the Ritual ✦</button>
+      <button class="btn-primary bundle-add-btn" onclick="addBundleToCart('The Stress Relief Ritual', 49.99, 'bundle-stress')">Begin the Ritual ✦</button>
     </article>
 
     <!-- 3. FOCUS & CLARITY RITUAL -->
@@ -1179,7 +1159,7 @@
         <span>Memory</span>
         <span>Clear Thinking</span>
       </div>
-      <button class="btn-primary bundle-add-btn" onclick="addBundleToCart('The Focus &amp; Clarity Ritual', 49.99)">Begin the Ritual ✦</button>
+      <button class="btn-primary bundle-add-btn" onclick="addBundleToCart('The Focus &amp; Clarity Ritual', 49.99, 'bundle-focus')">Begin the Ritual ✦</button>
     </article>
 
     <!-- 4. HAPPY & CALM RITUAL -->
@@ -1244,7 +1224,7 @@
         <span>Peace</span>
         <span>Joy</span>
       </div>
-      <button class="btn-primary bundle-add-btn" onclick="addBundleToCart('The Happy &amp; Calm Ritual', 51.99)">Begin the Ritual ✦</button>
+      <button class="btn-primary bundle-add-btn" onclick="addBundleToCart('The Happy &amp; Calm Ritual', 51.99, 'bundle-mood')">Begin the Ritual ✦</button>
     </article>
 
     <!-- 5. ENERGIZED & FOCUSED RITUAL -->
@@ -1309,7 +1289,7 @@
         <span>Stamina</span>
         <span>Drive</span>
       </div>
-      <button class="btn-primary bundle-add-btn" onclick="addBundleToCart('The Energized &amp; Focused Ritual', 52.99)">Begin the Ritual ✦</button>
+      <button class="btn-primary bundle-add-btn" onclick="addBundleToCart('The Energized &amp; Focused Ritual', 52.99, 'bundle-energy')">Begin the Ritual ✦</button>
     </article>
   </div>
 
@@ -2447,139 +2427,6 @@
     </div>
   </div>
 </section>
-
-<!-- CHECKOUT SECTION -->
-<section id="checkout" class="page-section pane-bg">
-  <div class="section-header">
-    <div class="section-ornament">✦ ─────────────── ✦</div>
-    <h2>Secure Checkout</h2>
-    <p>Complete your order below. Your payment is processed securely — card data never touches our servers.</p>
-  </div>
-
-  <div class="checkout-container">
-    <!-- Order Summary -->
-    <div class="checkout-summary card">
-      <h3>Order Summary</h3>
-      <div id="checkoutItems" class="checkout-items">
-        <p class="empty-cart">No items yet. Add products from the shop.</p>
-      </div>
-      <div class="checkout-totals">
-        <div class="cart-row"><span>Subtotal</span><span id="checkoutSubtotal">$0.00</span></div>
-        <div class="cart-row"><span>Shipping</span><span id="checkoutShipping">$0.00</span></div>
-        <div class="cart-row"><span>Sales Tax (8%)</span><span id="checkoutTax">$0.00</span></div>
-        <div class="cart-row total-row"><strong>Total</strong><strong id="checkoutTotal">$0.00</strong></div>
-      </div>
-      <p class="checkout-shipping-note">Free shipping on orders over $75</p>
-    </div>
-
-    <!-- Order Form + Payment -->
-    <div class="checkout-form-wrap card">
-      <form id="checkoutForm" name="checkout-order" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-        <input type="hidden" name="form-name" value="checkout-order" />
-        <input type="hidden" name="bot-field" />
-        <input type="hidden" name="transaction-id" id="transactionId" value="" />
-        <input type="hidden" name="payment-status" id="paymentStatus" value="" />
-        <input type="hidden" name="order-total" id="orderTotalField" value="" />
-        <input type="hidden" name="order-items" id="orderItemsField" value="" />
-        <input type="hidden" name="subject" value="New Website Order – Amber's Alchemy Apothecary" />
-
-        <h3>Order Information</h3>
-        <div class="checkout-field-row">
-          <div class="checkout-field">
-            <label for="checkoutCustomerName">Full Name *</label>
-            <input type="text" id="checkoutCustomerName" name="customer-name" required placeholder="Your full name" />
-          </div>
-          <div class="checkout-field">
-            <label for="checkoutEmail">Email Address *</label>
-            <input type="email" id="checkoutEmail" name="email" required placeholder="you@email.com" />
-          </div>
-        </div>
-        <div class="checkout-field-row">
-          <div class="checkout-field">
-            <label for="checkoutPhone">Phone Number</label>
-            <input type="tel" id="checkoutPhone" name="phone" placeholder="(555) 123-4567" />
-          </div>
-        </div>
-        <div class="checkout-field">
-          <label for="checkoutAddress">Shipping Address *</label>
-          <input type="text" id="checkoutAddress" name="shipping-address" required placeholder="Street address" />
-        </div>
-        <div class="checkout-field-row">
-          <div class="checkout-field">
-            <label for="checkoutCityStateZip">City, State, ZIP *</label>
-            <input type="text" id="checkoutCityStateZip" name="city-state-zip" required placeholder="City, ST 12345" />
-          </div>
-        </div>
-        <div class="checkout-field">
-          <label for="checkoutNotes">Order Notes / Special Requests</label>
-          <textarea id="checkoutNotes" name="order-notes" placeholder="Anything Amber should know about your order..."></textarea>
-        </div>
-
-        <!-- Your Order summary — pulls live from the cart, never hardcoded -->
-        <div class="your-order-summary card" style="margin-top:1.5rem;padding:1rem 1.25rem;border:1px solid rgba(184,148,90,0.4);border-radius:10px;background:rgba(42,26,46,0.4);">
-          <h3 style="margin:0 0 0.5rem 0;">Your Order</h3>
-          <div id="yourOrderItems" style="font-family:'Lora',serif;line-height:1.7;">
-            <p class="empty-cart" style="opacity:0.8;">Your cart is empty.</p>
-          </div>
-          <div class="cart-row" style="display:flex;justify-content:space-between;margin-top:0.6rem;padding-top:0.6rem;border-top:1px dashed rgba(184,148,90,0.3);"><span>Subtotal</span><span id="yourOrderSubtotal">$0.00</span></div>
-          <div class="cart-row" style="display:flex;justify-content:space-between;"><span>Shipping</span><span id="yourOrderShipping">$0.00</span></div>
-          <div class="cart-row" style="display:flex;justify-content:space-between;"><span>Sales Tax (8%)</span><span id="yourOrderTax">$0.00</span></div>
-          <div class="cart-row total-row" style="display:flex;justify-content:space-between;font-size:1.1rem;margin-top:0.4rem;"><strong>Amount Due</strong><strong id="yourOrderTotal">$0.00</strong></div>
-        </div>
-
-        <!-- Amount Due + Copy button (visible right above pay options) -->
-        <div class="amount-due-row" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:1.25rem 0;padding:0.75rem 1rem;border-radius:8px;background:linear-gradient(135deg,rgba(184,148,90,0.18),rgba(212,168,67,0.12));">
-          <div>
-            <span style="font-family:Cinzel,serif;letter-spacing:1.5px;color:var(--brass-lt,#B8945A);font-size:0.85rem;">AMOUNT DUE</span>
-            <strong id="amountDueDisplay" style="display:block;font-family:Cinzel,serif;color:var(--gold,#d4a843);font-size:1.6rem;">$0.00</strong>
-          </div>
-          <button type="button" id="copyAmountBtn" class="btn-secondary" style="padding:0.6rem 1rem;">Copy Amount</button>
-        </div>
-
-        <div class="checkout-divider"></div>
-
-        <!-- Legal / disclaimer agreement -->
-        <div class="checkout-field" style="display:flex;gap:0.6rem;align-items:flex-start;margin:1rem 0;">
-          <input type="checkbox" id="checkoutLegal" name="legal-agreement" required style="margin-top:6px;" />
-          <label for="checkoutLegal" style="font-size:0.85rem;line-height:1.5;">I agree these statements have not been evaluated by the FDA and are not intended to diagnose, treat, cure, or prevent any disease. I confirm I have read the safety notes and consent to my order being prepared.</label>
-        </div>
-
-        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn">
-          <span id="payBtnText">Submit Order ✦</span>
-          <span id="payBtnSpinner" class="checkout-spinner" style="display:none;border:2px solid rgba(243,235,221,0.3);border-top-color:#F3EBDD;border-radius:50%;width:14px;height:14px;display:none;animation:spin 0.8s linear infinite;margin-left:8px;vertical-align:middle;"></span>
-        </button>
-        <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-
-        <!-- Hidden Stripe slot retained so any legacy init code is safe -->
-        <div id="card-element" class="stripe-card-element" style="display:none;"></div>
-        <div id="card-errors" class="checkout-card-errors" role="alert" style="margin-top:0.6rem;"></div>
-
-        <div class="checkout-trust-badges">
-          <span>🔒 SSL Encrypted</span>
-          <span>📧 Order confirmed by email</span>
-          <span>💳 Pay via Venmo or Cash App</span>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Confirmation (hidden by default) -->
-  <div id="checkoutConfirmation" class="checkout-confirmation" style="display:none;">
-    <div class="checkout-confirm-inner card">
-      <div class="checkout-confirm-icon">✦</div>
-      <h2>Thank You! Your Order Has Been Received</h2>
-      <p>Confirmation has been sent to your email. Amber will begin preparing your order right away.</p>
-      <div id="confirmationDetails" class="checkout-confirm-details"></div>
-      <div class="rv-cta-row" style="justify-content:center;margin:20px 0 8px;">
-        <button type="button" class="btn-primary" data-rv-open data-rv-open-type="site" data-rv-name="My order experience">✦ Review Your Experience</button>
-        <a class="rv-google-link" data-rv-google target="_blank" rel="noopener">Leave a Review on Google ↗</a>
-      </div>
-      <p style="color:var(--text-muted);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.95rem;margin:0 auto 14px;max-width:540px;">We'll also check in by email in about ten days so you can review the products once you've had time to notice how they feel.</p>
-      <button class="btn-primary" onclick="showSection('shop')">Continue Shopping</button>
-    </div>
-  </div>
-</section>
-
 <!-- FOOTER -->
 <footer class="pane-bg">
   <div class="footer-nav">

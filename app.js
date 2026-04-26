@@ -287,16 +287,11 @@ cartOverlay.addEventListener('click', closeCartFn);
 
 function calcCartTotals() {
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal === 0 ? 0 : (subtotal >= 75 ? 0 : 6.99);
-  const taxRate = 0.08;
-  const tax = subtotal * taxRate;
-  const total = subtotal + shipping + tax;
-  document.getElementById('cartSubtotal').textContent = formatPrice(subtotal);
-  document.getElementById('cartShipping').textContent = shipping === 0 && subtotal > 0 ? 'FREE' : formatPrice(shipping);
-  document.getElementById('cartTax').textContent = formatPrice(tax);
-  document.getElementById('cartTotal').textContent = formatPrice(total);
-  document.getElementById('cartCount').textContent = cart.reduce((s, i) => s + i.qty, 0);
-  return { subtotal, shipping, tax, total };
+  const totalEl = document.getElementById('cartTotal');
+  if (totalEl) totalEl.textContent = formatPrice(subtotal);
+  const countEl = document.getElementById('cartCount');
+  if (countEl) countEl.textContent = cart.reduce((s, i) => s + i.qty, 0);
+  return { subtotal, total: subtotal };
 }
 
 function renderCart() {
@@ -344,249 +339,142 @@ function renderCart() {
   calcCartTotals();
 }
 
-function addToCart(name, price, qty = 1) {
-  const existing = cart.find(i => i.name === name);
+function addToCart(name, price, qty = 1, opts) {
+  opts = opts || {};
+  const variantKey = opts.variantKey || ShopifyCart.guessKey(name);
+  const customAttributes = opts.customAttributes || null;
+
+  // Local cart powers the sidebar UI. Shopify holds the source of truth for checkout.
+  const existing = cart.find(i => i.name === name && !customAttributes);
   if (existing) { existing.qty += qty; }
-  else { cart.push({ name, price, qty }); }
+  else {
+    const item = { name, price, qty };
+    if (opts.herbs) item.herbs = opts.herbs;
+    if (variantKey) item.variantKey = variantKey;
+    if (customAttributes) item.customAttributes = customAttributes;
+    cart.push(item);
+  }
   renderCart();
+  ShopifyCart.add(variantKey, qty, customAttributes);
   showToast(`✦ Added to cart: ${name}`);
   openCart();
   try { window.AAA && window.AAA.addToCart && window.AAA.addToCart({ name: name, price: price, quantity: qty }, qty); } catch (e) {}
 }
 
-// Email checkout — now redirects to secure checkout page
-document.getElementById('proceedToCheckoutBtn').addEventListener('click', () => {
-  const name = document.getElementById('cartName').value.trim();
-  const email = document.getElementById('cartEmail').value.trim();
-  const address = document.getElementById('cartAddress').value.trim();
-  const cityState = document.getElementById('cartCityState').value.trim();
-  const notes = document.getElementById('cartNotes').value.trim();
-  if (!name || !email || !address) { showToast('Please fill in your name, email, and address.'); return; }
-  if (cart.length === 0) { showToast('Your cart is empty!'); return; }
+// ---- SHOPIFY CHECKOUT INTEGRATION ----
+// Source of truth for checkout & payment. Local cart still powers the sidebar UI.
+const ShopifyCart = (function() {
+  let client = null;
+  let checkout = null;
+  let ready = null;
 
-  // Pre-fill checkout form with cart info
-  document.getElementById('checkoutCustomerName').value = name;
-  document.getElementById('checkoutEmail').value = email;
-  document.getElementById('checkoutAddress').value = address;
-  document.getElementById('checkoutCityStateZip').value = cityState;
-  document.getElementById('checkoutNotes').value = notes;
-
-  const cartTotal = cart.reduce((s, i) => s + (parseFloat(i.price) || 0) * i.qty, 0);
-  try { window.AAA && window.AAA.beginCheckout && window.AAA.beginCheckout(cart, cartTotal); } catch (e) {}
-
-  closeCartFn();
-  showSection('checkout');
-  renderCheckoutSummary();
-});
-
-// Venmo/CashApp dynamic total — accepts debit & credit cards
-function getOrderNote() {
-  const name = document.getElementById('cartName').value.trim();
-  const items = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-  let note = "Amber's Alchemy Order";
-  if (name) note += ` - ${name}`;
-  if (items) note += ` | ${items}`;
-  return note;
-}
-
-document.getElementById('venmoPayBtn').addEventListener('click', function(e) {
-  const { total } = calcCartTotals();
-  if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  const note = getOrderNote();
-  this.href = `https://venmo.com/u/Ambers-Alchemy?txn=pay&amount=${total.toFixed(2)}&note=${encodeURIComponent(note)}`;
-});
-document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
-  const { total } = calcCartTotals();
-  if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  this.href = `https://cash.app/$AmberPatten92/${total.toFixed(2)}`;
-});
-
-// ---- SECURE CHECKOUT (EmailJS — sends order to Amber + receipt to customer) ----
-function renderCheckoutSummary() {
-  const el = document.getElementById('checkoutItems');
-  const yourEl = document.getElementById('yourOrderItems');
-  const itemsHtml = cart.length === 0
-    ? '<p class="empty-cart">No items in cart.</p>'
-    : cart.map(i => `
-        <div class="checkout-item" style="display:flex;justify-content:space-between;padding:0.3rem 0;">
-          <span>${i.name} <small style="opacity:0.75;">×${i.qty}</small></span>
-          <span class="checkout-item-price">${formatPrice(i.price * i.qty)}</span>
-        </div>
-      `).join('');
-
-  if (el) el.innerHTML = itemsHtml;
-  if (yourEl) yourEl.innerHTML = cart.length === 0 ? '<p class="empty-cart" style="opacity:0.8;">Your cart is empty.</p>' : itemsHtml;
-
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal === 0 ? 0 : (subtotal >= 75 ? 0 : 6.99);
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
-  const setText = (id, txt) => { const e = document.getElementById(id); if (e) e.textContent = txt; };
-
-  setText('checkoutSubtotal', formatPrice(subtotal));
-  setText('checkoutShipping', shipping === 0 && subtotal > 0 ? 'FREE' : formatPrice(shipping));
-  setText('checkoutTax', formatPrice(tax));
-  setText('checkoutTotal', formatPrice(total));
-
-  setText('yourOrderSubtotal', formatPrice(subtotal));
-  setText('yourOrderShipping', shipping === 0 && subtotal > 0 ? 'FREE' : formatPrice(shipping));
-  setText('yourOrderTax', formatPrice(tax));
-  setText('yourOrderTotal', formatPrice(total));
-  setText('amountDueDisplay', formatPrice(total));
-
-  const totalField = document.getElementById('orderTotalField');
-  if (totalField) totalField.value = formatPrice(total);
-  const itemsField = document.getElementById('orderItemsField');
-  if (itemsField) itemsField.value = cart.map(i => `${i.name} ×${i.qty} — ${formatPrice(i.price * i.qty)}`).join(' | ');
-}
-
-// Re-render summary whenever the cart changes
-const _origRenderCart = renderCart;
-renderCart = function() { _origRenderCart(); renderCheckoutSummary(); };
-
-// Stub kept so any older inline handlers don't throw
-async function initStripe() { /* deprecated — payment now via Venmo/Cash App + EmailJS */ }
-
-// "Copy Amount" — copies the live total to clipboard
-document.addEventListener('click', function(e) {
-  if (!e.target || e.target.id !== 'copyAmountBtn') return;
-  const totalText = (document.getElementById('amountDueDisplay') || {}).textContent || '';
-  const amount = totalText.replace(/[^0-9.]/g, '');
-  if (!amount) { showToast('Cart is empty.'); return; }
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(amount).then(() => showToast('✦ Amount $' + amount + ' copied'));
-  } else {
-    const ta = document.createElement('textarea');
-    ta.value = amount; document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); showToast('✦ Amount $' + amount + ' copied'); } catch (err) {}
-    document.body.removeChild(ta);
+  function variantId(key) {
+    if (!key) return null;
+    const map = window.SHOPIFY_VARIANTS || {};
+    return map[key] || null;
   }
+
+  function guessKey(name) {
+    if (!name) return null;
+    const map = window.SHOPIFY_VARIANTS || {};
+    const direct = Object.keys(map).find(k => k.toLowerCase() === String(name).toLowerCase());
+    if (direct) return direct;
+    const slug = String(name).toLowerCase().replace(/&amp;/g, '&').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    if (map[slug]) return slug;
+    const aliases = {
+      'dreamease-capsules': 'dreamease',
+      'chill-pill-serenity-capsules': 'chill-pill',
+      'the-gentle-detox-ritual': 'bundle-detox',
+      'the-stress-relief-ritual': 'bundle-stress',
+      'the-focus-clarity-ritual': 'bundle-focus',
+      'the-happy-calm-ritual': 'bundle-mood',
+      'the-energized-focused-ritual': 'bundle-energy'
+    };
+    return aliases[slug] || null;
+  }
+
+  function init() {
+    if (ready) return ready;
+    ready = new Promise(function(resolve) {
+      function done() { resolve({ client: client, checkout: checkout }); }
+      try {
+        if (!window.ShopifyBuy || !window.SHOPIFY_DOMAIN || !window.SHOPIFY_STOREFRONT_TOKEN
+            || window.SHOPIFY_STOREFRONT_TOKEN === 'YOUR_STOREFRONT_API_TOKEN') {
+          console.warn('[Shopify] SDK or credentials not configured — checkout disabled until Amber pastes them in.');
+          return done();
+        }
+        client = window.ShopifyBuy.buildClient({
+          domain: window.SHOPIFY_DOMAIN,
+          storefrontAccessToken: window.SHOPIFY_STOREFRONT_TOKEN
+        });
+        client.checkout.create().then(function(c) {
+          checkout = c;
+          window.shopifyCheckout = c;
+          console.log('[Shopify] Checkout ready', c.id, c.webUrl);
+          done();
+        }).catch(function(err) {
+          console.error('[Shopify] Failed to create checkout', err);
+          done();
+        });
+      } catch (e) {
+        console.error('[Shopify] init error', e);
+        done();
+      }
+    });
+    return ready;
+  }
+
+  function add(key, qty, customAttributes) {
+    init().then(function(ctx) {
+      if (!ctx.client || !ctx.checkout) return;
+      const id = variantId(key);
+      if (!id) {
+        console.warn('[Shopify] No variant ID configured for "' + key + '" — paste it into SHOPIFY_VARIANTS in index.html.');
+        return;
+      }
+      const lineItem = { variantId: id, quantity: qty || 1 };
+      if (customAttributes && customAttributes.length) lineItem.customAttributes = customAttributes;
+      ctx.client.checkout.addLineItems(ctx.checkout.id, [lineItem]).then(function(updated) {
+        checkout = updated;
+        window.shopifyCheckout = updated;
+      }).catch(function(err) {
+        console.error('[Shopify] addLineItems error', err);
+      });
+    });
+  }
+
+  function redirectToCheckout() {
+    init().then(function(ctx) {
+      if (!ctx.checkout || !ctx.checkout.webUrl) {
+        showToast('Checkout is not configured yet. Please email awaken@consultant.com.');
+        return;
+      }
+      try { window.AAA && window.AAA.beginCheckout && window.AAA.beginCheckout(cart, cart.reduce((s,i) => s + i.price * i.qty, 0)); } catch (e) {}
+      window.location.href = ctx.checkout.webUrl;
+    });
+  }
+
+  // Boot on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else { init(); }
+
+  return { add: add, redirectToCheckout: redirectToCheckout, guessKey: guessKey, variantId: variantId, init: init };
+})();
+window.ShopifyCart = ShopifyCart;
+
+// ---- "Proceed to Checkout ✦" button — redirects to Shopify ----
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest && e.target.closest('#checkout-btn');
+  if (!btn) return;
+  e.preventDefault();
+  if (cart.length === 0) { showToast('Your cart is empty!'); return; }
+  ShopifyCart.redirectToCheckout();
 });
 
 // Email validation helper
 function isValidEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s); }
 
-// Checkout submit — sends two EmailJS templates, then shows success screen
-document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
-  e.preventDefault();
-
-  const payBtn = document.getElementById('checkoutPayBtn');
-  const btnText = document.getElementById('payBtnText');
-  const spinner = document.getElementById('payBtnSpinner');
-  const errEl = document.getElementById('card-errors');
-
-  const name = document.getElementById('checkoutCustomerName').value.trim();
-  const email = document.getElementById('checkoutEmail').value.trim();
-  const phone = (document.getElementById('checkoutPhone') || {}).value || '';
-  const address = document.getElementById('checkoutAddress').value.trim();
-  const cityZip = document.getElementById('checkoutCityStateZip').value.trim();
-  const notes = (document.getElementById('checkoutNotes') || {}).value || '';
-  const legal = document.getElementById('checkoutLegal');
-
-  errEl.textContent = '';
-  if (!name) { errEl.textContent = 'Please enter your full name.'; return; }
-  if (!email || !isValidEmail(email)) { errEl.textContent = 'Please enter a valid email address.'; return; }
-  if (!address) { errEl.textContent = 'Please enter your shipping address.'; return; }
-  if (!cityZip) { errEl.textContent = 'Please enter your city, state, and ZIP.'; return; }
-  if (legal && !legal.checked) { errEl.textContent = 'Please agree to the disclaimer to continue.'; return; }
-  if (cart.length === 0) {
-    errEl.textContent = 'Your cart is empty. Add items before checking out.';
-    return;
-  }
-
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal === 0 ? 0 : (subtotal >= 75 ? 0 : 6.99);
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
-
-  const orderItemsList = cart
-    .map(i => `• ${i.name} ×${i.qty} — ${formatPrice(i.price * i.qty)}` + (i.herbs ? ` (${i.herbs})` : ''))
-    .join('\n');
-
-  const params = {
-    customer_name: name,
-    customer_email: email,
-    customer_phone: phone,
-    shipping_address: address,
-    city_state_zip: cityZip,
-    order_items: orderItemsList,
-    subtotal: formatPrice(subtotal),
-    shipping: shipping === 0 && subtotal > 0 ? 'FREE' : formatPrice(shipping),
-    tax: formatPrice(tax),
-    order_total: formatPrice(total),
-    payment_method: 'Venmo (Amber\'s Alchemy) or Cash App ($AmberPatten92)',
-    order_notes: notes,
-    timestamp: new Date().toLocaleString()
-  };
-
-  payBtn.disabled = true;
-  btnText.textContent = 'Sending order…';
-  spinner.style.display = 'inline-block';
-
-  try {
-    if (!window.emailjs || typeof emailjs.send !== 'function') {
-      throw new Error('Email service not loaded');
-    }
-    if (!window.EMAILJS_SERVICE_ID || window.EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID') {
-      throw new Error('EmailJS is not configured yet. Please screenshot your order and email awaken@consultant.com');
-    }
-
-    // 1) Notify Amber
-    await emailjs.send(window.EMAILJS_SERVICE_ID, window.EMAILJS_TPL_AMBER, params);
-
-    // 2) Receipt to customer (sent via "to_email" / "customer_email" var in template)
-    await emailjs.send(window.EMAILJS_SERVICE_ID, window.EMAILJS_TPL_CUSTOMER, params);
-
-    // Both succeeded — show confirmation
-    document.getElementById('transactionId').value = 'EMAIL-' + Date.now();
-    document.getElementById('paymentStatus').value = 'awaiting-payment';
-    showConfirmation('EMAIL-' + Date.now(), 'pending');
-  } catch (err) {
-    errEl.textContent = 'There was an issue sending your confirmation. Please screenshot your order and email awaken@consultant.com';
-    payBtn.disabled = false;
-    btnText.textContent = 'Submit Order ✦';
-    spinner.style.display = 'none';
-  }
-});
-
-async function submitNetlifyForm() {
-  const form = document.getElementById('checkoutForm');
-  const formData = new FormData(form);
-  await fetch('/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(formData).toString(),
-  });
-}
-
-function showConfirmation(transactionId, status) {
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal === 0 ? 0 : (subtotal >= 75 ? 0 : 6.99);
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
-  const name = document.getElementById('checkoutCustomerName').value.trim();
-  const email = document.getElementById('checkoutEmail').value.trim();
-
-  document.getElementById('confirmationDetails').innerHTML = `
-    <p><strong>Order for:</strong> ${name}</p>
-    <p><strong>Email:</strong> ${email}</p>
-    <p><strong>Items:</strong> ${cart.map(i => `${i.name} x${i.qty}`).join(', ')}</p>
-    <p><strong>Total:</strong> ${formatPrice(total)}</p>
-    <p><strong>Reference:</strong> ${transactionId}</p>
-    <p>Send <strong>${formatPrice(total)}</strong> to Cash App <strong>$AmberPatten92</strong> or Venmo <strong>"Amber's Alchemy"</strong> — include your name in the note.</p>
-    <p>Your order ships once Amber confirms payment — typically within 24 hours.</p>
-  `;
-
-  document.querySelector('.checkout-container').style.display = 'none';
-  document.getElementById('checkoutConfirmation').style.display = 'block';
-
-  // Best-effort Netlify Form submission for backup record
-  try { submitNetlifyForm(); } catch (e) {}
-
-  cart = [];
-  renderCart();
-  showToast('Order submitted successfully!');
-}
 
 // ---- RENDER PRODUCTS (with category filter) ----
 function renderProducts(filterCat = 'all') {
@@ -641,7 +529,7 @@ function renderProducts(filterCat = 'all') {
       const sel = document.getElementById(`size-${p.id}`);
       const price = parseFloat(sel.value);
       const label = sel.options[sel.selectedIndex].text;
-      addToCart(`${p.name} (${label.split('—')[0].trim()})`, price);
+      addToCart(`${p.name} (${label.split('—')[0].trim()})`, price, 1, { variantKey: p.id });
     });
   });
 }
@@ -907,17 +795,58 @@ function updateTeaSelected() {}
 // ---- SOAP FORM ----
 // Handled by the DOMContentLoaded listener below — no duplicate needed here.
 
-// ---- CONTACT FORM ----
-document.getElementById('contactSubmitBtn').addEventListener('click', () => {
+// ---- CONTACT FORM (EmailJS → awaken@consultant.com) ----
+function showInlineFormStatus(form, msg, kind) {
+  if (!form) return;
+  let el = form.querySelector('.inline-form-status');
+  if (!el) {
+    el = document.createElement('p');
+    el.className = 'inline-form-status';
+    el.style.cssText = 'margin-top:0.75rem;padding:0.65rem 0.85rem;border-radius:8px;font-family:Lora,serif;font-size:0.9rem;line-height:1.5;';
+    form.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.background = kind === 'error' ? 'rgba(180,60,60,0.15)' : 'rgba(184,148,90,0.15)';
+  el.style.color = kind === 'error' ? '#ffb3b3' : '#F3EBDD';
+  el.style.border = kind === 'error' ? '1px solid rgba(180,60,60,0.5)' : '1px solid rgba(184,148,90,0.45)';
+}
+
+document.getElementById('contactSubmitBtn').addEventListener('click', async function() {
+  const btn = this;
+  const card = btn.closest('.contact-form');
   const name = document.getElementById('contactName').value.trim();
   const email = document.getElementById('contactEmail').value.trim();
   const subject = document.getElementById('contactSubject').value;
   const message = document.getElementById('contactMessage').value.trim();
-  if (!name || !email || !message) { showToast('Please fill in all fields.'); return; }
-  const body = encodeURIComponent(`From: ${name} (${email})\n\n${message}`);
-  try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
-  showToast('Opening email client...');
+
+  showInlineFormStatus(card, '', 'ok');
+  if (!name || !email || !message) { showInlineFormStatus(card, 'Please fill in your name, email, and message.', 'error'); return; }
+  if (!isValidEmail(email)) { showInlineFormStatus(card, 'Please enter a valid email address.', 'error'); return; }
+
+  const params = { name: name, email: email, subject_type: subject, message: message };
+  const originalLabel = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  try {
+    if (!window.emailjs || typeof emailjs.send !== 'function') {
+      throw new Error('EmailJS not loaded');
+    }
+    if (!window.EMAILJS_SERVICE_ID || window.EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID') {
+      throw new Error('EmailJS not configured');
+    }
+    await emailjs.send(window.EMAILJS_SERVICE_ID, window.EMAILJS_TPL_CONTACT, params);
+    try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
+    showInlineFormStatus(card, 'Sent! Amber will reply within 24–48 hours. ✦', 'ok');
+    document.getElementById('contactName').value = '';
+    document.getElementById('contactEmail').value = '';
+    document.getElementById('contactMessage').value = '';
+  } catch (err) {
+    console.error('[Contact] EmailJS send failed', err);
+    showInlineFormStatus(card, 'Something went wrong. Please email awaken@consultant.com directly.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
+  }
 });
 
 // ---- NEWSLETTER FORM ----
@@ -1262,9 +1191,20 @@ if (typeof BOTANICALS !== 'undefined') {
 // SOAP CART INTEGRATION
 // ============================================================
 function addSoapToCart(name, price, btnEl) {
-  // Use the main addToCart function which handles cart state, toast, and drawer
-  addToCart(name, price);
-  // Visual feedback on the button
+  // Map the friendly soap name to the SHOPIFY_VARIANTS key used in index.html
+  const SOAP_KEYS = {
+    'Lavender Fairy Dream': 'soap-lavender-fairy-dream',
+    "Gaia's Rose": 'soap-gaias-rose',
+    'Eucalyptus Mint Spa Renewal': 'soap-eucalyptus-mint',
+    'Warm Cinnamon Comfort': 'soap-warm-cinnamon',
+    'Orange Lily Goddess': 'soap-orange-lily',
+    'Citrus Goddess Glow': 'soap-citrus-goddess',
+    'Sacred Forest Ritual': 'soap-sacred-forest',
+    'Fresh Mountain Air': 'soap-fresh-mountain-air',
+    'Sunlit Garden Bloom': 'soap-sunlit-garden-bloom'
+  };
+  const variantKey = SOAP_KEYS[name] || ShopifyCart.guessKey(name);
+  addToCart(name, price, 1, { variantKey: variantKey });
   if (btnEl) {
     const orig = btnEl.textContent;
     btnEl.textContent = '✓ Added!';
@@ -1328,18 +1268,9 @@ function scrollToAnchor(id) {
 window.scrollToAnchor = scrollToAnchor;
 
 // ---- BUNDLE ADD-TO-CART (FIX 4) ----
-function addBundleToCart(name, price) {
+function addBundleToCart(name, price, variantKey) {
   const cleanName = (name || '').replace(/&amp;/g, '&');
-  const existing = cart.find(i => i.name === cleanName);
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({ name: cleanName, price: price, qty: 1, type: 'bundle' });
-  }
-  renderCart();
-  showToast('Added to cart! ✦');
-  openCart();
-  try { window.AAA && window.AAA.addToCart && window.AAA.addToCart({ name: cleanName, price: price, quantity: 1, type: 'bundle' }, 1); } catch (e) {}
+  addToCart(cleanName, price, 1, { variantKey: variantKey || ShopifyCart.guessKey(cleanName) });
 }
 window.addBundleToCart = addBundleToCart;
 

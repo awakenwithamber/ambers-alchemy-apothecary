@@ -759,44 +759,76 @@
   function bindFormulaForm() {
     var submitBtn = document.getElementById('formulaSubmitBtn');
     if (!submitBtn) return;
-    submitBtn.addEventListener('click', function() {
+
+    function setStatus(msg, kind) {
+      var card = submitBtn.closest('.formula-form');
+      if (!card) return;
+      var el = card.querySelector('.inline-form-status');
+      if (!el) {
+        el = document.createElement('p');
+        el.className = 'inline-form-status';
+        el.style.cssText = 'margin-top:0.75rem;padding:0.65rem 0.85rem;border-radius:8px;font-family:Lora,serif;font-size:0.9rem;line-height:1.5;';
+        card.appendChild(el);
+      }
+      el.textContent = msg || '';
+      el.style.background = kind === 'error' ? 'rgba(180,60,60,0.15)' : 'rgba(184,148,90,0.15)';
+      el.style.color = kind === 'error' ? '#ffb3b3' : '#F3EBDD';
+      el.style.border = kind === 'error' ? '1px solid rgba(180,60,60,0.5)' : '1px solid rgba(184,148,90,0.45)';
+      el.style.display = msg ? 'block' : 'none';
+    }
+
+    submitBtn.addEventListener('click', async function() {
       var name = (document.getElementById('formulaName') || {}).value || '';
       var email = (document.getElementById('formulaEmail') || {}).value || '';
       var symptoms = (document.getElementById('formulaSymptoms') || {}).value || '';
       var ageConfirm = document.getElementById('formulaAgeConfirm');
       var interactionCheck = document.getElementById('formulaInteractionCheck');
 
+      setStatus('', 'ok');
       if (!name || !email || !symptoms) {
-        alert('Please fill in your name, email, and symptoms to send your consultation request.');
+        setStatus('Please fill in your name, email, and symptoms.', 'error');
         return;
       }
       if (ageConfirm && !ageConfirm.checked) {
-        alert('Please confirm that you are 18 years of age or older.');
+        setStatus('Please confirm that you are 18 years of age or older.', 'error');
         return;
       }
       if (interactionCheck && !interactionCheck.checked) {
-        alert('Please acknowledge that herbal remedies may interact with medications or medical conditions before submitting.');
+        setStatus('Please acknowledge the interaction notice before submitting.', 'error');
         return;
       }
 
-      var type = (document.getElementById('formulaType') || {}).value || 'Not specified';
-      var meds = (document.getElementById('formulaMeds') || {}).value || 'None';
-      var supplements = (document.getElementById('formulaSupplements') || {}).value || 'None';
-      var pregnancy = (document.getElementById('formulaPregnancy') || {}).value || 'Not specified';
-      var allergies = (document.getElementById('formulaAllergies') || {}).value || 'None';
-      var fnotes = (document.getElementById('formulaNotes') || {}).value || '';
+      var params = {
+        customer_name: name,
+        customer_email: email,
+        symptoms: symptoms,
+        remedy_type: (document.getElementById('formulaType') || {}).value || 'Not specified',
+        medications: (document.getElementById('formulaMeds') || {}).value || 'None',
+        supplements: (document.getElementById('formulaSupplements') || {}).value || 'None',
+        allergies: (document.getElementById('formulaAllergies') || {}).value || 'None',
+        pregnancy_status: (document.getElementById('formulaPregnancy') || {}).value || 'Not specified',
+        additional_notes: (document.getElementById('formulaNotes') || {}).value || ''
+      };
 
-      var subject = encodeURIComponent('Custom Herbal Consultation Request from ' + name);
-      var body = encodeURIComponent(
-        'Name: ' + name + '\nEmail: ' + email + '\n\nSymptoms / Goals:\n' + symptoms +
-        '\n\nRemedy Type: ' + type +
-        '\nCurrent Medications: ' + meds +
-        '\nCurrent Supplements: ' + supplements +
-        '\nPregnancy / Breastfeeding: ' + pregnancy +
-        '\nAllergies: ' + allergies +
-        '\n\nAdditional Notes:\n' + fnotes
-      );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
+      var originalLabel = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      try {
+        if (!window.emailjs || typeof emailjs.send !== 'function') {
+          throw new Error('EmailJS not loaded');
+        }
+        if (!window.EMAILJS_SERVICE_ID || window.EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID') {
+          throw new Error('EmailJS not configured');
+        }
+        await emailjs.send(window.EMAILJS_SERVICE_ID, window.EMAILJS_TPL_CONSULTATION, params);
+        setStatus('Sent! Amber will reply within 24–48 hours. ✦', 'ok');
+      } catch (err) {
+        console.error('[Consultation] EmailJS send failed', err);
+        setStatus('Something went wrong. Please email awaken@consultant.com directly.', 'error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalLabel;
+      }
     });
   }
 
