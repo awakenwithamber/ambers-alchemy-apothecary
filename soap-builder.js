@@ -282,6 +282,7 @@
     var prevBtn = document.getElementById('sbPrevBtn');
     var nextBtn = document.getElementById('sbNextBtn');
     var addBtn = document.getElementById('sbAddCartBtn');
+    var requestBtn = document.getElementById('sbCustomRequestBtn');
     if (prevBtn) prevBtn.style.display = sbStep > 1 ? '' : 'none';
     if (nextBtn) {
       if (sbStep < 5) {
@@ -297,6 +298,7 @@
       }
     }
     if (addBtn) addBtn.style.display = sbStep === 5 ? '' : 'none';
+    if (requestBtn) requestBtn.style.display = sbStep === 5 ? '' : 'none';
   }
 
   function showStep(n) {
@@ -393,6 +395,128 @@
     if (typeof showToast === 'function') showToast('Added to cart! ✦');
     closeSoapBuilder();
   };
+
+  // ---------- CUSTOM REQUEST FALLBACK (emails awaken@consultant.com + dare2be4ree@gmail.com) ----------
+  function buildSummaryText() {
+    var lines = [];
+    lines.push('Bar Type: ' + (soapConfig.barType || '(not selected)'));
+    lines.push('Scent: ' + (soapConfig.scents.length ? soapConfig.scents.join(', ') : '(not selected)'));
+    lines.push('Benefits: ' + (soapConfig.benefits.length ? soapConfig.benefits.join(', ') : '(none)'));
+    lines.push('Botanicals: ' + (soapConfig.botanicals.length ? soapConfig.botanicals.join(', ') : '(none)'));
+    lines.push('Color: ' + (soapConfig.color || '(none)'));
+    return lines.join('\n');
+  }
+
+  window.sbOpenCustomRequest = function() {
+    var modal = document.getElementById('sbRequestModal');
+    if (!modal) return;
+    var summary = document.getElementById('sbRequestSummary');
+    if (summary) {
+      summary.innerHTML = '<strong style="display:block;margin-bottom:0.4rem;font-family:Cinzel,serif;letter-spacing:1px;font-size:0.78rem;color:#d4a843;">YOUR SELECTIONS</strong>' +
+        buildSummaryText().split('\n').map(function(l) { return '<div>' + l + '</div>'; }).join('');
+    }
+    var status = document.getElementById('sbRequestStatus');
+    if (status) { status.textContent = ''; status.style.color = ''; }
+    modal.style.display = 'flex';
+  };
+
+  window.sbCloseCustomRequest = function() {
+    var modal = document.getElementById('sbRequestModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.sbSubmitCustomRequest = function() {
+    var name = (document.getElementById('sbRequestName') || {}).value || '';
+    var email = (document.getElementById('sbRequestEmail') || {}).value || '';
+    var notes = (document.getElementById('sbRequestNotes') || {}).value || '';
+    var statusEl = document.getElementById('sbRequestStatus');
+    var submitBtn = document.getElementById('sbRequestSubmit');
+
+    function setStatus(msg, color) {
+      if (!statusEl) return;
+      statusEl.textContent = msg;
+      statusEl.style.color = color || '';
+    }
+
+    if (!name.trim() || !email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setStatus('Please enter a name and a valid email.', '#ffb29b');
+      return;
+    }
+    if (!soapConfig.barType) {
+      setStatus('Please pick a bar type before sending.', '#ffb29b');
+      return;
+    }
+
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+    setStatus('Sending your request to Amber…', '');
+
+    var recipients = (window.SOAP_REQUEST_RECIPIENTS && window.SOAP_REQUEST_RECIPIENTS.length)
+      ? window.SOAP_REQUEST_RECIPIENTS
+      : ['awaken@consultant.com', 'dare2be4ree@gmail.com'];
+
+    var summaryText = buildSummaryText();
+    var templateParams = {
+      to_email: recipients.join(','),
+      customer_name: name,
+      customer_email: email,
+      bar_type: soapConfig.barType || '',
+      scent_profile: soapConfig.scents.join(', '),
+      benefits: soapConfig.benefits.join(', '),
+      botanicals: soapConfig.botanicals.join(', '),
+      color: soapConfig.color || '',
+      notes: notes,
+      summary: summaryText,
+      submitted_at: new Date().toISOString()
+    };
+
+    function showSuccess() {
+      setStatus('✦ Request sent! Amber will confirm by email within 24 hours.', '#aef0c4');
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send Request ✦'; }
+      setTimeout(function() {
+        window.sbCloseCustomRequest();
+        if (typeof showToast === 'function') showToast('Custom request sent! ✦');
+      }, 1800);
+    }
+    function showFailure() {
+      setStatus('Could not send. Please email awaken@consultant.com directly with your selections.', '#ffb29b');
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Send Request ✦'; }
+    }
+
+    var hasEmailJS = window.emailjs && typeof emailjs.send === 'function';
+    var configuredKey = window.EMAILJS_PUBLIC_KEY && window.EMAILJS_PUBLIC_KEY.indexOf('YOUR_') !== 0;
+    var configuredService = window.EMAILJS_SERVICE_ID && window.EMAILJS_SERVICE_ID.indexOf('YOUR_') !== 0;
+    var configuredTpl = window.EMAILJS_TPL_SOAP_REQUEST && window.EMAILJS_TPL_SOAP_REQUEST.indexOf('YOUR_') !== 0;
+
+    if (hasEmailJS && configuredKey && configuredService && configuredTpl) {
+      emailjs.send(window.EMAILJS_SERVICE_ID, window.EMAILJS_TPL_SOAP_REQUEST, templateParams)
+        .then(showSuccess)
+        .catch(showFailure);
+    } else {
+      // Fallback path when EmailJS credentials are not configured: open user's mail client
+      // pre-populated with the spec so the request still reaches Amber.
+      try {
+        var subject = encodeURIComponent('Custom Soap Request — ' + name);
+        var body = encodeURIComponent(
+          'Hi Amber,\n\nI\'d like to request a custom soap with these selections:\n\n' +
+          summaryText +
+          '\n\nNotes: ' + (notes || '(none)') +
+          '\n\nName: ' + name +
+          '\nEmail: ' + email
+        );
+        window.location.href = 'mailto:' + recipients.join(',') + '?subject=' + subject + '&body=' + body;
+        showSuccess();
+      } catch (e) {
+        showFailure();
+      }
+    }
+  };
+
+  // Close on backdrop click for the request modal
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.id === 'sbRequestModal') {
+      window.sbCloseCustomRequest();
+    }
+  });
 
   // Close on backdrop click
   document.addEventListener('click', function(e) {

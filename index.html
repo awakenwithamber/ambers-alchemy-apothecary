@@ -528,6 +528,9 @@
   window.EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID";
   window.EMAILJS_TPL_CONSULTATION = "YOUR_CONSULTATION_TEMPLATE_ID";
   window.EMAILJS_TPL_CONTACT = "YOUR_CONTACT_TEMPLATE_ID";
+  window.EMAILJS_TPL_SOAP_REQUEST = "YOUR_SOAP_REQUEST_TEMPLATE_ID";
+  // Recipients for the soap-builder "Send as Custom Request" fallback.
+  window.SOAP_REQUEST_RECIPIENTS = ["awaken@consultant.com", "dare2be4ree@gmail.com"];
   document.addEventListener('DOMContentLoaded', function() {
     if (window.emailjs && typeof emailjs.init === 'function') {
       emailjs.init(window.EMAILJS_PUBLIC_KEY);
@@ -575,6 +578,20 @@
   <source src="ambient-apothecary.mp3" type="audio/mpeg" />
 </audio>
 
+<!-- ENTRANCE OVERLAY — first-time visitors choose music or silence (sessionStorage: awakenMusicChoice) -->
+<div id="entranceOverlay" style="position:fixed;inset:0;background:radial-gradient(ellipse at center,rgba(42,26,46,0.97) 0%,rgba(20,12,26,0.99) 100%);display:none;align-items:center;justify-content:center;z-index:10000;font-family:'Lora',serif;color:#F3EBDD;backdrop-filter:blur(12px);">
+  <div style="max-width:520px;width:90%;text-align:center;padding:2.5rem 1.5rem;border:1px solid rgba(184,148,90,0.4);border-radius:18px;background:rgba(42,26,46,0.65);box-shadow:0 16px 48px rgba(0,0,0,0.5);">
+    <div style="font-family:'Cinzel',serif;letter-spacing:5px;color:#d4a843;font-size:0.85rem;margin-bottom:0.6rem;">✦ AWAKEN WITH AMBER ✦</div>
+    <h2 style="font-family:'Cinzel',serif;font-size:1.6rem;margin:0 0 0.6rem;color:#F3EBDD;letter-spacing:1.5px;">Welcome to the Apothecary</h2>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem;opacity:0.85;margin:0 0 1.6rem;">Would you like to enter with ambient music, or browse in silence?</p>
+    <div style="display:flex;flex-direction:column;gap:0.65rem;align-items:stretch;">
+      <button id="entranceWithMusic" type="button" style="background:linear-gradient(135deg,#B8945A,#8C6B3A);color:#1f1326;border:none;padding:14px 22px;border-radius:999px;font-family:'Cinzel',serif;font-size:0.95rem;cursor:pointer;font-weight:600;letter-spacing:1.5px;min-height:48px;">🎵 Enter with Music</button>
+      <button id="entranceSilent" type="button" style="background:transparent;color:#F3EBDD;border:1px solid rgba(184,148,90,0.6);padding:14px 22px;border-radius:999px;font-family:'Cinzel',serif;font-size:0.95rem;cursor:pointer;letter-spacing:1.5px;min-height:48px;">✦ Enter in Silence</button>
+    </div>
+    <p style="font-size:0.78rem;opacity:0.6;margin-top:1.2rem;">You can toggle music anytime from the menu.</p>
+  </div>
+</div>
+
 <!-- AUDIO PILL — fades in 6s after page load (no upfront modal) -->
 <div id="audioPill" style="position:fixed;bottom:24px;right:24px;background:rgba(42,26,46,0.92);color:#F3EBDD;padding:10px 16px;border-radius:999px;border:1px solid rgba(184,148,90,0.6);font-family:'Lora',serif;font-size:0.9rem;display:none;align-items:center;gap:10px;z-index:9000;box-shadow:0 6px 24px rgba(0,0,0,0.35);opacity:0;transition:opacity 0.6s ease;backdrop-filter:blur(6px);">
   <span style="font-size:1.1rem;">🎵</span>
@@ -597,17 +614,19 @@
       <span class="nav-dropdown-arrow">&#9662;</span>
       <span class="nav-dropdown" id="factsDropdown">
         <button class="nav-dropdown-item" data-section="herbal-wisdom">Articles &amp; Guides</button>
-        <button class="nav-dropdown-item" data-section="herbal-library">Herb Encyclopedia</button>
-        <button class="nav-dropdown-item" data-section="herb-index">Ingredient Library</button>
+        <button class="nav-dropdown-item" data-section="herbal-library">Herb &amp; Ingredient Library</button>
+        <button class="nav-dropdown-item" data-section="herb-index">The Living Grimoire</button>
       </span>
     </button>
     <button class="nav-btn" data-section="soaps">Soaps</button>
+    <button class="nav-btn" onclick="openSoapBuilder()">Custom Soap Builder</button>
     <button class="nav-btn" data-section="services">Services</button>
     <button class="nav-btn" data-section="about">About Amber</button>
     <button class="nav-btn" data-section="faqs">FAQs</button>
     <button class="nav-btn" data-section="contact">Contact</button>
     <button class="nav-btn nav-btn-start" onclick="openHerbalAdvisor()">Find My Remedy</button>
   </div>
+  <button id="musicToggleBtn" class="nav-music-toggle" aria-label="Toggle background music" title="Toggle music" style="background:transparent;border:1px solid rgba(184,148,90,0.5);color:#F3EBDD;padding:6px 12px;border-radius:999px;font-family:'Cinzel',serif;font-size:0.78rem;cursor:pointer;letter-spacing:1.2px;">&#9834; OFF</button>
   <button id="cartBtn" class="cart-btn">🛒 Cart (<span id="cartCount">0</span>)</button>
   <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
 </nav>
@@ -914,7 +933,7 @@
       </div>
       <div class="education-preview-card" onclick="showSection('herbal-library')">
         <span class="education-preview-icon">🌿</span>
-        <h4>Herb Encyclopedia</h4>
+        <h4>Herb &amp; Ingredient Library</h4>
         <p>Browse 316+ botanicals — benefits, traditional uses, and how they work</p>
       </div>
     </div>
@@ -1379,7 +1398,8 @@
     <!-- 1. Lavender Fairy Dream -->
     <div class="soap-card">
       <div class="soap-img-wrap">
-        <img src="images/soap-lavender-honey.png" alt="Lavender Fairy Dream Soap" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>💜</div>'" />
+        <!-- IMAGE: TEMPORARY - photo update pending. Expected: violet/cream tones with visible lavender buds. -->
+        <img src="images/soap-lavender-honey.png" alt="Handcrafted bar soap with visible lavender buds, violet and cream tones (photo update pending)" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>💜</div>'" />
         <div class="soap-img-badge">Fan Favorite</div>
       </div>
       <div class="soap-info">
@@ -1404,7 +1424,8 @@
     <!-- 2. Gaia's Rose -->
     <div class="soap-card">
       <div class="soap-img-wrap">
-        <img src="images/soap-rose-clay.png" alt="Gaia's Rose Soap" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🌹</div>'" />
+        <!-- IMAGE: TEMPORARY - photo update pending. Expected: rose pink or warm gold with visible rose petals. -->
+        <img src="images/soap-rose-clay.png" alt="Handcrafted bar soap with visible rose petals, pink and warm tones (photo update pending)" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🌹</div>'" />
         <div class="soap-img-badge">Bestseller</div>
       </div>
       <div class="soap-info">
@@ -1429,7 +1450,8 @@
     <!-- 3. Eucalyptus Mint Spa Renewal -->
     <div class="soap-card">
       <div class="soap-img-wrap">
-        <img src="images/soap-charcoal-mint.png" alt="Eucalyptus Mint Spa Renewal Soap" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🌿</div>'" />
+        <!-- IMAGE: TEMPORARY - photo update pending. Expected: green/white/cool tones with mint or eucalyptus botanicals. -->
+        <img src="images/soap-charcoal-mint.png" alt="Handcrafted bar soap in cool green and white tones with mint botanicals (photo update pending)" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🌿</div>'" />
       </div>
       <div class="soap-info">
         <h3 class="soap-name">Eucalyptus Mint Spa Renewal</h3>
@@ -1453,7 +1475,8 @@
     <!-- 4. Warm Cinnamon Comfort -->
     <div class="soap-card">
       <div class="soap-img-wrap">
-        <img src="images/soap-frankincense-myrrh.png" alt="Warm Cinnamon Comfort Soap" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🍂</div>'" />
+        <!-- IMAGE: TEMPORARY - photo update pending. Expected: amber/brown warm tones with cinnamon or spiced look. Current image shows frankincense/myrrh resin. -->
+        <img src="images/soap-frankincense-myrrh.png" alt="Handcrafted bar soap in warm amber and brown tones with spiced botanicals (photo update pending)" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🍂</div>'" />
       </div>
       <div class="soap-info">
         <h3 class="soap-name">Warm Cinnamon Comfort</h3>
@@ -1477,7 +1500,8 @@
     <!-- 5. Orange Lily Goddess -->
     <div class="soap-card">
       <div class="soap-img-wrap">
-        <img src="images/soap-calendula-oat.png" alt="Orange Lily Goddess Soap" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🌺</div>'" />
+        <!-- IMAGE: TEMPORARY - photo update pending. Expected: orange/golden tones with citrus botanical, must be visually distinct from Citrus Goddess Glow. -->
+        <img src="images/soap-calendula-oat.png" alt="Handcrafted bar soap in orange and golden tones with citrus and lily botanicals (photo update pending)" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🌺</div>'" />
       </div>
       <div class="soap-info">
         <h3 class="soap-name">Orange Lily Goddess</h3>
@@ -1501,7 +1525,8 @@
     <!-- 6. Citrus Goddess Glow -->
     <div class="soap-card">
       <div class="soap-img-wrap">
-        <img src="images/soap-turmeric-glow.png" alt="Citrus Goddess Glow Soap" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🍊</div>'" />
+        <!-- IMAGE: TEMPORARY - photo update pending. Expected: bright orange/gold, must be visually distinct from Orange Lily Goddess. -->
+        <img src="images/soap-turmeric-glow.png" alt="Handcrafted bar soap with bright golden glow and citrus botanicals (photo update pending)" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🍊</div>'" />
       </div>
       <div class="soap-info">
         <h3 class="soap-name">Citrus Goddess Glow</h3>
@@ -1525,7 +1550,8 @@
     <!-- 7. Sacred Forest Ritual -->
     <div class="soap-card">
       <div class="soap-img-wrap">
-        <img src="images/soap-cedar-sage.png" alt="Sacred Forest Ritual Soap" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🌲</div>'" />
+        <!-- IMAGE: TEMPORARY - photo update pending. Expected: deep green or dark earthy tones with forest botanicals. -->
+        <img src="images/soap-cedar-sage.png" alt="Handcrafted bar soap in deep forest green and earthy tones with cedar and sage botanicals (photo update pending)" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🌲</div>'" />
       </div>
       <div class="soap-info">
         <h3 class="soap-name">Sacred Forest Ritual</h3>
@@ -1549,7 +1575,8 @@
     <!-- 8. Fresh Mountain Air -->
     <div class="soap-card">
       <div class="soap-img-wrap">
-        <img src="images/soap-shea-vanilla.png" alt="Fresh Mountain Air Soap" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🏔️</div>'" />
+        <!-- IMAGE: TEMPORARY - photo update pending. Expected: light blue/white/mint, clean and airy. Current image (shea/vanilla) is reused for Sunlit Garden Bloom and the Full Collection banner. -->
+        <img src="images/soap-shea-vanilla.png" alt="Handcrafted bar soap in light blue and white tones, clean and airy with mint accents (photo update pending)" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🏔️</div>'" />
       </div>
       <div class="soap-info">
         <h3 class="soap-name">Fresh Mountain Air</h3>
@@ -1573,7 +1600,8 @@
     <!-- 9. Sunlit Garden Bloom -->
     <div class="soap-card">
       <div class="soap-img-wrap">
-        <img src="images/soap-shea-vanilla.png" alt="Sunlit Garden Bloom Soap" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🌸</div>'" />
+        <!-- IMAGE: TEMPORARY - DUPLICATE PLACEHOLDER. Currently sharing soap-shea-vanilla.png with Fresh Mountain Air and the Full Collection banner. Expected: soft florals, light and garden-inspired with visible flower petals. Replace ASAP to differentiate from Fresh Mountain Air. -->
+        <img src="images/soap-shea-vanilla.png" alt="Handcrafted bar soap with soft floral tones, light and garden-inspired with visible flower petals (photo update pending — currently a placeholder shared with another bar)" class="soap-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder>🌸</div>'" />
       </div>
       <div class="soap-info">
         <h3 class="soap-name">Sunlit Garden Bloom</h3>
@@ -1613,7 +1641,8 @@
 
   <!-- Collection Banner -->
   <div class="soap-collection-banner">
-    <img src="images/soap-shea-vanilla.png" alt="Amber's Alchemy Soap Collection" class="soap-banner-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder style=height:200px>🧼✨🧴</div>'" />
+    <!-- IMAGE: TEMPORARY - this is a group/collection banner placeholder, not any single bar. Expected: a styled photo of all 9 bars together. -->
+    <img src="images/soap-shea-vanilla.png" alt="Group banner image for the full Amber's Alchemy soap collection (photo update pending — group photo of all 9 bars)" class="soap-banner-img" loading="lazy" onerror="this.outerHTML='<div class=img-placeholder style=height:200px>🧼✨🧴</div>'" />
     <div class="soap-banner-text">
       <h3>The Full Collection</h3>
       <p>All nine signature bars. One for every mood, intention, and season.</p>
@@ -1710,9 +1739,29 @@
     <div class="soap-builder-actions">
       <button class="btn-ghost" id="sbPrevBtn" onclick="sbPrevStep()" style="display:none;">Back</button>
       <button class="btn-secondary" id="sbStartNewBtn" onclick="sbStartNew()">Start New</button>
+      <button class="btn-secondary" id="sbCustomRequestBtn" onclick="sbOpenCustomRequest()" style="display:none;">Send as Custom Request</button>
       <button class="btn-primary" id="sbAddCartBtn" onclick="sbAddToCart()">Add to Cart</button>
       <button class="btn-primary" id="sbNextBtn" onclick="sbNextStep()">Next Step ✦</button>
     </div>
+  </div>
+</div>
+
+<!-- CUSTOM SOAP REQUEST FALLBACK FORM — emails awaken@consultant.com + dare2be4ree@gmail.com -->
+<div id="sbRequestModal" style="display:none;position:fixed;inset:0;background:rgba(20,12,26,0.85);z-index:10100;align-items:center;justify-content:center;backdrop-filter:blur(6px);font-family:'Lora',serif;color:#F3EBDD;">
+  <div style="max-width:520px;width:92%;background:linear-gradient(160deg,rgba(42,26,46,0.98),rgba(31,19,38,0.98));border:1px solid rgba(184,148,90,0.5);border-radius:16px;padding:1.8rem 1.5rem;box-shadow:0 16px 48px rgba(0,0,0,0.55);position:relative;max-height:90vh;overflow-y:auto;">
+    <button onclick="sbCloseCustomRequest()" aria-label="Close" style="position:absolute;top:12px;right:14px;background:transparent;border:none;color:#F3EBDD;font-size:1.4rem;cursor:pointer;">&times;</button>
+    <div style="text-align:center;font-family:'Cinzel',serif;letter-spacing:3px;color:#d4a843;font-size:0.78rem;margin-bottom:0.4rem;">✦ CUSTOM REQUEST ✦</div>
+    <h3 style="text-align:center;font-family:'Cinzel',serif;margin:0 0 0.8rem;font-size:1.25rem;letter-spacing:1.2px;">Send Your Soap Spec to Amber</h3>
+    <p style="text-align:center;font-family:'Cormorant Garamond',serif;font-style:italic;opacity:0.8;font-size:1rem;margin:0 0 1rem;">We'll forward your selections to Amber and confirm by email within 24 hours.</p>
+    <div id="sbRequestSummary" style="background:rgba(0,0,0,0.25);border:1px dashed rgba(184,148,90,0.4);border-radius:10px;padding:0.85rem 1rem;font-size:0.88rem;margin-bottom:1rem;"></div>
+    <label style="display:block;font-size:0.85rem;margin-bottom:0.3rem;">Your Name</label>
+    <input id="sbRequestName" type="text" required style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(184,148,90,0.4);background:rgba(0,0,0,0.25);color:#F3EBDD;margin-bottom:0.7rem;font-family:inherit;" />
+    <label style="display:block;font-size:0.85rem;margin-bottom:0.3rem;">Your Email</label>
+    <input id="sbRequestEmail" type="email" required style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(184,148,90,0.4);background:rgba(0,0,0,0.25);color:#F3EBDD;margin-bottom:0.7rem;font-family:inherit;" />
+    <label style="display:block;font-size:0.85rem;margin-bottom:0.3rem;">Notes (optional)</label>
+    <textarea id="sbRequestNotes" rows="3" style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(184,148,90,0.4);background:rgba(0,0,0,0.25);color:#F3EBDD;margin-bottom:1rem;font-family:inherit;resize:vertical;"></textarea>
+    <button id="sbRequestSubmit" onclick="sbSubmitCustomRequest()" class="btn-primary" style="width:100%;padding:13px 18px;font-family:'Cinzel',serif;letter-spacing:1.3px;">Send Request ✦</button>
+    <p id="sbRequestStatus" style="text-align:center;font-size:0.86rem;margin:0.8rem 0 0;min-height:1.2em;"></p>
   </div>
 </div>
 
@@ -1728,7 +1777,7 @@
     <div class="hw-internal-links" style="text-align:center;margin:1rem 0;">
       <p><strong>Related:</strong>
         <a href="#" data-section="herbal-wisdom">Articles &amp; Guides</a> |
-        <a href="#" data-section="herbal-library">Herb Encyclopedia</a> |
+        <a href="#" data-section="herbal-library">Herb &amp; Ingredient Library</a> |
         <a href="#" data-section="journal">Apothecary Journal</a> |
         <a href="#" data-section="shop">Shop Remedies</a>
       </p>
@@ -1737,6 +1786,19 @@
       <span class="sourcing-icon">🌱</span>
       <p><strong>Our Sourcing Promise:</strong> Every botanical in this Grimoire is either <strong>hand-harvested by Amber</strong> from wild or cultivated gardens, or <strong>sustainably sourced</strong> from certified organic, trusted wholesale partners who share our commitment to ethical wildcrafting, fair trade, and ecological stewardship. We never use irradiated, fumigated, or conventionally grown herbs.</p>
     </div>
+  </div>
+
+  <!-- GRIMOIRE SUBSCRIBER GATE — fallback (no API). Submits an access request to Amber.
+       TODO: Replace email fallback with subscriber API check. Needs: API base URL, API key, List ID -->
+  <div id="grimoireGate" style="max-width:640px;margin:1.5rem auto 2rem;padding:1.4rem 1.5rem;border:1px solid rgba(184,148,90,0.5);border-radius:14px;background:linear-gradient(160deg,rgba(42,26,46,0.6),rgba(31,19,38,0.7));box-shadow:0 8px 24px rgba(0,0,0,0.35);text-align:center;color:#F3EBDD;font-family:'Lora',serif;">
+    <div style="font-family:'Cinzel',serif;letter-spacing:3px;color:#d4a843;font-size:0.78rem;margin-bottom:0.3rem;">✦ SUBSCRIBER ACCESS ✦</div>
+    <h3 style="font-family:'Cinzel',serif;letter-spacing:1.5px;font-size:1.15rem;margin:0 0 0.5rem;">Already subscribed? Unlock your Grimoire.</h3>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;opacity:0.8;font-size:1rem;margin:0 0 1rem;">Enter the email tied to your subscription. Not subscribed yet? Your request still reaches Amber and she'll get back to you.</p>
+    <div id="grimoireGateForm" style="display:flex;gap:0.6rem;flex-wrap:wrap;justify-content:center;align-items:center;">
+      <input id="grimoireGateEmail" type="email" placeholder="you@email.com" aria-label="Subscriber email" style="flex:1 1 240px;min-width:220px;padding:11px 14px;border-radius:999px;border:1px solid rgba(184,148,90,0.4);background:rgba(0,0,0,0.25);color:#F3EBDD;font-family:inherit;" />
+      <button id="grimoireGateBtn" onclick="grimoireGateSubmit()" class="btn-primary" style="padding:11px 22px;border-radius:999px;font-family:'Cinzel',serif;letter-spacing:1.3px;font-size:0.85rem;min-height:44px;">Unlock Access</button>
+    </div>
+    <p id="grimoireGateStatus" style="margin:0.8rem 0 0;font-size:0.88rem;min-height:1.2em;"></p>
   </div>
 
   <!-- HERB EXPLORER SEARCH -->
@@ -2311,8 +2373,8 @@
 <section id="herbal-library" class="page-section pane-bg">
   <div class="section-header">
     <div class="section-ornament">✦ ─────────────── ✦</div>
-    <h2>Herb Encyclopedia</h2>
-    <p>Browse herbs, benefits, and botanical uses. Click any herb to discover its medicinal properties, traditional uses, and healing wisdom.</p>
+    <h2>Herb &amp; Ingredient Library</h2>
+    <p>Browse herbs, benefits, and botanical uses. Click any herb to discover its medicinal properties, traditional uses, and healing wisdom. For an interactive symptom-based explorer and remedy quiz, visit <a href="#" data-section="herb-index" style="color:var(--gold,#d4a843);text-decoration:underline;">The Living Grimoire</a>.</p>
   </div>
   <div class="hw-internal-links" style="text-align:center;margin-bottom:2rem;">
     <p><strong>Explore More:</strong>
@@ -2439,8 +2501,8 @@
     <div class="footer-col">
       <h4>Learn</h4>
       <a href="#" data-section="herbal-wisdom">Articles &amp; Guides</a>
-      <a href="#" data-section="herbal-library">Herb Encyclopedia</a>
-      <a href="#" data-section="herb-index">Ingredient Library</a>
+      <a href="#" data-section="herbal-library">Herb &amp; Ingredient Library</a>
+      <a href="#" data-section="herb-index">The Living Grimoire</a>
       <a href="#" data-section="faqs">FAQs</a>
       <a href="#" data-section="about">About Amber</a>
     </div>

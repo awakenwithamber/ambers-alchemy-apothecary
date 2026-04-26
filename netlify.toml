@@ -32,6 +32,30 @@
   to = "/index.html"
   status = 200
 
+# Legacy library URLs — both old paths now redirect to the merged Herb & Ingredient Library.
+[[redirects]]
+  from = "/herb-encyclopedia"
+  to = "/index.html#herbal-library"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/ingredient-library"
+  to = "/index.html#herbal-library"
+  status = 301
+  force = true
+
+# Direct deep-link to the Custom Soap Builder.
+[[redirects]]
+  from = "/soap-builder"
+  to = "/index.html#soaps"
+  status = 200
+
+[[redirects]]
+  from = "/custom-soap-builder"
+  to = "/index.html#soaps"
+  status = 200
+
 [[redirects]]
   from = "/journal"
   to = "/index.html"

@@ -115,6 +115,68 @@ function hideAudioPill() {
   setTimeout(function() { audioPill.style.display = 'none'; }, 600);
   try { sessionStorage.setItem('audioPillDismissed', '1'); } catch (e) {}
 }
+
+// ---- ENTRANCE OVERLAY (sessionStorage key: awakenMusicChoice) ----
+// Persists per-session — choice survives navigation between pages within the same tab.
+(function() {
+  var overlay = document.getElementById('entranceOverlay');
+  if (!overlay) return;
+  var withMusicBtn = document.getElementById('entranceWithMusic');
+  var silentBtn = document.getElementById('entranceSilent');
+
+  function startMusicFromOverlay() {
+    var target = getStartVolume();
+    bgMusic.volume = 0;
+    if (volumeSlider) volumeSlider.value = Math.round(target * 100);
+    bgMusic.load();
+    bgMusic.play().then(function() {
+      fadeInMusic(target);
+      setMusicUI(true);
+    }).catch(function() { setMusicUI(false); });
+  }
+
+  function closeOverlay() {
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.45s ease';
+    setTimeout(function() { overlay.style.display = 'none'; }, 450);
+  }
+
+  var existingChoice = null;
+  try { existingChoice = sessionStorage.getItem('awakenMusicChoice'); } catch (e) {}
+
+  if (!existingChoice) {
+    // First visit this session — show overlay
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '1';
+    // Suppress audio pill since the overlay covers that decision
+    try { sessionStorage.setItem('audioPillDismissed', '1'); } catch (e) {}
+  } else if (existingChoice === 'music') {
+    // Returning page within session — auto-resume music silently
+    setTimeout(function() {
+      bgMusic.play().then(function() {
+        fadeInMusic(getStartVolume());
+        setMusicUI(true);
+      }).catch(function() { /* browser blocked — user can use nav toggle */ });
+    }, 300);
+  }
+
+  if (withMusicBtn) {
+    withMusicBtn.addEventListener('click', function() {
+      try { sessionStorage.setItem('awakenMusicChoice', 'music'); } catch (e) {}
+      startMusicFromOverlay();
+      closeOverlay();
+    });
+  }
+  if (silentBtn) {
+    silentBtn.addEventListener('click', function() {
+      try { sessionStorage.setItem('awakenMusicChoice', 'silent'); } catch (e) {}
+      closeOverlay();
+    });
+  }
+})();
+
+// Audio pill only appears when overlay was already answered AND user picked silent (gives them
+// a soft second-chance to enable music) — the overlay handler suppresses it on first visit.
 setTimeout(showAudioPill, 6000);
 
 if (audioPillYes) {
@@ -1359,3 +1421,63 @@ document.addEventListener('click', function(e) {
     scrollToAnchor(id);
   }
 });
+
+// ---- GRIMOIRE SUBSCRIBER GATE (email fallback; replace with API check when credentials available) ----
+window.grimoireGateSubmit = function() {
+  var input = document.getElementById("grimoireGateEmail");
+  var statusEl = document.getElementById("grimoireGateStatus");
+  var btn = document.getElementById("grimoireGateBtn");
+  if (!input || !statusEl) return;
+  var email = (input.value || "").trim();
+  function setStatus(msg, color) { statusEl.textContent = msg; statusEl.style.color = color || ""; }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    setStatus("Please enter a valid email address.", "#ffb29b");
+    return;
+  }
+
+  if (btn) { btn.disabled = true; btn.textContent = "Sending…"; }
+  setStatus("Sending your access request…", "");
+
+  var recipients = (window.SOAP_REQUEST_RECIPIENTS && window.SOAP_REQUEST_RECIPIENTS.length)
+    ? window.SOAP_REQUEST_RECIPIENTS
+    : ["awaken@consultant.com", "dare2be4ree@gmail.com"];
+
+  function done(success) {
+    if (btn) { btn.disabled = false; btn.textContent = "Unlock Access"; }
+    if (success) {
+      setStatus("✦ Request sent — we’ll confirm your access within 24 hours.", "#aef0c4");
+      input.value = "";
+    } else {
+      setStatus("Could not send. Email awaken@consultant.com directly with your subscriber email.", "#ffb29b");
+    }
+  }
+
+  var hasEmailJS = window.emailjs && typeof emailjs.send === "function";
+  var configuredKey = window.EMAILJS_PUBLIC_KEY && window.EMAILJS_PUBLIC_KEY.indexOf("YOUR_") !== 0;
+  var configuredService = window.EMAILJS_SERVICE_ID && window.EMAILJS_SERVICE_ID.indexOf("YOUR_") !== 0;
+  var tplId = window.EMAILJS_TPL_CONTACT;
+  var configuredTpl = tplId && tplId.indexOf("YOUR_") !== 0;
+
+  var params = {
+    to_email: recipients.join(","),
+    name: "Grimoire Access Request",
+    email: email,
+    subject_type: "Grimoire Access Request",
+    message: "Subscriber-access request for the Grimoire from " + email + ". Verify against subscriber list and reply with access."
+  };
+
+  if (hasEmailJS && configuredKey && configuredService && configuredTpl) {
+    emailjs.send(window.EMAILJS_SERVICE_ID, tplId, params).then(function() { done(true); }).catch(function() { done(false); });
+  } else {
+    try {
+      var subject = encodeURIComponent("Grimoire Access Request");
+      var body = encodeURIComponent(
+        "A visitor requested Grimoire access.\n\nEmail: " + email + "\n\nPlease verify against subscriber list."
+      );
+      window.location.href = "mailto:" + recipients.join(",") + "?subject=" + subject + "&body=" + body;
+      done(true);
+    } catch (e) { done(false); }
+  }
+};
+
