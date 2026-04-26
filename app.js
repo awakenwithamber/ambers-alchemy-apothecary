@@ -570,7 +570,7 @@ document.getElementById('checkoutForm').addEventListener('submit', async functio
   } catch (err) {
     errEl.textContent = err.message || 'Payment failed. Please try again.';
     payBtn.disabled = false;
-    btnText.textContent = 'Pay Now';
+    btnText.textContent = 'Pay Securely with Card';
     spinner.style.display = 'none';
   }
 });
