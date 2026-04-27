@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unlock the Grimior — $3.33/month</title>
+<meta name="description" content="Unlock the full Grimior — 88 pages of light magic, exclusive perks, and monthly rituals — for $3.33/month. Cancel anytime." />
+<link rel="stylesheet" href="/assets/css/grimior.css" />
+<link rel="stylesheet" href="/assets/css/profile.css" />
+<style>
+  .subscribe-card {
+    max-width: 640px;
+    margin: 60px auto;
+    padding: 40px;
+    background: linear-gradient(180deg, rgba(74,42,23,0.5), rgba(28,14,7,0.7));
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    text-align: center;
+  }
+  .subscribe-card h1 {
+    font-family: 'Cinzel Decorative', serif;
+    color: var(--gold-light);
+    font-size: clamp(28px, 5vw, 44px);
+    margin: 0 0 12px;
+    letter-spacing: 0.05em;
+  }
+  .subscribe-card .price {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 36px;
+    color: var(--gold);
+    margin: 24px 0 8px;
+  }
+  .subscribe-card .cancel-line { color: var(--ink-faded); font-style: italic; font-size: 13px; }
+  .perks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 28px 0;
+    text-align: left;
+  }
+  .perk-tile {
+    background: rgba(0,0,0,0.25);
+    padding: 14px 16px;
+    border-radius: 4px;
+    border-left: 3px solid var(--gold);
+  }
+  .perk-tile .icon { color: var(--gold); margin-right: 6px; }
+  .subscribe-cta {
+    margin: 28px 0;
+    padding: 16px 32px;
+    background: var(--gold);
+    color: var(--leather-dark);
+    font-family: 'Cinzel Decorative', serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    width: 100%;
+    max-width: 360px;
+    transition: all 0.2s;
+  }
+  .subscribe-cta:hover { background: var(--gold-light); }
+  .subscribe-form input {
+    width: 100%; padding: 12px; margin: 8px 0;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(184,134,11,0.3);
+    border-radius: 4px; color: var(--parchment);
+    font-family: inherit; font-size: 15px;
+  }
+  .subscribe-form input:focus { outline: none; border-color: var(--gold); }
+  .subscription-upsell {
+    margin-top: 28px;
+    padding: 16px;
+    background: rgba(184,134,11,0.08);
+    border-radius: 4px;
+    border: 1px solid rgba(184,134,11,0.25);
+  }
+  .sub-checkbox-label {
+    display: flex; gap: 12px; align-items: flex-start;
+    cursor: pointer;
+  }
+  .sub-checkbox-label input { margin-top: 4px; }
+  .sub-checkbox-label .checkmark { color: var(--gold); font-size: 20px; }
+  .sub-checkbox-label small { color: var(--ink-faded); display: block; margin-top: 4px; font-size: 12px; }
+  .secondary-link { display: block; margin-top: 16px; color: var(--gold-light); font-size: 13px; }
+  .status-msg { margin-top: 14px; min-height: 18px; color: #e8b6b6; font-size: 14px; }
+  .status-msg.ok { color: #b6e8c4; }
+</style>
+</head>
+<body>
+<div class="grimior-shell">
+
+  <header class="grimior-header">
+    <a href="/index.html" style="color:var(--ink-faded);font-size:13px;">← Back to home</a>
+  </header>
+
+  <div class="subscribe-card">
+    <h1>Unlock the Full Grimior</h1>
+    <p class="cancel-line">A true book of light magic with 88 sacred pages, rituals, protections, cleansing rites, exclusive monthly gifts, promo codes, and magical wisdom.</p>
+
+    <div class="price">$3.33<span style="font-size:16px;">/month</span></div>
+    <p class="cancel-line">Cancel anytime. Access continues to the end of the billing period.</p>
+
+    <div class="perks-grid">
+      <div class="perk-tile"><span class="icon">✦</span> Full 88-page Grimior access</div>
+      <div class="perk-tile"><span class="icon">✦</span> 10% off every order, auto-applied</div>
+      <div class="perk-tile"><span class="icon">✦</span> Free gift with every purchase</div>
+      <div class="perk-tile"><span class="icon">✦</span> Free shipping over $50</div>
+      <div class="perk-tile"><span class="icon">✦</span> Exclusive monthly promo code</div>
+      <div class="perk-tile"><span class="icon">✦</span> Tarot of the Day, daily</div>
+      <div class="perk-tile"><span class="icon">✦</span> Monthly ritual, sent to your inbox</div>
+      <div class="perk-tile"><span class="icon">✦</span> New content added over time</div>
+    </div>
+
+    <form class="subscribe-form" id="subscribe-form" onsubmit="return false;">
+      <input type="email" name="email" placeholder="your-email@example.com" required />
+      <input type="text" name="first_name" placeholder="First name (optional)" />
+      <button class="subscribe-cta" id="shopify-subscribe-btn" type="submit">Subscribe Now ✦</button>
+    </form>
+
+    <div id="status-msg" class="status-msg"></div>
+
+    <div class="subscription-upsell">
+      <label class="sub-checkbox-label">
+        <input type="checkbox" id="add-grimior-subscription" name="add_grimior_sub" value="3.33">
+        <span class="checkmark">✦</span>
+        <span class="label-text">
+          Add <strong>Full Grimior Access</strong> — $3.33/month
+          <small>Unlock 88 pages of light magic + 10% off all orders, free gift &amp; more. Visible at checkout.</small>
+        </span>
+      </label>
+    </div>
+
+    <a class="secondary-link" href="/grimior">Continue reading the free preview →</a>
+    <a class="secondary-link" href="/profile">Already a subscriber? Open your profile →</a>
+  </div>
+</div>
+
+<script src="/assets/js/auth.js"></script>
+<script>
+(function () {
+  const $form = document.getElementById('subscribe-form');
+  const $msg = document.getElementById('status-msg');
+  const $btn = document.getElementById('shopify-subscribe-btn');
+
+  $form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    $msg.className = 'status-msg';
+    $msg.textContent = '';
+    const email = $form.email.value.trim();
+    const first_name = $form.first_name.value.trim();
+    if (!email) { $msg.textContent = 'Email required.'; return; }
+    $btn.disabled = true;
+    $btn.textContent = 'Preparing checkout...';
+    try {
+      const r = await fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, first_name })
+      });
+      const data = await r.json();
+      if (data.ok && data.checkoutUrl) {
+        // Remember email for post-checkout access
+        try { window.GrimiorAuth.setFallbackEmail(email); } catch (e) {}
+        window.location.href = data.checkoutUrl;
+        return;
+      }
+      if (data.ok) {
+        $msg.className = 'status-msg ok';
+        $msg.textContent = data.message || 'Customer prepared. Please complete checkout in Shopify.';
+        try { window.GrimiorAuth.setFallbackEmail(email); } catch (e) {}
+      } else {
+        $msg.textContent = data.error || 'Could not start checkout.';
+      }
+    } catch (err) {
+      $msg.textContent = 'Network error. Please try again.';
+    } finally {
+      $btn.disabled = false;
+      $btn.textContent = 'Subscribe Now ✦';
+    }
+  });
+})();
+</script>
+</body>
+</html>

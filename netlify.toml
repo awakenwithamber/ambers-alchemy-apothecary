@@ -3,6 +3,43 @@
   functions = "netlify/functions"
 
 [[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/grimior"
+  to = "/pages/grimior.html"
+  status = 200
+
+[[redirects]]
+  from = "/subscribe"
+  to = "/pages/subscribe.html"
+  status = 200
+
+[[redirects]]
+  from = "/profile"
+  to = "/pages/profile.html"
+  status = 200
+
+[[redirects]]
+  from = "/tarot"
+  to = "/pages/tarot.html"
+  status = 200
+
+[[redirects]]
+  from = "/grimior-content/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[headers]]
+  for = "/grimior-content/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
+[[redirects]]
   from = "/shop"
   to = "/index.html"
   status = 200

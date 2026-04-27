@@ -1,0 +1,251 @@
+/* Profile dashboard styling */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English&display=swap');
+
+:root {
+  --parchment: #f4ead5;
+  --gold: #b8860b;
+  --gold-light: #d4a843;
+  --leather: #4a2a17;
+  --leather-dark: #2c180c;
+  --ink-faded: #d6c7a3;
+}
+
+body {
+  margin: 0;
+  font-family: 'IM Fell English', Georgia, serif;
+  background:
+    radial-gradient(circle at top, rgba(184, 134, 11, 0.1), transparent 60%),
+    linear-gradient(180deg, #1a0e07 0%, #0d0703 100%);
+  color: var(--parchment);
+  min-height: 100vh;
+}
+
+.profile-shell {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+.profile-header h1 {
+  font-family: 'Cinzel Decorative', serif;
+  color: var(--gold-light);
+  font-size: clamp(28px, 4vw, 40px);
+  margin: 0 0 8px;
+  letter-spacing: 0.05em;
+}
+.profile-header p { color: var(--ink-faded); font-style: italic; }
+
+.profile-card {
+  background: linear-gradient(180deg, rgba(74, 42, 23, 0.4), rgba(28, 14, 7, 0.6));
+  border: 1px solid rgba(184, 134, 11, 0.3);
+  border-radius: 6px;
+  padding: 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+.profile-card h2 {
+  font-family: 'Cinzel Decorative', serif;
+  color: var(--gold-light);
+  margin-top: 0;
+  font-size: 22px;
+  letter-spacing: 0.05em;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: 'Cinzel Decorative', serif;
+}
+.status-badge.active   { background: #1f4d2b; color: #b6e8c4; border: 1px solid #4ea868; }
+.status-badge.inactive { background: #4a2a17; color: var(--ink-faded); border: 1px solid #6c4628; }
+.status-badge.cancelled,
+.status-badge.cancelling { background: #4d1f1f; color: #e8b6b6; border: 1px solid #a84e4e; }
+.status-badge.admin    { background: var(--gold); color: var(--leather-dark); }
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.info-grid .field {
+  background: rgba(0,0,0,0.25);
+  padding: 12px 16px;
+  border-radius: 4px;
+  border-left: 3px solid var(--gold);
+}
+.info-grid .field .label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.info-grid .field .value { color: var(--parchment); margin-top: 4px; }
+
+.perks-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 16px 0 0;
+}
+.perks-list li {
+  padding: 10px 0;
+  border-bottom: 1px dotted rgba(184, 134, 11, 0.2);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.perks-list li .icon {
+  color: var(--gold);
+  font-size: 18px;
+  margin-top: 2px;
+}
+.perks-list li .perk-title {
+  display: block;
+  font-family: 'Cinzel Decorative', serif;
+  color: var(--gold-light);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+}
+.perks-list li small { color: var(--ink-faded); font-size: 12px; }
+
+.btn-primary, .btn-secondary, .btn-danger {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 4px;
+  font-family: 'Cinzel Decorative', serif;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-size: 13px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid;
+  background: transparent;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: var(--gold);
+  color: var(--leather-dark);
+  border-color: var(--gold);
+}
+.btn-primary:hover { background: var(--gold-light); }
+.btn-secondary {
+  color: var(--gold-light);
+  border-color: var(--gold);
+}
+.btn-secondary:hover { background: rgba(184, 134, 11, 0.15); }
+.btn-danger {
+  color: #e8b6b6;
+  border-color: #a84e4e;
+}
+.btn-danger:hover { background: rgba(168, 78, 78, 0.2); }
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+.orders-table th {
+  text-align: left;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  text-transform: uppercase;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(184, 134, 11, 0.25);
+}
+.orders-table td {
+  padding: 10px;
+  border-bottom: 1px dotted rgba(184, 134, 11, 0.12);
+}
+.orders-table tr:hover td { background: rgba(184, 134, 11, 0.06); }
+
+.tarot-widget {
+  text-align: center;
+  padding: 24px;
+}
+.tarot-widget .card-flip-container {
+  margin: 0 auto 18px;
+  max-width: 320px;
+  min-height: 260px;
+  background: linear-gradient(180deg, var(--leather), var(--leather-dark));
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  padding: 24px;
+  color: var(--gold-light);
+  font-family: 'Cinzel Decorative', serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+.tarot-widget .card-name {
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  color: var(--gold-light);
+  margin-bottom: 8px;
+}
+.tarot-widget .card-number {
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  margin-bottom: 16px;
+}
+.tarot-widget .card-meaning {
+  font-family: 'IM Fell English', serif;
+  font-style: italic;
+  color: var(--parchment);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Login form / auth modal */
+.auth-card {
+  max-width: 420px;
+  margin: 80px auto;
+  background: linear-gradient(180deg, rgba(74, 42, 23, 0.5), rgba(28, 14, 7, 0.7));
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  padding: 36px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+}
+.auth-card h2 {
+  font-family: 'Cinzel Decorative', serif;
+  color: var(--gold-light);
+  text-align: center;
+  margin-top: 0;
+}
+.auth-card label {
+  display: block;
+  margin-top: 12px;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  text-transform: uppercase;
+}
+.auth-card input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 6px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(184, 134, 11, 0.3);
+  border-radius: 4px;
+  color: var(--parchment);
+  font-family: inherit;
+  font-size: 15px;
+}
+.auth-card input:focus { outline: none; border-color: var(--gold); }
+.auth-card .form-row { margin-top: 18px; }
+.auth-card .error { color: #e8b6b6; font-size: 13px; margin-top: 10px; min-height: 18px; }
+.auth-card .switch { text-align: center; margin-top: 16px; font-size: 13px; }
+.auth-card .switch a { color: var(--gold-light); cursor: pointer; }
+
+.muted { color: var(--ink-faded); font-style: italic; }

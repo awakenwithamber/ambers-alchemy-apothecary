@@ -1,0 +1,25 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Action Required — Subscription Payment Failed</title></head>
+<body style="margin:0;background:#f4ead5;font-family:Georgia,serif;color:#2b1a0e;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4ead5;padding:40px 20px;"><tr><td align="center">
+  <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border:1px solid #a84e4e;border-radius:6px;">
+    <tr><td style="background:linear-gradient(180deg,#4d1f1f,#2c0c0c);padding:36px;color:#e8b6b6;text-align:center;">
+      <h1 style="font-family:'Cinzel Decorative',serif;font-size:26px;margin:0;color:#e8b6b6;">✦ Action Required</h1>
+      <div style="font-style:italic;color:#f4ead5;font-size:14px;margin-top:6px;">Subscription payment failed</div>
+    </td></tr>
+    <tr><td style="padding:32px 40px;line-height:1.7;font-size:16px;">
+      <p>{{ first_name|default:"Dear keeper" }} — your most recent Grimior payment did not go through.</p>
+      <p style="background:rgba(168,78,78,0.08);padding:14px;border-left:3px solid #a84e4e;">
+        Access has been suspended for the locked pages. Front-matter pages remain visible. To restore full access, please update your payment method.
+      </p>
+      <p style="text-align:center;margin:24px 0;">
+        <a href="https://recharge.com" style="background:#a84e4e;color:#ffffff;padding:12px 24px;text-decoration:none;border-radius:4px;font-weight:bold;">Update Payment Method</a>
+      </p>
+      <p>If you'd prefer not to renew, you may cancel below. No further charges will be attempted.</p>
+    </td></tr>
+    <tr><td style="background:#f4ead5;padding:20px;text-align:center;font-size:12px;color:#4a3322;">
+      <a href="{{ site_url }}/profile" style="color:#b8860b;">My Profile</a> ·
+      <a href="{{ site_url }}/profile#cancel" style="color:#b8860b;">Cancel subscription</a>
+    </td></tr>
+  </table>
+</td></tr></table></body></html>

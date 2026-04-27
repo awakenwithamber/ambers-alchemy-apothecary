@@ -1,0 +1,22 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Your Grimior renews in 3 days</title></head>
+<body style="margin:0;background:#f4ead5;font-family:Georgia,serif;color:#2b1a0e;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4ead5;padding:40px 20px;"><tr><td align="center">
+  <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border:1px solid #d4a843;border-radius:6px;">
+    <tr><td style="background:linear-gradient(180deg,#4a2a17,#2c180c);padding:36px;color:#d4a843;text-align:center;">
+      <h1 style="font-family:'Cinzel Decorative',serif;font-size:26px;margin:0;color:#d4a843;">✦ Renewing in 3 days</h1>
+    </td></tr>
+    <tr><td style="padding:32px 40px;line-height:1.7;font-size:16px;">
+      <p>{{ first_name|default:"Dear keeper" }} — your Grimior subscription will renew on <strong>{{ renewal_date }}</strong> for <strong>${{ amount|default:"3.33" }}</strong>.</p>
+      <p>No action is needed. The book stays open. The kind ones keep walking with you.</p>
+      <p style="text-align:center;margin:24px 0;">
+        <a href="{{ site_url }}/profile" style="background:#b8860b;color:#2c180c;padding:12px 24px;text-decoration:none;border-radius:4px;font-weight:bold;">Manage Subscription</a>
+      </p>
+      <p style="font-size:13px;color:#4a3322;">If you'd like to pause or change your subscription, you can do so any time from your profile.</p>
+    </td></tr>
+    <tr><td style="background:#f4ead5;padding:20px;text-align:center;font-size:12px;color:#4a3322;">
+      <a href="{{ site_url }}/profile" style="color:#b8860b;">My Profile</a> ·
+      <a href="{{ site_url }}/profile#cancel" style="color:#b8860b;">Cancel subscription</a>
+    </td></tr>
+  </table>
+</td></tr></table></body></html>

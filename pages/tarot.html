@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tarot of the Day — Grimior</title>
+<link rel="stylesheet" href="/assets/css/profile.css" />
+</head>
+<body>
+<div class="profile-shell">
+  <header class="profile-header">
+    <h1>Tarot of the Day</h1>
+    <p>One card, drawn from the deck of the kind ones, for all keepers today.</p>
+  </header>
+
+  <div class="profile-card" id="card-card">
+    <div class="tarot-widget">
+      <div class="card-flip-container">
+        <div class="card-back" id="tarot-card-content">
+          <div class="muted">Click below to draw your card.</div>
+        </div>
+      </div>
+      <button id="reveal-btn" class="btn-primary" style="margin-top:18px;">✦ Reveal Today's Card</button>
+    </div>
+  </div>
+
+  <p style="text-align:center;margin-top:28px;">
+    <a href="/profile" style="color:var(--gold-light);">Back to profile</a> ·
+    <a href="/grimior" style="color:var(--gold-light);">Open the Grimior</a>
+  </p>
+</div>
+
+<script src="/assets/js/auth.js"></script>
+<script>
+(function () {
+  const $btn = document.getElementById('reveal-btn');
+  const $card = document.getElementById('tarot-card-content');
+
+  function escape(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  async function draw() {
+    $card.innerHTML = '<div class="muted">Drawing your card…</div>';
+    const session = window.GrimiorAuth.getSession();
+    if (!session && !window.GrimiorAuth.getEmail()) {
+      $card.innerHTML = '<div class="muted">Please <a href="/profile">log in</a> to draw your card.</div>';
+      return;
+    }
+    try {
+      const r = await window.GrimiorAuth.authedFetch('/api/tarot-of-day');
+      const data = await r.json();
+      if (!data.ok) {
+        if (r.status === 403) {
+          $card.innerHTML = '<div class="muted">Tarot of the Day is for active subscribers. <a href="/subscribe">Unlock the Grimior →</a></div>';
+        } else {
+          $card.innerHTML = '<div class="muted">Could not draw the card. ' + escape(data.error || '') + '</div>';
+        }
+        return;
+      }
+      const c = data.card;
+      $card.innerHTML = `
+        <div class="card-number">${escape(c.number)}</div>
+        <div class="card-name">${escape(c.name)}</div>
+        <div class="card-meaning">${escape(c.meaning)}</div>
+        <p style="margin-top:14px;color:var(--gold-light);font-size:13px;">
+          <em>${escape(c.affirmation)}</em>
+        </p>
+        <p style="font-size:13px;margin-top:8px;">
+          <strong>Journal:</strong> ${escape(c.journal_prompt)}
+        </p>
+        <p style="font-size:13px;margin-top:8px;">
+          <strong>Ritual:</strong> ${escape(c.ritual)}
+        </p>
+        ${c.product_suggestion ? `<p style="font-size:12px;margin-top:14px;color:var(--ink-faded);">
+          From the apothecary: <a href="${escape(c.product_suggestion.url)}">${escape(c.product_suggestion.name)}</a>
+        </p>` : ''}
+      `;
+    } catch (e) {
+      $card.innerHTML = '<div class="muted">Network error.</div>';
+    }
+  }
+
+  $btn.addEventListener('click', draw);
+})();
+</script>
+</body>
+</html>

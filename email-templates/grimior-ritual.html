@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Your Ritual for {{ month }}</title></head>
+<body style="margin:0;background:#f4ead5;font-family:Georgia,serif;color:#2b1a0e;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4ead5;padding:40px 20px;"><tr><td align="center">
+  <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border:1px solid #d4a843;border-radius:6px;">
+    <tr><td style="background:linear-gradient(180deg,#4a2a17,#2c180c);padding:36px;color:#d4a843;text-align:center;">
+      <h1 style="font-family:'Cinzel Decorative',serif;font-size:28px;margin:0;color:#d4a843;">✦ Your Ritual for {{ month|default:"this month" }}</h1>
+    </td></tr>
+    <tr><td style="padding:32px 40px;line-height:1.7;font-size:16px;">
+      <p>{{ first_name|default:"Dear keeper" }} — drawn from the Grimior for you this month.</p>
+      <h3 style="color:#b8860b;">{{ ritual_title|default:"Moon Blessing" }}</h3>
+      <p><em>{{ ritual_intent|default:"To bless yourself beneath the moon, gently and completely." }}</em></p>
+      <p><strong>You will need:</strong> {{ ritual_needs|default:"a clear night, a glass of water, a pinch of dried lavender or rose." }}</p>
+      <p><strong>The working:</strong></p>
+      <ol>
+        <li>Step outside or stand at an open window. Lift the glass toward the moon.</li>
+        <li>Speak: "Lady moon, witness me. I am here, I am willing, I am loved."</li>
+        <li>Sprinkle the herb across the glass. Stir three times sunwise.</li>
+        <li>Drink half. Pour the rest at the root of any plant or earth, with thanks.</li>
+      </ol>
+      <h3 style="color:#b8860b;">Journal prompt</h3>
+      <p style="font-style:italic;background:rgba(184,134,11,0.08);padding:14px;border-left:3px solid #b8860b;">
+        What is the moon witnessing in me this month?
+      </p>
+      <p>Pair with: <a href="{{ site_url }}/index.html#products">Lavender Loose Botanical</a></p>
+      <p style="text-align:center;margin:24px 0;">
+        <a href="{{ site_url }}/grimior" style="background:#b8860b;color:#2c180c;padding:12px 24px;text-decoration:none;border-radius:4px;font-weight:bold;">Open the Full Grimior</a>
+      </p>
+    </td></tr>
+    <tr><td style="background:#f4ead5;padding:20px;text-align:center;font-size:12px;color:#4a3322;">
+      <a href="{{ site_url }}/profile" style="color:#b8860b;">My Profile</a> ·
+      <a href="{{ site_url }}/profile#cancel" style="color:#b8860b;">Cancel subscription</a>
+    </td></tr>
+  </table>
+</td></tr></table></body></html>

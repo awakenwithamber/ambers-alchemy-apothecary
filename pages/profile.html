@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>My Grimior Profile</title>
+<link rel="stylesheet" href="/assets/css/profile.css" />
+</head>
+<body>
+<div class="profile-shell">
+  <header class="profile-header">
+    <h1>Your Grimior</h1>
+    <p>Profile, perks, and the daily card.</p>
+  </header>
+
+  <!-- LOGIN / SIGNUP CARD -->
+  <div id="login-card" class="auth-card" style="display:none;">
+    <h2>Enter the Grimior</h2>
+    <form id="login-form">
+      <label>Email <input name="email" type="email" required /></label>
+      <label>Password <input name="password" type="password" required /></label>
+      <div class="form-row">
+        <button type="submit" class="btn-primary" style="width:100%;">Log In</button>
+      </div>
+      <div class="error" id="login-error"></div>
+      <div class="switch">No account? <a id="toggle-signup">Create one →</a></div>
+    </form>
+
+    <form id="signup-form" style="display:none;">
+      <label>Full name <input name="name" type="text" /></label>
+      <label>Email <input name="email" type="email" required /></label>
+      <label>Password <input name="password" type="password" minlength="8" required /></label>
+      <div class="form-row">
+        <button type="submit" class="btn-primary" style="width:100%;">Create Account</button>
+      </div>
+      <div class="switch">Already a keeper? <a id="toggle-login">Log in →</a></div>
+    </form>
+    <p class="muted" style="text-align:center;margin-top:18px;font-size:12px;">
+      Identity sessions are issued by Netlify Identity (JWT-based).
+    </p>
+  </div>
+
+  <!-- PROFILE CONTENT -->
+  <div id="profile-content" style="display:none;">
+
+    <div class="profile-card">
+      <h2>Account
+        <span id="status-badge" class="status-badge inactive">Loading…</span>
+      </h2>
+      <div id="account-info"></div>
+      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="/grimior" class="btn-primary">Open Full Grimior →</a>
+        <a href="/tarot" class="btn-secondary">Tarot of the Day</a>
+        <button id="logout-btn" class="btn-secondary">Log out</button>
+      </div>
+    </div>
+
+    <div class="profile-card" id="perks-section">
+      <h2>Active Perks</h2>
+      <ul class="perks-list"></ul>
+    </div>
+
+    <div class="profile-card" id="tarot-widget" style="display:none;">
+      <h2>Tarot of the Day</h2>
+      <div class="tarot-widget">
+        <div class="card-flip-container">
+          <div class="card-back" id="tarot-card-content"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-card">
+      <h2>Order History</h2>
+      <div id="orders-table"></div>
+    </div>
+
+    <div class="profile-card" id="cancel-section">
+      <h2>Subscription Management</h2>
+      <p class="muted">Cancel any time. You retain access through the end of the current billing period.</p>
+      <button id="cancel-subscription" class="btn-danger" style="display:none;">Cancel My Subscription</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="/assets/js/auth.js"></script>
+<script src="/assets/js/profile.js"></script>
+<script>
+  // Show login by default unless a session exists; profile.js will flip it.
+  (function () {
+    const s = window.GrimiorAuth.getSession();
+    document.getElementById('login-card').style.display = s ? 'none' : '';
+    document.getElementById('profile-content').style.display = s ? '' : 'none';
+  })();
+</script>
+</body>
+</html>

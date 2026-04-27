@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Subscription cancelled</title></head>
+<body style="margin:0;background:#f4ead5;font-family:Georgia,serif;color:#2b1a0e;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4ead5;padding:40px 20px;"><tr><td align="center">
+  <table width="600" cellpadding="0" cellspacing="0" border="0" style="background:#ffffff;border:1px solid #d4a843;border-radius:6px;">
+    <tr><td style="background:linear-gradient(180deg,#4a2a17,#2c180c);padding:36px;color:#d4a843;text-align:center;">
+      <h1 style="font-family:'Cinzel Decorative',serif;font-size:24px;margin:0;color:#d4a843;">Your Grimior subscription has been cancelled</h1>
+    </td></tr>
+    <tr><td style="padding:32px 40px;line-height:1.7;font-size:16px;">
+      <p>{{ first_name|default:"Dear keeper" }} — your subscription has been gently closed.</p>
+      <p>You will retain full access to the Grimior until <strong>{{ access_until|default:"the end of your current billing period" }}</strong>. After that, the locked pages will return to their slumber.</p>
+      <p>Thank you for the season we walked together.</p>
+      <p>If you ever wish to return, the door is unlatched:</p>
+      <p style="text-align:center;margin:24px 0;">
+        <a href="{{ site_url }}/subscribe" style="background:#b8860b;color:#2c180c;padding:12px 24px;text-decoration:none;border-radius:4px;font-weight:bold;">Resubscribe — $3.33/month</a>
+      </p>
+      <p style="margin-top:32px;font-style:italic;">— Amber</p>
+    </td></tr>
+    <tr><td style="background:#f4ead5;padding:20px;text-align:center;font-size:12px;color:#4a3322;">
+      Awaken Again · Amber's Alchemy Apothecary
+    </td></tr>
+  </table>
+</td></tr></table></body></html>
