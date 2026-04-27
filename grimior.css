@@ -1,0 +1,754 @@
+/* ============================================================
+   THE GRIMIOR — Ancient Light-Magic Tome Styling
+   Leather, parchment, candlelight, gold, page-flip illusions.
+   Scoped under #the-grimior to avoid touching anything else.
+   ============================================================ */
+
+/* ---------- Section foundations ---------- */
+#the-grimior {
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(247, 196, 110, 0.18) 0%, rgba(0,0,0,0) 55%),
+    radial-gradient(ellipse at 50% 120%, rgba(120, 50, 20, 0.18) 0%, rgba(0,0,0,0) 60%),
+    linear-gradient(180deg, #1a0f0a 0%, #2a1a10 50%, #150b06 100%);
+  color: #f4e6c8;
+  padding: 2.5rem 1rem 4rem;
+  min-height: 100vh;
+}
+
+#the-grimior .grimior-intro {
+  max-width: 760px;
+  margin: 0 auto 2rem;
+  text-align: center;
+}
+#the-grimior .grimior-intro-ornament {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.4em;
+  color: #d8a85a;
+  opacity: 0.85;
+  margin-bottom: 0.6rem;
+}
+#the-grimior .grimior-intro-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  color: #f4d894;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.6), 0 0 18px rgba(247,196,110,0.14);
+  margin: 0;
+}
+#the-grimior .grimior-intro-sub {
+  font-family: 'Cormorant Garamond', 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #e7d4a8;
+  margin-top: 0.5rem;
+  opacity: 0.92;
+}
+
+/* ---------- Book stage ---------- */
+.grimior-stage {
+  max-width: 1080px;
+  margin: 0 auto;
+  position: relative;
+  perspective: 2400px;
+}
+
+/* Candle glow behind the book */
+.grimior-stage::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 30%, rgba(255, 196, 120, 0.18), rgba(0,0,0,0) 65%);
+  filter: blur(6px);
+  z-index: 0;
+}
+
+/* ---------- The book itself ---------- */
+.grimior-book {
+  position: relative;
+  margin: 0 auto;
+  width: min(100%, 1000px);
+  aspect-ratio: 16 / 11;
+  z-index: 1;
+}
+@media (max-width: 720px) {
+  .grimior-book { aspect-ratio: 4 / 5; }
+}
+
+/* The two-page spread */
+.grimior-spread {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 10px 16px 16px 10px;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 6%, rgba(0,0,0,0) 94%, rgba(0,0,0,0.35) 100%),
+    repeating-linear-gradient(180deg, rgba(99, 56, 12, 0.04) 0 2px, transparent 2px 7px),
+    radial-gradient(ellipse at 50% 50%, #f3e2b6 0%, #e6cf94 60%, #c8a866 100%);
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.6),
+    inset 0 0 60px rgba(120, 70, 20, 0.25);
+  overflow: hidden;
+}
+
+@media (max-width: 720px) {
+  .grimior-spread { grid-template-columns: 1fr; }
+  .grimior-page--right { display: none; }
+}
+
+/* Spine shadow */
+.grimior-spread::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 50%;
+  width: 30px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(60,30,10,0.45) 50%, rgba(0,0,0,0) 100%);
+  pointer-events: none;
+}
+@media (max-width: 720px) {
+  .grimior-spread::after { display: none; }
+}
+
+/* Individual pages */
+.grimior-page {
+  position: relative;
+  padding: clamp(1rem, 2.6vw, 2.2rem) clamp(1rem, 3vw, 2.6rem);
+  overflow: hidden;
+  color: #3a2410;
+  font-family: 'Lora', 'Cormorant Garamond', Georgia, serif;
+  line-height: 1.65;
+  font-size: clamp(0.95rem, 1.05vw, 1.05rem);
+}
+.grimior-page--left { border-right: 1px solid rgba(120, 70, 20, 0.25); }
+
+/* Aged-edges texture */
+.grimior-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(80, 40, 10, 0.25), transparent 35%),
+    radial-gradient(ellipse at 100% 0%, rgba(80, 40, 10, 0.25), transparent 35%),
+    radial-gradient(ellipse at 0% 100%, rgba(80, 40, 10, 0.30), transparent 38%),
+    radial-gradient(ellipse at 100% 100%, rgba(80, 40, 10, 0.30), transparent 38%);
+}
+
+/* Faint paper grain */
+.grimior-page::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image:
+    repeating-linear-gradient(45deg, rgba(60, 30, 10, 0.4) 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(-45deg, rgba(60, 30, 10, 0.3) 0 1px, transparent 1px 7px);
+}
+
+/* ---------- Cover (closed book) ---------- */
+.grimior-page--cover {
+  grid-column: 1 / -1;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255, 200, 120, 0.10), transparent 55%),
+    repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 5px),
+    linear-gradient(160deg, #4a2208 0%, #2c1303 60%, #1a0a02 100%);
+  color: #f3d68a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+}
+.grimior-page--cover::before { display: none; }
+.grimior-page--cover::after {
+  content: '';
+  position: absolute;
+  inset: 18px;
+  border: 2px solid rgba(243, 214, 138, 0.45);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 40px rgba(0,0,0,0.5),
+    0 0 0 6px rgba(0,0,0,0.25);
+  pointer-events: none;
+  background: none;
+  opacity: 1;
+}
+.grimior-cover-frame {
+  position: absolute;
+  inset: 36px;
+  border: 1px dashed rgba(243, 214, 138, 0.30);
+  border-radius: 4px;
+  pointer-events: none;
+}
+.grimior-cover-glyph {
+  font-family: 'Cinzel', serif;
+  font-size: 2.5rem;
+  letter-spacing: 0.4em;
+  color: #f3d68a;
+  text-shadow: 0 0 18px rgba(243, 214, 138, 0.5);
+}
+.grimior-cover-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2rem, 5vw, 3.6rem);
+  letter-spacing: 0.10em;
+  color: #f7dc8e;
+  margin: 1rem 0 0.4rem;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.6), 0 0 24px rgba(247, 196, 110, 0.45);
+}
+.grimior-cover-sub {
+  font-family: 'Cormorant Garamond', 'Lora', serif;
+  font-style: italic;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  color: #e9cb84;
+  letter-spacing: 0.06em;
+  margin-bottom: 1.5rem;
+}
+.grimior-cover-keeper {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(243, 214, 138, 0.7);
+}
+.grimior-cover-pressed {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1.2rem;
+  align-items: center;
+  font-size: 1.4rem;
+  color: rgba(247, 196, 110, 0.85);
+}
+
+/* ---------- Page typography ---------- */
+.grimior-page-chapter {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: #8a5a20;
+  opacity: 0.85;
+  margin: 0 0 0.4rem;
+}
+.grimior-page-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.25rem, 1.9vw, 1.6rem);
+  color: #4a2c0c;
+  margin: 0 0 0.8rem;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid rgba(120, 70, 20, 0.35);
+  padding-bottom: 0.5rem;
+}
+.grimior-page-title::before {
+  content: '✦ ';
+  color: #b07a30;
+}
+.grimior-handwriting {
+  font-family: 'Cormorant Garamond', 'Lora', Georgia, serif;
+  font-style: italic;
+  color: #5b3c14;
+  text-align: right;
+  margin-top: 0.6rem;
+  font-size: 1rem;
+}
+.grimior-body p {
+  margin: 0 0 0.8rem;
+  text-indent: 1.2em;
+  color: #3c2510;
+}
+.grimior-body p:first-child { text-indent: 0; }
+.grimior-body p:first-child::first-letter {
+  font-family: 'Cinzel', serif;
+  font-size: 2.6em;
+  float: left;
+  line-height: 0.9;
+  margin: 0.06em 0.18em 0 0;
+  color: #8a4f10;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+}
+.grimior-section-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.74rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #7a4f15;
+  margin: 1rem 0 0.3rem;
+}
+.grimior-list {
+  margin: 0.2rem 0 0.8rem 1.2rem;
+  padding: 0;
+}
+.grimior-list li {
+  margin: 0.25rem 0;
+  list-style: '✦  ';
+  color: #3c2510;
+}
+.grimior-correspondences {
+  background: rgba(120, 70, 20, 0.07);
+  border-left: 2px solid rgba(176, 122, 48, 0.5);
+  padding: 0.6rem 0.8rem;
+  margin: 0.6rem 0 1rem;
+  border-radius: 2px;
+  font-size: 0.95rem;
+}
+.grimior-correspondences strong { color: #6b3e10; }
+.grimior-note {
+  font-family: 'Cormorant Garamond', 'Lora', serif;
+  font-style: italic;
+  color: #6a4515;
+  margin-top: 0.6rem;
+  font-size: 0.95rem;
+  border-top: 1px dashed rgba(120, 70, 20, 0.4);
+  padding-top: 0.5rem;
+}
+.grimior-cross-sell {
+  margin-top: 1rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(247, 196, 110, 0.14);
+  border: 1px solid rgba(176, 122, 48, 0.30);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+.grimior-cross-sell-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #8a5a20;
+  margin: 0 0 0.3rem;
+}
+.grimior-cross-sell-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.grimior-cross-sell-tag {
+  background: rgba(120, 70, 20, 0.10);
+  color: #5b3c14;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(176, 122, 48, 0.3);
+  font-size: 0.82rem;
+}
+
+/* Page number */
+.grimior-page-number {
+  position: absolute;
+  bottom: 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  color: #8a5a20;
+  letter-spacing: 0.18em;
+}
+.grimior-page--left .grimior-page-number  { left: clamp(1rem, 3vw, 2.6rem); }
+.grimior-page--right .grimior-page-number { right: clamp(1rem, 3vw, 2.6rem); }
+
+/* ---------- Chapter divider styling ---------- */
+.grimior-page--chapter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 50%, rgba(247, 196, 110, 0.12), transparent 70%),
+    radial-gradient(ellipse at 50% 50%, #f3e2b6 0%, #e6cf94 60%, #c8a866 100%);
+}
+.grimior-chapter-roman {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  color: #6b3e10;
+  letter-spacing: 0.18em;
+  margin: 0 0 0.4rem;
+}
+.grimior-chapter-name {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  color: #4a2c0c;
+  letter-spacing: 0.08em;
+  margin: 0 0 1.2rem;
+}
+.grimior-chapter-verse {
+  font-family: 'Cormorant Garamond', 'Lora', serif;
+  font-style: italic;
+  color: #5b3c14;
+  max-width: 32ch;
+  margin: 0;
+  line-height: 1.5;
+}
+.grimior-chapter-flourish {
+  margin-bottom: 1rem;
+  color: #b07a30;
+  letter-spacing: 0.4em;
+  font-family: 'Cinzel', serif;
+  opacity: 0.85;
+}
+
+/* ---------- TOC ---------- */
+.grimior-toc-wrap {
+  grid-column: 1 / -1;
+  padding: clamp(1rem, 3vw, 2.2rem);
+}
+.grimior-toc-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  text-align: center;
+  color: #4a2c0c;
+  letter-spacing: 0.08em;
+  margin: 0 0 1rem;
+}
+.grimior-toc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem 1.6rem;
+  max-height: 70%;
+  overflow: auto;
+}
+@media (max-width: 720px) {
+  .grimior-toc-grid { grid-template-columns: 1fr; }
+}
+.grimior-toc-entry {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-family: 'Lora', serif;
+  font-size: 0.95rem;
+  color: #4a2c0c;
+  padding: 0.2rem 0.1rem;
+  border-bottom: 1px dotted rgba(120, 70, 20, 0.35);
+  cursor: pointer;
+  transition: background 0.18s ease;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+  width: 100%;
+}
+.grimior-toc-entry:hover { background: rgba(247, 196, 110, 0.18); }
+.grimior-toc-entry.is-locked { opacity: 0.55; cursor: pointer; }
+.grimior-toc-entry-title {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.grimior-toc-entry-num {
+  font-family: 'Cinzel', serif;
+  color: #8a5a20;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+}
+.grimior-toc-entry-chapter {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #8a5a20;
+  margin: 0.8rem 0 0.3rem;
+  grid-column: 1 / -1;
+  border-bottom: 1px solid rgba(120, 70, 20, 0.25);
+  padding-bottom: 0.2rem;
+}
+
+/* ---------- Welcome page ---------- */
+.grimior-welcome {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+.grimior-welcome-pressed {
+  text-align: center;
+  font-size: 2rem;
+  color: rgba(176, 122, 48, 0.7);
+  letter-spacing: 0.4em;
+  margin-bottom: 0.4rem;
+}
+
+/* ---------- Page flip animation ---------- */
+.grimior-spread {
+  transition: transform 0.5s ease;
+}
+.grimior-flip-anim .grimior-spread {
+  animation: grimiorFlip 480ms ease;
+}
+@keyframes grimiorFlip {
+  0%   { transform: rotateY(0deg); opacity: 1; }
+  50%  { transform: rotateY(8deg); opacity: 0.85; }
+  100% { transform: rotateY(0deg); opacity: 1; }
+}
+.grimior-flip-anim-back .grimior-spread {
+  animation: grimiorFlipBack 480ms ease;
+}
+@keyframes grimiorFlipBack {
+  0%   { transform: rotateY(0deg); opacity: 1; }
+  50%  { transform: rotateY(-8deg); opacity: 0.85; }
+  100% { transform: rotateY(0deg); opacity: 1; }
+}
+
+/* ---------- Controls ---------- */
+.grimior-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  max-width: 1000px;
+  margin: 1rem auto 0;
+  flex-wrap: wrap;
+}
+.grimior-arrow-btn {
+  background: linear-gradient(180deg, #2a1a10 0%, #170c06 100%);
+  color: #f3d68a;
+  border: 1px solid rgba(243, 214, 138, 0.35);
+  padding: 0.55rem 1rem;
+  border-radius: 999px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.grimior-arrow-btn:hover {
+  background: linear-gradient(180deg, #3a2418 0%, #1f120a 100%);
+  box-shadow: 0 0 18px rgba(247, 196, 110, 0.35);
+}
+.grimior-arrow-btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+.grimior-page-indicator {
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  color: #d8a85a;
+}
+.grimior-toc-btn {
+  background: transparent;
+  border: 1px solid rgba(243, 214, 138, 0.4);
+  color: #f3d68a;
+  border-radius: 4px;
+  padding: 0.4rem 0.9rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  cursor: pointer;
+}
+.grimior-toc-btn:hover { background: rgba(247, 196, 110, 0.1); }
+
+/* ---------- Paywall page ---------- */
+.grimior-paywall {
+  grid-column: 1 / -1;
+  padding: clamp(1.2rem, 3vw, 2.4rem);
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(247, 196, 110, 0.20), transparent 65%),
+    linear-gradient(180deg, #f3e2b6 0%, #e0c382 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.8rem;
+  position: relative;
+}
+.grimior-paywall::before { display: none; }
+.grimior-paywall-glyph {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.35em;
+  font-size: 1.4rem;
+  color: #b07a30;
+}
+.grimior-paywall-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+  color: #4a2c0c;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+.grimior-paywall-sub {
+  font-family: 'Cormorant Garamond', 'Lora', serif;
+  font-style: italic;
+  color: #5b3c14;
+  font-size: 1.05rem;
+  max-width: 60ch;
+  line-height: 1.6;
+  margin: 0 auto;
+}
+.grimior-paywall-perks {
+  list-style: none;
+  padding: 0;
+  margin: 0.4rem auto 0.6rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.3rem;
+  max-width: 460px;
+  text-align: left;
+}
+.grimior-paywall-perks li {
+  color: #3c2510;
+  font-size: 0.95rem;
+  padding-left: 1.6rem;
+  position: relative;
+}
+.grimior-paywall-perks li::before {
+  content: '✦';
+  position: absolute;
+  left: 0;
+  color: #b07a30;
+}
+.grimior-paywall-price {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  color: #6b3e10;
+  margin: 0.2rem 0;
+  letter-spacing: 0.05em;
+}
+.grimior-paywall-price small {
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  color: #8a5a20;
+  display: block;
+}
+.grimior-paywall-form {
+  width: min(100%, 380px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+.grimior-paywall-form input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 4px;
+  border: 1px solid rgba(120, 70, 20, 0.45);
+  background: rgba(255, 247, 222, 0.85);
+  color: #3c2510;
+  font-family: 'Lora', serif;
+  font-size: 0.95rem;
+}
+.grimior-paywall-cta {
+  background: linear-gradient(180deg, #6b3e10 0%, #3a2008 100%);
+  color: #f3d68a;
+  border: 1px solid rgba(243, 214, 138, 0.5);
+  padding: 0.75rem 1rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.16em;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.grimior-paywall-cta:hover {
+  box-shadow: 0 0 20px rgba(247, 196, 110, 0.5);
+  transform: translateY(-1px);
+}
+.grimior-paywall-cta[disabled] { opacity: 0.6; cursor: not-allowed; }
+.grimior-paywall-fineprint {
+  font-size: 0.8rem;
+  color: #6a4515;
+  font-family: 'Lora', serif;
+  font-style: italic;
+}
+.grimior-paywall-existing {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: #6a4515;
+}
+.grimior-paywall-existing button {
+  background: transparent;
+  border: none;
+  color: #6b3e10;
+  font-family: 'Cinzel', serif;
+  text-decoration: underline;
+  cursor: pointer;
+  letter-spacing: 0.06em;
+}
+.grimior-paywall-msg {
+  font-size: 0.85rem;
+  color: #6b3e10;
+  font-family: 'Lora', serif;
+  min-height: 1em;
+}
+.grimior-paywall-msg.is-error { color: #8b1d1d; }
+.grimior-paywall-msg.is-ok    { color: #2f5d2a; }
+
+/* ---------- Subscriber chip ---------- */
+.grimior-subscriber-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(247, 196, 110, 0.18);
+  color: #f3d68a;
+  border: 1px solid rgba(243, 214, 138, 0.4);
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* ---------- Sign-in modal (returning subscriber) ---------- */
+.grimior-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 5, 2, 0.78);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+  padding: 1rem;
+}
+.grimior-modal-overlay.is-open { display: flex; }
+.grimior-modal-box {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(247, 196, 110, 0.18), transparent 60%),
+    linear-gradient(180deg, #f3e2b6 0%, #e0c382 100%);
+  color: #3c2510;
+  border-radius: 10px;
+  border: 2px solid rgba(176, 122, 48, 0.5);
+  padding: 1.6rem;
+  width: min(420px, 100%);
+  text-align: center;
+  font-family: 'Lora', serif;
+}
+.grimior-modal-box h3 {
+  font-family: 'Cinzel', serif;
+  color: #4a2c0c;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.4rem;
+}
+.grimior-modal-box input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin: 0.6rem 0 0.5rem;
+  border-radius: 4px;
+  border: 1px solid rgba(120, 70, 20, 0.45);
+  background: rgba(255, 247, 222, 0.85);
+  font-family: 'Lora', serif;
+  font-size: 0.95rem;
+}
+.grimior-modal-box .btn-row {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-top: 0.4rem;
+}
+
+/* ---------- Mobile tweaks ---------- */
+@media (max-width: 720px) {
+  .grimior-page {
+    padding: 1.2rem 1.1rem 2.2rem;
+    font-size: 0.95rem;
+  }
+  .grimior-cover-glyph { font-size: 1.8rem; }
+  .grimior-controls { gap: 0.4rem; }
+  .grimior-arrow-btn { padding: 0.5rem 0.8rem; font-size: 0.78rem; letter-spacing: 0.14em; }
+}
+
+/* Lock state — locked pages look like a faintly visible parchment, then paywall sits on top */
+.grimior-locked-overlay {
+  grid-column: 1 / -1;
+  position: relative;
+}

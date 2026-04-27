@@ -475,6 +475,7 @@
     <link rel="stylesheet" href="grimoire-seo.css">
     <link rel="stylesheet" href="herbal-advisor.css">
     <link rel="stylesheet" href="soap-gallery.css">
+    <link rel="stylesheet" href="grimior.css">
 <!-- v-music-fix -->
 <script src="https://js.stripe.com/v3/"></script>
 <script src="https://player.vimeo.com/api/player.js"></script>
@@ -553,6 +554,7 @@
       </span>
     </button>
     <button class="nav-btn" data-section="soaps">Soaps</button>
+    <button class="nav-btn" data-section="the-grimior">The Grimior</button>
     <button class="nav-btn" data-section="services">Services</button>
     <button class="nav-btn" data-section="about">About Amber</button>
     <button class="nav-btn" data-section="faqs">FAQs</button>
@@ -2977,6 +2979,41 @@
   </div>
 </section>
 
+<!-- THE GRIMIOR — A True Book of Light Magic -->
+<section id="the-grimior" class="page-section">
+  <div class="grimior-intro">
+    <div class="grimior-intro-ornament">✦ ⚜ ✦</div>
+    <h2 class="grimior-intro-title">The Grimior / A True Book of Light Magic</h2>
+    <p class="grimior-intro-sub">An heirloom tome of healing, protection, cleansing, blessings, herbal wisdom, and sacred living — eighty-eight pages, kept by candlelight.</p>
+    <div style="margin-top:0.6rem;"><span id="grimiorSubscriberChip" class="grimior-subscriber-chip" style="display:none;">✦ Keeper of the Grimior</span></div>
+  </div>
+  <div class="grimior-stage">
+    <div class="grimior-book" id="grimiorBook">
+      <div class="grimior-spread" id="grimiorSpread"></div>
+    </div>
+    <div class="grimior-controls">
+      <button type="button" class="grimior-arrow-btn" id="grimiorPrevBtn">◂ Previous Page</button>
+      <button type="button" class="grimior-toc-btn" id="grimiorTocBtn">✦ Contents</button>
+      <span class="grimior-page-indicator" id="grimiorPageIndicator">Page 1</span>
+      <button type="button" class="grimior-arrow-btn" id="grimiorNextBtn">Turn the Page ▸</button>
+    </div>
+  </div>
+
+  <!-- Returning subscriber email check -->
+  <div class="grimior-modal-overlay" id="grimiorSignInModal" role="dialog" aria-label="Enter your subscriber email">
+    <div class="grimior-modal-box">
+      <h3>Welcome Back, Keeper</h3>
+      <p style="font-style:italic;color:#5b3c14;">Enter the email tied to your subscription to unlock the full Grimior on this device.</p>
+      <input type="email" id="grimiorSignInEmail" placeholder="you@example.com" autocomplete="email" />
+      <div class="btn-row">
+        <button type="button" class="grimior-paywall-cta" id="grimiorSignInCheck">Open the Book</button>
+        <button type="button" class="grimior-toc-btn" id="grimiorSignInClose" style="color:#6b3e10;border-color:rgba(120,70,20,0.4);">Cancel</button>
+      </div>
+      <div id="grimiorSignInMsg" style="margin-top:0.6rem;font-style:italic;color:#6a4515;font-size:0.9rem;min-height:1em;"></div>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer class="pane-bg">
   <div class="footer-nav">
@@ -3033,6 +3070,8 @@
 <script src="products-updated.js"></script>
 <script src="app.js"></script>
 <script src="grimoire.js"></script>
+<script src="grimior-data.js"></script>
+<script src="grimior.js"></script>
 <script src="custom-creations.js"></script>
   <script src="botanical-cards.js"></script>
     <script src="grimoire-seo.js"></script>
