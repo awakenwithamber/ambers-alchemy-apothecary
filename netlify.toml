@@ -82,6 +82,42 @@
   to = "/index.html"
   status = 200
 
+[[redirects]]
+  from = "/book"
+  to = "https://calendar.app.google/zSzB4LLvngFVmiqu7"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/book-consultation"
+  to = "https://calendar.app.google/zSzB4LLvngFVmiqu7"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/consultation"
+  to = "https://calendar.app.google/zSzB4LLvngFVmiqu7"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/shopify"
+  to = "https://awakenagain-2.myshopify.com"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/login"
+  to = "https://awakenagain-2.myshopify.com/account/login"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/account"
+  to = "https://awakenagain-2.myshopify.com/account"
+  status = 302
+  force = true
+
 [[headers]]
   for = "/sw.js"
   [headers.values]

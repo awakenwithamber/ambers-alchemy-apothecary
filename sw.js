@@ -3,7 +3,7 @@
 // Stale-while-revalidate for static assets, network-first for pages
 // ============================================================
 
-var CACHE_NAME = 'alchemy-v2-pricing';
+var CACHE_NAME = 'alchemy-v3-shopify';
 var STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -21,12 +21,15 @@ var STATIC_ASSETS = [
 // Never cache these patterns
 var NEVER_CACHE = [
   '/api/',
-  'stripe.com',
+  '/.netlify/functions/',
+  'myshopify.com',
+  'shopify.com',
   'venmo.com',
   'cash.app',
+  'calendar.app.google',
+  'calendar.google.com',
   'checkout',
-  'payment',
-  'create-payment-intent'
+  'payment'
 ];
 
 self.addEventListener('install', function(e) {
