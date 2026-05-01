@@ -300,7 +300,7 @@ const FAQS = [
   },
   {
     q: 'How do I pay for my order?',
-    a: 'All payments are processed directly through Venmo (@AmberAlchemy) or Cash App ($AmberAlchemy). After placing your order, you will receive payment instructions via email. Your order is confirmed once payment is received.'
+    a: 'Orders go through Shopify\'s secure checkout (cards, Apple Pay, Google Pay, and subscriptions are all supported), or you can pay directly via Cash App ($AmberPatten92) or Venmo (use Amber\'s Venmo code link). Cash App and Venmo orders are confirmed by email once payment is received.'
   },
   {
     q: 'Do you ship internationally?',
@@ -316,7 +316,7 @@ const FAQS = [
   },
   {
     q: 'How do I book a healing service?',
-    a: 'Visit the Contact page or click "Book a Free Consultation" to reach out to Amber directly. Services are offered in-person (where available) and remotely via video call. Amber will confirm your appointment and send payment instructions.'
+    a: 'Use Amber\'s booking calendar at <a href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">calendar.app.google/zSzB4LLvngFVmiqu7</a> to pick a time. Services are offered in-person (where available) and remotely via video call. You\'ll receive a confirmation and any payment details by email.'
   },
   {
     q: 'Are the healing services available remotely?',

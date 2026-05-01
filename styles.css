@@ -880,13 +880,31 @@ footer { border-top: 1px solid var(--border); padding: 50px 24px 30px; text-alig
 .checkout-divider { height: 1px; background: var(--border); margin: 10px 0; }
 .checkout-secure-note { font-family: var(--font-body); font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 4px; }
 
-.stripe-card-element {
-  padding: 14px; border-radius: var(--radius); border: 1px solid var(--border);
-  background: rgba(30,17,40,0.65); transition: border-color var(--transition);
-}
-.stripe-card-element.StripeElement--focus { border-color: var(--amethyst); }
-.stripe-card-element.StripeElement--invalid { border-color: #c0392b; }
 .checkout-card-errors { font-family: var(--font-body); font-size: 13px; color: #e74c3c; min-height: 20px; margin-top: 4px; }
+
+/* Shopify-primary checkout payment options */
+.checkout-pay-options { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+.checkout-pay-options .checkout-pay-btn { width: 100%; min-height: 64px; display: flex; align-items: center; justify-content: flex-start; gap: 14px; padding: 14px 18px; text-align: left; text-decoration: none; }
+.checkout-pay-options .pay-option-icon { font-size: 26px; line-height: 1; }
+.checkout-pay-options .pay-option-text { display: flex; flex-direction: column; gap: 2px; line-height: 1.25; }
+.checkout-pay-options .pay-option-text strong { font-size: 15px; letter-spacing: 0.04em; }
+.checkout-pay-options .pay-option-text small { font-size: 11.5px; color: rgba(243,235,221,0.78); font-family: var(--font-body); }
+.checkout-pay-shopify { background: linear-gradient(135deg,#5e8e3e,#3d6328); border:1px solid rgba(94,142,62,0.6); color:#fff; }
+.checkout-pay-shopify:hover { filter: brightness(1.07); }
+.checkout-pay-cashapp { background: rgba(46,89,46,0.55); border:1px solid rgba(75,126,75,0.6); color: var(--parchment); }
+.checkout-pay-venmo { background: rgba(75,46,89,0.55); border:1px solid rgba(110,75,126,0.6); color: var(--parchment); }
+.checkout-pay-btn.is-loading { opacity: 0.7; cursor: progress; }
+
+.shopify-btn { background: linear-gradient(135deg,#5e8e3e,#3d6328); border:1px solid rgba(94,142,62,0.6); color:#fff; }
+.shopify-btn:hover { filter: brightness(1.07); transform: translateY(-1px); }
+
+/* Promo code rows */
+.cart-promo-row, .checkout-promo-row { display: flex; gap: 8px; margin-top: 10px; }
+.cart-promo-row input, .checkout-promo-row input { flex: 1; padding: 10px 12px; background: rgba(30,17,40,0.65); border: 1px solid var(--border); border-radius: var(--radius); color: var(--parchment); font-family: var(--font-body); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; }
+.cart-promo-row button, .checkout-promo-row button { white-space: nowrap; padding: 10px 14px; }
+.cart-promo-status { font-family: var(--font-body); font-size: 12px; min-height: 16px; margin: 6px 0 0; color: var(--text-muted); }
+.cart-promo-status.promo-applied { color: #7db87d; }
+.cart-promo-status.promo-error { color: #e09a8d; }
 
 .checkout-pay-btn {
   width: 100%; padding: 16px; font-size: 16px; letter-spacing: 0.08em;

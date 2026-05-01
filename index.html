@@ -476,9 +476,7 @@
     <link rel="stylesheet" href="herbal-advisor.css">
     <link rel="stylesheet" href="soap-gallery.css">
 <!-- v-music-fix -->
-<script src="https://js.stripe.com/v3/"></script>
 <script src="https://player.vimeo.com/api/player.js"></script>
-<meta name="stripe-key" content="" />
 
 <!-- Analytics: dataLayer + GA4 / GTM bootstrap (consent-safe defaults).
      Set GTM_ID and/or GA4_MEASUREMENT_ID below to activate. -->
@@ -512,7 +510,7 @@
 
 <!-- CONSULTATION BANNER -->
 <div id="consultBanner">
-  <span>Not sure what to choose? <a href="#" data-section="custom-formula">Get a Free Custom Formula Consultation</a></span>
+  <span>Not sure what to choose? <a href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener" class="js-book-consultation">Book a Free Consultation with Amber</a></span>
   <button id="consultClose" aria-label="Dismiss">✕</button>
 </div>
 
@@ -599,24 +597,29 @@
     <input type="text" id="cartAddress" placeholder="Shipping Address" required />
     <input type="text" id="cartCityState" placeholder="City, State, ZIP" required />
     <textarea id="cartNotes" placeholder="Anything you want Amber to know about your order..."></textarea>
-    <button id="proceedToCheckoutBtn" class="btn-primary checkout-proceed-btn">✦ Proceed to Secure Checkout</button>
+    <div class="cart-promo-row">
+      <input type="text" id="cartPromoCode" placeholder="Promo code (e.g. FIRST10)" autocomplete="off" />
+      <button type="button" id="cartPromoApplyBtn" class="btn-secondary">Apply</button>
+    </div>
+    <p id="cartPromoStatus" class="cart-promo-status" aria-live="polite"></p>
+    <button id="proceedToCheckoutBtn" class="btn-primary checkout-proceed-btn">✦ Review &amp; Choose Payment</button>
   </div>
 
   <div class="payment-section">
-    <p class="payment-section-title">✦ Or Pay Directly</p>
-    <p class="payment-accepts-cards">Venmo &amp; Cash App also accept Debit &amp; Credit Cards</p>
+    <p class="payment-section-title">✦ Choose How to Pay</p>
+    <p class="payment-accepts-cards">Shopify is the secure primary checkout. Cash App and Venmo are accepted for direct payment.</p>
 
     <div class="payment-method-grid">
-      <div class="payment-method-card" id="payMethodVenmo">
-        <div class="payment-method-icon">💜</div>
-        <div class="payment-method-name">Venmo</div>
+      <div class="payment-method-card" id="payMethodShopify">
+        <div class="payment-method-icon">🛍️</div>
+        <div class="payment-method-name">Shopify</div>
         <div class="payment-method-types">
+          <span class="card-badge">🔒 Secure Checkout</span>
           <span class="card-badge">💳 Visa</span>
           <span class="card-badge">💳 Mastercard</span>
-          <span class="card-badge">💳 Debit</span>
-          <span class="card-badge">📱 Venmo Balance</span>
+          <span class="card-badge">💳 Amex</span>
         </div>
-        <a id="venmoPayBtn" href="https://venmo.com/AmberLynnPatten" target="_blank" rel="noopener" class="pay-btn venmo-btn">Pay with Venmo</a>
+        <button type="button" id="shopifyPayBtn" class="pay-btn shopify-btn">Pay with Shopify (secure checkout)</button>
       </div>
 
       <div class="payment-method-card" id="payMethodCashApp">
@@ -628,14 +631,26 @@
           <span class="card-badge">💳 Debit</span>
           <span class="card-badge">📱 Cash App Balance</span>
         </div>
-        <a id="cashAppPayBtn" href="https://cash.app/$AmberAlchemy" target="_blank" rel="noopener" class="pay-btn cashapp-btn">Pay with Cash App</a>
+        <a id="cashAppPayBtn" href="https://cash.app/$AmberPatten92" target="_blank" rel="noopener" class="pay-btn cashapp-btn">Pay with Cash App</a>
+      </div>
+
+      <div class="payment-method-card" id="payMethodVenmo">
+        <div class="payment-method-icon">💜</div>
+        <div class="payment-method-name">Venmo</div>
+        <div class="payment-method-types">
+          <span class="card-badge">💳 Visa</span>
+          <span class="card-badge">💳 Mastercard</span>
+          <span class="card-badge">💳 Debit</span>
+          <span class="card-badge">📱 Venmo Balance</span>
+        </div>
+        <a id="venmoPayBtn" href="https://venmo.com/code?user_id=3573264899114195665&created=1772995696" target="_blank" rel="noopener" class="pay-btn venmo-btn">Pay with Venmo</a>
       </div>
     </div>
 
     <div class="payment-instructions">
       <p>✦ Click your preferred payment method above</p>
-      <p>✦ You can pay with any debit or credit card — no account needed</p>
-      <p>✦ After payment, Amber will confirm your order via email</p>
+      <p>✦ Shopify is the recommended secure path with order tracking</p>
+      <p>✦ Cash App and Venmo go directly to Amber — include your name in the note</p>
     </div>
   </div>
 </div>
@@ -2170,6 +2185,9 @@
     <p>Sacred, intentional sessions offered in-person or remotely. Each service is a doorway to deeper knowing.</p>
   </div>
   <div class="products-grid" id="servicesGrid"></div>
+  <div style="text-align:center;margin:1.5rem auto 0;">
+    <a class="btn-primary js-book-consultation" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">📅 Book a Service or Consultation</a>
+  </div>
   <div class="hw-internal-links" style="text-align:center;margin:2rem auto;max-width:700px;">
     <p><strong>Explore More:</strong>
       <a href="#" data-section="herbal-wisdom">Articles &amp; Guides</a> |
@@ -2210,7 +2228,7 @@
       </div>
       <div class="about-cta-row">
         <button class="btn-primary" data-section="custom-formula">Get a Custom Formula</button>
-        <button class="btn-secondary" data-section="contact">Book a Consultation</button>
+        <a class="btn-secondary js-book-consultation" href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener">Book a Consultation</a>
         <button class="btn-ghost" data-section="herbal-wisdom">Read Articles &amp; Guides</button>
       </div>
     </div>
@@ -2818,6 +2836,7 @@
   <div class="contact-grid">
     <div class="contact-form card">
       <h3>Send a Message</h3>
+      <p style="margin:0.25rem 0 0.85rem;font-size:0.92rem;">📅 Want to <a href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener" class="js-book-consultation"><strong>book a consultation or service?</strong></a> Use Amber's calendar to pick a time.</p>
       <input type="text" id="contactName" placeholder="Your Name" />
       <input type="email" id="contactEmail" placeholder="Your Email" />
       <select id="contactSubject">
@@ -2835,7 +2854,7 @@
       <p>📧 <a href="mailto:awaken@consultant.com">awaken@consultant.com</a></p>
       <p>📘 <a href="https://www.facebook.com/share/1BNvSQzPiP/" target="_blank" rel="noopener">Follow on Facebook</a></p>
       <p>📸 <a href="https://www.instagram.com/awakenwithamber" target="_blank" rel="noopener">@awakenwithamber on Instagram</a></p>
-      <p>📅 <a href="#" data-section="custom-formula">Book a Free Consultation</a></p>
+      <p>📅 <a href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener" class="js-book-consultation">Book a Free Consultation</a></p>
       <div class="rv-cta-row" style="margin-top:1rem;">
         <button type="button" class="btn-secondary" data-rv-open data-rv-open-type="site" data-rv-name="My experience with Amber's Alchemy">✦ Leave a Review Here</button>
         <a class="rv-google-link" data-rv-google target="_blank" rel="noopener">Leave a Review on Google ↗</a>
@@ -2858,8 +2877,8 @@
 <section id="checkout" class="page-section pane-bg">
   <div class="section-header">
     <div class="section-ornament">✦ ─────────────── ✦</div>
-    <h2>Secure Checkout</h2>
-    <p>Complete your order below. Your payment is processed securely — card data never touches our servers.</p>
+    <h2>Checkout</h2>
+    <p>Choose how you'd like to pay. Shopify is our secure primary checkout — Cash App and Venmo are also accepted for direct payment.</p>
   </div>
 
   <div class="checkout-container">
@@ -2871,14 +2890,21 @@
       </div>
       <div class="checkout-totals">
         <div class="cart-row"><span>Subtotal</span><span id="checkoutSubtotal">$0.00</span></div>
+        <div class="cart-row" id="checkoutDiscountRow" style="display:none;"><span>Promo (<span id="checkoutPromoCodeLabel">FIRST10</span>)</span><span id="checkoutDiscount">-$0.00</span></div>
         <div class="cart-row"><span>Shipping</span><span id="checkoutShipping">$0.00</span></div>
         <div class="cart-row"><span>Sales Tax (8%)</span><span id="checkoutTax">$0.00</span></div>
         <div class="cart-row total-row"><strong>Total</strong><strong id="checkoutTotal">$0.00</strong></div>
       </div>
-      <p class="checkout-shipping-note">Free shipping on orders over $75</p>
+      <p class="checkout-shipping-note">Free shipping on orders over $75 · Final tax &amp; shipping calculated by Shopify at the secure checkout step.</p>
+
+      <div class="checkout-promo-row">
+        <input type="text" id="checkoutPromoCode" placeholder="Promo code (e.g. FIRST10)" autocomplete="off" />
+        <button type="button" id="checkoutPromoApplyBtn" class="btn-secondary">Apply</button>
+      </div>
+      <p id="checkoutPromoStatus" class="cart-promo-status" aria-live="polite"></p>
     </div>
 
-    <!-- Order Form + Payment -->
+    <!-- Order Form + Payment Options -->
     <div class="checkout-form-wrap card">
       <form id="checkoutForm" name="checkout-order" method="POST" data-netlify="true" netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="checkout-order" />
@@ -2886,17 +2912,19 @@
         <input type="hidden" name="transaction-id" id="transactionId" value="" />
         <input type="hidden" name="payment-status" id="paymentStatus" value="" />
         <input type="hidden" name="order-total" id="orderTotalField" value="" />
+        <input type="hidden" name="promo-code" id="checkoutPromoField" value="" />
         <input type="hidden" name="subject" value="New Website Order – Amber's Alchemy Apothecary" />
 
-        <h3>Order Information</h3>
+        <h3>Your Information</h3>
+        <p class="checkout-secure-note">Required for Cash App / Venmo orders so Amber can confirm and ship. Shopify will collect this on its own secure checkout page.</p>
         <div class="checkout-field-row">
           <div class="checkout-field">
-            <label for="checkoutCustomerName">Full Name *</label>
-            <input type="text" id="checkoutCustomerName" name="customer-name" required placeholder="Your full name" />
+            <label for="checkoutCustomerName">Full Name</label>
+            <input type="text" id="checkoutCustomerName" name="customer-name" placeholder="Your full name" />
           </div>
           <div class="checkout-field">
-            <label for="checkoutEmail">Email Address *</label>
-            <input type="email" id="checkoutEmail" name="email" required placeholder="you@email.com" />
+            <label for="checkoutEmail">Email Address</label>
+            <input type="email" id="checkoutEmail" name="email" placeholder="you@email.com" />
           </div>
         </div>
         <div class="checkout-field-row">
@@ -2910,13 +2938,13 @@
           </div>
         </div>
         <div class="checkout-field">
-          <label for="checkoutAddress">Shipping Address *</label>
-          <input type="text" id="checkoutAddress" name="shipping-address" required placeholder="Street address" />
+          <label for="checkoutAddress">Shipping Address</label>
+          <input type="text" id="checkoutAddress" name="shipping-address" placeholder="Street address" />
         </div>
         <div class="checkout-field-row">
           <div class="checkout-field">
-            <label for="checkoutCityStateZip">City, State, ZIP *</label>
-            <input type="text" id="checkoutCityStateZip" name="city-state-zip" required placeholder="City, ST 12345" />
+            <label for="checkoutCityStateZip">City, State, ZIP</label>
+            <input type="text" id="checkoutCityStateZip" name="city-state-zip" placeholder="City, ST 12345" />
           </div>
           <div class="checkout-field">
             <label for="checkoutQuantity">Quantity</label>
@@ -2930,32 +2958,37 @@
 
         <div class="checkout-divider"></div>
 
-        <h3>Pay with Card</h3>
-        <p class="checkout-secure-note">Your card information is processed securely by Stripe. No card data is stored on our servers.</p>
+        <h3>Choose Your Payment</h3>
         <div class="checkout-trust-badges">
           <span class="trust-badge-item">🔒 SSL Encrypted</span>
-          <span class="trust-badge-item">💳 Visa</span>
-          <span class="trust-badge-item">💳 Mastercard</span>
-          <span class="trust-badge-item">💳 Amex</span>
+          <span class="trust-badge-item">💳 Visa, Mastercard, Amex</span>
           <span class="trust-badge-item">🛡️ Secure Checkout</span>
         </div>
 
-        <div class="checkout-field">
-          <label for="card-element">Card Details</label>
-          <div id="card-element" class="stripe-card-element"></div>
-          <div id="card-errors" class="checkout-card-errors" role="alert"></div>
+        <div class="checkout-pay-options">
+          <button type="button" id="checkoutShopifyBtn" class="btn-primary checkout-pay-btn checkout-pay-shopify">
+            <span class="pay-option-icon">🛍️</span>
+            <span class="pay-option-text">
+              <strong>Pay with Shopify</strong>
+              <small>Secure checkout · cards · order tracking · subscriptions</small>
+            </span>
+          </button>
+          <a id="checkoutCashAppBtn" href="https://cash.app/$AmberPatten92" target="_blank" rel="noopener" class="btn-primary checkout-pay-btn checkout-pay-cashapp">
+            <span class="pay-option-icon">💚</span>
+            <span class="pay-option-text">
+              <strong>Pay with Cash App</strong>
+              <small>cash.app/$AmberPatten92 · include your name in the note</small>
+            </span>
+          </a>
+          <a id="checkoutVenmoBtn" href="https://venmo.com/code?user_id=3573264899114195665&created=1772995696" target="_blank" rel="noopener" class="btn-primary checkout-pay-btn checkout-pay-venmo">
+            <span class="pay-option-icon">💜</span>
+            <span class="pay-option-text">
+              <strong>Pay with Venmo</strong>
+              <small>Open Amber's Venmo profile · include your name in the note</small>
+            </span>
+          </a>
         </div>
-
-        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn" disabled>
-          <span id="payBtnText">Pay Now</span>
-          <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
-        </button>
-
-        <div class="checkout-trust-badges">
-          <span>🔒 SSL Encrypted</span>
-          <span>💳 Visa, Mastercard, Amex</span>
-          <span>✦ PCI Compliant</span>
-        </div>
+        <div id="card-errors" class="checkout-card-errors" role="alert"></div>
       </form>
     </div>
   </div>
@@ -2998,6 +3031,7 @@
       <h4>Connect</h4>
       <a href="#" data-section="contact">Contact</a>
       <a href="#" data-section="services">Healing Services</a>
+      <a href="https://calendar.app.google/zSzB4LLvngFVmiqu7" target="_blank" rel="noopener" class="js-book-consultation">📅 Book a Consultation</a>
       <a href="https://www.facebook.com/share/1BNvSQzPiP/" target="_blank" rel="noopener">📘 Facebook</a>
       <a href="https://www.instagram.com/awakenwithamber" target="_blank" rel="noopener">📸 Instagram</a>
       <a href="mailto:awaken@consultant.com">awaken@consultant.com</a>

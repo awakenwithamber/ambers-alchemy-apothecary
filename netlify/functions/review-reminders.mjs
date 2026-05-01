@@ -14,6 +14,9 @@
 import { getStore } from '@netlify/blobs';
 
 const SITE_URL = process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://awakenagain.com';
+const BOOKING_URL = 'https://calendar.app.google/zSzB4LLvngFVmiqu7';
+const SHOPIFY_LOGIN_URL = 'https://awakenagain-2.myshopify.com/account/login';
+const GRIMIOR_URL = `${SITE_URL}/#herb-index`;
 
 function reviewMessage({ customerName, product }) {
   const name = customerName?.split(' ')[0] || 'friend';
@@ -29,9 +32,15 @@ function reviewMessage({ customerName, product }) {
       &nbsp;
       <a href="${SITE_URL}/?google_review=1" style="background:#2E1C38;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-family:serif;">Review Us on Google</a>
     </p>
+    <p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.7;">Anything else we can support you with?</p>
+    <ul style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.7;padding-left:18px;">
+      <li>📅 <a href="${BOOKING_URL}">Book a free consultation</a></li>
+      <li>📖 <a href="${GRIMIOR_URL}">Visit the Living Grimior of Herbs</a></li>
+      <li>🔐 <a href="${SHOPIFY_LOGIN_URL}">Customer login &amp; subscription management</a></li>
+    </ul>
     <p>With gratitude,<br/>Amber ✦</p>
   `;
-  const text = `Dear ${name},\n\nThank you for your recent order from Amber's Alchemy Apothecary. If you've had a chance to try ${product ? `your ${product}` : 'your remedies'}, we would be grateful if you shared an honest review.\n\nReview on our site: ${SITE_URL}/?review=me\nReview on Google: ${SITE_URL}/?google_review=1\n\nWith gratitude,\nAmber`;
+  const text = `Dear ${name},\n\nThank you for your recent order from Amber's Alchemy Apothecary. If you've had a chance to try ${product ? `your ${product}` : 'your remedies'}, we would be grateful if you shared an honest review.\n\nReview on our site: ${SITE_URL}/?review=me\nReview on Google: ${SITE_URL}/?google_review=1\n\nMore from Amber:\n- Book a consultation: ${BOOKING_URL}\n- Living Grimior of Herbs: ${GRIMIOR_URL}\n- Customer login & subscriptions: ${SHOPIFY_LOGIN_URL}\n\nWith gratitude,\nAmber`;
   return { subject, html, text };
 }
 

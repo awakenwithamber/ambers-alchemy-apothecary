@@ -12,7 +12,10 @@ import { getStore } from "@netlify/blobs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ADMIN_NOTIFY_TO = 'awaken@consultant.com';
-const GUEST_FROM = process.env.QUIZ_LEAD_FROM_EMAIL || 'Amber\u2019s Alchemy Apothecary <hello@awakenagain.com>';
+const GUEST_FROM = process.env.QUIZ_LEAD_FROM_EMAIL || 'Amber’s Alchemy Apothecary <hello@awakenagain.com>';
+const BOOKING_URL = 'https://calendar.app.google/zSzB4LLvngFVmiqu7';
+const SHOPIFY_LOGIN_URL = 'https://awakenagain-2.myshopify.com/account/login';
+const GRIMIOR_URL = 'https://awakenagain.com/#herb-index';
 const EXTENDED_DEDUPE_WINDOW_MS = 6 * 60 * 60 * 1000; // 6 hours
 
 function sanitizePhone(raw) {
@@ -53,17 +56,17 @@ function buildGuestEmail({ firstName, resultSummary }) {
     : [];
 
   const subject = firstName
-    ? `${firstName}, Your Full Results Are Ready \u2728`
-    : 'Your Personalized Herbal Guidance Is Here \u2728';
+    ? `${firstName}, Your Full Results Are Ready ✨`
+    : 'Your Personalized Herbal Guidance Is Here ✨';
 
   const alliesHtml = allyList.length
     ? `<ul style="padding-left:18px;margin:10px 0 18px;color:#3b2a5e;font-family:Georgia,serif;">${allyList
-        .map((n) => `<li style="margin:4px 0;">\u2726 ${escapeHtml(n)}</li>`)
+        .map((n) => `<li style="margin:4px 0;">✦ ${escapeHtml(n)}</li>`)
         .join('')}</ul>`
     : '';
 
   const patternLine = primaryPattern
-    ? `<p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.6;">Your answers pointed most clearly to <strong>${primaryPattern}</strong> \u2014 a pattern many carry quietly. The herbs below were chosen for what your body seems to be asking for right now.</p>`
+    ? `<p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.6;">Your answers pointed most clearly to <strong>${primaryPattern}</strong> — a pattern many carry quietly. The herbs below were chosen for what your body seems to be asking for right now.</p>`
     : '';
 
   const html = `<!doctype html>
@@ -73,7 +76,7 @@ function buildGuestEmail({ firstName, resultSummary }) {
       <tr><td align="center">
         <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;box-shadow:0 10px 30px rgba(60,30,110,0.12);overflow:hidden;">
           <tr><td style="padding:28px 28px 8px;text-align:center;">
-            <div style="font-family:'Cinzel',Georgia,serif;letter-spacing:0.18em;font-size:12px;color:#6b4f9b;text-transform:uppercase;">\u2726 Your Personalized Results</div>
+            <div style="font-family:'Cinzel',Georgia,serif;letter-spacing:0.18em;font-size:12px;color:#6b4f9b;text-transform:uppercase;">✦ Your Personalized Results</div>
             <h1 style="font-family:'Cinzel',Georgia,serif;font-size:22px;color:#3b2a5e;margin:10px 0 0;">${greetName}, your deeper reading is here.</h1>
           </td></tr>
           <tr><td style="padding:14px 28px 8px;">
@@ -81,10 +84,16 @@ function buildGuestEmail({ firstName, resultSummary }) {
             ${patternLine}
             ${allyList.length ? '<p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.6;margin:18px 0 6px;"><strong>Your herbal allies</strong></p>' : ''}
             ${alliesHtml}
-            <p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.6;">Move gently this week. Favor warm foods, quiet evenings, and small rituals. When you\u2019re ready, your custom remedy is waiting for you in the apothecary.</p>
+            <p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.6;">Move gently this week. Favor warm foods, quiet evenings, and small rituals. When you’re ready, your custom remedy is waiting for you in the apothecary.</p>
           </td></tr>
-          <tr><td style="padding:10px 28px 28px;text-align:center;">
-            <a href="https://awakenagain.com/" style="display:inline-block;padding:12px 22px;background:linear-gradient(135deg,#6b4f9b,#3b2a5e);color:#fff;text-decoration:none;border-radius:999px;font-family:'Cinzel',Georgia,serif;letter-spacing:0.08em;font-size:13px;">Return to the Apothecary \u2728</a>
+          <tr><td style="padding:10px 28px 18px;text-align:center;">
+            <a href="https://awakenagain.com/" style="display:inline-block;padding:12px 22px;background:linear-gradient(135deg,#6b4f9b,#3b2a5e);color:#fff;text-decoration:none;border-radius:999px;font-family:'Cinzel',Georgia,serif;letter-spacing:0.08em;font-size:13px;">Return to the Apothecary ✨</a>
+          </td></tr>
+          <tr><td style="padding:0 28px 22px;text-align:center;font-family:Georgia,serif;font-size:13px;color:#3b2a5e;line-height:1.7;">
+            <p style="margin:14px 0 6px;"><strong>Continue your journey:</strong></p>
+            <p style="margin:4px 0;">✦ <a href="${BOOKING_URL}" style="color:#6b4f9b;">Book a free consultation with Amber</a></p>
+            <p style="margin:4px 0;">✦ <a href="${GRIMIOR_URL}" style="color:#6b4f9b;">Enter the Living Grimior of Herbs</a></p>
+            <p style="margin:4px 0;">✦ <a href="${SHOPIFY_LOGIN_URL}" style="color:#6b4f9b;">Customer login &amp; subscription management</a></p>
           </td></tr>
           <tr><td style="padding:18px 28px;border-top:1px solid #eee;font-family:Georgia,serif;font-size:12px;color:#7a6a95;line-height:1.5;text-align:center;">
             These botanical recommendations support general wellness and are not intended to diagnose, treat, cure, or prevent any disease. Please consult a qualified healthcare professional for medical concerns.
@@ -100,15 +109,20 @@ function buildGuestEmail({ firstName, resultSummary }) {
 Thank you for taking the herbal quiz. Based on your responses, your body may be asking for deeper support, restoration, and balance right now.
 
 ${primaryPattern ? `Primary pattern: ${resultSummary.primaryPattern}\n` : ''}${allyList.length ? `Your herbal allies: ${allyList.join(', ')}\n` : ''}
-Move gently this week. Favor warm foods, quiet evenings, and small rituals. When you\u2019re ready, your custom remedy is waiting for you at awakenagain.com.
+Move gently this week. Favor warm foods, quiet evenings, and small rituals. When you’re ready, your custom remedy is waiting for you at awakenagain.com.
 
-\u2014 Amber\u2019s Alchemy Apothecary`;
+Continue your journey:
+- Book a free consultation: ${BOOKING_URL}
+- Enter the Living Grimior of Herbs: ${GRIMIOR_URL}
+- Customer login & subscription management: ${SHOPIFY_LOGIN_URL}
+
+— Amber’s Alchemy Apothecary`;
 
   return { subject, html, text };
 }
 
 function buildAdminEmail({ firstName, email, record }) {
-  const subject = `New Extended-Results Request \u2014 ${firstName || 'Guest'} (${email})`;
+  const subject = `New Extended-Results Request — ${firstName || 'Guest'} (${email})`;
   const summary = record.resultSummary || {};
   const allyList = Array.isArray(summary.allies) ? summary.allies.map(prettyHerbName) : [];
 
@@ -121,10 +135,10 @@ function buildAdminEmail({ firstName, email, record }) {
     <tr><td><strong>Timestamp</strong></td><td>${escapeHtml(record.createdAt)}</td></tr>
     <tr><td><strong>First name</strong></td><td>${escapeHtml(firstName || '')}</td></tr>
     <tr><td><strong>Email</strong></td><td>${escapeHtml(email)}</td></tr>
-    <tr><td><strong>Primary pattern</strong></td><td>${escapeHtml(summary.primaryPattern || '\u2014')}</td></tr>
-    <tr><td><strong>Patterns</strong></td><td>${escapeHtml((summary.patternNames || []).join(', ') || '\u2014')}</td></tr>
-    <tr><td><strong>Herbal allies</strong></td><td>${escapeHtml(allyList.join(', ') || '\u2014')}</td></tr>
-    <tr><td><strong>Symptoms</strong></td><td>${escapeHtml((record.symptoms || []).join(', ') || '\u2014')}</td></tr>
+    <tr><td><strong>Primary pattern</strong></td><td>${escapeHtml(summary.primaryPattern || '—')}</td></tr>
+    <tr><td><strong>Patterns</strong></td><td>${escapeHtml((summary.patternNames || []).join(', ') || '—')}</td></tr>
+    <tr><td><strong>Herbal allies</strong></td><td>${escapeHtml(allyList.join(', ') || '—')}</td></tr>
+    <tr><td><strong>Symptoms</strong></td><td>${escapeHtml((record.symptoms || []).join(', ') || '—')}</td></tr>
   </table>
 </body></html>`;
 
