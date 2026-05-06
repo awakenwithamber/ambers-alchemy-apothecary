@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Grimior ✦ Amber's Alchemy Apothecary</title>
+  <link rel="stylesheet" href="/css/main.css" />
+  <!-- ADD your existing stylesheet links here -->
+  <style>
+    /* ── Grimior paywall styles ── */
+    #grimior-gate {
+      display: none;
+      text-align: center;
+      padding: 60px 24px;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    #grimior-gate h2 {
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      margin-bottom: 16px;
+    }
+    #grimior-gate p {
+      opacity: 0.75;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .grimior-subscribe-btn {
+      display: inline-block;
+      padding: 14px 36px;
+      background: transparent;
+      border: 1px solid currentColor;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .grimior-subscribe-btn:hover { opacity: 0.7; }
+
+    #grimior-loading {
+      text-align: center;
+      padding: 80px 24px;
+      opacity: 0.6;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+    }
+
+    #grimior-content { display: none; }
+    #grimior-preview { display: block; }
+
+    .grimior-email-form {
+      max-width: 360px;
+      margin: 32px auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .grimior-email-form input {
+      padding: 12px 18px;
+      border-radius: 6px;
+      border: 1px solid rgba(212,175,106,0.4);
+      background: rgba(255,255,255,0.05);
+      color: inherit;
+      font-size: 14px;
+    }
+    .grimior-email-form button {
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid currentColor;
+      background: transparent;
+      cursor: pointer;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Nav (copy your existing nav here) ── -->
+  <nav><!-- your nav --></nav>
+
+  <main>
+
+    <!-- Always-visible header -->
+    <section style="text-align:center; padding: 60px 24px 40px;">
+      <p style="letter-spacing:0.15em; opacity:0.6; font-size:12px; text-transform:uppercase;">✦ AWAKEN WITH AMBER ✦</p>
+      <h1>The Grimior</h1>
+      <blockquote style="opacity:0.7; font-style:italic; max-width:500px; margin:16px auto;">
+        "The art of healing comes from nature, not from the physician." — Paracelsus
+      </blockquote>
+      <p style="max-width:600px; margin:16px auto; line-height:1.8; opacity:0.8;">
+        Welcome, seeker. The full Grimior is Amber's living archive of botanical wisdom,
+        traditional herbal knowledge, and the alchemical lore behind every remedy in the apothecary.
+        Pages are added as the work unfolds.
+      </p>
+    </section>
+
+    <!-- Loading state -->
+    <div id="grimior-loading">✦ Verifying access...</div>
+
+    <!-- Gate (shown to non-subscribers) -->
+    <div id="grimior-gate">
+      <h2>Pages 1–7 are open to all seekers.</h2>
+      <p>
+        The full archive — pages 8 through 88 — is reserved for active subscribers.
+        Join for $3.33/month to unlock the complete Grimior, including Amber's private
+        formulations, ritual guides, and the deeper botanical lore.
+      </p>
+      <a href="https://buy.stripe.com/YOUR_STRIPE_PAYMENT_LINK" class="grimior-subscribe-btn">
+        ✦ Unlock the Full Grimior — $3.33/mo
+      </a>
+      <div style="margin-top:32px; opacity:0.6; font-size:13px;">Already subscribed?</div>
+      <div class="grimior-email-form">
+        <input type="email" id="grimior-email-input" placeholder="Enter your subscriber email" />
+        <button onclick="checkGrimiorAccess()">✦ Check My Access</button>
+        <div id="grimior-auth-error" style="color:#c0392b; font-size:13px; display:none;"></div>
+      </div>
+    </div>
+
+    <!-- Preview pages 1-7 (always shown) -->
+    <div id="grimior-preview">
+      <!-- PASTE YOUR EXISTING PAGES 1-7 CONTENT HERE -->
+      <!-- This section is always visible to everyone -->
+    </div>
+
+    <!-- Full content pages 8-88 (subscribers only) -->
+    <div id="grimior-content">
+      <!-- PASTE YOUR FULL GRIMIOR CONTENT HERE (pages 8-88) -->
+      <!-- This is hidden until auth check passes -->
+      <section style="text-align:center; padding:40px 24px;">
+        <p style="opacity:0.6; letter-spacing:0.1em;">✦ Full archive unlocked ✦</p>
+        <h2>The Complete Grimior</h2>
+        <!-- Full content here -->
+      </section>
+    </div>
+
+  </main>
+
+  <!-- ── Footer (copy your existing footer here) ── -->
+  <footer><!-- your footer --></footer>
+
+  <script>
+    (function() {
+      // Check if we already verified this session
+      const cached = sessionStorage.getItem('grimior_access');
+      if (cached === 'true') {
+        grantAccess();
+        return;
+      }
+      if (cached === 'false') {
+        showGate();
+        return;
+      }
+
+      // Check email stored from previous visit
+      const savedEmail = localStorage.getItem('grimior_email');
+      if (savedEmail) {
+        verifyEmail(savedEmail);
+      } else {
+        showGate();
+      }
+    })();
+
+    async function checkGrimiorAccess() {
+      const emailEl = document.getElementById('grimior-email-input');
+      const errorEl = document.getElementById('grimior-auth-error');
+      const email = emailEl?.value?.trim();
+
+      if (!email) {
+        if (errorEl) { errorEl.textContent = 'Please enter your email.'; errorEl.style.display = ''; }
+        return;
+      }
+
+      if (errorEl) errorEl.style.display = 'none';
+      await verifyEmail(email);
+    }
+
+    async function verifyEmail(email) {
+      document.getElementById('grimior-loading').style.display = '';
+      document.getElementById('grimior-gate').style.display = 'none';
+
+      try {
+        const res = await fetch(`/.netlify/functions/auth-check?email=${encodeURIComponent(email)}`);
+        const data = await res.json();
+
+        if (data.access) {
+          localStorage.setItem('grimior_email', email);
+          sessionStorage.setItem('grimior_access', 'true');
+          grantAccess();
+        } else {
+          sessionStorage.setItem('grimior_access', 'false');
+          showGate();
+          const errorEl = document.getElementById('grimior-auth-error');
+          if (errorEl) {
+            errorEl.textContent = 'No active subscription found for that email.';
+            errorEl.style.display = '';
+          }
+        }
+      } catch (err) {
+        console.error('Auth check failed:', err);
+        showGate();
+      }
+    }
+
+    function grantAccess() {
+      document.getElementById('grimior-loading').style.display = 'none';
+      document.getElementById('grimior-gate').style.display = 'none';
+      document.getElementById('grimior-preview').style.display = '';
+      document.getElementById('grimior-content').style.display = '';
+    }
+
+    function showGate() {
+      document.getElementById('grimior-loading').style.display = 'none';
+      document.getElementById('grimior-gate').style.display = '';
+      document.getElementById('grimior-preview').style.display = '';
+      document.getElementById('grimior-content').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>

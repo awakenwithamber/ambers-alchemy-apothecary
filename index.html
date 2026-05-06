@@ -475,6 +475,7 @@
     <link rel="stylesheet" href="grimoire-seo.css">
     <link rel="stylesheet" href="herbal-advisor.css">
     <link rel="stylesheet" href="soap-gallery.css">
+    <link rel="stylesheet" href="/css/scroll-fix.css">
 <!-- v-music-fix -->
 <script src="https://js.stripe.com/v3/"></script>
 <script src="https://player.vimeo.com/api/player.js"></script>
@@ -1530,7 +1531,7 @@
   </div>
 
   <!-- Custom Soap Order Form -->
-  <div class="custom-soap-form">
+  <div class="custom-soap-form" id="soap-order-form">
     <div class="section-header">
       <div class="section-ornament">✦ ─── ✦</div>
       <h3>✦ Order a Custom Soap</h3>
@@ -2076,7 +2077,7 @@
 
   <!-- CONSULTATION FORM (formerly Custom Blend) -->
   <div class="formula-grid">
-    <div class="formula-form card">
+    <div class="formula-form card" id="consultation-form">
       <h3>✦ Your Personal Herbal Consultation</h3>
       <p class="form-intro">Fill out the form below and Amber will respond within 24–48 hours with your custom formula recommendation.</p>
       <input type="text" id="formulaName" placeholder="Your Full Name" required />
@@ -2816,7 +2817,7 @@
     <p>Reach out with questions, custom requests, or to book a consultation.</p>
   </div>
   <div class="contact-grid">
-    <div class="contact-form card">
+    <div class="contact-form card" id="contact-form">
       <h3>Send a Message</h3>
       <input type="text" id="contactName" placeholder="Your Name" />
       <input type="email" id="contactEmail" placeholder="Your Email" />
@@ -2880,7 +2881,7 @@
 
     <!-- Order Form + Payment -->
     <div class="checkout-form-wrap card">
-      <form id="checkoutForm" name="checkout-order" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <form id="checkout-form" name="checkout-order" method="POST" data-netlify="true" netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="checkout-order" />
         <input type="hidden" name="bot-field" />
         <input type="hidden" name="transaction-id" id="transactionId" value="" />
@@ -3084,10 +3085,13 @@
 })();
 </script>
 
-<script src="soap-builder.js"></script>
 <script src="herbal-wisdom.js"></script>
 <script src="navigation-history.js"></script>
 <script src="reviews.js"></script>
 <script src="pwa-init.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/soap-builder.js"></script>
+<script src="/js/shopify-checkout.js"></script>
+<script src="/js/form-handlers.js"></script>
     </body>
 </html>

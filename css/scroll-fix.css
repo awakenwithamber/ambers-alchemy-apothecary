@@ -1,0 +1,75 @@
+/* css/scroll-fix.css
+   Load this LAST in your <head>, after all other stylesheets.
+   Fixes scroll-lock issues across all pages. */
+
+/* ── Global scroll reset ─────────────────────────────────── */
+html,
+body {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  scroll-behavior: smooth;
+  /* Remove any height locks that trap scroll */
+  height: auto !important;
+  min-height: 100%;
+}
+
+/* ── Remove position:fixed from body/html (not modals) ───── */
+body:not(.modal-open):not(.menu-open) {
+  position: static !important;
+}
+
+/* ── Horizontal carousels — scroll internally, not the page ─ */
+.soap-cards-row,
+.product-row,
+.horizontal-scroll,
+[data-carousel],
+.carousel-track {
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  /* Hide scrollbar visually but keep it functional */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 175, 106, 0.3) transparent;
+}
+
+.soap-cards-row::-webkit-scrollbar,
+.product-row::-webkit-scrollbar,
+.horizontal-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+.soap-cards-row::-webkit-scrollbar-thumb,
+.product-row::-webkit-scrollbar-thumb,
+.horizontal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 106, 0.3);
+  border-radius: 2px;
+}
+
+/* ── Snap cards inside carousels ─────────────────────────── */
+.soap-cards-row > *,
+.product-row > *,
+.horizontal-scroll > * {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* ── Modal / drawer — these CAN be fixed ─────────────────── */
+.modal,
+.cart-drawer,
+#cart-drawer,
+.drawer,
+.overlay,
+[data-modal] {
+  overflow-y: auto;
+}
+
+/* ── Ensure no section is taller than viewport without scroll */
+section,
+.section {
+  max-height: none !important;
+}
+
+/* ── Music modal — keep scroll locked ONLY while it's open ── */
+body.music-modal-open {
+  overflow: hidden !important;
+}
