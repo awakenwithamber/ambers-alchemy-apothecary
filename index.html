@@ -477,9 +477,7 @@
     <link rel="stylesheet" href="soap-gallery.css">
     <link rel="stylesheet" href="/css/scroll-fix.css">
 <!-- v-music-fix -->
-<script src="https://js.stripe.com/v3/"></script>
 <script src="https://player.vimeo.com/api/player.js"></script>
-<meta name="stripe-key" content="" />
 
 <!-- Analytics: dataLayer + GA4 / GTM bootstrap (consent-safe defaults).
      Set GTM_ID and/or GA4_MEASUREMENT_ID below to activate. -->
@@ -2932,7 +2930,6 @@
         <div class="checkout-divider"></div>
 
         <h3>Pay with Card</h3>
-        <p class="checkout-secure-note">Your card information is processed securely by Stripe. No card data is stored on our servers.</p>
         <div class="checkout-trust-badges">
           <span class="trust-badge-item">🔒 SSL Encrypted</span>
           <span class="trust-badge-item">💳 Visa</span>
@@ -2941,16 +2938,12 @@
           <span class="trust-badge-item">🛡️ Secure Checkout</span>
         </div>
 
-        <div class="checkout-field">
-          <label for="card-element">Card Details</label>
-          <div id="card-element" class="stripe-card-element"></div>
-          <div id="card-errors" class="checkout-card-errors" role="alert"></div>
-        </div>
-
-        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn" disabled>
-          <span id="payBtnText">Pay Now</span>
-          <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
+        <button type="button" data-shopify-checkout id="shopifyCheckoutBtn" class="btn-primary checkout-pay-btn">
+          💳 Pay with Card — Secure Shopify Checkout
         </button>
+        <p style="font-size:12px; opacity:0.6; text-align:center; margin-top:8px;">
+          Visa · Mastercard · Amex · Debit · Apple Pay
+        </p>
 
         <div class="checkout-trust-badges">
           <span>🔒 SSL Encrypted</span>
@@ -2991,7 +2984,7 @@
       <h4>Learn</h4>
       <a href="#" data-section="herbal-wisdom">Articles &amp; Guides</a>
       <a href="#" data-section="herbal-library">Herb Encyclopedia</a>
-      <a href="#" data-section="herb-index">Ingredient Library</a>
+      <a href="#" data-section="herb-index">Herbal Index &amp; Encyclopedia</a>
       <a href="#" data-section="faqs">FAQs</a>
       <a href="#" data-section="about">About Amber</a>
     </div>
