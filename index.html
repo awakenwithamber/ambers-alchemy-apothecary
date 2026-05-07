@@ -475,10 +475,9 @@
     <link rel="stylesheet" href="grimoire-seo.css">
     <link rel="stylesheet" href="herbal-advisor.css">
     <link rel="stylesheet" href="soap-gallery.css">
+    <link rel="stylesheet" href="/css/scroll-fix.css">
 <!-- v-music-fix -->
-<script src="https://js.stripe.com/v3/"></script>
 <script src="https://player.vimeo.com/api/player.js"></script>
-<meta name="stripe-key" content="" />
 
 <!-- Analytics: dataLayer + GA4 / GTM bootstrap (consent-safe defaults).
      Set GTM_ID and/or GA4_MEASUREMENT_ID below to activate. -->
@@ -1530,7 +1529,7 @@
   </div>
 
   <!-- Custom Soap Order Form -->
-  <div class="custom-soap-form">
+  <div class="custom-soap-form" id="soap-order-form">
     <div class="section-header">
       <div class="section-ornament">✦ ─── ✦</div>
       <h3>✦ Order a Custom Soap</h3>
@@ -2076,7 +2075,7 @@
 
   <!-- CONSULTATION FORM (formerly Custom Blend) -->
   <div class="formula-grid">
-    <div class="formula-form card">
+    <div class="formula-form card" id="consultation-form">
       <h3>✦ Your Personal Herbal Consultation</h3>
       <p class="form-intro">Fill out the form below and Amber will respond within 24–48 hours with your custom formula recommendation.</p>
       <input type="text" id="formulaName" placeholder="Your Full Name" required />
@@ -2816,7 +2815,7 @@
     <p>Reach out with questions, custom requests, or to book a consultation.</p>
   </div>
   <div class="contact-grid">
-    <div class="contact-form card">
+    <div class="contact-form card" id="contact-form">
       <h3>Send a Message</h3>
       <input type="text" id="contactName" placeholder="Your Name" />
       <input type="email" id="contactEmail" placeholder="Your Email" />
@@ -2880,7 +2879,7 @@
 
     <!-- Order Form + Payment -->
     <div class="checkout-form-wrap card">
-      <form id="checkoutForm" name="checkout-order" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <form id="checkout-form" name="checkout-order" method="POST" data-netlify="true" netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="checkout-order" />
         <input type="hidden" name="bot-field" />
         <input type="hidden" name="transaction-id" id="transactionId" value="" />
@@ -2931,7 +2930,6 @@
         <div class="checkout-divider"></div>
 
         <h3>Pay with Card</h3>
-        <p class="checkout-secure-note">Your card information is processed securely by Stripe. No card data is stored on our servers.</p>
         <div class="checkout-trust-badges">
           <span class="trust-badge-item">🔒 SSL Encrypted</span>
           <span class="trust-badge-item">💳 Visa</span>
@@ -2940,16 +2938,12 @@
           <span class="trust-badge-item">🛡️ Secure Checkout</span>
         </div>
 
-        <div class="checkout-field">
-          <label for="card-element">Card Details</label>
-          <div id="card-element" class="stripe-card-element"></div>
-          <div id="card-errors" class="checkout-card-errors" role="alert"></div>
-        </div>
-
-        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn" disabled>
-          <span id="payBtnText">Pay Now</span>
-          <span id="payBtnSpinner" class="checkout-spinner" style="display:none;"></span>
+        <button type="button" data-shopify-checkout id="shopifyCheckoutBtn" class="btn-primary checkout-pay-btn">
+          💳 Pay with Card — Secure Shopify Checkout
         </button>
+        <p style="font-size:12px; opacity:0.6; text-align:center; margin-top:8px;">
+          Visa · Mastercard · Amex · Debit · Apple Pay
+        </p>
 
         <div class="checkout-trust-badges">
           <span>🔒 SSL Encrypted</span>
@@ -2990,7 +2984,7 @@
       <h4>Learn</h4>
       <a href="#" data-section="herbal-wisdom">Articles &amp; Guides</a>
       <a href="#" data-section="herbal-library">Herb Encyclopedia</a>
-      <a href="#" data-section="herb-index">Ingredient Library</a>
+      <a href="#" data-section="herb-index">Herbal Index &amp; Encyclopedia</a>
       <a href="#" data-section="faqs">FAQs</a>
       <a href="#" data-section="about">About Amber</a>
     </div>
@@ -3084,10 +3078,13 @@
 })();
 </script>
 
-<script src="soap-builder.js"></script>
 <script src="herbal-wisdom.js"></script>
 <script src="navigation-history.js"></script>
 <script src="reviews.js"></script>
 <script src="pwa-init.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/soap-builder.js"></script>
+<script src="/js/shopify-checkout.js"></script>
+<script src="/js/form-handlers.js"></script>
     </body>
 </html>

@@ -381,7 +381,6 @@ document.getElementById('proceedToCheckoutBtn').addEventListener('click', () => 
   closeCartFn();
   showSection('checkout');
   renderCheckoutSummary();
-  initStripe();
 });
 
 // Venmo/CashApp dynamic total — accepts debit & credit cards
@@ -434,55 +433,13 @@ function renderCheckoutSummary() {
 }
 
 async function initStripe() {
-  if (stripeReady) return;
-
-  // Try meta tag first, then fetch from API
-  let pk = '';
-  const stripeKey = document.querySelector('meta[name="stripe-key"]');
-  if (stripeKey && stripeKey.content) {
-    pk = stripeKey.content;
-  } else {
-    try {
-      const res = await fetch('/api/stripe-config');
-      const data = await res.json();
-      pk = data.publishableKey || '';
-    } catch (e) { /* ignore */ }
-  }
-
-  if (!pk) {
-    document.getElementById('card-errors').textContent = 'Card payments are being set up. You may also use Venmo or Cash App from the cart.';
-    document.getElementById('checkoutPayBtn').disabled = false;
-    document.getElementById('payBtnText').textContent = 'Submit Order';
-    return;
-  }
-  try {
-    stripe = Stripe(pk);
-    const elements = stripe.elements();
-    cardElement = elements.create('card', {
-      style: {
-        base: {
-          color: '#F3EBDD',
-          fontFamily: 'Lora, Georgia, serif',
-          fontSize: '15px',
-          '::placeholder': { color: '#B8A898' },
-        },
-        invalid: { color: '#e74c3c' },
-      },
-    });
-    cardElement.mount('#card-element');
-    cardElement.on('change', function(event) {
-      const errEl = document.getElementById('card-errors');
-      errEl.textContent = event.error ? event.error.message : '';
-      document.getElementById('checkoutPayBtn').disabled = !event.complete;
-    });
-    stripeReady = true;
-  } catch (e) {
-    document.getElementById('card-errors').textContent = 'Could not initialize payment form.';
-  }
+  // Stripe removed — payment now handled via Shopify Checkout (js/shopify-checkout.js)
+  return;
 }
 
 // Handle checkout form submission
-document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+const _checkoutFormEl = document.getElementById('checkoutForm');
+if (_checkoutFormEl) _checkoutFormEl.addEventListener('submit', async function(e) {
   e.preventDefault();
 
   const payBtn = document.getElementById('checkoutPayBtn');
