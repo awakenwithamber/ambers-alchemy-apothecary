@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Living Herbal Grimoire | Amber's Alchemy Apothecary</title>
+<meta name="description" content="Explore the Living Herbal Grimoire — a botanical knowledge collection covering 18+ medicinal herbs with traditional uses, botanical compounds, and ritual wisdom.">
+<link rel="icon" href="/images/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Tangerine:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-deepest: #0a0810;
+  --bg-dark: #0f0b18;
+  --bg-card: #15102050;
+  --purple-deep: #1e0a35;
+  --purple-mid: #3d1a5c;
+  --purple-light: #7b4ca5;
+  --gold: #c9a84c;
+  --gold-light: #e8cc80;
+  --gold-dim: #8a6b28;
+  --parchment: #f0e8d0;
+  --parchment-dim: #c8b99a;
+  --green-deep: #0d2a1a;
+  --green-mid: #1a4a2a;
+  --green-accent: #3d7a4a;
+  --text-body: #d4c8b0;
+  --text-dim: #8a7a65;
+  --border-gold: rgba(201, 168, 76, 0.25);
+  --border-subtle: rgba(201, 168, 76, 0.1);
+  --glow: rgba(201, 168, 76, 0.15);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--bg-deepest);
+  color: var(--text-body);
+  font-family: 'EB Garamond', Georgia, serif;
+  font-size: 18px;
+  line-height: 1.7;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(61, 26, 92, 0.4) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 100% 80%, rgba(13, 42, 26, 0.3) 0%, transparent 50%);
+}
+
+/* ─── NAV ─── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10, 8, 16, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-gold);
+  padding: 14px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand a {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1rem; color: var(--gold); text-decoration: none;
+  letter-spacing: 0.05em;
+}
+.nav-links {
+  display: flex; gap: 24px; align-items: center; list-style: none;
+}
+.nav-links a {
+  font-family: 'EB Garamond', serif; font-size: 1rem;
+  color: var(--parchment-dim); text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--gold); }
+.nav-back {
+  font-family: 'EB Garamond', serif; font-size: 0.95rem;
+  color: var(--gold-dim); text-decoration: none;
+  border: 1px solid var(--border-gold);
+  padding: 6px 16px; border-radius: 20px;
+  transition: all 0.2s;
+}
+.nav-back:hover { color: var(--gold); border-color: var(--gold); }
+.nav-hamburger { display: none; }
+
+/* ─── HERO ─── */
+.grimoire-hero {
+  text-align: center;
+  padding: 80px 24px 60px;
+  position: relative;
+  overflow: hidden;
+}
+.grimoire-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(61, 26, 92, 0.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-sigil {
+  font-size: 3rem; margin-bottom: 16px; display: block;
+  animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.grimoire-hero h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  color: var(--gold); font-weight: 700;
+  line-height: 1.15; margin-bottom: 16px;
+  text-shadow: 0 0 40px rgba(201, 168, 76, 0.4);
+}
+.hero-subtitle {
+  font-family: 'Tangerine', cursive;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: var(--parchment-dim); margin-bottom: 24px;
+}
+.hero-description {
+  max-width: 680px; margin: 0 auto 32px;
+  color: var(--text-body); font-size: 1.1rem; font-style: italic;
+}
+.hero-divider {
+  color: var(--gold-dim); font-size: 1.2rem;
+  letter-spacing: 0.5em; margin-bottom: 40px;
+}
+
+/* ─── GRIMOIRE SECTION TABS ─── */
+.grimoire-tabs {
+  display: flex; justify-content: center; gap: 0;
+  border: 1px solid var(--border-gold);
+  border-radius: 8px; overflow: hidden;
+  max-width: 500px; margin: 0 auto 48px;
+}
+.tab-btn {
+  flex: 1; padding: 12px 24px;
+  background: transparent; border: none; cursor: pointer;
+  font-family: 'EB Garamond', serif; font-size: 1rem;
+  color: var(--text-dim); transition: all 0.25s;
+}
+.tab-btn:not(:last-child) { border-right: 1px solid var(--border-gold); }
+.tab-btn.active {
+  background: rgba(201, 168, 76, 0.15);
+  color: var(--gold);
+}
+.tab-btn:hover:not(.active) { color: var(--parchment-dim); }
+
+/* ─── HERB LIBRARY ─── */
+#herb-library { display: block; }
+#grimoire-book { display: none; }
+
+/* ─── SEARCH & FILTER ─── */
+.filter-bar {
+  max-width: 1100px; margin: 0 auto 40px;
+  padding: 0 24px;
+}
+.search-wrapper {
+  position: relative; margin-bottom: 20px;
+}
+.herb-search {
+  width: 100%; padding: 14px 20px 14px 48px;
+  background: rgba(21, 16, 32, 0.8);
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  color: var(--parchment); font-family: 'EB Garamond', serif;
+  font-size: 1.05rem; outline: none;
+  transition: border-color 0.2s;
+}
+.herb-search::placeholder { color: var(--text-dim); }
+.herb-search:focus { border-color: var(--gold); }
+.search-icon {
+  position: absolute; left: 16px; top: 50%;
+  transform: translateY(-50%); font-size: 1.1rem;
+  color: var(--gold-dim); pointer-events: none;
+}
+
+.filter-pills {
+  display: flex; flex-wrap: wrap; gap: 10px;
+}
+.pill {
+  padding: 7px 18px; border-radius: 24px;
+  border: 1px solid var(--border-gold);
+  background: transparent; cursor: pointer;
+  font-family: 'EB Garamond', serif; font-size: 0.95rem;
+  color: var(--text-dim); transition: all 0.2s;
+  white-space: nowrap;
+}
+.pill:hover { color: var(--parchment-dim); border-color: var(--gold-dim); }
+.pill.active {
+  background: rgba(201, 168, 76, 0.18);
+  border-color: var(--gold); color: var(--gold);
+}
+
+/* ─── HERB GRID ─── */
+.herb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 28px;
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+.herb-card {
+  background: linear-gradient(145deg, rgba(21, 16, 32, 0.9), rgba(13, 42, 26, 0.3));
+  border: 1px solid var(--border-gold);
+  border-radius: 16px; overflow: hidden;
+  cursor: pointer; transition: all 0.3s;
+  position: relative;
+}
+.herb-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at top left, rgba(201, 168, 76, 0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.herb-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+  box-shadow: 0 8px 40px rgba(201, 168, 76, 0.12);
+}
+
+.herb-card-emoji {
+  font-size: 3.5rem;
+  padding: 28px 28px 12px;
+  display: block;
+}
+.herb-card-body { padding: 0 28px 28px; }
+.herb-card-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.15rem; color: var(--gold);
+  margin-bottom: 4px;
+}
+.herb-card-botanical {
+  font-style: italic; font-size: 0.88rem;
+  color: var(--text-dim); margin-bottom: 12px;
+}
+.herb-card-overview {
+  font-size: 0.95rem; color: var(--text-body);
+  line-height: 1.6; margin-bottom: 16px;
+}
+.herb-card-tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 18px;
+}
+.herb-tag {
+  font-size: 0.75rem; padding: 3px 10px; border-radius: 12px;
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid var(--border-subtle);
+  color: var(--gold-dim);
+}
+.herb-card-btn {
+  background: transparent; border: 1px solid var(--gold-dim);
+  color: var(--gold); padding: 8px 20px; border-radius: 24px;
+  font-family: 'EB Garamond', serif; font-size: 0.95rem;
+  cursor: pointer; transition: all 0.2s;
+  width: 100%;
+}
+.herb-card-btn:hover {
+  background: rgba(201, 168, 76, 0.12);
+  border-color: var(--gold);
+}
+
+.no-results {
+  text-align: center; padding: 60px 24px;
+  color: var(--text-dim); font-style: italic; font-size: 1.1rem;
+  grid-column: 1 / -1;
+}
+
+/* ─── HERB MODAL ─── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(5, 3, 12, 0.88);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 24px 16px;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  overflow-y: auto;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: linear-gradient(160deg, #15102a 0%, #0d1a12 100%);
+  border: 1px solid var(--border-gold);
+  border-radius: 20px; max-width: 680px; width: 100%;
+  margin: auto;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6),
+              0 0 0 1px rgba(201, 168, 76, 0.1);
+  position: relative; overflow: hidden;
+}
+.modal-box::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 200px;
+  background: radial-gradient(ellipse at top, rgba(61, 26, 92, 0.5) 0%, transparent 70%);
+  pointer-events: none;
+}
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  background: rgba(201, 168, 76, 0.1); border: 1px solid var(--border-gold);
+  color: var(--gold); width: 36px; height: 36px; border-radius: 50%;
+  font-size: 1.1rem; cursor: pointer; z-index: 10;
+  transition: all 0.2s;
+}
+.modal-close:hover { background: rgba(201, 168, 76, 0.2); }
+.modal-content { padding: 48px 40px 40px; position: relative; }
+.modal-emoji { font-size: 4rem; display: block; margin-bottom: 16px; }
+.modal-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: var(--gold); margin-bottom: 6px;
+  line-height: 1.2;
+}
+.modal-botanical {
+  font-style: italic; color: var(--text-dim);
+  font-size: 1rem; margin-bottom: 24px;
+}
+.modal-divider {
+  border: none; border-top: 1px solid var(--border-gold);
+  margin: 24px 0;
+}
+.modal-section-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.85rem; letter-spacing: 0.15em;
+  color: var(--gold-dim); text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.modal-text { font-size: 1rem; line-height: 1.75; color: var(--text-body); margin-bottom: 20px; }
+.modal-compounds {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;
+}
+.compound-badge {
+  background: rgba(61, 26, 92, 0.4);
+  border: 1px solid rgba(123, 76, 165, 0.3);
+  color: #b08adc; font-size: 0.82rem;
+  padding: 4px 12px; border-radius: 12px;
+  font-style: italic;
+}
+.modal-caution {
+  background: rgba(180, 100, 30, 0.15);
+  border: 1px solid rgba(180, 100, 30, 0.3);
+  border-radius: 8px; padding: 12px 16px;
+  font-size: 0.9rem; color: #e0a060; margin-bottom: 20px;
+}
+.modal-products { display: flex; flex-wrap: wrap; gap: 8px; }
+.product-link {
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid var(--border-gold);
+  color: var(--gold); font-size: 0.88rem;
+  padding: 6px 14px; border-radius: 16px;
+  text-decoration: none; transition: all 0.2s;
+  font-family: 'EB Garamond', serif;
+}
+.product-link:hover { background: rgba(201, 168, 76, 0.2); }
+
+/* ─── GRIMOIRE BOOK ─── */
+#grimoire-book {
+  max-width: 900px; margin: 0 auto;
+  padding: 0 24px 80px;
+}
+.grimoire-preview {
+  background: linear-gradient(160deg, rgba(30, 10, 53, 0.6), rgba(13, 26, 18, 0.4));
+  border: 1px solid var(--border-gold);
+  border-radius: 20px; padding: 40px;
+  text-align: center; margin-bottom: 32px;
+}
+.grimoire-preview h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.6rem; color: var(--gold);
+  margin-bottom: 16px;
+}
+.grimoire-preview p { color: var(--text-body); margin-bottom: 24px; font-style: italic; }
+.grimoire-lock-icon { font-size: 3rem; margin-bottom: 16px; }
+
+.access-form {
+  max-width: 400px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.access-input {
+  width: 100%; padding: 12px 20px;
+  background: rgba(15, 11, 24, 0.8);
+  border: 1px solid var(--border-gold);
+  border-radius: 8px; color: var(--parchment);
+  font-family: 'EB Garamond', serif; font-size: 1rem;
+  outline: none; transition: border-color 0.2s;
+}
+.access-input:focus { border-color: var(--gold); }
+.access-btn {
+  padding: 12px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  border: none; color: #0a0810;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.9rem; cursor: pointer; transition: opacity 0.2s;
+}
+.access-btn:hover { opacity: 0.88; }
+.access-status { font-size: 0.9rem; margin-top: 8px; }
+.access-status.error { color: #e07070; }
+.access-status.success { color: #70d0a0; }
+
+.grimoire-page-content {
+  display: none;
+  background: linear-gradient(160deg, rgba(30, 20, 10, 0.7), rgba(20, 30, 15, 0.5));
+  border: 1px solid var(--border-gold); border-radius: 20px; padding: 48px;
+}
+.grimoire-page-content.unlocked { display: block; }
+
+/* ─── SUBSCRIBE CTA ─── */
+.subscribe-section {
+  text-align: center; padding: 64px 24px;
+  max-width: 600px; margin: 0 auto;
+}
+.subscribe-section h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.8rem; color: var(--gold);
+  margin-bottom: 16px;
+}
+.subscribe-section p { color: var(--text-body); margin-bottom: 32px; font-style: italic; }
+.subscribe-price {
+  font-family: 'Tangerine', cursive;
+  font-size: 3rem; color: var(--gold-light);
+  margin-bottom: 8px;
+}
+.subscribe-note { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 24px; }
+.subscribe-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--purple-mid), var(--purple-light));
+  border: 1px solid var(--gold-dim); color: var(--gold-light);
+  padding: 14px 36px; border-radius: 30px;
+  font-family: 'Cinzel Decorative', serif; font-size: 0.95rem;
+  text-decoration: none; cursor: pointer; transition: all 0.2s;
+}
+.subscribe-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(61, 26, 92, 0.5); }
+
+/* ─── FDA DISCLAIMER ─── */
+.fda-disclaimer {
+  max-width: 900px; margin: 0 auto;
+  padding: 20px 24px 60px;
+  font-size: 0.78rem; color: var(--text-dim);
+  text-align: center; line-height: 1.6;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  border-top: 1px solid var(--border-gold);
+  text-align: center; padding: 32px 24px;
+  font-size: 0.85rem; color: var(--text-dim);
+}
+footer a { color: var(--gold-dim); text-decoration: none; }
+footer a:hover { color: var(--gold); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: block; }
+  .herb-grid { grid-template-columns: 1fr; padding: 0 16px 60px; }
+  .modal-content { padding: 40px 24px 32px; }
+  .grimoire-page-content { padding: 32px 24px; }
+  .grimoire-tabs { max-width: 100%; margin: 0 16px 40px; }
+}
+
+/* ─── LOADING ─── */
+.herb-card.hidden { display: none; }
+
+/* ─── SCROLL REVEAL ─── */
+.herb-card {
+  animation: fadeUp 0.5s ease backwards;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.herb-card:nth-child(1) { animation-delay: 0.05s; }
+.herb-card:nth-child(2) { animation-delay: 0.10s; }
+.herb-card:nth-child(3) { animation-delay: 0.15s; }
+.herb-card:nth-child(4) { animation-delay: 0.20s; }
+.herb-card:nth-child(5) { animation-delay: 0.25s; }
+.herb-card:nth-child(6) { animation-delay: 0.30s; }
+
+/* Prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand"><a href="/">Amber's Alchemy Apothecary</a></div>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/#shop">Shop</a></li>
+    <li><a href="/grimoir.html" style="color:var(--gold)">Grimoire</a></li>
+    <li><a href="/#contact">Contact</a></li>
+  </ul>
+  <a href="/" class="nav-back">← Back to Apothecary</a>
+</nav>
+
+<!-- HERO -->
+<header class="grimoire-hero">
+  <span class="hero-sigil">📖</span>
+  <h1>The Living Herbal Grimoire</h1>
+  <p class="hero-subtitle">A True Book of Plant Wisdom</p>
+  <p class="hero-description">
+    Plants have supported human wellness for thousands of years. Explore traditional uses, botanical compounds, energetic qualities, and the ancient wisdom of medicinal herbs — cultivated across centuries of herbal tradition.
+  </p>
+  <div class="hero-divider">✦ ───── ✦ ───── ✦</div>
+
+  <!-- TABS -->
+  <div class="grimoire-tabs">
+    <button class="tab-btn active" onclick="showTab('herb-library')">🌿 Herb Library</button>
+    <button class="tab-btn" onclick="showTab('grimoire-book')">📜 The Grimoire</button>
+  </div>
+</header>
+
+<!-- HERB LIBRARY TAB -->
+<section id="herb-library">
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text" class="herb-search"
+        placeholder="Search herbs by name, use, or compound…"
+        id="herbSearch" oninput="filterHerbs()"
+        aria-label="Search the herb library"
+      >
+    </div>
+    <div class="filter-pills" role="group" aria-label="Filter herbs by category">
+      <button class="pill active" onclick="setFilter('all', this)">All Herbs</button>
+      <button class="pill" onclick="setFilter('sleep', this)">😴 Sleep</button>
+      <button class="pill" onclick="setFilter('stress', this)">🧘 Stress & Mood</button>
+      <button class="pill" onclick="setFilter('energy', this)">⚡ Energy</button>
+      <button class="pill" onclick="setFilter('immune', this)">🛡️ Immune</button>
+      <button class="pill" onclick="setFilter('skin', this)">✨ Skin</button>
+      <button class="pill" onclick="setFilter('hair', this)">💇 Hair</button>
+      <button class="pill" onclick="setFilter('pain', this)">🌿 Pain & Muscles</button>
+      <button class="pill" onclick="setFilter('digestive', this)">🌾 Digestive</button>
+      <button class="pill" onclick="setFilter('womens', this)">🌸 Women's Wellness</button>
+      <button class="pill" onclick="setFilter('spiritual', this)">🔮 Spiritual & Ritual</button>
+    </div>
+  </div>
+
+  <!-- HERB GRID -->
+  <div class="herb-grid" id="herbGrid" role="list">
+    <!-- Cards rendered by JS -->
+  </div>
+</section>
+
+<!-- GRIMOIRE BOOK TAB -->
+<section id="grimoire-book">
+  <div style="max-width:900px;margin:0 auto;padding:0 24px 80px">
+
+    <!-- FREE PREVIEW (pages 1–7) -->
+    <div class="grimoire-preview">
+      <div class="grimoire-lock-icon">📜</div>
+      <h2>A True Book of Light Magic</h2>
+      <p style="font-size:1.1rem">
+        Pages 1–7 are freely available to all seekers.<br>
+        The full Grimoire (pages 8–88) opens to confirmed subscribers and Amber's inner circle.
+      </p>
+      <p style="color:var(--text-dim);font-size:0.9rem;margin-bottom:0">
+        All magic within these pages is oriented strictly toward light, love, and protection — never harm.
+      </p>
+    </div>
+
+    <!-- FREE PAGES SAMPLE -->
+    <div style="background:linear-gradient(160deg,rgba(30,10,53,0.5),rgba(13,26,18,0.3));border:1px solid var(--border-gold);border-radius:20px;padding:40px;margin-bottom:32px">
+      <p class="modal-section-title">Page I — A Seeker's Oath</p>
+      <hr class="modal-divider">
+      <p class="modal-text">
+        I open this Grimoire with an open heart, a curious mind, and a reverence for the living world. I seek only to heal, protect, and uplift — myself and all those I love. I pledge to use the wisdom found within these pages in the service of light, never as a weapon of harm, manipulation, or control. So it is written. So it is sealed.
+      </p>
+      <p class="modal-section-title" style="margin-top:32px">Page II — The Nature of Plant Magic</p>
+      <hr class="modal-divider">
+      <p class="modal-text">
+        Plants are the original alchemists. Long before human hands learned to distill, extract, or synthesize, the green world was already transforming sunlight into medicine, soil into sustenance, air into fragrance. To work with plants is to enter into a conversation that stretches back to the beginning of life itself. Every leaf, root, and flower carries a signature — a pattern of compounds, energies, and intentions laid down across millions of years of relationship with the earth.
+      </p>
+      <p class="modal-section-title" style="margin-top:32px">Pages III–VII — Preview Available to Subscribers</p>
+      <hr class="modal-divider">
+      <p class="modal-text" style="color:var(--text-dim);font-style:italic">
+        Additional preview pages — including protection circles, cleansing rites, and the first botanical invocations — are included with any active subscription.
+      </p>
+    </div>
+
+    <!-- UNLOCK FORM -->
+    <div class="grimoire-preview">
+      <div class="grimoire-lock-icon">🔐</div>
+      <h2>Unlock Pages 8–88</h2>
+      <p>Enter the email address connected to your active subscription to reveal the full Grimoire.</p>
+      <div class="access-form">
+        <input type="email" class="access-input" id="grimEmailInput" placeholder="your@email.com" />
+        <button class="access-btn" onclick="checkGrimoireAccess()">✦ Open the Grimoire</button>
+        <p class="access-status" id="accessStatus"></p>
+      </div>
+    </div>
+
+    <!-- FULL GRIMOIRE (shown when unlocked) -->
+    <div class="grimoire-page-content" id="grimoireFullContent">
+      <p style="text-align:center;font-family:'Cinzel Decorative',serif;color:var(--gold);font-size:1.4rem;margin-bottom:24px">✦ The Grimoire is Open ✦</p>
+      <p style="text-align:center;color:var(--text-dim);font-style:italic;margin-bottom:40px">You are now in the sacred space. Use this wisdom with love and light.</p>
+      <!-- Full content injected here by auth-check -->
+      <div id="grimoirePages"></div>
+    </div>
+
+    <!-- SUBSCRIBE CTA (shown when not subscribed) -->
+    <div class="subscribe-section" id="subscribeCTA">
+      <h2>Join the Inner Circle</h2>
+      <p>Unlock the full Living Grimoire — 88 pages of botanical rituals, protection workings, light magic, and sacred herbalism.</p>
+      <div class="subscribe-price">$3.33 / month</div>
+      <p class="subscribe-note">Cancel anytime · Instant access · All pages from day one</p>
+      <a href="https://awakenagain-2.myshopify.com/products/grimoire-subscription" class="subscribe-btn" target="_blank" rel="noopener">
+        ✦ Subscribe & Unlock
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FDA DISCLAIMER -->
+<div class="fda-disclaimer">
+  ✦ These statements have not been evaluated by the Food and Drug Administration. Products referenced on this page are not intended to diagnose, treat, cure, or prevent any disease. ✦
+</div>
+
+<footer>
+  <p>© 2025 Awaken With Amber LLC · Amber's Alchemy Apothecary · <a href="/">awakenagain.com</a></p>
+  <p style="margin-top:8px"><a href="/#privacy">Privacy</a> · <a href="/#terms">Terms</a> · <a href="/#contact">Contact Amber</a></p>
+</footer>
+
+<!-- HERB MODAL -->
+<div class="modal-overlay" id="herbModal" role="dialog" aria-modal="true" aria-labelledby="modalHerbName" onclick="closeModalOutside(event)">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">✕</button>
+    <div class="modal-content">
+      <span class="modal-emoji" id="modalEmoji"></span>
+      <h2 class="modal-name" id="modalHerbName"></h2>
+      <p class="modal-botanical" id="modalBotanical"></p>
+
+      <p class="modal-section-title">Overview</p>
+      <p class="modal-text" id="modalOverview"></p>
+      <hr class="modal-divider">
+
+      <p class="modal-section-title">Traditional Uses</p>
+      <p class="modal-text" id="modalTraditional"></p>
+
+      <p class="modal-section-title">Botanical Compounds</p>
+      <div class="modal-compounds" id="modalCompounds"></div>
+
+      <p class="modal-section-title">Energetic Qualities</p>
+      <p class="modal-text" id="modalEnergetic"></p>
+      <hr class="modal-divider">
+
+      <p class="modal-section-title">How It Is Used</p>
+      <p class="modal-text" id="modalHow"></p>
+
+      <div id="modalCautionWrapper" style="display:none">
+        <p class="modal-caution" id="modalCaution"></p>
+      </div>
+
+      <p class="modal-section-title">Products Containing This Herb</p>
+      <div class="modal-products" id="modalProducts"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── HERB DATA ───────────────────────────────────────────────
+const herbs = [
+  {
+    name: "Ashwagandha",
+    botanical: "Withania somnifera",
+    emoji: "🌿",
+    overview: "Known as the 'strength of the stallion,' Ashwagandha is one of Ayurveda's most revered adaptogenic roots. Used for thousands of years to support resilience, grounded energy, and stress recovery.",
+    traditional: "Traditionally used as an adaptogen to support the body's response to stress, promote grounded energy, and nourish the nervous system. Used in Ayurvedic medicine to support stamina, vitality, and restful sleep.",
+    compounds: ["Withanolides", "Alkaloids", "Saponins", "Iron"],
+    energetic: "Earth and fire energy — grounding, fortifying, and warming. Associated with inner strength and deep-root nourishment. Ideal for those who feel scattered, depleted, or burned out.",
+    how: "Taken as capsules, blended into warm milk (golden milk), or brewed as a root decoction. Works best with consistent daily use over 4–8 weeks.",
+    products: ["Vital Vitality Capsules", "Custom Blend"],
+    productLinks: ["#vital-vitality", "#custom-builder"],
+    categories: ["stress", "energy"],
+    caution: null
+  },
+  {
+    name: "Lavender",
+    botanical: "Lavandula angustifolia",
+    emoji: "💜",
+    overview: "The most universally beloved aromatic herb, Lavender bridges the worlds of botanical medicine and sensory ritual. Its silver-purple wands carry one of nature's most studied and celebrated calming compounds.",
+    traditional: "Traditionally used to support calm, ease nervous tension, promote restful sleep, and soothe irritated skin. Used in Mediterranean, European, and Middle Eastern herbal traditions for over 2,500 years.",
+    compounds: ["Linalool", "Linalyl Acetate", "Camphor", "Flavonoids"],
+    energetic: "Air and water energy — calming, cleansing, and clarifying. Clears mental clutter and invites peace. Associated with the crown and heart chakras. A herb of transitions and thresholds.",
+    how: "Used in botanical soaps, balms, aromatherapy, teas, and capsule blends. Applied topically in skin preparations, diffused aromatically, or taken as a tea for evening rituals.",
+    products: ["DreamEase Capsules", "Handmade Botanical Soaps", "Age Reversal Beauty Balm"],
+    productLinks: ["#dreamease", "#soaps", "#beauty-balm"],
+    categories: ["sleep", "stress", "skin", "spiritual"]
+  },
+  {
+    name: "Chamomile",
+    botanical: "Matricaria chamomilla",
+    emoji: "🌼",
+    overview: "The gentle golden sun-disk of the herb world, Chamomile has been gathered and treasured since ancient Egypt. One of the most widely used medicinal herbs globally, it is beloved for its soft, apple-like fragrance and its consistent calming nature.",
+    traditional: "Traditionally used for nervous tension, digestive comfort, sleep support, and gentle inflammation relief. Central to European herbal medicine and ancient Egyptian cosmetic traditions.",
+    compounds: ["Apigenin", "Bisabolol", "Chamazulene", "Flavonoids"],
+    energetic: "Sun and water energy — warm yet soft, soothing yet bright. Carries the quality of a gentle reassurance. Ideal for anxious, restless, or overwhelmed energy states.",
+    how: "Brewed as a gentle tea for evening rituals, used in capsule blends for sleep support, and incorporated into skin-soothing balms and botanical soaps.",
+    products: ["DreamEase Capsules", "Herbal Tea Apothecary"],
+    productLinks: ["#dreamease", "#herbal-tea"],
+    categories: ["sleep", "stress", "digestive"]
+  },
+  {
+    name: "Holy Basil",
+    botanical: "Ocimum sanctum (Tulsi)",
+    emoji: "🌱",
+    overview: "Revered as a sacred plant in India for over 3,000 years, Holy Basil — or Tulsi — is often called 'the queen of herbs.' It sits at the heart of Ayurvedic adaptogenic medicine and is considered a living embodiment of grace and clarity.",
+    traditional: "Traditionally used for emotional balance, mental clarity, respiratory support, and adaptogenic stress resilience. In Indian tradition, Tulsi is a sacred household plant, tended daily as an act of reverence.",
+    compounds: ["Eugenol", "Ursolic Acid", "Ocimumosides", "Rosmarinic Acid"],
+    energetic: "Fire and air energy — clarifying, uplifting, and purifying. Cuts through confusion and emotional stagnation. Associated with clarity of purpose and connection to higher wisdom.",
+    how: "Brewed as a sacred tea, used in adaptogenic capsule blends, or incorporated into ritual aromatic preparations.",
+    products: ["Vital Vitality Capsules", "Custom Blend"],
+    productLinks: ["#vital-vitality", "#custom-builder"],
+    categories: ["stress", "energy", "spiritual"]
+  },
+  {
+    name: "Rhodiola",
+    botanical: "Rhodiola rosea",
+    emoji: "🏔️",
+    overview: "A mountain-born adaptogen grown in the harsh, windswept terrain of Siberia and Scandinavia, Rhodiola has been used by Vikings, Siberian shamans, and Soviet-era researchers alike. It is one of the most thoroughly studied adaptogens in modern botanical science.",
+    traditional: "Traditionally used to support stamina, focus, mental resilience, and recovery under stress. Used by Norse warriors before battle, Siberian hunters on long journeys, and in traditional Russian medicine for vitality.",
+    compounds: ["Rosavins", "Salidroside", "Tyrosol", "Phenylpropanoids"],
+    energetic: "Fire and earth energy — warming, strengthening, and determined. Carries the energy of the mountain — calm, steady, and enduring in the face of hardship.",
+    how: "Taken as capsules or tincture, best used in the morning or midday. Pairs well with other adaptogens in comprehensive energy formulas.",
+    products: ["Vital Vitality Capsules", "Custom Blend"],
+    productLinks: ["#vital-vitality", "#custom-builder"],
+    categories: ["energy", "stress"]
+  },
+  {
+    name: "Ginseng",
+    botanical: "Panax ginseng",
+    emoji: "🫚",
+    overview: "One of the most studied and revered botanicals in human history, Asian Ginseng has been a cornerstone of Chinese and Korean medicine for over 2,000 years. Its name, 'Panax,' comes from the Greek for 'all-healing.'",
+    traditional: "Traditionally used to support vitality, mental energy, stamina, and a healthy stress response. Considered a premier tonic for longevity and vigor in Traditional Chinese Medicine.",
+    compounds: ["Ginsenosides (Rb1, Rg1)", "Polysaccharides", "Peptides", "Polyacetylenes"],
+    energetic: "Yang fire energy — revitalizing, warming, and illuminating. Associated with the spirit of the deep forest elder — ancient, potent, and generously nourishing.",
+    how: "Taken as capsules or decoctions. Used in energy-support formulas. Best taken in the morning. Cycle with rest periods for best results.",
+    products: ["Vital Vitality Capsules"],
+    productLinks: ["#vital-vitality"],
+    categories: ["energy", "stress"]
+  },
+  {
+    name: "Elderberry",
+    botanical: "Sambucus nigra",
+    emoji: "🫐",
+    overview: "The elder tree has long been considered one of the most magically and medicinally significant plants in European tradition. Its deep purple berries are among the most widely used botanical immune allies in the Western herbal canon.",
+    traditional: "Traditionally used for seasonal wellness, respiratory support, and immune resilience. Found in folk medicine traditions across Europe and North America. Historically, every part of the elder was considered medicinal.",
+    compounds: ["Anthocyanins", "Flavonoids (Quercetin, Rutin)", "Vitamins A, B, C", "Sambunigrin (raw berries only — cook before use)"],
+    energetic: "Water and earth energy — protective, deeply nourishing, and ancestrally wise. Elder is considered a guardian herb — one that holds the boundary between the known and unknown.",
+    how: "Used in immune-support capsule blends, syrups, teas, and tinctures. Always use properly prepared elder preparations — raw berries are not suitable for consumption.",
+    products: ["Immune-At-Ease Capsules"],
+    productLinks: ["#immune-at-ease"],
+    categories: ["immune"],
+    caution: "⚠️ Raw elderberries must be cooked before use. Only use properly prepared elderberry products."
+  },
+  {
+    name: "Echinacea",
+    botanical: "Echinacea purpurea",
+    emoji: "🌸",
+    overview: "The purple coneflower of the North American prairie has been used by Indigenous peoples for hundreds of years and became one of the most studied herbs in Western botanical medicine. Its spiky, warm-toned blooms mirror its activating, protective energy.",
+    traditional: "Traditionally used by over 14 Indigenous North American nations for wound healing, immunity, and respiratory support. Among the most widely used botanical supplements globally.",
+    compounds: ["Alkylamides", "Polysaccharides", "Caffeic Acid Derivatives", "Glycoproteins"],
+    energetic: "Fire and air energy — activating, warming, and clearing. Carries the energy of mobilization — preparing the inner landscape for challenge and recovery.",
+    how: "Used in immune-support capsule blends, tinctures, and teas. Best used at the onset of seasonal challenges and during winter months.",
+    products: ["Immune-At-Ease Capsules"],
+    productLinks: ["#immune-at-ease"],
+    categories: ["immune"]
+  },
+  {
+    name: "Astragalus",
+    botanical: "Astragalus membranaceus (Huang Qi)",
+    emoji: "🌾",
+    overview: "Known as Huang Qi — 'Yellow Elder' — in Traditional Chinese Medicine, Astragalus has been used as a premier immune and longevity tonic for over 2,000 years. It is considered one of the most important adaptogenic roots in the Chinese materia medica.",
+    traditional: "Traditionally used to tonify the Wei Qi (protective life force), support immune resilience, strengthen the lungs, and promote deep vitality and longevity.",
+    compounds: ["Astragalosides (including Cycloastragenol)", "Polysaccharides", "Saponins", "Flavonoids"],
+    energetic: "Earth and metal energy — deep, nourishing, and fortifying. Builds from the roots up. Ideal for those in recovery, convalescence, or seasonal transitions.",
+    how: "Used in immune and vitality capsule blends, decocted in soups and broths (traditional use), or taken as tincture.",
+    products: ["Immune-At-Ease Capsules", "Custom Blend"],
+    productLinks: ["#immune-at-ease", "#custom-builder"],
+    categories: ["immune", "energy"]
+  },
+  {
+    name: "Turmeric",
+    botanical: "Curcuma longa",
+    emoji: "🟡",
+    overview: "The golden root of ancient Ayurveda, Turmeric has been used in India for over 4,000 years — in medicine, ritual, culinary tradition, and as a sacred dye. Modern botanical research has made it one of the most extensively studied plants in the world.",
+    traditional: "Traditionally used to support healthy inflammation response, skin vitality, joint comfort, liver support, and digestive wellness. Central to Ayurvedic and Unani medical traditions.",
+    compounds: ["Curcuminoids (Curcumin, Bisdemethoxycurcumin)", "Turmerones", "Zingiberene", "Polysaccharides"],
+    energetic: "Fire and sun energy — illuminating, purifying, and activating. Carries the warmth of the sun itself. Associated with truth, courage, and the clearing of stagnation.",
+    how: "Used in pain-relief balms, beauty preparations, capsule blends, and golden milk. Best absorbed with black pepper (piperine) and a healthy fat.",
+    products: ["Ultimate Pain Relief Balm", "Age Reversal Beauty Balm", "Custom Blend"],
+    productLinks: ["#pain-balm", "#beauty-balm", "#custom-builder"],
+    categories: ["pain", "skin"]
+  },
+  {
+    name: "Calendula",
+    botanical: "Calendula officinalis",
+    emoji: "🌻",
+    overview: "Pot marigold, the flower of the sun. Calendula has been used since at least the 12th century in European herbal medicine and continues to be one of the most trusted skin-supporting botanicals in both traditional and contemporary herbalism.",
+    traditional: "Traditionally used for skin soothing, wound care, and repair rituals. Used topically in poultices, salves, and creams. Also historically used in culinary traditions across the Mediterranean.",
+    compounds: ["Triterpenoids (Oleanolic Acid)", "Flavonoids", "Carotenoids", "Polysaccharides"],
+    energetic: "Sun and fire energy — healing, brightening, and protective. The flower that opens to the sun and closes with it. Carries the energy of gentle, consistent care.",
+    how: "Primarily used in topical preparations — balms, creams, soaps, and infused oils. Also available as a gentle tea.",
+    products: ["Age Reversal Beauty Balm", "Handmade Botanical Soaps"],
+    productLinks: ["#beauty-balm", "#soaps"],
+    categories: ["skin"]
+  },
+  {
+    name: "Rose",
+    botanical: "Rosa spp.",
+    emoji: "🌹",
+    overview: "The queen of all flowers, Rose carries the longest continuous history of medicinal, ritual, and aromatic use of any botanical on earth — spanning Persian, Egyptian, Roman, Ayurvedic, and Western herbal traditions.",
+    traditional: "Traditionally used for heart-centered emotional healing, skin softness and tone, reproductive wellness, and grief support. Rose water has been used in Persian medicine since at least the 10th century.",
+    compounds: ["Polyphenols", "Flavonoids", "Tannins", "Rose Oxide", "Geraniol"],
+    energetic: "Water and fire — the heart herb. Opens what is closed, softens what is hard, nourishes what has been neglected. Associated with Venus, love, and deep self-worth.",
+    how: "Used in beauty balms, botanical soaps, teas, tinctures, and ritual aromatics. Rose water is a traditional skin toner. Rose hip oil is a concentrated skin-support formula.",
+    products: ["Age Reversal Beauty Balm", "Herbal Tea Apothecary", "Handmade Botanical Soaps"],
+    productLinks: ["#beauty-balm", "#herbal-tea", "#soaps"],
+    categories: ["skin", "stress", "spiritual", "womens"]
+  },
+  {
+    name: "Hibiscus",
+    botanical: "Hibiscus sabdariffa",
+    emoji: "🌺",
+    overview: "The jewel-red calyces of Hibiscus sabdariffa are among the most beloved tea botanicals on earth, used in cultures from West Africa and Egypt to Mexico and the Caribbean. Their brilliant color and tart, cranberry-like flavor carry significant botanical activity.",
+    traditional: "Traditionally used for antioxidant support, cardiovascular wellness, beauty rituals, and vibrant tea preparations. Used in Karkadé (Egyptian hibiscus tea), Agua de Jamaica, and West African Bissap.",
+    compounds: ["Anthocyanins", "Organic Acids (Citric, Malic, Hibiscus)", "Polyphenols", "Vitamin C"],
+    energetic: "Fire and water energy — vivid, nourishing, and vitality-enhancing. Carries the energy of passionate aliveness. A plant of beauty, abundance, and sensory delight.",
+    how: "Brewed as a vibrant ruby tea, incorporated into hair rinses for scalp support, used in beauty formulas, and consumed as a potent antioxidant botanical.",
+    products: ["Hair Regrowth Botanical Serum", "Herbal Tea Apothecary"],
+    productLinks: ["#hair-serum", "#herbal-tea"],
+    categories: ["hair", "skin"]
+  },
+  {
+    name: "Comfrey",
+    botanical: "Symphytum officinale",
+    emoji: "🍃",
+    overview: "Known as 'knit-bone' and 'healing herb,' Comfrey has one of the most dramatic topical repair reputations in Western herbalism. Its large, rough leaves and deep roots carry remarkable concentrations of allantoin — a compound that supports cell proliferation.",
+    traditional: "Traditionally used topically for skin and tissue repair, bruising, and body-care preparations. One of the oldest medicinal plants in European tradition, found in monastic and folk medicine records going back over 1,000 years.",
+    compounds: ["Allantoin", "Rosmarinic Acid", "Pyrrolizidine Alkaloids (root)", "Mucilage"],
+    energetic: "Earth energy — deeply healing, binding, and restoring. Carries the quality of the healer who works in silence and depth. Reconnects what has been separated.",
+    how: "Used externally in balms, poultices, and body-care preparations. Not for internal use. External use only.",
+    products: ["Ultimate Pain Relief Balm", "Hair Regrowth Botanical Serum"],
+    productLinks: ["#pain-balm", "#hair-serum"],
+    categories: ["pain", "skin", "hair"],
+    caution: "⚠️ External use only. Do not apply to broken skin or open wounds. Avoid internal use. Avoid during pregnancy."
+  },
+  {
+    name: "Valerian",
+    botanical: "Valeriana officinalis",
+    emoji: "🌙",
+    overview: "One of the most extensively used sleep herbs in the Western world, Valerian root has been part of European herbal medicine since at least the time of ancient Greece and Rome. Galen recommended it for insomnia; medieval healers called it 'all-heal.'",
+    traditional: "Traditionally used for sleep support, nervous tension, anxiety, and restlessness. Used across European, Ayurvedic, and Native American herbal traditions for centuries.",
+    compounds: ["Valerenic Acids", "Isovaleric Acid", "GABA", "Flavonoids", "Iridoids"],
+    energetic: "Water and earth energy — deep, still, and descending. Carries the quality of the cave — protective darkness, profound rest, and the quiet below the noise.",
+    how: "Taken as capsules 30–60 minutes before sleep, or brewed as a strong tea. Best used as part of a consistent sleep ritual.",
+    products: ["DreamEase Capsules"],
+    productLinks: ["#dreamease"],
+    categories: ["sleep"]
+  },
+  {
+    name: "Passionflower",
+    botanical: "Passiflora incarnata",
+    emoji: "🌸",
+    overview: "One of the most visually extraordinary plants in the herb world, Passionflower's elaborate blooms seem designed to communicate their complexity. Native to the Americas, this climbing vine has been used medicinally since at least the 16th century.",
+    traditional: "Traditionally used by the Cherokee and other Indigenous nations for its nervous system calming properties. Used in European phytomedicine for anxiety, restlessness, and sleep support since the 1800s.",
+    compounds: ["Flavonoids (Chrysin, Vitexin)", "Harman Alkaloids", "Maltol", "Gamma-aminobutyric acid (GABA)"],
+    energetic: "Water and air energy — dreaming, flowing, and gently surrendering. Carries the quality of sacred release — letting go of the day's grip and descending into the softer realms.",
+    how: "Used in sleep and calming capsule blends, teas, and tinctures. Combines beautifully with Valerian and Lavender in evening formulas.",
+    products: ["DreamEase Capsules"],
+    productLinks: ["#dreamease"],
+    categories: ["sleep", "stress"]
+  },
+  {
+    name: "Skullcap",
+    botanical: "Scutellaria lateriflora",
+    emoji: "🫧",
+    overview: "A member of the mint family native to North America, Skullcap has been used in Eclectic and folk medicine for its remarkable nervous system affinity. Its delicate blue flowers give little hint of its profound calming action.",
+    traditional: "Traditionally used in American Eclectic and folk medicine for nervous system nourishment, anxiety, restlessness, and tension headaches. The Iroquois used related species ritually.",
+    compounds: ["Baicalin", "Scutellarein", "Flavonoids", "Iridoids"],
+    energetic: "Air and water energy — cooling, quieting, and centering. Carries the quality of a wise inner voice that knows how to settle. A herb for the overwhelmed and the over-thinking.",
+    how: "Used in relaxation and sleep blends as capsules or tincture. Pairs well with Passionflower and Valerian. Best used in consistent evening preparations.",
+    products: ["DreamEase Capsules", "Custom Blend"],
+    productLinks: ["#dreamease", "#custom-builder"],
+    categories: ["sleep", "stress"]
+  },
+  {
+    name: "Mugwort",
+    botanical: "Artemisia vulgaris",
+    emoji: "🌑",
+    overview: "Named for the goddess Artemis, Mugwort is one of the oldest and most widespread ritual herbs in the world — used across European, Asian, and Indigenous North American traditions. It is a plant of the moon, of dreams, and of edges.",
+    traditional: "Traditionally used in dream work, moon rituals, smoke cleansing, and women's herbal traditions. Used for centuries in Chinese medicine as moxa for moxibustion. A significant herb in European folk magic.",
+    compounds: ["Thujone", "Camphor", "Flavonoids", "Sesquiterpene Lactones"],
+    energetic: "Moon and water energy — liminal, visionary, and deeply feminine. Carries the quality of the in-between — the threshold of sleep and waking, seen and unseen. A guide herb for inner journeys.",
+    how: "Used in ritual herbal bundles, dream pillows, moon-water preparations, and ceremonial smoke. Not for internal use during pregnancy. Used with intention and care.",
+    products: ["Custom Blend (ritual)"],
+    productLinks: ["#custom-builder"],
+    categories: ["spiritual", "womens"],
+    caution: "⚠️ Avoid during pregnancy. Use with care. A herb of significant potency — approach with intention and respect."
+  }
+];
+
+let currentFilter = 'all';
+
+function renderHerbCards(filtered) {
+  const grid = document.getElementById('herbGrid');
+  if (!filtered || filtered.length === 0) {
+    grid.innerHTML = '<p class="no-results">No herbs found. Try a different search or filter.</p>';
+    return;
+  }
+  grid.innerHTML = filtered.map((herb, i) => `
+    <article class="herb-card" role="listitem" onclick="openModal(${herbs.indexOf(herb)})"
+      style="animation-delay:${i * 0.06}s"
+      aria-label="View details for ${herb.name}">
+      <span class="herb-card-emoji">${herb.emoji}</span>
+      <div class="herb-card-body">
+        <h3 class="herb-card-name">${herb.name}</h3>
+        <p class="herb-card-botanical">${herb.botanical}</p>
+        <p class="herb-card-overview">${herb.overview.substring(0, 120)}…</p>
+        <div class="herb-card-tags">
+          ${herb.categories.map(c => `<span class="herb-tag">${categoryLabel(c)}</span>`).join('')}
+        </div>
+        <button class="herb-card-btn">Explore This Herb →</button>
+      </div>
+    </article>
+  `).join('');
+}
+
+function categoryLabel(cat) {
+  const map = { sleep:'😴 Sleep', stress:'🧘 Stress & Mood', energy:'⚡ Energy',
+    immune:'🛡️ Immune', skin:'✨ Skin', hair:'💇 Hair', pain:'🌿 Pain',
+    digestive:'🌾 Digestive', womens:'🌸 Women\'s', spiritual:'🔮 Spiritual' };
+  return map[cat] || cat;
+}
+
+function filterHerbs() {
+  const query = document.getElementById('herbSearch').value.toLowerCase();
+  let filtered = herbs.filter(h =>
+    (currentFilter === 'all' || h.categories.includes(currentFilter)) &&
+    (h.name.toLowerCase().includes(query) ||
+     h.botanical.toLowerCase().includes(query) ||
+     h.overview.toLowerCase().includes(query) ||
+     h.compounds.some(c => c.toLowerCase().includes(query)) ||
+     h.categories.includes(query))
+  );
+  renderHerbCards(filtered);
+}
+
+function setFilter(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  filterHerbs();
+}
+
+function openModal(idx) {
+  const herb = herbs[idx];
+  document.getElementById('modalEmoji').textContent = herb.emoji;
+  document.getElementById('modalHerbName').textContent = herb.name;
+  document.getElementById('modalBotanical').textContent = herb.botanical;
+  document.getElementById('modalOverview').textContent = herb.overview;
+  document.getElementById('modalTraditional').textContent = herb.traditional;
+  document.getElementById('modalCompounds').innerHTML =
+    herb.compounds.map(c => `<span class="compound-badge">${c}</span>`).join('');
+  document.getElementById('modalEnergetic').textContent = herb.energetic;
+  document.getElementById('modalHow').textContent = herb.how;
+
+  const cautionEl = document.getElementById('modalCautionWrapper');
+  if (herb.caution) {
+    document.getElementById('modalCaution').textContent = herb.caution;
+    cautionEl.style.display = 'block';
+  } else {
+    cautionEl.style.display = 'none';
+  }
+
+  document.getElementById('modalProducts').innerHTML =
+    herb.products.map((p, i) =>
+      `<a class="product-link" href="${herb.productLinks[i]}">${p}</a>`
+    ).join('');
+
+  const overlay = document.getElementById('herbModal');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  overlay.querySelector('.modal-close').focus();
+}
+
+function closeModal() {
+  document.getElementById('herbModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('herbModal')) closeModal();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ─── TABS ─────────────────────────────────────────────
+function showTab(id) {
+  document.getElementById('herb-library').style.display = id === 'herb-library' ? 'block' : 'none';
+  document.getElementById('grimoire-book').style.display = id === 'grimoire-book' ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── GRIMOIRE ACCESS ──────────────────────────────────
+async function checkGrimoireAccess() {
+  const email = document.getElementById('grimEmailInput').value.trim();
+  const status = document.getElementById('accessStatus');
+  if (!email || !email.includes('@')) {
+    status.textContent = 'Please enter a valid email address.';
+    status.className = 'access-status error';
+    return;
+  }
+  status.textContent = '✦ Verifying your subscription…';
+  status.className = 'access-status';
+
+  try {
+    const res = await fetch('/.netlify/functions/auth-check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+
+    if (data.access === true) {
+      status.textContent = '✦ Access granted. The Grimoire is open.';
+      status.className = 'access-status success';
+      document.getElementById('grimoireFullContent').classList.add('unlocked');
+      document.getElementById('subscribeCTA').style.display = 'none';
+    } else {
+      status.textContent = data.message || 'No active subscription found for this email.';
+      status.className = 'access-status error';
+      document.getElementById('subscribeCTA').style.display = 'block';
+    }
+  } catch (err) {
+    status.textContent = 'Unable to verify at this time. Please try again.';
+    status.className = 'access-status error';
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────
+renderHerbCards(herbs);
+
+// URL hash routing for tabs
+if (window.location.hash === '#grimoire') {
+  showTab('grimoire-book');
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', i === 1);
+  });
+}
+</script>
+</body>
+</html>

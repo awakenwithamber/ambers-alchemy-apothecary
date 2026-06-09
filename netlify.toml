@@ -35,7 +35,7 @@
 
 [[redirects]]
   from = "/herb-encyclopedia"
-  to = "/herbal-index.html"
+  to = "/grimoir.html"
   status = 301
 
 [[redirects]]
@@ -68,3 +68,86 @@
   from = "/#ingredient-library"
   to = "/herbal-index.html"
   status = 301
+
+# ── Grimoire route aliases ──────────────────────────────────────
+[[redirects]]
+  from = "/grimoire"
+  to = "/grimoir.html"
+  status = 200
+
+[[redirects]]
+  from = "/grimoire.html"
+  to = "/grimoir.html"
+  status = 301
+
+[[redirects]]
+  from = "/herbal-library"
+  to = "/grimoir.html"
+  status = 200
+
+[[redirects]]
+  from = "/herbal-library.html"
+  to = "/grimoir.html"
+  status = 301
+
+[[redirects]]
+  from = "/herbs"
+  to = "/grimoir.html"
+  status = 200
+
+[[redirects]]
+  from = "/library"
+  to = "/grimoir.html"
+  status = 301
+
+# ── SEO product page aliases ────────────────────────────────────
+[[redirects]]
+  from = "/dream-ease-capsules"
+  to = "/#dreamease"
+  status = 200
+
+[[redirects]]
+  from = "/vital-vitality-capsules"
+  to = "/#vital-vitality"
+  status = 200
+
+[[redirects]]
+  from = "/immune-at-ease-capsules"
+  to = "/#immune-at-ease"
+  status = 200
+
+[[redirects]]
+  from = "/pain-relief-balm"
+  to = "/#pain-balm"
+  status = 200
+
+[[redirects]]
+  from = "/age-reversal-beauty-balm"
+  to = "/#beauty-balm"
+  status = 200
+
+[[redirects]]
+  from = "/hair-regrowth-serum"
+  to = "/#hair-serum"
+  status = 200
+
+[[redirects]]
+  from = "/custom-capsule-builder"
+  to = "/#custom-builder"
+  status = 200
+
+[[redirects]]
+  from = "/handmade-botanical-soaps"
+  to = "/#soaps"
+  status = 200
+
+[[redirects]]
+  from = "/herbal-tea-apothecary"
+  to = "/#herbal-tea"
+  status = 200
+
+# ── SPA catch-all (must be last) ───────────────────────────────
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
