@@ -37,3 +37,8 @@ externalPort = 80
 [deployment]
 deploymentTarget = "static"
 publicDir = "."
+
+[userenv]
+
+[userenv.shared]
+SUPABASE_URL = "https://orpaqodqlvjczshtcxif.supabase.co"
