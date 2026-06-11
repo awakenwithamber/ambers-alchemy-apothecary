@@ -195,7 +195,7 @@ app.get('/grimoir', (req, res) => res.sendFile(path.join(__dirname, 'grimoir.htm
 app.get('/grimoire', (req, res) => res.sendFile(path.join(__dirname, 'grimoir.html')));
 app.get('/grimior', (req, res) => res.sendFile(path.join(__dirname, 'grimior.html')));
 
-app.get('*', (req, res) => {
+app.get(/(.*)/, (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
