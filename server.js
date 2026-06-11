@@ -130,15 +130,6 @@ app.all('/.netlify/functions/auth-check', async (req, res) => {
   }
 });
 
-app.all('/.netlify/functions/shopify-checkout', async (req, res) => {
-  try {
-    await runCjsHandler('./netlify/functions/shopify-checkout.js', req, res);
-  } catch (e) {
-    console.error('[shopify-checkout]', e.message);
-    res.status(500).json({ error: e.message });
-  }
-});
-
 app.all('/.netlify/functions/form-relay', async (req, res) => {
   try {
     await runCjsHandler('./netlify/functions/form-relay.js', req, res);
@@ -167,6 +158,14 @@ app.delete('/api/reviews/:id', reviewsApi.adminDelete);
 
 // Quiz leads
 app.post('/api/quiz-lead', quizLeadApi.submit);
+
+// Stripe payments (on-site checkout + Grimoire subscription)
+const stripeApi = require('./api/stripe');
+app.get('/api/stripe-publishable-key', stripeApi.publishableKey);
+app.post('/api/create-payment-intent', stripeApi.createPaymentIntent);
+app.post('/api/grimoire-subscribe', stripeApi.grimoireSubscribe);
+app.post('/api/grimoire-activate', stripeApi.grimoireActivate);
+app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), stripeApi.stripeWebhook);
 
 // Order submission (Netlify form webhook equivalent)
 app.post('/api/submission-created', submissionApi.handle);
