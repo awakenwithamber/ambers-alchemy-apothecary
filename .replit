@@ -45,3 +45,4 @@ run = ["node", "server.js"]
 SUPABASE_URL = "https://orpaqodqlvjczshtcxif.supabase.co"
 SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ycGFxb2RxbHZqY3pzaHRjeGlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODEwNzEsImV4cCI6MjA5NDk1NzA3MX0.fCNlHQ4NqLs_6MAre_-O1c12oo0LBNZyXckmka6OFHg"
 SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ycGFxb2RxbHZqY3pzaHRjeGlmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTM4MTA3MSwiZXhwIjoyMDk0OTU3MDcxfQ.Z8voXkUzva9znuBaeeJm3jzhDcYNVoWLGU90ppBhrSQ"
+ADMIN_PASSWORD = "Orion347*"

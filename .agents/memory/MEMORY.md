@@ -1,2 +1,3 @@
 - [Supabase on Node 20](supabase-node20-ws.md) — all Supabase access must use getAdminClient/getAnonClient from lib/supabase.js (ws transport); raw createClient hangs.
 - [Stripe on-site only](stripe-onsite-payments.md) — this site forbids Shopify & redirects; checkout + grimoire subscription use Stripe Elements confirmCardPayment on-page.
+- [Admin dashboard & forms](admin-dashboard-forms.md) — /admin (JWT via ADMIN_PASSWORD) shows orders+forms; site forms now stored in Supabase form_submissions, Zapier is optional forward.

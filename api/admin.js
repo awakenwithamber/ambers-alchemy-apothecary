@@ -37,7 +37,7 @@ exports.login = (req, res) => {
 exports.requireAdmin = (req, res, next) => {
   const auth = req.headers.authorization || '';
   const bearer = auth.startsWith('Bearer ') ? auth.slice(7) : '';
-  const token = bearer || req.headers['x-admin-token'] || req.query.token || '';
+  const token = bearer || req.headers['x-admin-token'] || '';
   if (!token) return res.status(401).json({ ok: false, error: 'Missing admin token' });
   try {
     const decoded = jwt.verify(token, getJwtSecret());

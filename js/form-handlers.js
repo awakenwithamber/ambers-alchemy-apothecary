@@ -192,7 +192,7 @@
           emailEl?.focus();
           return;
         }
-        await submitForm('contact', {
+        await submitForm('email-capture', {
           name: 'Guide Request',
           email: emailEl.value,
           subject: 'Free Herbal Guide Request',
