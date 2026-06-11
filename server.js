@@ -181,6 +181,12 @@ app.get('/api/admin/leads', adminApi.requireAdmin, adminApi.leads);
 app.get('/api/admin/subscribers', adminApi.requireAdmin, adminApi.subscribers);
 app.get('/api/admin/reviews', adminApi.requireAdmin, adminApi.reviews);
 
+// ── Customer email (confirmations + weekly promo) ─────────────────────────────
+const emailApi = require('./api/email');
+app.get('/unsubscribe', emailApi.unsubscribe);
+app.get('/api/admin/email-stats', adminApi.requireAdmin, emailApi.stats);
+app.post('/api/admin/send-promo', adminApi.requireAdmin, emailApi.adminSendPromo);
+
 // Legacy Netlify function paths (redirect to new routes for backwards compat)
 app.all('/.netlify/functions/reviews', async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
@@ -218,8 +224,39 @@ app.get(/(.*)/, (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// ── Weekly promo scheduler ────────────────────────────────────────────────────
+// Checks hourly; sends at most one promo per 7 days (guarded by promo_sends so
+// restarts/multiple instances don't double-send). Runs while the app is up;
+// for guaranteed delivery when idle, a Scheduled Deployment can POST
+// /api/admin/send-promo instead.
+function startPromoScheduler() {
+  const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+  const { getAdminClient } = require('./lib/supabase');
+  const { sendWeeklyPromo } = require('./api/email');
+
+  async function tick() {
+    try {
+      const sb = getAdminClient();
+      const { data } = await sb.from('promo_sends').select('sent_at').order('sent_at', { ascending: false }).limit(1);
+      const last = data && data[0] ? new Date(data[0].sent_at).getTime() : 0;
+      if (Date.now() - last >= WEEK_MS) {
+        // Only send during daytime hours (14:00 UTC ≈ morning US) to feel human.
+        if (new Date().getUTCHours() === 14) {
+          const result = await sendWeeklyPromo({ triggeredBy: 'scheduler' });
+          console.log('[promo-scheduler]', JSON.stringify(result));
+        }
+      }
+    } catch (e) {
+      console.error('[promo-scheduler]', e.message);
+    }
+  }
+  setInterval(tick, 60 * 60 * 1000); // hourly
+  setTimeout(tick, 30 * 1000); // initial check shortly after boot
+}
+
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, '0.0.0.0', () => {
+  startPromoScheduler();
   console.log(`✦ Amber's Alchemy Apothecary server running on http://0.0.0.0:${PORT}`);
   console.log(`  Netlify functions available at /.netlify/functions/*`);
   console.log(`  Local blob store at .blobs/`);

@@ -122,6 +122,19 @@
 
     <div class="cards" id="cards"></div>
 
+    <div class="card" id="emailPanel" style="margin-bottom:28px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+        <div>
+          <div style="color:var(--gold);font-weight:600;font-size:0.95rem;">✦ Customer Emails</div>
+          <div class="muted" id="emailStats" style="font-size:0.82rem;margin-top:6px;">Loading…</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <button class="btn" id="sendPromoBtn">Send weekly promo now</button>
+        </div>
+      </div>
+      <div id="emailMsg" style="font-size:0.84rem;margin-top:12px;min-height:1em;"></div>
+    </div>
+
     <div class="tabs" id="tabs">
       <button class="tab active" data-tab="orders">Orders</button>
       <button class="tab" data-tab="submissions">Form Submissions</button>
@@ -169,8 +182,34 @@
       $('login').style.display = 'none';
       $('dashboard').style.display = 'block';
       loadSummary();
+      loadEmailStats();
       loadTab(currentTab);
     }
+
+    async function loadEmailStats() {
+      try {
+        const d = await api('/api/admin/email-stats');
+        const last = d.lastPromo ? new Date(d.lastPromo.sent_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ` (${d.lastPromo.recipient_count} sent)` : 'never';
+        $('emailStats').innerHTML = `<strong>${d.recipients}</strong> recipients · <strong>${d.unsubscribed}</strong> unsubscribed · last weekly send: ${last}`;
+      } catch { $('emailStats').textContent = 'Could not load email stats.'; }
+    }
+
+    $('sendPromoBtn').addEventListener('click', async () => {
+      const btn = $('sendPromoBtn');
+      if (!confirm('Send this week\'s promo email to all subscribed customers now?')) return;
+      btn.disabled = true; btn.textContent = 'Sending…'; $('emailMsg').textContent = '';
+      try {
+        const res = await fetch('/api/admin/send-promo', { method: 'POST', headers: { 'Authorization': 'Bearer ' + getToken() } });
+        const d = await res.json();
+        if (!res.ok || !d.ok) {
+          $('emailMsg').innerHTML = `<span style="color:var(--red)">${d.error || 'Could not send.'}</span>`;
+        } else {
+          $('emailMsg').innerHTML = `<span style="color:var(--green)">✓ Sent to ${d.sent} of ${d.total} recipients${d.failed ? ` (${d.failed} failed)` : ''}.</span>`;
+          loadEmailStats();
+        }
+      } catch { $('emailMsg').innerHTML = '<span style="color:var(--red)">Network error.</span>'; }
+      btn.disabled = false; btn.textContent = 'Send weekly promo now';
+    });
 
     // ── Login ──
     $('loginForm').addEventListener('submit', async (e) => {
@@ -190,7 +229,7 @@
     });
 
     $('logoutBtn').addEventListener('click', () => showLogin());
-    $('refreshBtn').addEventListener('click', () => { cache = {}; loadSummary(); loadTab(currentTab); });
+    $('refreshBtn').addEventListener('click', () => { cache = {}; loadSummary(); loadEmailStats(); loadTab(currentTab); });
 
     // ── Tabs ──
     document.querySelectorAll('.tab').forEach((t) => {

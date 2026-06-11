@@ -1,4 +1,5 @@
 const { getAdminClient } = require('../lib/supabase');
+const { sendPurchaseConfirmation } = require('./email');
 
 const REVIEW_REQUEST_DELAY_DAYS = 10;
 
@@ -48,6 +49,11 @@ exports.handle = async (req, res) => {
     send_at: sendAt.toISOString(),
     sent: false,
   });
+
+  // Send the purchase confirmation email (best-effort — never block the order)
+  if (email) {
+    sendPurchaseConfirmation(order).catch((e) => console.error('[purchase-email]', e.message));
+  }
 
   res.json({ ok: true, orderId });
 };
