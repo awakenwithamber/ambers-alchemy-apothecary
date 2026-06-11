@@ -605,9 +605,24 @@ footer a:hover { color: var(--gold); }
       <p>Unlock the full Living Grimoire — 88 pages of botanical rituals, protection workings, light magic, and sacred herbalism.</p>
       <div class="subscribe-price">$3.33 / month</div>
       <p class="subscribe-note">Cancel anytime · Instant access · All pages from day one</p>
-      <a href="https://awakenagain-2.myshopify.com/products/grimoire-subscription" class="subscribe-btn" target="_blank" rel="noopener">
-        ✦ Subscribe & Unlock
-      </a>
+      <button type="button" class="subscribe-btn" id="openSubscribeBtn">✦ Subscribe & Unlock</button>
+
+      <!-- Inline on-site Stripe subscription form (no redirect) -->
+      <form id="grimoireSubscribeForm" style="display:none;max-width:420px;margin:24px auto 0;text-align:left">
+        <label style="display:block;font-size:0.85rem;margin-bottom:6px;opacity:0.85">Email</label>
+        <input type="email" id="subEmail" required placeholder="your@email.com"
+          style="width:100%;padding:12px 14px;margin-bottom:14px;border-radius:8px;border:1px solid var(--border-gold);background:rgba(255,255,255,0.05);color:var(--text-body);font-family:inherit" />
+        <label style="display:block;font-size:0.85rem;margin-bottom:6px;opacity:0.85">Card Details</label>
+        <div id="sub-card-element" style="padding:12px 14px;border-radius:8px;border:1px solid var(--border-gold);background:rgba(255,255,255,0.05)"></div>
+        <div id="sub-card-errors" style="color:#ff6b6b;font-size:0.85rem;margin-top:6px;min-height:1.2em"></div>
+        <button type="submit" class="subscribe-btn" id="subscribeSubmitBtn" style="width:100%;margin-top:16px">
+          <span id="subBtnText">✦ Subscribe — $3.33/month</span>
+          <span id="subBtnSpinner" style="display:none">⏳</span>
+        </button>
+        <p style="font-size:11px;opacity:0.55;text-align:center;margin-top:8px">
+          Secure payment by Stripe · Processed on awakenagain.com · Cancel anytime
+        </p>
+      </form>
     </div>
   </div>
 </section>
@@ -658,6 +673,7 @@ footer a:hover { color: var(--gold); }
   </div>
 </div>
 
+<script src="https://js.stripe.com/v3/"></script>
 <script>
 // ─── HERB DATA ───────────────────────────────────────────────
 const herbs = [
@@ -1020,10 +1036,9 @@ async function checkGrimoireAccess() {
   status.className = 'access-status';
 
   try {
-    const res = await fetch('/.netlify/functions/auth-check', {
-      method: 'POST',
+    const res = await fetch('/.netlify/functions/auth-check?email=' + encodeURIComponent(email), {
+      method: 'GET',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
     });
     const data = await res.json();
 
@@ -1043,8 +1058,106 @@ async function checkGrimoireAccess() {
   }
 }
 
+// ─── GRIMOIRE SUBSCRIPTION (on-site Stripe Elements) ──
+let _grimStripe, _grimCard, _grimStripeReady = false;
+
+async function initGrimoireStripe() {
+  if (_grimStripeReady) return;
+  try {
+    const res = await fetch('/api/stripe-publishable-key');
+    if (!res.ok) return;
+    const { key } = await res.json();
+    if (!key) return;
+    _grimStripe = Stripe(key);
+    const elements = _grimStripe.elements();
+    _grimCard = elements.create('card', {
+      style: { base: { color: '#f0e9d6', fontSize: '16px', '::placeholder': { color: 'rgba(240,233,214,0.4)' } }, invalid: { color: '#ff6b6b' } },
+    });
+    _grimCard.mount('#sub-card-element');
+    _grimCard.on('change', (e) => {
+      const el = document.getElementById('sub-card-errors');
+      if (el) el.textContent = e.error ? e.error.message : '';
+    });
+    _grimStripeReady = true;
+  } catch (err) {
+    console.warn('[Grimoire Stripe] init failed:', err.message);
+  }
+}
+
+const _openSubBtn = document.getElementById('openSubscribeBtn');
+if (_openSubBtn) _openSubBtn.addEventListener('click', () => {
+  _openSubBtn.style.display = 'none';
+  document.getElementById('grimoireSubscribeForm').style.display = 'block';
+  const prefill = document.getElementById('grimEmailInput').value.trim();
+  if (prefill) document.getElementById('subEmail').value = prefill;
+  initGrimoireStripe();
+});
+
+const _subForm = document.getElementById('grimoireSubscribeForm');
+if (_subForm) _subForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const errEl = document.getElementById('sub-card-errors');
+  const btn = document.getElementById('subscribeSubmitBtn');
+  const btnText = document.getElementById('subBtnText');
+  const spinner = document.getElementById('subBtnSpinner');
+  const email = document.getElementById('subEmail').value.trim();
+
+  if (!email || !email.includes('@')) { errEl.textContent = 'Please enter a valid email.'; return; }
+  if (!_grimStripe || !_grimCard) { errEl.textContent = 'Payment form still loading — try again in a moment.'; return; }
+
+  btn.disabled = true; btnText.style.display = 'none'; spinner.style.display = 'inline';
+  errEl.textContent = '';
+
+  try {
+    // 1. Create the subscription server-side (returns client secret of the first invoice's PaymentIntent)
+    const pm = await _grimStripe.createPaymentMethod({ type: 'card', card: _grimCard, billing_details: { email } });
+    if (pm.error) throw new Error(pm.error.message);
+
+    const subRes = await fetch('/api/grimoire-subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, paymentMethodId: pm.paymentMethod.id }),
+    });
+    const subData = await subRes.json();
+    if (subData.error) throw new Error(subData.error);
+
+    // 2. Confirm the payment on-site
+    if (subData.clientSecret) {
+      const confirm = await _grimStripe.confirmCardPayment(subData.clientSecret, { payment_method: pm.paymentMethod.id });
+      if (confirm.error) throw new Error(confirm.error.message);
+    }
+
+    // 3. Activate access in Supabase — only unlock if the server confirms it
+    const actRes = await fetch('/api/grimoire-activate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, subscriptionId: subData.subscriptionId }),
+    });
+    const actData = await actRes.json().catch(() => ({}));
+    if (!actRes.ok || actData.ok !== true) {
+      throw new Error(actData.error || 'Payment succeeded but access could not be activated. Please contact support with your email.');
+    }
+
+    // 4. Unlock content
+    document.getElementById('grimoireFullContent').classList.add('unlocked');
+    document.getElementById('subscribeCTA').style.display = 'none';
+    const status = document.getElementById('accessStatus');
+    if (status) { status.textContent = '✦ Welcome to the Inner Circle. The Grimoire is open.'; status.className = 'access-status success'; }
+    window.scrollTo({ top: document.getElementById('grimoireFullContent').offsetTop - 80, behavior: 'smooth' });
+  } catch (err) {
+    errEl.textContent = err.message || 'Subscription failed. Please try again.';
+    btn.disabled = false; btnText.style.display = 'inline'; spinner.style.display = 'none';
+  }
+});
+
 // ─── INIT ─────────────────────────────────────────────
 renderHerbCards(herbs);
+
+// Auto-verify if returning from a completed checkout
+if (new URLSearchParams(window.location.search).get('subscribed') === '1') {
+  const status = document.getElementById('accessStatus');
+  if (status) { status.textContent = '✦ Subscription confirmed — enter your email above to open the Grimoire.'; status.className = 'access-status success'; }
+}
 
 // URL hash routing for tabs
 if (window.location.hash === '#grimoire') {

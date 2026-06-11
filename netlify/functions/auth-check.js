@@ -2,7 +2,7 @@
 // Grimoire paywall — checks Supabase grimoir_subscribers table
 // GET /.netlify/functions/auth-check?email=xxx
 
-const { createClient } = require('@supabase/supabase-js');
+const { getAdminClient } = require('../../lib/supabase');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -36,7 +36,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+    const supabase = getAdminClient();
 
     const { data, error } = await supabase
       .from('grimoir_subscribers')

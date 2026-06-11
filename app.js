@@ -381,6 +381,7 @@ document.getElementById('proceedToCheckoutBtn').addEventListener('click', () => 
   closeCartFn();
   showSection('checkout');
   renderCheckoutSummary();
+  initStripe();
 });
 
 // Venmo/CashApp dynamic total — accepts debit & credit cards
@@ -562,10 +563,12 @@ if (_checkoutFormEl) _checkoutFormEl.addEventListener('submit', async function(e
 async function submitNetlifyForm() {
   const form = document.getElementById('checkoutForm');
   const formData = new FormData(form);
-  await fetch('/', {
+  const data = {};
+  formData.forEach((value, key) => { data[key] = value; });
+  await fetch('/api/submission-created', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(formData).toString(),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ data }),
   });
 }
 

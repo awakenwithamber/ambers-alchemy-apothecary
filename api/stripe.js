@@ -44,44 +44,119 @@ async function publishableKey(req, res) {
 }
 
 // POST /api/grimoire-subscribe
-// Creates a Stripe Checkout Session for the $3.33/month Grimoire subscription
-// Returns { url } to redirect to
+// On-site $3.33/month Grimoire subscription via Stripe Elements (no redirect).
+// Body: { email, paymentMethodId }
+// Returns { subscriptionId, clientSecret } so the client can confirm on-site.
 async function grimoireSubscribe(req, res) {
   try {
     const stripe = getStripe();
-    const { email } = req.body;
+    const { email, paymentMethodId } = req.body;
 
-    const host = req.headers.host || 'awakenagain.com';
-    const protocol = host.includes('localhost') || host.includes('replit') ? 'https' : 'https';
-    const baseUrl = `${protocol}://${host}`;
+    if (!email || !paymentMethodId) {
+      return res.status(400).json({ error: 'email and paymentMethodId required' });
+    }
+    const normalizedEmail = email.toLowerCase().trim();
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
-      customer_email: email || undefined,
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: "Amber's Living Grimoire — Inner Circle",
-              description: '88 pages of botanical rituals, protection workings, light magic, and sacred herbalism. Cancel anytime.',
-              images: [],
-            },
-            unit_amount: 333,
-            recurring: { interval: 'month' },
-          },
-          quantity: 1,
-        },
-      ],
-      success_url: `${baseUrl}/grimoir?subscribed=1&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/grimoir`,
-      metadata: { source: 'grimoire-subscribe' },
+    // 1. Find or create the customer
+    const existing = await stripe.customers.list({ email: normalizedEmail, limit: 1 });
+    let customer = existing.data[0];
+    if (!customer) {
+      customer = await stripe.customers.create({ email: normalizedEmail });
+    }
+
+    // 2. Attach the payment method and make it the default
+    await stripe.paymentMethods.attach(paymentMethodId, { customer: customer.id });
+    await stripe.customers.update(customer.id, {
+      invoice_settings: { default_payment_method: paymentMethodId },
     });
 
-    res.json({ url: session.url });
+    // 3. Reuse a price for the Grimoire product, or create one
+    const productName = "Amber's Living Grimoire — Inner Circle";
+    let price;
+    const prices = await stripe.prices.list({ active: true, limit: 100, expand: ['data.product'] });
+    price = prices.data.find(
+      (p) => p.recurring && p.unit_amount === 333 && p.currency === 'usd' &&
+        p.product && p.product.name === productName
+    );
+    if (!price) {
+      price = await stripe.prices.create({
+        currency: 'usd',
+        unit_amount: 333,
+        recurring: { interval: 'month' },
+        product_data: { name: productName },
+      });
+    }
+
+    // 4. Create the subscription, requiring on-site payment confirmation
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      items: [{ price: price.id }],
+      payment_behavior: 'default_incomplete',
+      payment_settings: { save_default_payment_method: 'on_subscription' },
+      expand: ['latest_invoice.payment_intent'],
+      metadata: { source: 'grimoire-subscribe', email: normalizedEmail },
+    });
+
+    const clientSecret = subscription.latest_invoice?.payment_intent?.client_secret || null;
+
+    res.json({ subscriptionId: subscription.id, clientSecret });
   } catch (err) {
     console.error('[grimoire-subscribe]', err.message);
     res.status(500).json({ error: err.message });
+  }
+}
+
+// POST /api/grimoire-activate
+// Called by the client after an on-site subscription payment succeeds.
+// Verifies the subscription is active in Stripe, then records the subscriber in Supabase.
+// Body: { email, subscriptionId }
+async function grimoireActivate(req, res) {
+  try {
+    const stripe = getStripe();
+    const { email, subscriptionId } = req.body;
+
+    if (!email || !subscriptionId) {
+      return res.status(400).json({ ok: false, error: 'email and subscriptionId required' });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const sub = await stripe.subscriptions.retrieve(subscriptionId, { expand: ['customer'] });
+    if (!sub || !['active', 'trialing'].includes(sub.status)) {
+      return res.status(402).json({ ok: false, error: 'Subscription not active', status: sub && sub.status });
+    }
+
+    // Verify the requesting email actually owns this subscription (prevents
+    // a client from claiming access to an arbitrary active subscription id).
+    const subEmail = (
+      (sub.customer && typeof sub.customer === 'object' && sub.customer.email) ||
+      sub.metadata?.email ||
+      ''
+    ).toLowerCase().trim();
+    if (!subEmail || subEmail !== normalizedEmail) {
+      return res.status(403).json({ ok: false, error: 'Subscription does not belong to this email' });
+    }
+
+    const supabase = getAdminClient();
+    const { error } = await supabase.from('grimoir_subscribers').upsert(
+      {
+        email: normalizedEmail,
+        active: true,
+        stripe_subscription_id: subscriptionId,
+        subscribed_at: new Date().toISOString(),
+      },
+      { onConflict: 'email' }
+    );
+
+    if (error) {
+      console.error('[grimoire-activate] Supabase upsert error:', error.message);
+      return res.status(500).json({ ok: false, error: 'Could not record subscription' });
+    }
+
+    res.json({ ok: true, access: true });
+  } catch (err) {
+    console.error('[grimoire-activate]', err.message);
+    res.status(500).json({ ok: false, error: err.message });
   }
 }
 
@@ -92,13 +167,19 @@ async function stripeWebhook(req, res) {
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+  // Refuse to process events unless we can cryptographically verify them.
+  // Without this, anyone could POST a forged "subscription active" event.
+  if (!webhookSecret) {
+    console.error('[stripe-webhook] STRIPE_WEBHOOK_SECRET not configured; rejecting unverifiable event');
+    return res.status(503).json({ error: 'Webhook not configured' });
+  }
+  if (!sig) {
+    return res.status(400).json({ error: 'Missing stripe-signature header' });
+  }
+
   let event;
   try {
-    if (webhookSecret && sig) {
-      event = stripe.webhooks.constructEvent(req.rawBody || req.body, sig, webhookSecret);
-    } else {
-      event = req.body;
-    }
+    event = stripe.webhooks.constructEvent(req.rawBody || req.body, sig, webhookSecret);
   } catch (err) {
     console.error('[stripe-webhook] signature verification failed:', err.message);
     return res.status(400).json({ error: 'Webhook signature invalid' });
@@ -138,4 +219,4 @@ async function stripeWebhook(req, res) {
   res.json({ received: true });
 }
 
-module.exports = { createPaymentIntent, publishableKey, grimoireSubscribe, stripeWebhook };
+module.exports = { createPaymentIntent, publishableKey, grimoireSubscribe, grimoireActivate, stripeWebhook };

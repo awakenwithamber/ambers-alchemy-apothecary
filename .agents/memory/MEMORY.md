@@ -1,2 +1,2 @@
-- [Supabase setup](supabase-setup.md) — project orpaqodqlvjczshtcxif; keys fetched via Management API with PAT; ws transport required for Node 20
-- [Server architecture](server-arch.md) — Express replaces Netlify; Netlify function routes proxied; Supabase replaces Netlify Blobs for reviews/orders/leads
+- [Supabase on Node 20](supabase-node20-ws.md) — all Supabase access must use getAdminClient/getAnonClient from lib/supabase.js (ws transport); raw createClient hangs.
+- [Stripe on-site only](stripe-onsite-payments.md) — this site forbids Shopify & redirects; checkout + grimoire subscription use Stripe Elements confirmCardPayment on-page.
