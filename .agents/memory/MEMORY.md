@@ -2,3 +2,4 @@
 - [Stripe on-site only](stripe-onsite-payments.md) — this site forbids Shopify & redirects; checkout + grimoire subscription use Stripe Elements confirmCardPayment on-page.
 - [Admin dashboard & forms](admin-dashboard-forms.md) — /admin (JWT via ADMIN_PASSWORD) shows orders+forms; site forms now stored in Supabase form_submissions, Zapier is optional forward.
 - [Customer email (Resend)](customer-email-resend.md) — customer mail MUST use Resend connector, NOT Replit Mail (owner-only); idempotent confirmations + atomic weekly promo claim.
+- [Cart architecture](cart-architecture.md) — two carts; only app.js `window.addItemToCart` reaches checkout (AACart doesn't); it dedupes by name, so encode full config in name.

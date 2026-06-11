@@ -613,6 +613,9 @@ function renderSynthesis() {
       '<div class="synth-allies">' +
         allies.map(renderAllyCard).join('') +
       '</div>' +
+      '<div class="synth-allies-actions">' +
+        '<button type="button" class="synth-download-btn" id="synth-download-allies">\u2B07 Download My Herbal Allies</button>' +
+      '</div>' +
     '</section>' +
 
     renderWhyThisWorks(patterns) +
@@ -1047,6 +1050,89 @@ function synthAddCustomToCart() {
 }
 
 // ============================================================
+// DOWNLOAD — let the guest save their herbal allies as a file.
+// Builds a branded, self-contained HTML document (opens in any
+// browser and prints cleanly to PDF) from the current results and
+// triggers a download. No network call, no dependencies.
+// ============================================================
+function synthDownloadAllies() {
+  var allies = Array.isArray(advisorState.allies) ? advisorState.allies : [];
+  if (allies.length === 0) {
+    if (typeof showToast === 'function') showToast('Complete the quiz to download your herbal allies.');
+    return;
+  }
+
+  var patternName = advisorState.patterns && advisorState.patterns[0]
+    ? advisorState.patterns[0].pattern.name
+    : 'Your Personal Pattern';
+  var dateStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  var cardsHtml = allies.map(function(ally) {
+    var herb = (typeof BOTANICALS !== 'undefined')
+      ? BOTANICALS.find(function(b) { return b.id === ally.id; })
+      : null;
+    var name = herb ? herb.name : ally.id;
+    var latin = herb && herb.latin ? herb.latin : '';
+    var traditional = herb && herb.desc ? herb.desc : '';
+    var benefit = ally.benefit || (herb && Array.isArray(herb.benefits) && herb.benefits.length ? herb.benefits[0] : '');
+    var signalPhrases = (ally.matchedSignals || []).slice(0, 2).map(function(s) {
+      return window.RemedyFlow ? window.RemedyFlow.humanSignalPhrase(s) : s;
+    });
+    var whyLine = signalPhrases.length > 0
+      ? 'Chosen because of ' + signalPhrases.join(' and ') + '.'
+      : 'Chosen to nourish the ' + patternName.toLowerCase() + ' pattern.';
+    return '<div class="ally">' +
+      '<h3>' + escapeHtmlSafe(name) + (latin ? ' <span class="latin">' + escapeHtmlSafe(latin) + '</span>' : '') + '</h3>' +
+      (benefit ? '<p><strong>Primary benefit:</strong> ' + escapeHtmlSafe(benefit) + '</p>' : '') +
+      '<p><strong>Chosen for you because:</strong> ' + escapeHtmlSafe(whyLine) + '</p>' +
+      (traditional ? '<p><strong>Traditional use:</strong> ' + escapeHtmlSafe(traditional) + '</p>' : '') +
+    '</div>';
+  }).join('');
+
+  var doc = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">' +
+    '<title>My Herbal Allies \u2014 Amber\u2019s Alchemy Apothecary</title>' +
+    '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+    '<style>' +
+      'body{font-family:Georgia,"Times New Roman",serif;background:#1a1206;color:#f3e9d6;margin:0;padding:40px;}' +
+      '.wrap{max-width:720px;margin:0 auto;}' +
+      'header{text-align:center;border-bottom:1px solid #d4af6a;padding-bottom:24px;margin-bottom:24px;}' +
+      '.brand{color:#d4af6a;letter-spacing:.15em;text-transform:uppercase;font-size:13px;}' +
+      'h1{font-size:26px;margin:10px 0 4px;color:#f7efe0;}' +
+      '.meta{color:#c9b890;font-size:13px;}' +
+      '.ally{background:rgba(212,175,106,.06);border:1px solid rgba(212,175,106,.25);border-radius:10px;padding:18px 20px;margin-bottom:16px;}' +
+      '.ally h3{color:#d4af6a;margin:0 0 10px;font-size:19px;}' +
+      '.ally .latin{font-style:italic;font-weight:normal;color:#c9b890;font-size:14px;}' +
+      '.ally p{margin:6px 0;font-size:14px;line-height:1.6;}' +
+      'footer{margin-top:28px;text-align:center;color:#c9b890;font-size:12px;border-top:1px solid rgba(212,175,106,.3);padding-top:18px;}' +
+      '@media print{body{background:#fff;color:#2a1f12;padding:24px;}.ally{background:#faf6ee;border-color:#d8c39a;}.ally h3{color:#7a5a1e;}.brand,.meta,.ally .latin,footer{color:#7a6a48;}h1{color:#2a1f12;}}' +
+    '</style></head><body><div class="wrap">' +
+      '<header>' +
+        '<div class="brand">Amber\u2019s Alchemy Apothecary</div>' +
+        '<h1>Your Personal Herbal Allies</h1>' +
+        '<div class="meta">' + escapeHtmlSafe(patternName) + ' \u00b7 ' + allies.length + ' plant allies \u00b7 ' + escapeHtmlSafe(dateStr) + '</div>' +
+      '</header>' +
+      cardsHtml +
+      '<footer>These botanical recommendations support general wellness and self-care. They are not intended to diagnose, treat, cure, or prevent any disease. Consult a qualified healthcare professional before use.<br>awakenagain.com</footer>' +
+    '</div></body></html>';
+
+  try {
+    var blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'my-herbal-allies.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+    if (typeof showToast === 'function') showToast('\u2728 Your herbal allies are downloading.');
+    try { if (window.AAA && typeof window.AAA.track === 'function') window.AAA.track('synth_allies_downloaded', { count: allies.length }); } catch (e) {}
+  } catch (err) {
+    if (typeof showToast === 'function') showToast('Download is not supported on this browser.');
+  }
+}
+
+// ============================================================
 // POST-ADD MODAL — only appears AFTER a successful cart add.
 // Three clear next-step options. No competing CTAs before this point.
 // ============================================================
@@ -1196,6 +1282,7 @@ if (!window.__advisorDelegationInstalled) {
       if (id === 'lead-submit') { submitLeadCapture(); return; }
       if (id === 'lead-skip')   { skipLeadCapture();   return; }
       if (id === 'synth-cta-custom') { synthAddCustomToCart(); return; }
+      if (id === 'synth-download-allies') { synthDownloadAllies(); return; }
       if (id === 'synth-extended-submit') { submitExtendedResultsCapture(); return; }
     }
   });

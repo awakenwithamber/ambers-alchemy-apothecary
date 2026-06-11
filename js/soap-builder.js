@@ -89,14 +89,44 @@
       'Color':      state.color      || '—',
     };
 
-    window.AACart && window.AACart.add({
-      id:    'custom-soap-' + Date.now(),
-      name:  'Custom Botanical Soap',
-      price: 13.99,
-      image: '/images/soap-shea-vanilla.png',
-      qty:   1,
-      options,
-    });
+    const detailParts = [];
+    if (state.botanicals) detailParts.push(state.botanicals);
+    if (state.benefits && state.benefits.length) detailParts.push(state.benefits.join(', '));
+
+    // Build a name that encodes the FULL configuration. app.js dedupes the
+    // cart strictly by name, so the name must be unique per configuration —
+    // otherwise two different custom soaps would merge into one line item.
+    const nameParts = [];
+    if (state.scent)      nameParts.push(state.scent);
+    if (state.barType)    nameParts.push(state.barType);
+    if (state.botanicals) nameParts.push(state.botanicals);
+    if (state.color)      nameParts.push(state.color);
+    if (state.benefits && state.benefits.length) nameParts.push(state.benefits.join('/'));
+    const soapName = 'Custom Botanical Soap' +
+      (nameParts.length ? ' \u2014 ' + nameParts.join(' \u00b7 ') : '');
+
+    // Route into the main checkout cart (app.js) so the soap reaches checkout.
+    // Falls back to the legacy AACart drawer only if app.js isn't present.
+    if (typeof window.addItemToCart === 'function') {
+      window.addItemToCart({
+        name:     soapName,
+        price:    13.99,
+        qty:      1,
+        form:     state.barType || 'Bar Soap',
+        herbs:    detailParts.join(' \u00b7 '),
+        size:     state.color ? state.color + ' tone' : '4 oz bar',
+        symptoms: '',
+      });
+    } else if (window.AACart) {
+      window.AACart.add({
+        id:    'custom-soap-' + Date.now(),
+        name:  'Custom Botanical Soap',
+        price: 13.99,
+        image: '/images/soap-shea-vanilla.png',
+        qty:   1,
+        options,
+      });
+    }
 
     resetBuilder();
   }
