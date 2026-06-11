@@ -255,32 +255,44 @@
   };
 
   window.sbAddToCart = function() {
+    // Sort selected IDs per category so two soaps with the same options chosen in
+    // a different click order produce an identical name/detail and dedupe correctly.
+    var sBases    = sbSelections.bases.slice().sort();
+    var sScents   = sbSelections.scents.slice().sort();
+    var sBenefits = sbSelections.benefits.slice().sort();
+    var sAddons   = sbSelections.addons.slice().sort();
+
     var name = 'Custom Soap';
     var parts = [];
-    if (sbSelections.scents.length > 0) {
-      var scentNames = sbSelections.scents.map(function(id) { var i = getItemByKey('scents', id); return i ? i.name : id; });
+    if (sScents.length > 0) {
+      var scentNames = sScents.map(function(id) { var i = getItemByKey('scents', id); return i ? i.name : id; });
       name = scentNames.join(' & ') + ' Custom Soap';
     }
-    if (sbSelections.bases.length > 0) {
-      parts.push('Base: ' + sbSelections.bases.map(function(id) { var i = getItemByKey('bases', id); return i ? i.name : id; }).join(', '));
+    if (sBases.length > 0) {
+      parts.push('Base: ' + sBases.map(function(id) { var i = getItemByKey('bases', id); return i ? i.name : id; }).join(', '));
     }
-    if (sbSelections.benefits.length > 0) {
-      parts.push('Benefits: ' + sbSelections.benefits.map(function(id) { var i = getItemByKey('benefits', id); return i ? i.name : id; }).join(', '));
+    if (sBenefits.length > 0) {
+      parts.push('Benefits: ' + sBenefits.map(function(id) { var i = getItemByKey('benefits', id); return i ? i.name : id; }).join(', '));
     }
-    if (sbSelections.addons.length > 0) {
-      parts.push('Add-Ons: ' + sbSelections.addons.map(function(id) { var i = getItemByKey('addons', id); return i ? i.name : id; }).join(', '));
+    if (sAddons.length > 0) {
+      parts.push('Add-Ons: ' + sAddons.map(function(id) { var i = getItemByKey('addons', id); return i ? i.name : id; }).join(', '));
     }
 
     var price = calcPrice();
+    var detail = parts.length > 0 ? parts.join(' | ') : '';
 
     if (typeof addToCart === 'function') {
-      var existing = cart ? cart.find(function(i) { return i.name === name; }) : null;
+      // Match on full configuration (name + detail) so two soaps that share a
+      // scent but differ in bar type / benefits / add-ons stay as separate lines.
+      var existing = (typeof cart !== 'undefined' && cart)
+        ? cart.find(function(i) { return i.name === name && (i.herbs || '') === detail; })
+        : null;
       if (existing) {
         existing.qty += 1;
         if (typeof renderCart === 'function') renderCart();
       } else {
         var item = { name: name, price: price, qty: 1 };
-        if (parts.length > 0) item.herbs = parts.join(' | ');
+        if (detail) item.herbs = detail;
         if (typeof cart !== 'undefined') cart.push(item);
         if (typeof renderCart === 'function') renderCart();
       }

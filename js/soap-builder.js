@@ -1,4 +1,12 @@
 // js/soap-builder.js
+// ⚠️ DEPRECATED / UNUSED — DO NOT LOAD.
+// This is an older, generic builder implementation (selectors: .soap-step,
+// [data-bar-type], .soap-add-to-cart) that does NOT match the actual modal
+// markup in index.html. The live Custom Soap Builder is the ROOT file
+// `soap-builder.js` (defines openSoapBuilder/closeSoapBuilder/sbAddToCart and
+// matches #soapBuilderModal). index.html intentionally loads that root file.
+// Kept only for reference; safe to delete.
+//
 // Fixes the 5-step Custom Soap Builder — wires Step 5 "Add to Cart"
 // Depends on cart.js being loaded first
 
@@ -129,6 +137,11 @@
     }
 
     resetBuilder();
+
+    // addItemToCart() opens the main cart drawer, but this builder modal sits
+    // above it (higher z-index). Close the builder so the cart confirmation
+    // is actually visible to the customer.
+    if (typeof window.closeSoapBuilder === 'function') window.closeSoapBuilder();
   }
 
   // ── Reset builder to Step 1 ──────────────────────────────────
