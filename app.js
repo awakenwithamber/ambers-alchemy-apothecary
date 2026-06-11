@@ -397,12 +397,12 @@ document.getElementById('venmoPayBtn').addEventListener('click', function(e) {
   const { total } = calcCartTotals();
   if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
   const note = getOrderNote();
-  this.href = `https://venmo.com/AmberLynnPatten?txn=pay&amount=${total.toFixed(2)}&note=${encodeURIComponent(note)}`;
+  this.href = `https://venmo.com/code?user_id=3573264899114195665&created=1781193245`;
 });
 document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
   const { total } = calcCartTotals();
   if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  this.href = `https://cash.app/$AmberAlchemy/${total.toFixed(2)}`;
+  this.href = `https://cash.app/$AmberPatten92/${total.toFixed(2)}`;
 });
 
 // ---- SECURE CHECKOUT (Stripe) ----
