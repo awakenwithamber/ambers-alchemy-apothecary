@@ -42,3 +42,4 @@ publicDir = "."
 
 [userenv.shared]
 SUPABASE_URL = "https://orpaqodqlvjczshtcxif.supabase.co"
+SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ycGFxb2RxbHZqY3pzaHRjeGlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzODEwNzEsImV4cCI6MjA5NDk1NzA3MX0.fCNlHQ4NqLs_6MAre_-O1c12oo0LBNZyXckmka6OFHg"
