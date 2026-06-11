@@ -50,9 +50,23 @@ exports.handle = async (req, res) => {
     sent: false,
   });
 
-  // Send the purchase confirmation email (best-effort — never block the order)
+  // Send the purchase confirmation email (best-effort — never block the order).
+  // Atomically claim the send by setting confirmation_sent_at only when it's
+  // still null, so webhook retries for the same order can't double-send.
   if (email) {
-    sendPurchaseConfirmation(order).catch((e) => console.error('[purchase-email]', e.message));
+    try {
+      const { data: claimed } = await sb
+        .from('orders')
+        .update({ confirmation_sent_at: now.toISOString() })
+        .eq('order_id', orderId)
+        .is('confirmation_sent_at', null)
+        .select('order_id');
+      if (claimed && claimed.length) {
+        sendPurchaseConfirmation(order).catch((e) => console.error('[purchase-email]', e.message));
+      }
+    } catch (e) {
+      console.error('[purchase-email-claim]', e.message);
+    }
   }
 
   res.json({ ok: true, orderId });

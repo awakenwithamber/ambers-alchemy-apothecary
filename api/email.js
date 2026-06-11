@@ -8,7 +8,8 @@ const { sendMail, sendBulk } = require('../lib/mailer');
 const content = require('../lib/email-content');
 
 function unsubToken(email) {
-  const secret = process.env.GRIMOIRE_JWT_SECRET || 'fallback-secret';
+  const secret = process.env.GRIMOIRE_JWT_SECRET;
+  if (!secret) throw new Error('GRIMOIRE_JWT_SECRET is required for unsubscribe tokens');
   return crypto.createHmac('sha256', secret).update(String(email).toLowerCase().trim()).digest('hex').slice(0, 32);
 }
 
@@ -60,31 +61,69 @@ async function gatherRecipients() {
 }
 
 // ── Send the weekly promo to everyone (manual button OR scheduler) ──────────
-async function sendWeeklyPromo({ triggeredBy = 'manual' } = {}) {
-  const recipients = await gatherRecipients();
-  if (!recipients.length) return { ok: true, sent: 0, total: 0, note: 'No recipients' };
-
-  // Rotate content by ISO week so each weekly send differs.
+// When `weekKey` is supplied (scheduler), we atomically claim that week by
+// inserting a promo_sends row with id=weekKey BEFORE sending. If the insert
+// conflicts, another instance/run already claimed this week — we skip. This
+// guarantees at most one scheduled broadcast per week even across instances.
+async function sendWeeklyPromo({ triggeredBy = 'manual', weekKey = null } = {}) {
   const weekIndex = Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000));
-  const sample = content.weeklyPromo(unsubscribeUrl(recipients[0].email), weekIndex);
+  const sb = getAdminClient();
 
-  const result = await sendBulk(recipients, (r) =>
-    content.weeklyPromo(unsubscribeUrl(r.email), weekIndex)
+  // Atomic weekly claim for scheduled sends.
+  if (weekKey) {
+    const { error: claimErr } = await sb.from('promo_sends').insert({
+      id: weekKey,
+      subject: '(claimed)',
+      recipient_count: 0,
+      triggered_by: triggeredBy,
+      status: 'claimed',
+    });
+    if (claimErr) {
+      // Duplicate key → already claimed this week.
+      return { ok: true, skipped: false, claimed: false, note: 'Week already claimed' };
+    }
+  }
+
+  const recipients = await gatherRecipients();
+  // Rotate content by ISO week so each weekly send differs.
+  const sample = content.weeklyPromo(
+    unsubscribeUrl(recipients[0] ? recipients[0].email : 'noone@example.com'),
+    weekIndex
   );
 
-  // Log the send
+  let result = { sent: 0, failed: 0, skipped: 0, total: 0 };
+  if (recipients.length) {
+    result = await sendBulk(recipients, (r) =>
+      content.weeklyPromo(unsubscribeUrl(r.email), weekIndex)
+    );
+  }
+
+  // Record the outcome.
   try {
-    const sb = getAdminClient();
-    await sb.from('promo_sends').insert({
-      id: `promo_${Date.now().toString(36)}`,
-      subject: sample.subject,
-      recipient_count: result.sent,
-      triggered_by: triggeredBy,
-    });
+    if (weekKey) {
+      // Update the claim row with the final result.
+      await sb.from('promo_sends').update({
+        subject: sample.subject,
+        recipient_count: result.sent,
+        status: result.sent > 0 ? 'sent' : 'no_delivery',
+        sent_at: new Date().toISOString(),
+      }).eq('id', weekKey);
+    } else if (result.sent > 0) {
+      // Manual send: only log when something was actually delivered, so a
+      // disconnected/empty run never blocks the scheduler's freshness check.
+      await sb.from('promo_sends').insert({
+        id: `promo_${Date.now().toString(36)}`,
+        subject: sample.subject,
+        recipient_count: result.sent,
+        triggered_by: triggeredBy,
+        status: 'sent',
+      });
+    }
   } catch (e) {
     console.error('[promo log]', e.message);
   }
 
+  if (!recipients.length) return { ok: true, ...result, note: 'No recipients', subject: sample.subject };
   return { ok: true, ...result, subject: sample.subject };
 }
 
@@ -126,7 +165,14 @@ exports.unsubscribe = async (req, res) => {
 <a href="${content.siteUrl()}" style="display:inline-block;margin-top:18px;color:#4a7c59;">Return to the apothecary →</a>
 </div></body></html>`;
 
-  if (!validEmail(email) || token !== unsubToken(email)) {
+  let expected;
+  try {
+    expected = validEmail(email) ? unsubToken(email) : null;
+  } catch (e) {
+    console.error('[unsubscribe]', e.message);
+    return res.status(503).send(page('Temporarily unavailable', 'We can\'t process unsubscribes right now. Please reply to any email and we\'ll remove you manually.'));
+  }
+  if (!expected || token !== expected) {
     return res.status(400).send(page('Invalid link', 'This unsubscribe link is invalid or has expired. Please reply to any email and we\'ll remove you manually.'));
   }
   try {

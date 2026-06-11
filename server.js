@@ -236,16 +236,14 @@ function startPromoScheduler() {
 
   async function tick() {
     try {
-      const sb = getAdminClient();
-      const { data } = await sb.from('promo_sends').select('sent_at').order('sent_at', { ascending: false }).limit(1);
-      const last = data && data[0] ? new Date(data[0].sent_at).getTime() : 0;
-      if (Date.now() - last >= WEEK_MS) {
-        // Only send during daytime hours (14:00 UTC ≈ morning US) to feel human.
-        if (new Date().getUTCHours() === 14) {
-          const result = await sendWeeklyPromo({ triggeredBy: 'scheduler' });
-          console.log('[promo-scheduler]', JSON.stringify(result));
-        }
-      }
+      // Only send during daytime hours (14:00 UTC ≈ morning US) to feel human.
+      if (new Date().getUTCHours() !== 14) return;
+      // Atomic per-week claim (weekKey) ensures at most one send per week even
+      // across restarts or multiple instances — no check-then-send race.
+      const weekIndex = Math.floor(Date.now() / WEEK_MS);
+      const weekKey = `promo_week_${weekIndex}`;
+      const result = await sendWeeklyPromo({ triggeredBy: 'scheduler', weekKey });
+      if (result.claimed !== false) console.log('[promo-scheduler]', JSON.stringify(result));
     } catch (e) {
       console.error('[promo-scheduler]', e.message);
     }
