@@ -9,6 +9,8 @@ Customer-facing email (purchase confirmations, weekly promo) uses the **Resend**
 
 **Why:** Replit Mail (replitmail blueprint) can only send to the repl owner — it cannot email arbitrary customers. Any feature that emails buyers/subscribers must go through Resend (or another real ESP connector). Resend additionally requires the user to verify a sending domain before mail reaches real inboxes; until then it only sends from `onboarding@resend.dev` to the account's own email.
 
+**Status:** `awakenagain.com` is verified in Resend (sending enabled); `EMAIL_FROM` shared env var = `Amber's Alchemy Apothecary <amber@awakenagain.com>`. Auth uses the `RESEND_API_KEY` secret (mailer prefers it over the connector). Owner address `awaken@consultant.com` is BCC'd on confirmations and is the reply-to.
+
 **How to apply:**
 - Transport wrapper skips gracefully (logs + returns `{skipped:true}`) until the Resend connector is connected, so the rest of the app keeps working.
 - Unsubscribe links are token-verified with `HMAC-SHA256(email, GRIMOIRE_JWT_SECRET)` (no token column). The secret must be present — fail closed (503), never fall back to a hardcoded secret, or links become forgeable.
