@@ -130,13 +130,10 @@ app.all('/.netlify/functions/auth-check', async (req, res) => {
   }
 });
 
-app.all('/.netlify/functions/form-relay', async (req, res) => {
-  try {
-    await runCjsHandler('./netlify/functions/form-relay.js', req, res);
-  } catch (e) {
-    console.error('[form-relay]', e.message);
-    res.status(500).json({ error: e.message });
-  }
+// Legacy form-relay path → store submissions in Supabase
+app.all('/.netlify/functions/form-relay', (req, res) => {
+  if (req.method !== 'POST') return res.sendStatus(200);
+  return require('./api/form-submit').submit(req, res);
 });
 
 // ── Supabase-backed API routes ────────────────────────────────────────────────
@@ -170,6 +167,20 @@ app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), strip
 // Order submission (Netlify form webhook equivalent)
 app.post('/api/submission-created', submissionApi.handle);
 
+// Site form submissions (contact, consultation, soap-order, etc.) → Supabase
+const formSubmitApi = require('./api/form-submit');
+app.post('/api/form-submit', formSubmitApi.submit);
+
+// ── Admin dashboard (JWT-protected) ───────────────────────────────────────────
+const adminApi = require('./api/admin');
+app.post('/api/admin/login', adminApi.login);
+app.get('/api/admin/summary', adminApi.requireAdmin, adminApi.summary);
+app.get('/api/admin/orders', adminApi.requireAdmin, adminApi.orders);
+app.get('/api/admin/submissions', adminApi.requireAdmin, adminApi.submissions);
+app.get('/api/admin/leads', adminApi.requireAdmin, adminApi.leads);
+app.get('/api/admin/subscribers', adminApi.requireAdmin, adminApi.subscribers);
+app.get('/api/admin/reviews', adminApi.requireAdmin, adminApi.reviews);
+
 // Legacy Netlify function paths (redirect to new routes for backwards compat)
 app.all('/.netlify/functions/reviews', async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
@@ -194,6 +205,9 @@ app.use(express.static(__dirname, {
   index: 'index.html',
   dotfiles: 'ignore',
 }));
+
+// Admin dashboard page
+app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
 
 // SPA catch-all (mirrors netlify.toml redirects)
 app.get('/grimoir', (req, res) => res.sendFile(path.join(__dirname, 'grimoir.html')));

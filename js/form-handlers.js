@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  const RELAY_URL = '/.netlify/functions/form-relay'; // handled by Express server
+  const RELAY_URL = '/api/form-submit'; // stores submissions in Supabase (admin dashboard)
 
   // ── Generic form submitter ───────────────────────────────────
   async function submitForm(formType, data, btn, successMessage) {

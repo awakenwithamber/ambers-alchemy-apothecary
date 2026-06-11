@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin Dashboard — Amber's Alchemy Apothecary</title>
+  <style>
+    :root {
+      --bg: #14101c;
+      --panel: #1e1830;
+      --panel-2: #271f3d;
+      --gold: #d4a843;
+      --gold-soft: #e6c87a;
+      --text: #f0e9d6;
+      --muted: rgba(240,233,214,0.55);
+      --border: rgba(212,168,67,0.25);
+      --green: #6bbf7a;
+      --red: #ff6b6b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+    a { color: var(--gold-soft); }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 24px 20px 60px; }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px;
+    }
+    h1 { font-size: 1.4rem; margin: 0; color: var(--gold); font-weight: 600; letter-spacing: 0.02em; }
+    h1 span { opacity: 0.6; font-weight: 400; font-size: 0.85rem; display: block; margin-top: 2px; }
+    .btn {
+      background: var(--gold); color: #1a1422; border: none; border-radius: 8px;
+      padding: 10px 18px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.88; }
+    .btn.ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+
+    /* Login */
+    #login {
+      max-width: 380px; margin: 12vh auto 0; background: var(--panel);
+      border: 1px solid var(--border); border-radius: 16px; padding: 36px 32px; text-align: center;
+    }
+    #login h2 { color: var(--gold); margin: 0 0 6px; font-weight: 600; }
+    #login p { color: var(--muted); font-size: 0.85rem; margin: 0 0 24px; }
+    #login input {
+      width: 100%; padding: 13px 15px; border-radius: 9px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04); color: var(--text); font-size: 1rem; margin-bottom: 16px;
+    }
+    #login .btn { width: 100%; }
+    #loginError { color: var(--red); font-size: 0.85rem; min-height: 1.2em; margin-top: 12px; }
+
+    /* Cards */
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .card {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .card .num { font-size: 1.9rem; font-weight: 700; color: var(--gold-soft); }
+    .card .lbl { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+    .tab {
+      background: var(--panel); color: var(--muted); border: 1px solid var(--border);
+      border-radius: 999px; padding: 8px 18px; font-size: 0.88rem; cursor: pointer; transition: all 0.15s;
+    }
+    .tab.active { background: var(--gold); color: #1a1422; border-color: var(--gold); font-weight: 600; }
+
+    .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+    .toolbar input {
+      flex: 1; min-width: 200px; padding: 9px 13px; border-radius: 8px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04); color: var(--text); font-size: 0.9rem;
+    }
+
+    /* Table */
+    .table-wrap {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 12px; overflow: auto;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid rgba(212,168,67,0.12); vertical-align: top; }
+    th { color: var(--gold); font-weight: 600; white-space: nowrap; position: sticky; top: 0; background: var(--panel-2); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    td { color: var(--text); max-width: 320px; word-break: break-word; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 0.72rem; font-weight: 600; }
+    .pill.paid { background: rgba(107,191,122,0.18); color: var(--green); }
+    .pill.pending { background: rgba(212,168,67,0.18); color: var(--gold-soft); }
+    .pill.active { background: rgba(107,191,122,0.18); color: var(--green); }
+    .pill.inactive { background: rgba(255,107,107,0.15); color: var(--red); }
+    .pill.type { background: rgba(212,168,67,0.14); color: var(--gold-soft); }
+    .empty { text-align: center; color: var(--muted); padding: 48px 20px; }
+    .muted { color: var(--muted); }
+    .loading { text-align: center; color: var(--muted); padding: 40px; }
+    @media (max-width: 600px) { .wrap { padding: 16px 12px 40px; } th, td { padding: 9px 10px; } }
+  </style>
+</head>
+<body>
+  <!-- LOGIN -->
+  <div id="login">
+    <h2>✦ Admin Access</h2>
+    <p>Amber's Alchemy Apothecary</p>
+    <form id="loginForm">
+      <input type="password" id="password" placeholder="Admin password" autocomplete="current-password" required />
+      <button type="submit" class="btn">Enter Dashboard</button>
+    </form>
+    <div id="loginError"></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="wrap" id="dashboard" style="display:none">
+    <header>
+      <h1>✦ Dashboard <span>Amber's Alchemy Apothecary</span></h1>
+      <div>
+        <button class="btn ghost" id="refreshBtn">↻ Refresh</button>
+        <button class="btn ghost" id="logoutBtn">Log out</button>
+      </div>
+    </header>
+
+    <div class="cards" id="cards"></div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-tab="orders">Orders</button>
+      <button class="tab" data-tab="submissions">Form Submissions</button>
+      <button class="tab" data-tab="leads">Quiz Leads</button>
+      <button class="tab" data-tab="subscribers">Grimoire Subscribers</button>
+      <button class="tab" data-tab="reviews">Reviews</button>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" id="search" placeholder="Search current tab…" />
+      <button class="btn ghost" id="exportBtn">⬇ Export CSV</button>
+    </div>
+
+    <div class="table-wrap">
+      <div id="tableArea"><div class="loading">Loading…</div></div>
+    </div>
+  </div>
+
+  <script>
+    const TOKEN_KEY = 'aaa_admin_token';
+    let currentTab = 'orders';
+    let cache = {};
+
+    const $ = (id) => document.getElementById(id);
+    function getToken() { return localStorage.getItem(TOKEN_KEY); }
+    function setToken(t) { localStorage.setItem(TOKEN_KEY, t); }
+    function clearToken() { localStorage.removeItem(TOKEN_KEY); }
+
+    async function api(path, opts = {}) {
+      const res = await fetch(path, {
+        ...opts,
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken(), ...(opts.headers || {}) },
+      });
+      if (res.status === 401 || res.status === 403) { showLogin('Session expired — please log in again.'); throw new Error('unauthorized'); }
+      return res.json();
+    }
+
+    function showLogin(msg) {
+      clearToken();
+      $('dashboard').style.display = 'none';
+      $('login').style.display = 'block';
+      if (msg) $('loginError').textContent = msg;
+    }
+    function showDashboard() {
+      $('login').style.display = 'none';
+      $('dashboard').style.display = 'block';
+      loadSummary();
+      loadTab(currentTab);
+    }
+
+    // ── Login ──
+    $('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      $('loginError').textContent = '';
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: $('password').value }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) { $('loginError').textContent = data.error || 'Login failed'; return; }
+        setToken(data.token);
+        $('password').value = '';
+        showDashboard();
+      } catch (err) { $('loginError').textContent = 'Network error — try again.'; }
+    });
+
+    $('logoutBtn').addEventListener('click', () => showLogin());
+    $('refreshBtn').addEventListener('click', () => { cache = {}; loadSummary(); loadTab(currentTab); });
+
+    // ── Tabs ──
+    document.querySelectorAll('.tab').forEach((t) => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach((x) => x.classList.remove('active'));
+        t.classList.add('active');
+        currentTab = t.dataset.tab;
+        $('search').value = '';
+        loadTab(currentTab);
+      });
+    });
+
+    $('search').addEventListener('input', () => render(currentTab, cache[currentTab] || []));
+
+    // ── Data ──
+    async function loadSummary() {
+      try {
+        const data = await api('/api/admin/summary');
+        const c = data.counts || {};
+        const order = [['orders','Orders'],['submissions','Form Submissions'],['leads','Quiz Leads'],['subscribers','Subscribers'],['reviews','Reviews']];
+        $('cards').innerHTML = order.map(([k, lbl]) => `<div class="card"><div class="num">${c[k] ?? 0}</div><div class="lbl">${lbl}</div></div>`).join('');
+      } catch {}
+    }
+
+    async function loadTab(tab) {
+      $('tableArea').innerHTML = '<div class="loading">Loading…</div>';
+      try {
+        if (!cache[tab]) {
+          const data = await api('/api/admin/' + tab);
+          cache[tab] = data.rows || [];
+        }
+        render(tab, cache[tab]);
+      } catch (e) {
+        if (e.message !== 'unauthorized') $('tableArea').innerHTML = '<div class="empty">Could not load data.</div>';
+      }
+    }
+
+    function fmtDate(s) { if (!s) return '—'; const d = new Date(s); return isNaN(d) ? s : d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }); }
+    function esc(s) { return String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+    const COLUMNS = {
+      orders: [
+        ['Date', (r) => fmtDate(r.submitted_at)],
+        ['Customer', (r) => esc(r.customer_name)],
+        ['Email', (r) => esc(r.email)],
+        ['Product', (r) => esc(r.product)],
+        ['Total', (r) => esc(r.order_total)],
+        ['Status', (r) => `<span class="pill ${r.payment_status === 'paid' ? 'paid' : 'pending'}">${esc(r.payment_status || '—')}</span>`],
+        ['Ship To', (r) => esc(r.shipping_address)],
+        ['Txn', (r) => esc(r.transaction_id)],
+      ],
+      submissions: [
+        ['Date', (r) => fmtDate(r.created_at)],
+        ['Type', (r) => `<span class="pill type">${esc(r.form_type)}</span>`],
+        ['Name', (r) => esc(r.name)],
+        ['Email', (r) => esc(r.email)],
+        ['Phone', (r) => esc(r.phone)],
+        ['Subject', (r) => esc(r.subject)],
+        ['Message', (r) => esc(r.message)],
+      ],
+      leads: [
+        ['Date', (r) => fmtDate(r.submitted_at)],
+        ['Email', (r) => esc(r.email)],
+        ['First Name', (r) => esc(r.first_name)],
+        ['Phone', (r) => esc(r.phone)],
+        ['Result', (r) => esc(typeof r.result_summary === 'object' ? JSON.stringify(r.result_summary) : r.result_summary)],
+        ['Extended?', (r) => r.extended_requested ? 'Yes' : '—'],
+      ],
+      subscribers: [
+        ['Subscribed', (r) => fmtDate(r.subscribed_at)],
+        ['Email', (r) => esc(r.email)],
+        ['Status', (r) => `<span class="pill ${r.active ? 'active' : 'inactive'}">${r.active ? 'Active' : 'Inactive'}</span>`],
+        ['Subscription ID', (r) => esc(r.stripe_subscription_id)],
+        ['Expires', (r) => fmtDate(r.expires_at)],
+      ],
+      reviews: [
+        ['Date', (r) => fmtDate(r.created_at)],
+        ['Rating', (r) => '★'.repeat(r.rating || 0)],
+        ['Product', (r) => esc(r.target_name)],
+        ['Title', (r) => esc(r.title)],
+        ['Body', (r) => esc(r.body)],
+        ['By', (r) => esc(r.display_name)],
+        ['Status', (r) => esc(r.status || 'published')],
+      ],
+    };
+
+    function filterRows(rows) {
+      const q = $('search').value.trim().toLowerCase();
+      if (!q) return rows;
+      return rows.filter((r) => JSON.stringify(r).toLowerCase().includes(q));
+    }
+
+    function render(tab, rows) {
+      const cols = COLUMNS[tab];
+      const filtered = filterRows(rows);
+      if (!filtered.length) {
+        $('tableArea').innerHTML = `<div class="empty">${rows.length ? 'No matches.' : 'Nothing here yet.'}</div>`;
+        return;
+      }
+      const head = '<tr>' + cols.map(([h]) => `<th>${h}</th>`).join('') + '</tr>';
+      const body = filtered.map((r) => '<tr>' + cols.map(([, fn]) => `<td>${fn(r)}</td>`).join('') + '</tr>').join('');
+      $('tableArea').innerHTML = `<table><thead>${head}</thead><tbody>${body}</tbody></table>`;
+    }
+
+    // ── Export CSV ──
+    $('exportBtn').addEventListener('click', () => {
+      const rows = filterRows(cache[currentTab] || []);
+      if (!rows.length) return;
+      const keys = Object.keys(rows[0]);
+      const csv = [keys.join(',')].concat(
+        rows.map((r) => keys.map((k) => {
+          let v = r[k];
+          if (v === null || v === undefined) v = '';
+          else if (typeof v === 'object') v = JSON.stringify(v);
+          return '"' + String(v).replace(/"/g, '""') + '"';
+        }).join(','))
+      ).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `${currentTab}-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+    });
+
+    // ── Init ──
+    if (getToken()) showDashboard(); else showLogin();
+  </script>
+</body>
+</html>
