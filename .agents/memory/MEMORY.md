@@ -1,0 +1,2 @@
+- [Supabase setup](supabase-setup.md) — project orpaqodqlvjczshtcxif; keys fetched via Management API with PAT; ws transport required for Node 20
+- [Server architecture](server-arch.md) — Express replaces Netlify; Netlify function routes proxied; Supabase replaces Netlify Blobs for reviews/orders/leads

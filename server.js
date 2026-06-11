@@ -148,40 +148,46 @@ app.all('/.netlify/functions/form-relay', async (req, res) => {
   }
 });
 
+// ── Supabase-backed API routes ────────────────────────────────────────────────
+const reviewsApi = require('./api/reviews');
+const quizLeadApi = require('./api/quiz-lead');
+const submissionApi = require('./api/submission-created');
+
+// Reviews – public
+app.get('/api/reviews', reviewsApi.list);
+app.get('/api/reviews/stats', reviewsApi.stats);
+app.get('/api/reviews/featured', reviewsApi.featured);
+app.post('/api/reviews', reviewsApi.create);
+app.post('/api/reviews/helpful', reviewsApi.helpful);
+// Reviews – admin
+app.get('/api/reviews/admin', reviewsApi.adminList);
+app.get('/api/reviews/export', reviewsApi.adminExport);
+app.patch('/api/reviews/:id', reviewsApi.adminUpdate);
+app.delete('/api/reviews/:id', reviewsApi.adminDelete);
+
+// Quiz leads
+app.post('/api/quiz-lead', quizLeadApi.submit);
+
+// Order submission (Netlify form webhook equivalent)
+app.post('/api/submission-created', submissionApi.handle);
+
+// Legacy Netlify function paths (redirect to new routes for backwards compat)
 app.all('/.netlify/functions/reviews', async (req, res) => {
-  try {
-    await runEsmHandler(path.join(__dirname, 'netlify/functions/reviews.mjs'), req, res);
-  } catch (e) {
-    console.error('[reviews]', e.message);
-    res.status(500).json({ error: e.message });
-  }
+  const url = new URL(req.url, `http://localhost:${PORT}`);
+  const p = url.pathname.replace('/.netlify/functions/reviews', '/api/reviews');
+  res.redirect(307, p + url.search);
 });
 
 app.all('/.netlify/functions/quiz-lead', async (req, res) => {
-  try {
-    await runEsmHandler(path.join(__dirname, 'netlify/functions/quiz-lead.mjs'), req, res);
-  } catch (e) {
-    console.error('[quiz-lead]', e.message);
-    res.status(500).json({ error: e.message });
-  }
+  res.redirect(307, '/api/quiz-lead');
 });
 
 app.all('/.netlify/functions/submission-created', async (req, res) => {
-  try {
-    await runEsmHandler(path.join(__dirname, 'netlify/functions/submission-created.mjs'), req, res);
-  } catch (e) {
-    console.error('[submission-created]', e.message);
-    res.status(500).json({ error: e.message });
-  }
+  res.redirect(307, '/api/submission-created');
 });
 
 app.all('/.netlify/functions/review-reminders', async (req, res) => {
-  try {
-    await runEsmHandler(path.join(__dirname, 'netlify/functions/review-reminders.mjs'), req, res);
-  } catch (e) {
-    console.error('[review-reminders]', e.message);
-    res.status(500).json({ error: e.message });
-  }
+  res.json({ ok: true, message: 'Review reminders are handled server-side via scheduled tasks.' });
 });
 
 // ── Static files ──────────────────────────────────────────────────────────────

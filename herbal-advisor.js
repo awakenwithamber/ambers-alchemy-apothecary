@@ -509,7 +509,7 @@ function submitLeadCapture() {
   advisorState.leadCaptured = true;
 
   try {
-    fetch('/.netlify/functions/quiz-lead', {
+    fetch('/api/quiz-lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

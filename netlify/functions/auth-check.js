@@ -9,7 +9,7 @@ const SHOPIFY_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 const ADMIN_TOKEN    = process.env.SHOPIFY_ADMIN_TOKEN; // Admin API token (different from Storefront)
 
 const CORS = {
-  'Access-Control-Allow-Origin':  'https://awakenagain.com',
+  'Access-Control-Allow-Origin':  '*',
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
   'Content-Type': 'application/json',

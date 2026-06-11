@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  const RELAY_URL = '/.netlify/functions/form-relay';
+  const RELAY_URL = '/.netlify/functions/form-relay'; // handled by Express server
 
   // ── Generic form submitter ───────────────────────────────────
   async function submitForm(formType, data, btn, successMessage) {
