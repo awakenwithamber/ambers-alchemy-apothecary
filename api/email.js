@@ -23,12 +23,24 @@ function validEmail(e) {
   return typeof e === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 }
 
+// Owner address — gets a BCC of every order confirmation, and is the reply-to
+// so customer replies reach the shop owner directly.
+const OWNER_EMAIL = process.env.OWNER_EMAIL || 'awaken@consultant.com';
+const REPLY_TO = process.env.EMAIL_REPLY_TO || OWNER_EMAIL;
+
 // ── Purchase confirmation (best-effort, called after an order is recorded) ──
 async function sendPurchaseConfirmation(order) {
   const email = (order && order.email || '').toLowerCase().trim();
   if (!validEmail(email)) return { ok: false, skipped: true };
   const msg = content.purchaseConfirmation(order);
-  return sendMail({ to: email, subject: msg.subject, html: msg.html, text: msg.text });
+  return sendMail({
+    to: email,
+    subject: msg.subject,
+    html: msg.html,
+    text: msg.text,
+    replyTo: REPLY_TO,
+    bcc: validEmail(OWNER_EMAIL) ? OWNER_EMAIL : undefined,
+  });
 }
 
 // ── Gather promo recipients across all customer tables, minus unsubscribes ──
@@ -93,9 +105,10 @@ async function sendWeeklyPromo({ triggeredBy = 'manual', weekKey = null } = {}) 
 
   let result = { sent: 0, failed: 0, skipped: 0, total: 0 };
   if (recipients.length) {
-    result = await sendBulk(recipients, (r) =>
-      content.weeklyPromo(unsubscribeUrl(r.email), weekIndex)
-    );
+    result = await sendBulk(recipients, (r) => ({
+      ...content.weeklyPromo(unsubscribeUrl(r.email), weekIndex),
+      replyTo: REPLY_TO,
+    }));
   }
 
   // Record the outcome.
