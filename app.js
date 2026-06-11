@@ -433,8 +433,35 @@ function renderCheckoutSummary() {
 }
 
 async function initStripe() {
-  // Stripe removed — payment now handled via Shopify Checkout (js/shopify-checkout.js)
-  return;
+  if (stripeReady) return;
+  try {
+    const res = await fetch('/api/stripe-publishable-key');
+    if (!res.ok) { console.warn('[Stripe] Key endpoint unavailable'); return; }
+    const { key } = await res.json();
+    if (!key) { console.warn('[Stripe] No publishable key returned'); return; }
+    stripe = Stripe(key);
+    const elements = stripe.elements();
+    cardElement = elements.create('card', {
+      style: {
+        base: {
+          color: '#f0e9d6',
+          fontFamily: '"Crimson Text", Georgia, serif',
+          fontSize: '16px',
+          '::placeholder': { color: 'rgba(240,233,214,0.4)' },
+        },
+        invalid: { color: '#ff6b6b' },
+      },
+    });
+    cardElement.mount('#card-element');
+    cardElement.on('change', (e) => {
+      const errEl = document.getElementById('card-errors');
+      if (errEl) errEl.textContent = e.error ? e.error.message : '';
+    });
+    stripeReady = true;
+    console.log('[Stripe] Card element mounted');
+  } catch (err) {
+    console.warn('[Stripe] Init failed:', err.message);
+  }
 }
 
 // Handle checkout form submission

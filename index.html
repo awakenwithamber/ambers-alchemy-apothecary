@@ -2879,7 +2879,7 @@
 
     <!-- Order Form + Payment -->
     <div class="checkout-form-wrap card">
-      <form id="checkout-form" name="checkout-order" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <form id="checkoutForm" name="checkout-order" method="POST" data-netlify="true" netlify-honeypot="bot-field">
         <input type="hidden" name="form-name" value="checkout-order" />
         <input type="hidden" name="bot-field" />
         <input type="hidden" name="transaction-id" id="transactionId" value="" />
@@ -2938,18 +2938,19 @@
           <span class="trust-badge-item">🛡️ Secure Checkout</span>
         </div>
 
-        <button type="button" data-shopify-checkout id="shopifyCheckoutBtn" class="btn-primary checkout-pay-btn">
-          💳 Pay with Card — Secure Shopify Checkout
-        </button>
-        <p style="font-size:12px; opacity:0.6; text-align:center; margin-top:8px;">
-          Visa · Mastercard · Amex · Debit · Apple Pay
-        </p>
-
-        <div class="checkout-trust-badges">
-          <span>🔒 SSL Encrypted</span>
-          <span>💳 Visa, Mastercard, Amex</span>
-          <span>✦ PCI Compliant</span>
+        <div id="stripe-card-wrap">
+          <label style="display:block;font-size:0.85rem;margin-bottom:6px;opacity:0.8;">Card Details</label>
+          <div id="card-element" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:12px 14px;"></div>
+          <div id="card-errors" style="color:#ff6b6b;font-size:0.85rem;margin-top:6px;min-height:1.2em;"></div>
         </div>
+
+        <button type="submit" id="checkoutPayBtn" class="btn-primary checkout-pay-btn" style="margin-top:16px;">
+          <span id="payBtnText">💳 Pay Now — awakenagain.com</span>
+          <span id="payBtnSpinner" style="display:none;margin-left:8px;">⏳</span>
+        </button>
+        <p style="font-size:11px; opacity:0.55; text-align:center; margin-top:8px;">
+          Powered by Stripe · Visa · Mastercard · Amex · Debit · Apple Pay · No data leaves awakenagain.com
+        </p>
       </form>
     </div>
   </div>
@@ -3084,7 +3085,7 @@
 <script src="pwa-init.js"></script>
 <script src="/js/cart.js"></script>
 <script src="/js/soap-builder.js"></script>
-<script src="/js/shopify-checkout.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
 <script src="/js/form-handlers.js"></script>
     </body>
 </html>
