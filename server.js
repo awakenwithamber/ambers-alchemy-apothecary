@@ -156,6 +156,11 @@ app.delete('/api/reviews/:id', reviewsApi.adminDelete);
 // Quiz leads
 app.post('/api/quiz-lead', quizLeadApi.submit);
 
+// Grimoire OTP authentication (two-step: request code → verify code)
+const grimoireAuth = require('./api/grimoire-auth');
+app.post('/api/grimoire-otp/request', grimoireAuth.requestOtp);
+app.post('/api/grimoire-otp/verify',  grimoireAuth.verifyOtp);
+
 // Stripe payments (on-site checkout + Grimoire subscription)
 const stripeApi = require('./api/stripe');
 app.get('/api/stripe-publishable-key', stripeApi.publishableKey);

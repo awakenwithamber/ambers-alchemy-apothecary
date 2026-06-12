@@ -112,9 +112,17 @@
       </a>
       <div style="margin-top:32px; opacity:0.6; font-size:13px;">Already subscribed?</div>
       <div class="grimior-email-form">
-        <input type="email" id="grimior-email-input" placeholder="Enter your subscriber email" />
-        <button onclick="checkGrimiorAccess()">✦ Check My Access</button>
+        <div id="grimior-step1">
+          <input type="email" id="grimior-email-input" placeholder="Enter your subscriber email" />
+          <button onclick="requestGrimiorCode()">✦ Send Access Code</button>
+        </div>
+        <div id="grimior-step2" style="display:none">
+          <input type="text" id="grimior-otp-input" placeholder="6-digit code from your email" maxlength="6" autocomplete="one-time-code" inputmode="numeric" />
+          <button onclick="verifyGrimiorCode()">✦ Verify Code</button>
+          <button onclick="showGrimiorStep1()" style="background:transparent;border:1px solid #b8893a;color:#b8893a;margin-top:8px;font-size:12px;padding:6px 12px;cursor:pointer;border-radius:4px">← Different email</button>
+        </div>
         <div id="grimior-auth-error" style="color:#c0392b; font-size:13px; display:none;"></div>
+        <div id="grimior-auth-info" style="color:#4a7c59; font-size:13px; display:none;"></div>
       </div>
     </div>
 
@@ -142,64 +150,95 @@
 
   <script>
     (function() {
-      // Check if we already verified this session
+      // Check if we already verified this session via OTP
       const cached = sessionStorage.getItem('grimior_access');
       if (cached === 'true') {
         grantAccess();
         return;
       }
-      if (cached === 'false') {
-        showGate();
-        return;
-      }
-
-      // Check email stored from previous visit
-      const savedEmail = localStorage.getItem('grimior_email');
-      if (savedEmail) {
-        verifyEmail(savedEmail);
-      } else {
-        showGate();
-      }
+      showGate();
     })();
 
-    async function checkGrimiorAccess() {
+    function showGrimiorStep1() {
+      document.getElementById('grimior-step1').style.display = '';
+      document.getElementById('grimior-step2').style.display = 'none';
+      const errEl = document.getElementById('grimior-auth-error');
+      const infoEl = document.getElementById('grimior-auth-info');
+      if (errEl) { errEl.textContent = ''; errEl.style.display = 'none'; }
+      if (infoEl) { infoEl.textContent = ''; infoEl.style.display = 'none'; }
+    }
+
+    async function requestGrimiorCode() {
       const emailEl = document.getElementById('grimior-email-input');
       const errorEl = document.getElementById('grimior-auth-error');
-      const email = emailEl?.value?.trim();
+      const infoEl  = document.getElementById('grimior-auth-info');
+      const email   = emailEl?.value?.trim();
+
+      if (errorEl) { errorEl.textContent = ''; errorEl.style.display = 'none'; }
+      if (infoEl)  { infoEl.textContent = '';  infoEl.style.display = 'none'; }
 
       if (!email) {
         if (errorEl) { errorEl.textContent = 'Please enter your email.'; errorEl.style.display = ''; }
         return;
       }
 
-      if (errorEl) errorEl.style.display = 'none';
-      await verifyEmail(email);
-    }
-
-    async function verifyEmail(email) {
-      document.getElementById('grimior-loading').style.display = '';
-      document.getElementById('grimior-gate').style.display = 'none';
-
       try {
-        const res = await fetch(`/.netlify/functions/auth-check?email=${encodeURIComponent(email)}`);
+        const res  = await fetch('/api/grimoire-otp/request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
         const data = await res.json();
 
-        if (data.access) {
-          localStorage.setItem('grimior_email', email);
+        if (!res.ok) {
+          if (errorEl) { errorEl.textContent = data.error || 'Unable to send code. Please try again.'; errorEl.style.display = ''; }
+          return;
+        }
+
+        document.getElementById('grimior-step1').style.display = 'none';
+        document.getElementById('grimior-step2').style.display = '';
+        if (infoEl) { infoEl.textContent = data.message || 'If an active subscription was found, a code has been sent.'; infoEl.style.display = ''; }
+        document.getElementById('grimior-otp-input').focus();
+      } catch (err) {
+        console.error('OTP request failed:', err);
+        if (errorEl) { errorEl.textContent = 'Unable to connect. Please try again.'; errorEl.style.display = ''; }
+      }
+    }
+
+    async function verifyGrimiorCode() {
+      const email   = document.getElementById('grimior-email-input')?.value?.trim();
+      const otp     = document.getElementById('grimior-otp-input')?.value?.trim();
+      const errorEl = document.getElementById('grimior-auth-error');
+      const infoEl  = document.getElementById('grimior-auth-info');
+
+      if (errorEl) { errorEl.textContent = ''; errorEl.style.display = 'none'; }
+
+      if (!otp || otp.length < 6) {
+        if (errorEl) { errorEl.textContent = 'Please enter the 6-digit code from your email.'; errorEl.style.display = ''; }
+        return;
+      }
+
+      if (infoEl) { infoEl.textContent = '✦ Verifying…'; infoEl.style.display = ''; }
+
+      try {
+        const res  = await fetch('/api/grimoire-otp/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, otp }),
+        });
+        const data = await res.json();
+
+        if (data.access === true) {
           sessionStorage.setItem('grimior_access', 'true');
           grantAccess();
         } else {
-          sessionStorage.setItem('grimior_access', 'false');
-          showGate();
-          const errorEl = document.getElementById('grimior-auth-error');
-          if (errorEl) {
-            errorEl.textContent = 'No active subscription found for that email.';
-            errorEl.style.display = '';
-          }
+          if (infoEl)  { infoEl.textContent = '';  infoEl.style.display = 'none'; }
+          if (errorEl) { errorEl.textContent = data.error || 'Invalid or expired code. Please try again.'; errorEl.style.display = ''; }
         }
       } catch (err) {
-        console.error('Auth check failed:', err);
-        showGate();
+        console.error('OTP verify failed:', err);
+        if (infoEl)  { infoEl.textContent = ''; infoEl.style.display = 'none'; }
+        if (errorEl) { errorEl.textContent = 'Unable to connect. Please try again.'; errorEl.style.display = ''; }
       }
     }
 

@@ -583,10 +583,17 @@ footer a:hover { color: var(--gold); }
     <div class="grimoire-preview">
       <div class="grimoire-lock-icon">🔐</div>
       <h2>Unlock Pages 8–88</h2>
-      <p>Enter the email address connected to your active subscription to reveal the full Grimoire.</p>
+      <p id="grimAccessDesc">Enter the email address connected to your active subscription and we'll send you a one-time access code.</p>
       <div class="access-form">
-        <input type="email" class="access-input" id="grimEmailInput" placeholder="your@email.com" />
-        <button class="access-btn" onclick="checkGrimoireAccess()">✦ Open the Grimoire</button>
+        <div id="grimStep1">
+          <input type="email" class="access-input" id="grimEmailInput" placeholder="your@email.com" />
+          <button class="access-btn" onclick="requestGrimoireCode()">✦ Send Access Code</button>
+        </div>
+        <div id="grimStep2" style="display:none">
+          <input type="text" class="access-input" id="grimOtpInput" placeholder="6-digit code from your email" maxlength="6" autocomplete="one-time-code" inputmode="numeric" />
+          <button class="access-btn" onclick="verifyGrimoireCode()">✦ Open the Grimoire</button>
+          <button class="access-btn" style="background:transparent;border:1px solid var(--border-gold);opacity:0.7;margin-top:8px;font-size:0.85rem" onclick="showGrimStep1()">← Use a different email</button>
+        </div>
         <p class="access-status" id="accessStatus"></p>
       </div>
     </div>
@@ -1023,8 +1030,8 @@ function showTab(id) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// ─── GRIMOIRE ACCESS ──────────────────────────────────
-async function checkGrimoireAccess() {
+// ─── GRIMOIRE ACCESS (two-step OTP) ───────────────────
+async function requestGrimoireCode() {
   const email = document.getElementById('grimEmailInput').value.trim();
   const status = document.getElementById('accessStatus');
   if (!email || !email.includes('@')) {
@@ -1032,25 +1039,67 @@ async function checkGrimoireAccess() {
     status.className = 'access-status error';
     return;
   }
-  status.textContent = '✦ Verifying your subscription…';
+  status.textContent = '✦ Sending access code…';
   status.className = 'access-status';
-
   try {
-    const res = await fetch('/.netlify/functions/auth-check?email=' + encodeURIComponent(email), {
-      method: 'GET',
+    const res = await fetch('/api/grimoire-otp/request', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
     });
     const data = await res.json();
+    if (!res.ok) {
+      status.textContent = data.error || 'Unable to send code. Please try again.';
+      status.className = 'access-status error';
+      return;
+    }
+    document.getElementById('grimStep1').style.display = 'none';
+    document.getElementById('grimStep2').style.display = '';
+    document.getElementById('grimAccessDesc').textContent = 'Check your email for a 6-digit code and enter it below.';
+    status.textContent = data.message || 'If an active subscription was found, a code has been sent.';
+    status.className = 'access-status';
+    document.getElementById('grimOtpInput').focus();
+  } catch (err) {
+    status.textContent = 'Unable to connect. Please try again.';
+    status.className = 'access-status error';
+  }
+}
 
+function showGrimStep1() {
+  document.getElementById('grimStep1').style.display = '';
+  document.getElementById('grimStep2').style.display = 'none';
+  document.getElementById('grimAccessDesc').textContent = 'Enter the email address connected to your active subscription and we\'ll send you a one-time access code.';
+  document.getElementById('accessStatus').textContent = '';
+  document.getElementById('accessStatus').className = 'access-status';
+}
+
+async function verifyGrimoireCode() {
+  const email = document.getElementById('grimEmailInput').value.trim();
+  const otp   = document.getElementById('grimOtpInput').value.trim();
+  const status = document.getElementById('accessStatus');
+  if (!otp || otp.length < 6) {
+    status.textContent = 'Please enter the 6-digit code from your email.';
+    status.className = 'access-status error';
+    return;
+  }
+  status.textContent = '✦ Verifying your code…';
+  status.className = 'access-status';
+  try {
+    const res = await fetch('/api/grimoire-otp/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp }),
+    });
+    const data = await res.json();
     if (data.access === true) {
       status.textContent = '✦ Access granted. The Grimoire is open.';
       status.className = 'access-status success';
       document.getElementById('grimoireFullContent').classList.add('unlocked');
       document.getElementById('subscribeCTA').style.display = 'none';
+      document.getElementById('grimStep2').style.display = 'none';
     } else {
-      status.textContent = data.message || 'No active subscription found for this email.';
+      status.textContent = data.error || 'Invalid or expired code. Please try again.';
       status.className = 'access-status error';
-      document.getElementById('subscribeCTA').style.display = 'block';
     }
   } catch (err) {
     status.textContent = 'Unable to verify at this time. Please try again.';
