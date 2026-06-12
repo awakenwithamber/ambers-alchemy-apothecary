@@ -51,3 +51,7 @@ SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9ycGFxb2RxbHZqY3pzaHRjeGlmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTM4MTA3MSwiZXhwIjoyMDk0OTU3MDcxfQ.Z8voXkUzva9znuBaeeJm3jzhDcYNVoWLGU90ppBhrSQ"
 ADMIN_PASSWORD = "Orion347*"
 EMAIL_FROM = "Amber's Alchemy Apothecary <amber@awakenagain.com>"
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 180000
