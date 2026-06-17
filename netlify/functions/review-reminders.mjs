@@ -12,26 +12,57 @@
 // Postmark, etc.) without code changes.
 
 import { getStore } from '@netlify/blobs';
+import {
+  escapeHtml,
+  groundingThought,
+  renderHtmlEmail,
+  renderTextEmail
+} from './lib/voice.mjs';
 
 const SITE_URL = process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://awakenagain.com';
 
-function reviewMessage({ customerName, product }) {
+function reviewMessage({ customerName, product, orderId, kind }) {
   const name = customerName?.split(' ')[0] || 'friend';
-  const subject = `A quiet thank you from Amber's Alchemy Apothecary`;
-  const html = `
-    <p>Dear ${name},</p>
-    <p>Thank you for your recent order from <strong>Amber's Alchemy Apothecary</strong>.
-    If you've had a chance to try ${product ? `your <em>${product}</em>` : 'your remedies'},
-    we would be deeply grateful if you shared an honest review. Your experience helps others
-    discover the natural support they may be looking for.</p>
-    <p style="margin:28px 0;">
-      <a href="${SITE_URL}/?review=me" style="background:#8C6A3B;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-family:serif;">Review My Product</a>
-      &nbsp;
-      <a href="${SITE_URL}/?google_review=1" style="background:#2E1C38;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-family:serif;">Review Us on Google</a>
-    </p>
-    <p>With gratitude,<br/>Amber ✦</p>
-  `;
-  const text = `Dear ${name},\n\nThank you for your recent order from Amber's Alchemy Apothecary. If you've had a chance to try ${product ? `your ${product}` : 'your remedies'}, we would be grateful if you shared an honest review.\n\nReview on our site: ${SITE_URL}/?review=me\nReview on Google: ${SITE_URL}/?google_review=1\n\nWith gratitude,\nAmber`;
+  const safeName = escapeHtml(name);
+  const productHtml = product ? `your <em>${escapeHtml(product)}</em>` : 'your remedies';
+  const grounding = groundingThought(orderId || name);
+
+  // The initial note and the gentle reminder carry the same warmth; the
+  // reminder simply acknowledges that life is full and there's no pressure.
+  const isReminder = kind === 'reminder';
+  const subject = isReminder
+    ? `No pressure at all — just thinking of you, ${name}`
+    : `A quiet thank you, ${name} ☾`;
+
+  const opening = isReminder
+    ? `<p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.7;">${safeName}, I wrote to you a little while ago and wanted to gently reach out once more — not to nudge, only because you’ve been on my mind. Life is full, and that is exactly as it should be.</p>`
+    : `<p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.7;">${safeName}, a little time has passed since ${productHtml} made its way to you, and I’ve been quietly hoping it’s brought you even a small measure of ease.</p>`;
+
+  const bodyHtml = `
+    ${opening}
+    <p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.7;">If it ever feels right — only if it feels right — a few honest words about how you’re getting on would mean the world to me. Not for the shop, truly, but because what you share helps the next person who’s tired and searching find something that might hold them too. That’s the whole reason this little apothecary exists.</p>
+    <p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.7;">You can <a href="${SITE_URL}/?review=me" style="color:#6b4f9b;text-decoration:underline;">leave a few words here</a> whenever there’s a quiet moment, or <a href="${SITE_URL}/?google_review=1" style="color:#6b4f9b;text-decoration:underline;">on Google</a> if you’d rather. And if now isn’t the time, that is perfectly all right — this note asks nothing of you.</p>`;
+
+  const html = renderHtmlEmail({
+    kicker: 'Thinking of you',
+    heading: isReminder ? `Still here, whenever you need me.` : `Thank you, from one human to another.`,
+    bodyHtml,
+    grounding
+  });
+
+  const bodyText = `${name}, ${isReminder
+    ? 'I wrote to you a little while ago and wanted to gently reach out once more — not to nudge, only because you have been on my mind. Life is full, and that is exactly as it should be.'
+    : `a little time has passed since ${product ? product : 'your remedies'} made its way to you, and I have been quietly hoping it has brought you even a small measure of ease.`}
+
+If it ever feels right — only if it feels right — a few honest words about how you're getting on would mean the world to me. Not for the shop, but because what you share helps the next tired, searching person find something that might hold them too.
+
+Leave a few words on our site: ${SITE_URL}/?review=me
+Or on Google: ${SITE_URL}/?google_review=1
+
+And if now isn't the time, that is perfectly all right — this note asks nothing of you.`;
+
+  const text = renderTextEmail({ heading: '', bodyText, grounding });
+
   return { subject, html, text };
 }
 
@@ -58,7 +89,7 @@ export default async () => {
 
     if (!kind) continue;
 
-    const message = reviewMessage(record);
+    const message = reviewMessage({ ...record, kind });
     const dispatchId = `${record.orderId}_${kind}_${Date.now().toString(36)}`;
     const dispatchRecord = {
       dispatchId,

@@ -9,6 +9,12 @@
 // provider (Resend) is configured.
 
 import { getStore } from "@netlify/blobs";
+import {
+  escapeHtml,
+  groundingThought,
+  renderHtmlEmail,
+  renderTextEmail
+} from "./lib/voice.mjs";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ADMIN_NOTIFY_TO = 'awaken@consultant.com';
@@ -26,15 +32,6 @@ function sanitizeName(raw) {
   return String(raw).replace(/[<>]/g, '').trim().slice(0, 60);
 }
 
-function escapeHtml(str) {
-  return String(str == null ? '' : str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 function prettyHerbName(id) {
   if (!id) return '';
   return String(id)
@@ -43,8 +40,8 @@ function prettyHerbName(id) {
     .join(' ');
 }
 
-function buildGuestEmail({ firstName, resultSummary }) {
-  const greetName = firstName ? escapeHtml(firstName) : 'Friend';
+function buildGuestEmail({ firstName, resultSummary, email }) {
+  const greetName = firstName ? escapeHtml(firstName) : 'friend';
   const primaryPattern = resultSummary && resultSummary.primaryPattern
     ? escapeHtml(resultSummary.primaryPattern)
     : '';
@@ -53,56 +50,55 @@ function buildGuestEmail({ firstName, resultSummary }) {
     : [];
 
   const subject = firstName
-    ? `${firstName}, Your Full Results Are Ready \u2728`
-    : 'Your Personalized Herbal Guidance Is Here \u2728';
+    ? `${firstName}, I\u2019ve been thinking about your answers \u2728`
+    : 'I\u2019ve been sitting with your answers \u2728';
 
   const alliesHtml = allyList.length
-    ? `<ul style="padding-left:18px;margin:10px 0 18px;color:#3b2a5e;font-family:Georgia,serif;">${allyList
+    ? `<ul style="padding-left:18px;margin:10px 0 18px;color:#3b2a5e;font-family:Georgia,serif;line-height:1.7;">${allyList
         .map((n) => `<li style="margin:4px 0;">\u2726 ${escapeHtml(n)}</li>`)
         .join('')}</ul>`
     : '';
 
   const patternLine = primaryPattern
-    ? `<p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.6;">Your answers pointed most clearly to <strong>${primaryPattern}</strong> \u2014 a pattern many carry quietly. The herbs below were chosen for what your body seems to be asking for right now.</p>`
+    ? `<p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.7;">What you shared pointed most gently toward <strong>${primaryPattern}</strong> \u2014 something so many people carry quietly, without ever saying it aloud. The herbs below aren\u2019t a fix. They\u2019re companions, chosen for what your body seems to be quietly asking for right now.</p>`
     : '';
 
-  const html = `<!doctype html>
-<html>
-  <body style="margin:0;padding:0;background:#f7f1ea;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f7f1ea;padding:28px 12px;">
-      <tr><td align="center">
-        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;box-shadow:0 10px 30px rgba(60,30,110,0.12);overflow:hidden;">
-          <tr><td style="padding:28px 28px 8px;text-align:center;">
-            <div style="font-family:'Cinzel',Georgia,serif;letter-spacing:0.18em;font-size:12px;color:#6b4f9b;text-transform:uppercase;">\u2726 Your Personalized Results</div>
-            <h1 style="font-family:'Cinzel',Georgia,serif;font-size:22px;color:#3b2a5e;margin:10px 0 0;">${greetName}, your deeper reading is here.</h1>
-          </td></tr>
-          <tr><td style="padding:14px 28px 8px;">
-            <p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.6;">${greetName}, thank you for taking the herbal quiz. Based on your responses, your body may be asking for deeper support, restoration, and balance right now.</p>
-            ${patternLine}
-            ${allyList.length ? '<p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.6;margin:18px 0 6px;"><strong>Your herbal allies</strong></p>' : ''}
-            ${alliesHtml}
-            <p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.6;">Move gently this week. Favor warm foods, quiet evenings, and small rituals. When you\u2019re ready, your custom remedy is waiting for you in the apothecary.</p>
-          </td></tr>
-          <tr><td style="padding:10px 28px 28px;text-align:center;">
-            <a href="https://awakenagain.com/" style="display:inline-block;padding:12px 22px;background:linear-gradient(135deg,#6b4f9b,#3b2a5e);color:#fff;text-decoration:none;border-radius:999px;font-family:'Cinzel',Georgia,serif;letter-spacing:0.08em;font-size:13px;">Return to the Apothecary \u2728</a>
-          </td></tr>
-          <tr><td style="padding:18px 28px;border-top:1px solid #eee;font-family:Georgia,serif;font-size:12px;color:#7a6a95;line-height:1.5;text-align:center;">
-            These botanical recommendations support general wellness and are not intended to diagnose, treat, cure, or prevent any disease. Please consult a qualified healthcare professional for medical concerns.
-          </td></tr>
-        </table>
-      </td></tr>
-    </table>
-  </body>
-</html>`;
+  const bodyHtml = `
+    <p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.7;">${greetName}, thank you for trusting me with your answers to the quiz. I don\u2019t take that lightly \u2014 sharing where you\u2019re weary or out of balance takes a kind of quiet courage, and I felt it in what you wrote.</p>
+    ${patternLine}
+    ${allyList.length ? '<p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.7;margin:18px 0 6px;"><strong>The allies I\u2019d reach for, were I sitting beside you</strong></p>' : ''}
+    ${alliesHtml}
+    <p style="font-family:Georgia,serif;color:#3b2a5e;line-height:1.7;">Be gentle with yourself this week. Warm food, quiet evenings, small rituals that ask nothing of you. There\u2019s no rush here, and nothing to earn.</p>`;
 
-  const text = `${firstName || 'Friend'},
+  const html = renderHtmlEmail({
+    kicker: 'A note, just for you',
+    heading: firstName ? `${greetName}, your deeper reading is here.` : 'Your deeper reading is here.',
+    bodyHtml,
+    grounding: groundingThought(email || firstName || 'guest'),
+    link: {
+      lead: 'And whenever \u2014 if ever \u2014 it feels right,',
+      label: 'a remedy is waiting quietly for you in the apothecary',
+      href: 'https://awakenagain.com/'
+    },
+    disclaimerHtml: 'These botanical companions support general wellness and are not intended to diagnose, treat, cure, or prevent any disease. Please consult a qualified healthcare professional for medical concerns.'
+  });
 
-Thank you for taking the herbal quiz. Based on your responses, your body may be asking for deeper support, restoration, and balance right now.
+  const bodyText = `${firstName || 'Friend'}, thank you for trusting me with your answers to the quiz. Sharing where you're weary or out of balance takes a kind of quiet courage, and I felt it in what you wrote.
 
-${primaryPattern ? `Primary pattern: ${resultSummary.primaryPattern}\n` : ''}${allyList.length ? `Your herbal allies: ${allyList.join(', ')}\n` : ''}
-Move gently this week. Favor warm foods, quiet evenings, and small rituals. When you\u2019re ready, your custom remedy is waiting for you at awakenagain.com.
+${primaryPattern ? `What you shared pointed most gently toward: ${resultSummary.primaryPattern} \u2014 something so many people carry quietly.\n` : ''}${allyList.length ? `The allies I'd reach for, were I sitting beside you: ${allyList.join(', ')}\n` : ''}
+Be gentle with yourself this week. Warm food, quiet evenings, small rituals that ask nothing of you. There's no rush here, and nothing to earn.`;
 
-\u2014 Amber\u2019s Alchemy Apothecary`;
+  const text = renderTextEmail({
+    heading: '',
+    bodyText,
+    grounding: groundingThought(email || firstName || 'guest'),
+    link: {
+      lead: 'And whenever \u2014 if ever \u2014 it feels right,',
+      label: 'a remedy is waiting for you at',
+      href: 'https://awakenagain.com/'
+    },
+    disclaimerText: 'These botanical companions support general wellness and are not intended to diagnose, treat, cure, or prevent any disease. Please consult a qualified healthcare professional for medical concerns.'
+  });
 
   return { subject, html, text };
 }
@@ -252,7 +248,7 @@ export default async (req) => {
       const withinWindow = lastTs && (now.getTime() - lastTs) < EXTENDED_DEDUPE_WINDOW_MS;
 
       if (!withinWindow) {
-        const guest = buildGuestEmail({ firstName, resultSummary });
+        const guest = buildGuestEmail({ firstName, resultSummary, email });
         const admin = buildAdminEmail({ firstName, email, record });
 
         const [guestSend, adminSend] = await Promise.all([
