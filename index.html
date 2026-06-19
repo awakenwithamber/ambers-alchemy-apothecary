@@ -627,7 +627,7 @@
           <span class="card-badge">💳 Debit</span>
           <span class="card-badge">📱 Cash App Balance</span>
         </div>
-        <a id="cashAppPayBtn" href="https://cash.app/$AmberAlchemy" target="_blank" rel="noopener" class="pay-btn cashapp-btn">Pay with Cash App</a>
+        <a id="cashAppPayBtn" href="https://cash.app/$AmberPatten92" target="_blank" rel="noopener" class="pay-btn cashapp-btn">Pay with Cash App</a>
       </div>
     </div>
 
@@ -2938,9 +2938,11 @@
           <span class="trust-badge-item">🛡️ Secure Checkout</span>
         </div>
 
-        <button type="button" data-shopify-checkout id="shopifyCheckoutBtn" class="btn-primary checkout-pay-btn">
-          💳 Pay with Card — Secure Shopify Checkout
+        <button type="button" id="stripeCheckoutBtn" class="btn-primary checkout-pay-btn">
+          💳 Pay with Card — Secure Checkout
         </button>
+        <!-- Stripe embedded checkout mounts here (customer pays without leaving the site) -->
+        <div id="stripe-checkout-mount" style="margin-top:16px;"></div>
         <p style="font-size:12px; opacity:0.6; text-align:center; margin-top:8px;">
           Visa · Mastercard · Amex · Debit · Apple Pay
         </p>
@@ -3084,7 +3086,8 @@
 <script src="pwa-init.js"></script>
 <script src="/js/cart.js"></script>
 <script src="/js/soap-builder.js"></script>
-<script src="/js/shopify-checkout.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script src="/js/stripe-checkout.js"></script>
 <script src="/js/form-handlers.js"></script>
     </body>
 </html>
