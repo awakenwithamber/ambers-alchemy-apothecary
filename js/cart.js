@@ -1,6 +1,6 @@
 // js/cart.js
 // Global cart system for Awaken Again
-// Handles all Add to Cart actions, cart drawer, and Shopify checkout
+// Handles all Add to Cart actions and the cart drawer
 
 (function () {
   'use strict';

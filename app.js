@@ -402,7 +402,7 @@ document.getElementById('venmoPayBtn').addEventListener('click', function(e) {
 document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
   const { total } = calcCartTotals();
   if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  this.href = `https://cash.app/$AmberAlchemy/${total.toFixed(2)}`;
+  this.href = `https://cash.app/$AmberPatten92/${total.toFixed(2)}`;
 });
 
 // ---- SECURE CHECKOUT (Stripe) ----
@@ -433,7 +433,7 @@ function renderCheckoutSummary() {
 }
 
 async function initStripe() {
-  // Stripe removed — payment now handled via Shopify Checkout (js/shopify-checkout.js)
+  // Card payment now handled by Stripe embedded checkout (js/stripe-checkout.js)
   return;
 }
 
