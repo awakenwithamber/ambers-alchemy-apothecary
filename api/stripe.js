@@ -2,6 +2,9 @@
 // Stripe payment routes: cart checkout (PaymentIntent) + Grimoire subscription checkout
 
 const { getAdminClient } = require('../lib/supabase');
+const { computeCartTotal, resolveLineItems } = require('../lib/catalog');
+const { sendMail } = require('../lib/mailer');
+const emailContent = require('../lib/email-content');
 
 function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY;
@@ -9,26 +12,94 @@ function getStripe() {
   return require('stripe')(key);
 }
 
+// ── Resilient subscriber writes ─────────────────────────────────────────────
+// The grimoir_subscribers table is being extended with new columns
+// (subscription_status, current_period_end, discount_code, free_gift_sent,
+// welcome_email_sent, shopify_tag_applied, updated_at). Until that migration is
+// applied in Supabase, writes that reference the new columns would fail. These
+// helpers try the richer payload first and transparently fall back to the
+// core columns, so subscription activation never breaks.
+function isMissingColumnErr(err) {
+  if (!err) return false;
+  if (err.code === 'PGRST204') return true;
+  const m = `${err.message || ''} ${err.details || ''} ${err.hint || ''}`;
+  return /does not exist/i.test(m) && /column/i.test(m)
+    || /could not find the .* column/i.test(m);
+}
+
+async function resilientUpsert(sb, rich, base) {
+  let { error } = await sb.from('grimoir_subscribers').upsert(rich, { onConflict: 'email' });
+  if (error && isMissingColumnErr(error)) {
+    ({ error } = await sb.from('grimoir_subscribers').upsert(base, { onConflict: 'email' }));
+  }
+  return error;
+}
+
+async function resilientUpdate(sb, richPatch, basePatch, col, val) {
+  let { error } = await sb.from('grimoir_subscribers').update(richPatch).eq(col, val);
+  if (error && isMissingColumnErr(error)) {
+    ({ error } = await sb.from('grimoir_subscribers').update(basePatch).eq(col, val));
+  }
+  return error;
+}
+
 // POST /api/create-payment-intent
-// Body: { amount (cents), currency, description, metadata }
+// Body: { cartItems: [{name, qty, unitPrice?}], currency, description, customerName, email }
+// Amount is computed server-side from lib/catalog — the client-supplied amount field is ignored.
 async function createPaymentIntent(req, res) {
   try {
     const stripe = getStripe();
-    const { amount, currency = 'usd', description, metadata } = req.body;
+    const { cartItems, description, customerName, email } = req.body;
+    // Currency is hardcoded server-side — never trusted from the client.
+    // Allowing the client to supply currency would let an attacker swap to a
+    // lower-value or zero-decimal currency and undercharge for USD-priced goods.
+    const CURRENCY = 'usd';
 
-    if (!amount || amount < 50) {
-      return res.status(400).json({ error: 'Invalid amount' });
+    if (!Array.isArray(cartItems) || cartItems.length === 0) {
+      return res.status(400).json({ error: 'cartItems is required' });
     }
 
+    let computed, lineItems;
+    try {
+      lineItems = resolveLineItems(cartItems);
+      computed = computeCartTotal(cartItems);
+    } catch (err) {
+      return res.status(400).json({ error: err.message });
+    }
+
+    const { amountCents, total, subtotal, shipping, tax } = computed;
+    // Build the paid-order item summary from canonical, server-derived
+    // descriptions — never from the client's free-text item names.
+    const itemsSummary = lineItems
+      .map(li => `${li.description} x${li.qty} @ $${li.unitPrice.toFixed(2)}`)
+      .join(', ')
+      .substring(0, 500);
+
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount),
-      currency,
+      amount: amountCents,
+      currency: CURRENCY,
       description,
-      metadata: metadata || {},
+      metadata: {
+        checkout_flow: 'cart',
+        customer_name: customerName || '',
+        email: email || '',
+        items: itemsSummary,
+        server_subtotal: subtotal.toFixed(2),
+        server_shipping: shipping.toFixed(2),
+        server_tax: tax.toFixed(2),
+        server_total: total.toFixed(2),
+      },
       automatic_payment_methods: { enabled: true },
     });
 
-    res.json({ clientSecret: paymentIntent.client_secret, id: paymentIntent.id });
+    res.json({
+      clientSecret: paymentIntent.client_secret,
+      id: paymentIntent.id,
+      serverTotal: total,
+      serverSubtotal: subtotal,
+      serverShipping: shipping,
+      serverTax: tax,
+    });
   } catch (err) {
     console.error('[create-payment-intent]', err.message);
     res.status(500).json({ error: err.message });
@@ -137,20 +208,64 @@ async function grimoireActivate(req, res) {
       return res.status(403).json({ ok: false, error: 'Subscription does not belong to this email' });
     }
 
-    const supabase = getAdminClient();
-    const { error } = await supabase.from('grimoir_subscribers').upsert(
-      {
-        email: normalizedEmail,
-        active: true,
-        stripe_subscription_id: subscriptionId,
-        subscribed_at: new Date().toISOString(),
-      },
-      { onConflict: 'email' }
-    );
+    const customerId = (sub.customer && typeof sub.customer === 'object' && sub.customer.id) || sub.customer || null;
+    const periodEnd = sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null;
+    const nowIso = new Date().toISOString();
 
+    const supabase = getAdminClient();
+
+    // Has this subscriber already been welcomed? Used to send the welcome + gift
+    // emails exactly once. select('*') tolerates the table not yet having the
+    // new columns (we read them defensively).
+    let alreadyWelcomed = false;
+    try {
+      const { data: row } = await supabase
+        .from('grimoir_subscribers')
+        .select('*')
+        .eq('email', normalizedEmail)
+        .maybeSingle();
+      if (row && row.welcome_email_sent) alreadyWelcomed = true;
+    } catch (_) { /* table/columns may be absent — treat as not welcomed */ }
+
+    const base = {
+      email: normalizedEmail,
+      active: true,
+      stripe_customer_id: customerId,
+      stripe_subscription_id: subscriptionId,
+      subscribed_at: nowIso,
+    };
+    const rich = {
+      ...base,
+      subscription_status: sub.status,
+      current_period_end: periodEnd,
+      updated_at: nowIso,
+    };
+
+    const error = await resilientUpsert(supabase, rich, base);
     if (error) {
       console.error('[grimoire-activate] Supabase upsert error:', error.message);
       return res.status(500).json({ ok: false, error: 'Could not record subscription' });
+    }
+
+    // Send the welcome + free-gift emails exactly once (best-effort — never block
+    // activation). Claim the send by setting welcome_email_sent/free_gift_sent;
+    // if those columns don't exist yet the claim is a no-op and we still send.
+    if (!alreadyWelcomed) {
+      resilientUpdate(
+        supabase,
+        { welcome_email_sent: true, free_gift_sent: true, updated_at: nowIso },
+        {},
+        'email',
+        normalizedEmail
+      ).catch((e) => console.error('[grimoire-activate] flag update:', e && e.message));
+
+      const welcome = emailContent.grimoireWelcome({ email: normalizedEmail });
+      sendMail({ to: normalizedEmail, subject: welcome.subject, html: welcome.html, text: welcome.text })
+        .catch((e) => console.error('[grimoire-welcome-email]', e.message));
+
+      const gift = emailContent.grimoireFreeGift({ email: normalizedEmail });
+      sendMail({ to: normalizedEmail, subject: gift.subject, html: gift.html, text: gift.text })
+        .catch((e) => console.error('[grimoire-gift-email]', e.message));
     }
 
     res.json({ ok: true, access: true });
@@ -207,12 +322,98 @@ async function stripeWebhook(req, res) {
     const sub = event.data.object;
     try {
       const supabase = getAdminClient();
-      await supabase.from('grimoir_subscribers')
-        .update({ active: false, expires_at: new Date().toISOString() })
-        .eq('stripe_subscription_id', sub.id);
+      const nowIso = new Date().toISOString();
+
+      // Look up the subscriber so we can email them and avoid duplicate sends.
+      let row = null;
+      try {
+        ({ data: row } = await supabase
+          .from('grimoir_subscribers')
+          .select('*')
+          .eq('stripe_subscription_id', sub.id)
+          .maybeSingle());
+      } catch (_) { /* tolerate missing columns */ }
+
+      await resilientUpdate(
+        supabase,
+        { active: false, expires_at: nowIso, subscription_status: 'canceled', updated_at: nowIso },
+        { active: false, expires_at: nowIso },
+        'stripe_subscription_id',
+        sub.id
+      );
       console.log(`[stripe-webhook] Grimoire subscription cancelled: ${sub.id}`);
+
+      // Send the reactivation email (best-effort), only if it was previously active.
+      const targetEmail = (row && row.email) || '';
+      if (targetEmail && (!row || row.active !== false)) {
+        const msg = emailContent.grimoireReactivation({ email: targetEmail });
+        sendMail({ to: targetEmail, subject: msg.subject, html: msg.html, text: msg.text })
+          .catch((e) => console.error('[grimoire-reactivation-email]', e.message));
+      }
     } catch (err) {
       console.error('[stripe-webhook] Supabase update error:', err.message);
+    }
+  }
+
+  if (event.type === 'invoice.payment_failed') {
+    const invoice = event.data.object;
+    const subscriptionId = invoice.subscription;
+    const email = (invoice.customer_email || '').toLowerCase().trim();
+    try {
+      const supabase = getAdminClient();
+      const nowIso = new Date().toISOString();
+      if (subscriptionId) {
+        await resilientUpdate(
+          supabase,
+          { subscription_status: 'past_due', updated_at: nowIso },
+          {},
+          'stripe_subscription_id',
+          subscriptionId
+        );
+      }
+      // Resolve the email for the reminder (fall back to the stored row).
+      let targetEmail = email;
+      if (!targetEmail && subscriptionId) {
+        try {
+          const { data: row } = await supabase
+            .from('grimoir_subscribers')
+            .select('email')
+            .eq('stripe_subscription_id', subscriptionId)
+            .maybeSingle();
+          targetEmail = (row && row.email) || '';
+        } catch (_) { /* ignore */ }
+      }
+      if (targetEmail) {
+        const msg = emailContent.grimoirePaymentReminder({ email: targetEmail });
+        sendMail({ to: targetEmail, subject: msg.subject, html: msg.html, text: msg.text })
+          .catch((e) => console.error('[grimoire-payment-reminder-email]', e.message));
+        console.log(`[stripe-webhook] Payment failed reminder queued: ${targetEmail}`);
+      }
+    } catch (err) {
+      console.error('[stripe-webhook] payment_failed handling error:', err.message);
+    }
+  }
+
+  if (event.type === 'invoice.payment_succeeded') {
+    const invoice = event.data.object;
+    const subscriptionId = invoice.subscription;
+    if (subscriptionId) {
+      try {
+        const supabase = getAdminClient();
+        const nowIso = new Date().toISOString();
+        const periodEnd = invoice.lines?.data?.[0]?.period?.end
+          ? new Date(invoice.lines.data[0].period.end * 1000).toISOString()
+          : null;
+        await resilientUpdate(
+          supabase,
+          { active: true, subscription_status: 'active', current_period_end: periodEnd, updated_at: nowIso },
+          { active: true },
+          'stripe_subscription_id',
+          subscriptionId
+        );
+      } catch (err) {
+        console.error('[stripe-webhook] payment_succeeded handling error:', err.message);
+      }
     }
   }
 

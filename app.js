@@ -486,14 +486,14 @@ if (_checkoutFormEl) _checkoutFormEl.addEventListener('submit', async function(e
   }
   if (cart.length === 0) { errEl.textContent = 'Your cart is empty.'; return; }
 
-  // Calculate total in cents for Stripe
+  // Calculate display total from cart (used for the Venmo/CashApp pending flow and initial display).
+  // For Stripe card payments the authoritative total is computed server-side (see below).
   const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const shipping = subtotal >= 75 ? 0 : 6.99;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
-  const amountCents = Math.round(total * 100);
 
-  // Ensure order total is set on hidden field
+  // Set initial display value; overwritten with server-authoritative total after PI creation.
   document.getElementById('orderTotalField').value = formatPrice(total);
 
   payBtn.disabled = true;
@@ -512,24 +512,29 @@ if (_checkoutFormEl) _checkoutFormEl.addEventListener('submit', async function(e
       return;
     }
 
-    // Create PaymentIntent on server
+    // Create PaymentIntent on server — amount is computed server-side from the catalog.
+    // We send item names + quantities, plus a trusted customForm key + herbCount
+    // for custom items so the server can price them authoritatively. The server
+    // ignores any client-supplied price entirely.
     const piResponse = await fetch('/api/create-payment-intent', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        amount: amountCents,
+        cartItems: cart.map(i => ({ name: i.name, qty: i.qty, customForm: i.customForm || '', herbCount: i.herbCount || 0 })),
         currency: 'usd',
         description: `Order from ${name} — Amber's Alchemy Apothecary`,
-        metadata: {
-          customer_name: name,
-          email: email,
-          items: cart.map(i => `${i.name} x${i.qty}`).join(', ').substring(0, 500),
-        },
+        customerName: name,
+        email: email,
       }),
     });
 
     const piData = await piResponse.json();
     if (piData.error) { throw new Error(piData.error); }
+
+    // Update the order total field with the server-authoritative total
+    if (piData.serverTotal) {
+      document.getElementById('orderTotalField').value = formatPrice(piData.serverTotal);
+    }
 
     // Confirm payment with Stripe
     const { error, paymentIntent } = await stripe.confirmCardPayment(piData.clientSecret, {
@@ -1008,7 +1013,7 @@ const BOTANICAL_IMAGES = {
 window.addItemToCart = function(item) {
   const existing = cart.find(i => i.name === item.name);
   if (existing) { existing.qty += (item.qty || 1); }
-  else { cart.push({ name: item.name, price: item.price, qty: item.qty || 1, herbs: item.herbs || '', size: item.size || '', symptoms: item.symptoms || '', recommendedHerbs: item.recommendedHerbs || '', form: item.form || '' }); }
+  else { cart.push({ name: item.name, price: item.price, qty: item.qty || 1, herbs: item.herbs || '', size: item.size || '', symptoms: item.symptoms || '', recommendedHerbs: item.recommendedHerbs || '', form: item.form || '', customForm: item.customForm || '', herbCount: item.herbCount || 0 }); }
   renderCart();
   showToast('\u2726 Added to cart: ' + item.name);
   openCart();

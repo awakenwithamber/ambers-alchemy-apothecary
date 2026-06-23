@@ -76,8 +76,11 @@ function computeStats(rows) {
 async function emailOrderCount(email) {
   if (!email) return 0;
   const sb = getAdminClient();
+  // Only count orders that were verified as paid by the server (Stripe-confirmed).
+  // Pending-external-payment rows and any forged submissions are excluded.
   const { count } = await sb.from('orders').select('*', { count: 'exact', head: true })
-    .eq('email', email.toLowerCase().trim());
+    .eq('email', email.toLowerCase().trim())
+    .eq('payment_status', 'paid');
   return count || 0;
 }
 

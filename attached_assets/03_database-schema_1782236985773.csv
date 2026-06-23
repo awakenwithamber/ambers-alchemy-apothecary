@@ -1,0 +1,13 @@
+table_name,field_name,field_type,required,notes
+grimoire_subscribers,id,UUID / Auto Number,YES,Primary key — auto-generated
+grimoire_subscribers,email,Email / Single Line Text,YES,Unique — used as the subscriber lookup key
+grimoire_subscribers,stripe_customer_id,Single Line Text,YES,From Stripe — format: cus_xxxxxxxx
+grimoire_subscribers,stripe_subscription_id,Single Line Text,YES,From Stripe — format: sub_xxxxxxxx
+grimoire_subscribers,subscription_status,Single Select,YES,"Options: active, trialing, canceled, unpaid, incomplete, incomplete_expired, past_due"
+grimoire_subscribers,current_period_end,Date,YES,Subscription expiry date — convert from Stripe Unix timestamp
+grimoire_subscribers,discount_code,Single Line Text,NO,Optional — store SEER10 or unique code if issued
+grimoire_subscribers,free_gift_sent,Checkbox / Boolean,NO,TRUE once free gift email has been delivered
+grimoire_subscribers,shopify_tag_applied,Checkbox / Boolean,NO,TRUE when GrimoireSubscriber tag is active in Shopify
+grimoire_subscribers,welcome_email_sent,Checkbox / Boolean,NO,TRUE once welcome email has been sent
+grimoire_subscribers,created_at,Date + Time,YES,Record creation timestamp
+grimoire_subscribers,updated_at,Date + Time,YES,Last update timestamp — update on every status change

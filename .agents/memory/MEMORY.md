@@ -3,3 +3,4 @@
 - [Admin dashboard & forms](admin-dashboard-forms.md) — /admin (JWT via ADMIN_PASSWORD) shows orders+forms; site forms now stored in Supabase form_submissions, Zapier is optional forward.
 - [Customer email (Resend)](customer-email-resend.md) — customer mail MUST use Resend connector, NOT Replit Mail (owner-only); idempotent confirmations + atomic weekly promo claim.
 - [Cart architecture](cart-architecture.md) — two carts; only app.js `window.addItemToCart` reaches checkout (AACart doesn't); it dedupes by name, so encode full config in name.
+- [Supabase DDL access](supabase-ddl-access.md) — app tables are Supabase REST-only; no DB conn/connector/pg. DDL must run in Supabase SQL Editor; make code resilient to missing columns.

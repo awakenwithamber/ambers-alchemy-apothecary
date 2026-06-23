@@ -668,7 +668,9 @@
         qty: 1,
         symptoms: symptomList,
         recommendedHerbs: recHerbList,
-        form: typeLabel
+        form: typeLabel,
+        customForm: ccType,
+        herbCount: ccSelected.length
       };
 
       if (typeof window.addItemToCart === 'function') {
@@ -735,7 +737,9 @@
         qty: 1,
         symptoms: symptomLabel,
         recommendedHerbs: recommendedHerbs.join(', '),
-        form: typeLabel
+        form: typeLabel,
+        customForm: ccType,
+        herbCount: symptomHerbs.length
       };
 
       if (typeof window.addItemToCart === 'function') {

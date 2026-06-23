@@ -117,13 +117,14 @@
     // Falls back to the legacy AACart drawer only if app.js isn't present.
     if (typeof window.addItemToCart === 'function') {
       window.addItemToCart({
-        name:     soapName,
-        price:    13.99,
-        qty:      1,
-        form:     state.barType || 'Bar Soap',
-        herbs:    detailParts.join(' \u00b7 '),
-        size:     state.color ? state.color + ' tone' : '4 oz bar',
-        symptoms: '',
+        name:       soapName,
+        price:      13.99,
+        qty:        1,
+        form:       state.barType || 'Bar Soap',
+        herbs:      detailParts.join(' \u00b7 '),
+        size:       state.color ? state.color + ' tone' : '4 oz bar',
+        symptoms:   '',
+        customForm: 'custom-soap',
       });
     } else if (window.AACart) {
       window.AACart.add({

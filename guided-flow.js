@@ -475,7 +475,9 @@
       price: basePrice + herbCost,
       qty: 1,
       symptoms: symptomList,
-      form: formLabels[form] || form
+      form: formLabels[form] || form,
+      customForm: form,
+      herbCount: herbs.length
     };
 
     if (typeof window.addItemToCart === 'function') {
@@ -515,7 +517,9 @@
         price: basePrice + herbCost,
         qty: 1,
         symptoms: symptomLabel,
-        form: formLabels[form] || form
+        form: formLabels[form] || form,
+        customForm: form,
+        herbCount: symptomHerbs.length
       };
 
       if (typeof window.addItemToCart === 'function') {
