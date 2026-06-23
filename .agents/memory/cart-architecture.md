@@ -22,3 +22,8 @@ There are two `soap-builder.js` files. The LIVE one is the **root** `soap-builde
 **Dedup gotchas:**
 - `window.addItemToCart` dedupes strictly by `item.name`; items whose config varies must encode full config in `name` or different configs wrongly merge.
 - `sbAddToCart` (root soap builder) does its OWN dedup directly on `cart`, matching on `name + herbs` (full config in `herbs`), and sorts selected option IDs per category so click order doesn't create duplicate lines.
+
+## Server-authoritative pricing — every cart item needs a server price path
+Checkout no longer trusts client prices. `lib/catalog.js resolvePrice` prices an item by EITHER an exact `CATALOG` name match OR a trusted `customForm` key (CUSTOM_FORMS); anything else is REJECTED (fail-closed) and checkout throws. So any flow that pushes a custom item to `cart` MUST set `item.customForm` (e.g. soap builder sets `customForm:'custom-soap'`, remedies set their form key + `herbCount`). The checkout payload only forwards `{name, qty, customForm, herbCount}` — NOT `price` or `herbs`.
+**Why:** custom soap checkout silently broke because the live root `soap-builder.js` pushed `{name, price, herbs}` with no `customForm`, so resolvePrice rejected it.
+**Known gaps (business decisions, not yet fixed):** (1) `custom-soap` is a FLAT $13.99 server-side (not in HERB_PRICE_FORMS), so the builder's add-on upcharges (anti-aging/botanicals) are NOT collected and the cart-displayed total can exceed the actual charge. (2) The soap's full configuration (bar type/botanicals/color/benefits, kept only in client `item.herbs`) is never sent to the server, so the authoritative paid-order line item is just "Custom Botanical Soap" — fulfillment loses the config.

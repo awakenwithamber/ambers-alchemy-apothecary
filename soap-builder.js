@@ -291,7 +291,9 @@
         existing.qty += 1;
         if (typeof renderCart === 'function') renderCart();
       } else {
-        var item = { name: name, price: price, qty: 1 };
+        // customForm tells the server-authoritative pricer (lib/catalog.js) this
+        // is a custom botanical soap; without it checkout rejects the item.
+        var item = { name: name, price: price, qty: 1, customForm: 'custom-soap' };
         if (detail) item.herbs = detail;
         if (typeof cart !== 'undefined') cart.push(item);
         if (typeof renderCart === 'function') renderCart();
