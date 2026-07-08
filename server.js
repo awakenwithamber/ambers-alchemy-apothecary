@@ -66,6 +66,8 @@ async function runEsmHandler(modulePath, req, res) {
 }
 
 // ── Local blob store (filesystem-backed, replaces @netlify/blobs in dev) ─────
+// Only mounted in non-production environments. In production, @netlify/blobs
+// (or equivalent) is used directly and these helper routes must not be reachable.
 const BLOBS_DIR = path.join(__dirname, '.blobs');
 if (!fs.existsSync(BLOBS_DIR)) fs.mkdirSync(BLOBS_DIR, { recursive: true });
 
@@ -73,44 +75,59 @@ function safeKey(k) {
   return k.replace(/[^a-zA-Z0-9_\-:.@]/g, '_');
 }
 
-app.get('/_blobs/:store', (req, res) => {
-  const dir = path.join(BLOBS_DIR, req.params.store);
-  if (!fs.existsSync(dir)) return res.json({ blobs: [] });
-  const files = fs.readdirSync(dir).filter(f => !f.startsWith('.'));
-  const prefix = req.query.prefix || '';
-  const blobs = files
-    .filter(f => !prefix || f.startsWith(safeKey(prefix)))
-    .map(f => ({
-      key: f,
-      etag: `"${fs.statSync(path.join(dir, f)).mtime.getTime()}"`,
-      size: fs.statSync(path.join(dir, f)).size,
-    }));
-  res.json({ blobs });
-});
+// Resolve a path and confirm it stays within BLOBS_DIR, returning null on escape.
+function safeBlobPath(...segments) {
+  const resolved = path.resolve(BLOBS_DIR, ...segments);
+  if (!resolved.startsWith(BLOBS_DIR + path.sep) && resolved !== BLOBS_DIR) return null;
+  return resolved;
+}
 
-app.get('/_blobs/:store/:key', (req, res) => {
-  const file = path.join(BLOBS_DIR, req.params.store, safeKey(req.params.key));
-  if (!fs.existsSync(file)) return res.status(404).end();
-  res.setHeader('ETag', `"${fs.statSync(file).mtime.getTime()}"`);
-  res.sendFile(file);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.get('/_blobs/:store', (req, res) => {
+    const dir = safeBlobPath(safeKey(req.params.store));
+    if (!dir) return res.status(400).end();
+    if (!fs.existsSync(dir)) return res.json({ blobs: [] });
+    const files = fs.readdirSync(dir).filter(f => !f.startsWith('.'));
+    const prefix = req.query.prefix || '';
+    const blobs = files
+      .filter(f => !prefix || f.startsWith(safeKey(prefix)))
+      .map(f => ({
+        key: f,
+        etag: `"${fs.statSync(path.join(dir, f)).mtime.getTime()}"`,
+        size: fs.statSync(path.join(dir, f)).size,
+      }));
+    res.json({ blobs });
+  });
 
-app.put('/_blobs/:store/:key', (req, res) => {
-  const dir = path.join(BLOBS_DIR, req.params.store);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  let data = '';
-  req.on('data', chunk => (data += chunk));
-  req.on('end', () => {
-    fs.writeFileSync(path.join(dir, safeKey(req.params.key)), data);
+  app.get('/_blobs/:store/:key', (req, res) => {
+    const file = safeBlobPath(safeKey(req.params.store), safeKey(req.params.key));
+    if (!file) return res.status(400).end();
+    if (!fs.existsSync(file)) return res.status(404).end();
+    res.setHeader('ETag', `"${fs.statSync(file).mtime.getTime()}"`);
+    res.sendFile(file);
+  });
+
+  app.put('/_blobs/:store/:key', (req, res) => {
+    const storeDir = safeBlobPath(safeKey(req.params.store));
+    if (!storeDir) return res.status(400).end();
+    const file = safeBlobPath(safeKey(req.params.store), safeKey(req.params.key));
+    if (!file) return res.status(400).end();
+    if (!fs.existsSync(storeDir)) fs.mkdirSync(storeDir, { recursive: true });
+    let data = '';
+    req.on('data', chunk => (data += chunk));
+    req.on('end', () => {
+      fs.writeFileSync(file, data);
+      res.status(204).end();
+    });
+  });
+
+  app.delete('/_blobs/:store/:key', (req, res) => {
+    const file = safeBlobPath(safeKey(req.params.store), safeKey(req.params.key));
+    if (!file) return res.status(400).end();
+    if (fs.existsSync(file)) fs.unlinkSync(file);
     res.status(204).end();
   });
-});
-
-app.delete('/_blobs/:store/:key', (req, res) => {
-  const file = path.join(BLOBS_DIR, req.params.store, safeKey(req.params.key));
-  if (fs.existsSync(file)) fs.unlinkSync(file);
-  res.status(204).end();
-});
+}
 
 // Set the NETLIFY_BLOBS_CONTEXT env var so @netlify/blobs finds the local server
 const blobsContext = Buffer.from(JSON.stringify({
