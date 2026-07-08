@@ -2,7 +2,7 @@ modules = ["nodejs-20", "web", "python-3.11", "postgresql-16"]
 [agent]
 expertMode = true
 stack = "BEST_EFFORT_FALLBACK"
-integrations = ["replitmail:1.0.0"]
+integrations = ["replitmail:1.0.0", "github:1.0.0"]
 
 [nix]
 channel = "stable-25_05"
