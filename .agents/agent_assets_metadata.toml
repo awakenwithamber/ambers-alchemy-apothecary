@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "QIWoY0SoT0LE6Vd8qmvGl"
+uri = "file://exports/awakenagain-project.zip"
+type = "unspecified"
+title = "AwakenAgain Project Files (ZIP)"
