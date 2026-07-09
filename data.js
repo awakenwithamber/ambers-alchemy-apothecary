@@ -15,9 +15,9 @@ const PRODUCTS = [
     keyHerbs: ['Rose Hip', 'Frankincense', 'Sea Buckthorn', 'Neroli'],
     desc: 'A luminous botanical balm created to soften, restore, and renew. Saffron, rose, and lavender offer antioxidant beauty support while rich oils deeply hydrate and encourage a smoother, more radiant glow.',
     sizes: [
-      { label: '2oz — $21.99', price: 21.99 },
-      { label: '3oz — $29.99', price: 29.99 },
-      { label: '4oz — $37.99', price: 37.99 },
+      { label: '2oz — $24.99', price: 24.99 },
+      { label: '3oz — $33.99', price: 33.99 },
+      { label: '4oz — $41.99', price: 41.99 },
     ],
     sampleNote: 'FREE sample size included with any purchase',
     categories: ['beauty']
@@ -32,9 +32,9 @@ const PRODUCTS = [
     keyHerbs: ['Arnica', 'Cayenne', 'Wintergreen', 'Comfrey'],
     desc: 'A powerful herbal balm made to warm, soothe, and comfort the body. Turmeric, cayenne, peppermint, comfrey, and arnica help support circulation and ease tension in tired muscles and joints.',
     sizes: [
-      { label: '2oz — $21.99', price: 21.99 },
-      { label: '3oz — $29.99', price: 29.99 },
-      { label: '4oz — $37.99', price: 37.99 },
+      { label: '2oz — $24.99', price: 24.99 },
+      { label: '3oz — $33.99', price: 33.99 },
+      { label: '4oz — $41.99', price: 41.99 },
     ],
     sampleNote: 'FREE sample size included with any purchase',
     categories: ['pain']
@@ -65,7 +65,7 @@ const PRODUCTS = [
     sizes: [
       { label: '30-Day Supply — $30.00', price: 30 },
     ],
-    categories: ['immune']
+    categories: ['immune', 'wellness']
   },
   {
     id: 'hair-serum',
@@ -77,9 +77,9 @@ const PRODUCTS = [
     keyHerbs: ['Rosemary', 'Peppermint', 'Castor Oil', 'Saw Palmetto'],
     desc: 'A sacred botanical scalp elixir designed to awaken roots and restore vitality. Rosemary, fenugreek, and plant oils help stimulate circulation, nourish follicles, and encourage fuller, healthier-looking hair.',
     sizes: [
-      { label: '2oz — $21.99', price: 21.99 },
-      { label: '3oz — $29.99', price: 29.99 },
-      { label: '4oz — $37.99', price: 37.99 },
+      { label: '2oz — $24.99', price: 24.99 },
+      { label: '3oz — $33.99', price: 33.99 },
+      { label: '4oz — $41.99', price: 41.99 },
     ],
     categories: ['beauty']
   },
@@ -93,7 +93,7 @@ const PRODUCTS = [
     keyHerbs: ['Mugwort', 'Blue Lotus', 'Valerian', 'Passionflower'],
     desc: 'A sacred blend of mugwort, blue lotus, valerian, and passionflower. Brewed before sleep to deepen dream states and invite visionary clarity.',
     sizes: [
-      { label: '20 Tea Bags — $12.99', price: 12.99 },
+      { label: '20 Tea Bags — $11.99', price: 11.99 },
       { label: '1oz Loose Leaf — $9.99', price: 9.99 },
     ],
     categories: ['sleep']
@@ -206,33 +206,132 @@ const PRODUCTS = [
     keyHerbs: ['Chamomile', 'Lemon Balm', 'Hibiscus', 'Rose Petals'],
     desc: 'A handcrafted loose-leaf herbal tea blend designed for full-body nourishment and balance. Steep 10-15 minutes for a rich, restorative botanical experience.',
     sizes: [
-      { label: '1oz Loose Leaf — $12.99', price: 12.99 },
+      { label: '1oz Loose Leaf — $13.33', price: 13.33 },
       { label: '2oz Loose Leaf — $22.99', price: 22.99 },
     ],
     categories: ['sleep']
+  },
+  {
+    id: 'detox-formula',
+    name: 'Detox Formula',
+    emoji: '🌿',
+    img: 'images/detox-formula.png',
+    benefit: "Gently supports the liver & the body's natural detox pathways",
+    shortDesc: "Gently supports the liver and the body's natural daily detox pathways.",
+    keyHerbs: ['Milk Thistle', 'Dandelion Root', 'Burdock', 'Red Clover'],
+    desc: "A cleansing botanical blend crafted to support the liver, lymph, and the body's own daily detoxification. Milk thistle, dandelion, and burdock help the body gently release what no longer serves it.",
+    sizes: [
+      { label: '30-Day Supply — $34.00', price: 34 },
+    ],
+    categories: ['wellness']
+  },
+  {
+    id: 'mold-metal-detox',
+    name: 'Mold & Heavy Metal Detox',
+    emoji: '🛡️',
+    img: 'images/mold-metal-detox.png',
+    benefit: 'Binds & helps clear mold toxins & heavy metals',
+    shortDesc: 'Supports the body in binding and clearing mold toxins and heavy metals.',
+    keyHerbs: ['Chlorella', 'Cilantro', 'Activated Charcoal', 'Zeolite Clay'],
+    desc: 'A deep-cleansing binder blend formulated to support the body in gently capturing and eliminating mold toxins, environmental pollutants, and heavy metals. Chlorella and cilantro support natural chelation while binders escort impurities out.',
+    sizes: [
+      { label: '30-Day Supply — $34.00', price: 34 },
+    ],
+    categories: ['wellness']
+  },
+  {
+    id: 'parasite-cleanse',
+    name: 'Parasite Cleanse Formula',
+    emoji: '🌑',
+    img: 'images/parasite-cleanse.png',
+    benefit: 'Traditional botanicals for gut & microbial balance',
+    shortDesc: 'Traditional cleansing botanicals to support gut and microbial balance.',
+    keyHerbs: ['Black Walnut', 'Wormwood', 'Clove', 'Oregano'],
+    desc: 'A time-honored cleansing blend using black walnut, wormwood, and clove — botanicals traditionally used to support a balanced gut terrain and a healthy internal microbial environment.',
+    sizes: [
+      { label: '30-Day Supply — $34.00', price: 34 },
+    ],
+    categories: ['wellness']
+  },
+  {
+    id: 'mood-clarity',
+    name: 'Mood & Clarity Formula',
+    emoji: '🌟',
+    img: 'images/mood-clarity.png',
+    benefit: 'Lifts mood & supports calm, clear focus',
+    shortDesc: 'Lifts mood and supports calm, clear mental focus.',
+    keyHerbs: ["Lion's Mane", 'Bacopa', 'Gotu Kola', 'Saffron'],
+    desc: "A bright nootropic-botanical blend to uplift mood and clear mental fog. Lion's mane and bacopa nourish cognition while saffron and gotu kola support a calm, balanced, focused mind.",
+    sizes: [
+      { label: '30-Day Supply — $34.00', price: 34 },
+    ],
+    categories: ['wellness', 'energy']
+  },
+  {
+    id: 'diabetic-support',
+    name: 'Diabetic Support Formula',
+    emoji: '🍃',
+    img: 'images/diabetic-support.png',
+    benefit: 'Supports healthy blood sugar already in normal range',
+    shortDesc: 'Botanical support for healthy blood sugar already within a normal range.',
+    keyHerbs: ['Berberine', 'Cinnamon', 'Gymnema', 'Bitter Melon'],
+    desc: 'A balancing botanical blend crafted to support healthy blood sugar metabolism already within a normal range. Berberine, cinnamon, and gymnema support glucose balance and steady daily energy.',
+    sizes: [
+      { label: '30-Day Supply — $34.00', price: 34 },
+    ],
+    categories: ['wellness']
+  },
+  {
+    id: 'vital-clarity',
+    name: 'Vital Clarity Formula',
+    emoji: '💎',
+    img: 'images/vital-clarity.png',
+    benefit: 'Clears brain fog & supports sharp, steady focus',
+    shortDesc: 'Clears brain fog and supports sharp, sustained mental focus.',
+    keyHerbs: ['Ginkgo', 'Rosemary', 'Sage', "Lion's Mane"],
+    desc: "A clarifying herbal blend to lift brain fog and support sharp, steady focus. Ginkgo and rosemary support healthy circulation to the mind while sage and lion's mane nourish memory and concentration.",
+    sizes: [
+      { label: '30-Day Supply — $34.00', price: 34 },
+    ],
+    categories: ['wellness']
   }
 ];
 
 // ---- SOAPS (9 Signature Scents) ----
 const SOAPS = [
-  { id: 'lavender-fairy-dream', name: 'Lavender Fairy Dream', emoji: '💜', img: 'images/soap-lavender-honey.png', desc: 'A gentle floral escape inspired by twilight gardens. Calming lavender helps soothe the mind while nourishing goat milk and shea butter soften and hydrate the skin, leaving you wrapped in peaceful botanical comfort.', price: 12.99, benefits: ['Calming lavender soothes the mind', 'Softens and hydrates with goat milk and shea butter', 'Peaceful botanical comfort for sensitive skin'], illustration: 'images/soap-lavender-honey.png', botanicals: 'Lavender buds + Butterfly pea flower', scentProfile: 'Soft floral \u2022 calming \u2022 dreamy', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'calming'] },
-  { id: 'gaias-rose', name: "Gaia's Rose", emoji: '🌹', img: 'images/soap-rose-clay.png', desc: "A romantic bar inspired by nature's sacred bloom. Rose petals are cherished for their skin-softening and heart-lifting qualities, while creamy shea butter and goat milk restore moisture and leave skin glowing and refreshed.", price: 12.99, benefits: ['Rose petals soften and nourish skin', 'Restores moisture for a glowing complexion', 'Heart-lifting floral aroma'], illustration: 'images/soap-rose-clay.png', botanicals: 'Rose petals + Hibiscus', scentProfile: 'Romantic \u2022 floral \u2022 heart-opening', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'floral'] },
-  { id: 'eucalyptus-mint-spa', name: 'Eucalyptus Mint Spa Renewal', emoji: '🌿', img: 'images/soap-charcoal-mint.png', desc: 'A bright, invigorating blend that awakens the senses. Cooling eucalyptus and mint help refresh tired skin and open the breath, while deeply moisturizing goat milk and shea butter leave the body feeling clean, energized, and renewed.', price: 12.99, benefits: ['Cooling eucalyptus and mint refresh tired skin', 'Opens the breath and awakens the senses', 'Deeply moisturizing with goat milk and shea butter'], illustration: 'images/soap-charcoal-mint.png', botanicals: 'Mint leaves + Spirulina', scentProfile: 'Fresh \u2022 cooling \u2022 clean', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'refresh'] },
-  { id: 'warm-cinnamon-comfort', name: 'Warm Cinnamon Comfort', emoji: '🍂', img: 'images/soap-frankincense-myrrh.png', desc: "A cozy, grounding soap infused with the warmth of cinnamon and spice. Cinnamon's natural stimulating properties encourage circulation while creamy shea butter and goat milk provide rich nourishment for soft, healthy skin.", price: 12.99, benefits: ['Cinnamon encourages healthy circulation', 'Creamy shea butter and goat milk nourish deeply', 'Cozy, grounding warmth for soft, healthy skin'], illustration: 'images/soap-frankincense-myrrh.png', botanicals: 'Cinnamon + Clove', scentProfile: 'Cozy \u2022 spicy \u2022 grounding', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'warming'] },
-  { id: 'orange-lily-goddess', name: 'Orange Lily Goddess', emoji: '🌺', img: 'images/soap-calendula-oat.png', desc: 'A radiant citrus floral blend inspired by sunlight and blooming gardens. Sweet orange uplifts the mood while botanical oils help brighten and soften the skin, leaving a fresh glow and a gentle aura of natural sweetness.', price: 12.99, benefits: ['Sweet orange uplifts mood and brightens skin', 'Botanical oils soften and nourish', 'Fresh glow with natural sweetness'], illustration: 'images/soap-calendula-oat.png', botanicals: 'Calendula + Orange peel', scentProfile: 'Bright \u2022 citrus \u2022 radiant', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'uplifting'] },
-  { id: 'citrus-goddess-glow', name: 'Citrus Goddess Glow', emoji: '🍊', img: 'images/soap-turmeric-glow.png', desc: 'A sweet citrus bar that uplifts and energizes with every wash. Bright orange peel and golden calendula brighten the skin and lift the spirit, leaving a luminous, sun-kissed glow that carries through the day.', price: 12.99, benefits: ['Citrus oils are brightening and antioxidant-rich', 'Uplifts mood and supports emotional balance', 'Energizing morning fragrance that lingers'], illustration: 'images/soap-turmeric-glow.png', botanicals: 'Orange peel + Calendula', scentProfile: 'Sweet citrus \u2022 uplifting \u2022 energizing', base: 'Glycerin top + Goat milk + Shea butter base', layered: true, categories: ['soap', 'energizing'] },
-  { id: 'sacred-forest-ritual', name: 'Sacred Forest Ritual', emoji: '🌲', img: 'images/soap-cedar-sage.png', desc: 'An earthy, resinous bar that grounds the spirit and purifies the energy field. Mineral-rich nettle and deep forest tones create a ceremonial lather that cleanses both body and soul with ancient botanical wisdom.', price: 12.99, benefits: ['Grounding earthy aroma for meditation and ritual', 'Nettle provides mineral-rich skin nourishment', 'Purifying resinous tones cleanse body and spirit'], illustration: 'images/soap-cedar-sage.png', botanicals: 'Nettle + Resin-inspired tones', scentProfile: 'Earthy \u2022 resinous \u2022 grounding', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'grounding'] },
-  { id: 'fresh-mountain-air', name: 'Fresh Mountain Air', emoji: '🏔️', img: 'images/soap-shea-vanilla.png', desc: 'A clean, herbal bar that clears the mind and refreshes the body. Cool mint and light green botanicals create a crisp, awakening lather like the first breath of mountain morning air.', price: 12.99, benefits: ['Clean herbal aroma clears and refreshes the mind', 'Mint awakens and invigorates tired skin', 'Light botanical greens support skin clarity'], illustration: 'images/soap-shea-vanilla.png', botanicals: 'Mint + Light green herbs', scentProfile: 'Clean \u2022 herbal \u2022 awakening', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'refresh'] },
-  { id: 'sunlit-garden-bloom', name: 'Sunlit Garden Bloom', emoji: '🌸', img: 'images/soap-shea-vanilla.png', desc: 'A soft, feminine bar inspired by sun-drenched gardens in bloom. Soothing chamomile and delicate rose petals create a gentle lather that calms sensitive skin and wraps you in soft botanical warmth.', price: 12.99, benefits: ['Chamomile soothes and calms sensitive skin', 'Rose petals soften and add botanical beauty', 'Soft, feminine floral aroma uplifts the soul'], illustration: 'images/soap-shea-vanilla.png', botanicals: 'Chamomile + Rose mix', scentProfile: 'Floral \u2022 soft \u2022 feminine', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'floral'] },
+  { id: 'gaias-rose', name: "Gaia's Rose", emoji: '🌹', img: 'images/gaias-rose-soap.png', desc: "A romantic bar inspired by nature's sacred bloom. Rose petals soften and nourish the skin while creamy goat milk and shea butter restore moisture, leaving skin glowing, refreshed, and wrapped in a heart-opening floral aura.", price: 9.99, benefits: ['Rose petals soften and nourish the skin', 'Restores moisture for a glowing complexion', 'Heart-opening floral aroma'], illustration: 'images/gaias-rose-soap.png', botanicals: 'Rose petals + Rose clay', scentProfile: 'Romantic • floral • heart-opening', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'floral'] },
+  { id: 'lavender-dream', name: 'Lavender Dream', emoji: '💜', img: 'images/lavender-dream-soap.png', desc: 'A gentle floral escape inspired by twilight gardens. Calming lavender soothes the mind while nourishing goat milk and shea butter soften and hydrate the skin, leaving you wrapped in peaceful botanical comfort.', price: 9.99, benefits: ['Calming lavender soothes the mind', 'Softens and hydrates with goat milk and shea butter', 'Peaceful comfort for sensitive skin'], illustration: 'images/lavender-dream-soap.png', botanicals: 'Lavender buds', scentProfile: 'Soft floral • calming • dreamy', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'calming'] },
+  { id: 'emerald-forest', name: 'Emerald Forest', emoji: '🌲', img: 'images/emerald-forest-soap.png', desc: 'An earthy, resinous bar that grounds the spirit and purifies the energy field. Deep forest botanicals and mineral-rich greens create a ceremonial lather that cleanses both body and soul with ancient woodland wisdom.', price: 9.99, benefits: ['Grounding forest aroma for meditation and ritual', 'Purifying botanicals cleanse body and spirit', 'Mineral-rich nourishment for the skin'], illustration: 'images/emerald-forest-soap.png', botanicals: 'Pine + Fern + Forest botanicals', scentProfile: 'Earthy • resinous • grounding', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'grounding'] },
+  { id: 'citrus-grove', name: 'Citrus Grove', emoji: '🍊', img: 'images/citrus-grove-soap.png', desc: 'A sweet citrus bar that uplifts and energizes with every wash. Bright orange peel and golden calendula brighten the skin and lift the spirit, leaving a luminous, sun-kissed glow that carries through the day.', price: 9.99, benefits: ['Citrus oils are brightening and antioxidant-rich', 'Uplifts mood and energizes', 'Sunny fragrance that lingers'], illustration: 'images/citrus-grove-soap.png', botanicals: 'Orange peel + Calendula', scentProfile: 'Sweet citrus • uplifting • energizing', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'energizing'] },
+  { id: 'rose-blossom', name: 'Rose Blossom', emoji: '🌸', img: 'images/rose-blossom-soap.png', desc: 'A soft, feminine bar inspired by sun-drenched gardens in bloom. Soothing chamomile and delicate rose blossoms create a gentle lather that calms sensitive skin and wraps you in soft botanical warmth.', price: 9.99, benefits: ['Chamomile soothes and calms sensitive skin', 'Rose blossoms soften and add botanical beauty', 'Soft, feminine floral aroma'], illustration: 'images/rose-blossom-soap.png', botanicals: 'Rose blossoms + Chamomile', scentProfile: 'Floral • soft • feminine', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'floral'] },
+  { id: 'ivory-rose', name: 'Ivory Rose', emoji: '🤍', img: 'images/ivory-rose-soap.png', desc: 'A pure, elegant bar crowned with a single white rose. Gentle white-rose botanicals with creamy goat milk and shea butter cleanse and refine all skin types, leaving a clean, refined, softly floral finish.', price: 9.99, benefits: ['Gentle, pure cleansing for all skin types', 'White rose softens and refines the skin', 'Clean, elegant floral aroma'], illustration: 'images/ivory-rose-soap.png', botanicals: 'White rose + Shea', scentProfile: 'Clean • elegant • pure floral', base: 'Goat milk + Shea butter', layered: false, categories: ['soap', 'floral'] },
 ];
 
 // ---- SERVICES ----
 const SERVICES = [
   {
+    id: 'consultation',
+    name: 'Custom Remedy Consultation',
+    emoji: '🌿',
+    img: 'images/consultation.png',
+    desc: 'A one-on-one session where Amber listens to your needs and hand-maps a botanical remedy made for you - your plant allies, your goals, your ritual.',
+    price: 0,
+    duration: '45 min'
+  },
+  {
+    id: 'protocols',
+    name: 'Personalized Herbal Protocols',
+    emoji: '📜',
+    img: 'images/protocols.png',
+    desc: 'A comprehensive written herbal protocol crafted around your whole picture - daily blends, timing, and lifestyle rituals to support your path to balance.',
+    price: 0,
+    duration: 'Custom plan'
+  },
+  {
     id: 'divination',
     name: 'Care & Divination Reading',
     emoji: '🔮',
-    img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80',
+    img: 'images/tarot-empress.png',
     desc: 'A deeply personal session combining intuitive care with tarot or oracle divination. Amber holds space for your questions, your healing, and your path forward.',
     price: 55,
     duration: '60 min'
@@ -241,7 +340,7 @@ const SERVICES = [
     id: 'aura-cleanse',
     name: 'Aura & Space Cleansing',
     emoji: '🌟',
-    img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80',
+    img: 'images/aura-cleanse.png',
     desc: 'A sacred clearing of your personal energy field and/or living space using sound, smoke, and intention. Removes stagnant energy and restores vibrational harmony.',
     price: 88,
     duration: '75 min'
@@ -250,7 +349,7 @@ const SERVICES = [
     id: 'past-life',
     name: 'Past Life Regression',
     emoji: '⏳',
-    img: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=400&q=80',
+    img: 'images/past-life.png',
     desc: 'A guided hypnotic journey into past life memories to uncover patterns, release karmic wounds, and bring profound understanding to your present experience.',
     price: 111,
     duration: '90 min'
@@ -259,7 +358,7 @@ const SERVICES = [
     id: 'generational-trauma',
     name: 'Generational Trauma Healing',
     emoji: '🌱',
-    img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80',
+    img: 'images/generational-trauma.png',
     desc: 'A transformative session addressing inherited emotional and energetic patterns. Amber works with ancestral lineage to identify, acknowledge, and release what was passed down.',
     price: 125,
     duration: '90 min'
@@ -268,7 +367,7 @@ const SERVICES = [
     id: 'chakra',
     name: 'Chakra Balancing',
     emoji: '🌈',
-    img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80',
+    img: 'images/chakra.png',
     desc: 'A full chakra assessment and balancing session using crystals, sound, and energy work. Restores the flow of vital energy through all seven energy centers.',
     price: 77,
     duration: '60 min'
@@ -277,7 +376,7 @@ const SERVICES = [
     id: 'crystal-rebirthing',
     name: 'Crystal Rebirthing',
     emoji: '💎',
-    img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&q=80',
+    img: 'images/crystal-rebirthing.png',
     desc: 'A powerful ceremonial session using crystals, breathwork, and guided visualization to facilitate deep release, renewal, and spiritual rebirth.',
     price: 95,
     duration: '75 min'
