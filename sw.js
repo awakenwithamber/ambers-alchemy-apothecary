@@ -14,8 +14,8 @@ var STATIC_ASSETS = [
   '/grimoire-seo.css',
   '/herbal-advisor.css',
   '/navigation-history.js',
-  '/images/icon-192.png',
-  '/images/icon-512.png'
+  '/images/icon-192.svg',
+  '/images/icon-512.svg'
 ];
 
 // Never cache these patterns

@@ -4,24 +4,26 @@
    ============================================================ */
 
 :root {
-  --plum-deep:    #2E1C38;
-  --plum-dark:    #1E1128;
-  --plum-mid:     #4B2E59;
+  --plum-deep:    #1f1336;
+  --plum-dark:    #150b26;
+  --plum-mid:     #2a1a40;
   --amethyst:     #6E4B7E;
   --amethyst-lt:  #9B72B0;
-  --brass:        #8C6A3B;
-  --brass-lt:     #B8945A;
-  --parchment:    #F3EBDD;
-  --parchment-dk: #E0D0B8;
+  --brass:        #d4af37;
+  --brass-lt:     #e6c766;
+  --gold:         #d4af37;
+  --gold-light:   #e6c766;
+  --parchment:    #f4e8d0;
+  --parchment-dk: #e5d5b5;
   --sage:         #7A8B6F;
-  --text-body:    #EDE4D8;
-  --text-muted:   #B8A898;
-  --border:       rgba(140, 106, 59, 0.25);
-  --border-lt:    rgba(243, 235, 221, 0.12);
-  --shadow:       0 4px 24px rgba(30, 17, 40, 0.55);
-  --font-display: 'Cinzel', serif;
-  --font-body:    'Lora', Georgia, serif;
-  --font-accent:  'Cormorant Garamond', serif;
+  --text-body:    #f4e8d0;
+  --text-muted:   #c8b79a;
+  --border:       rgba(212, 175, 55, 0.28);
+  --border-lt:    rgba(244, 232, 208, 0.12);
+  --shadow:       0 4px 24px rgba(10, 6, 20, 0.6);
+  --font-display: 'Cinzel Decorative', 'Cinzel', serif;
+  --font-body:    'EB Garamond', Georgia, serif;
+  --font-accent:  'EB Garamond', 'Cormorant Garamond', serif;
   --radius:       8px;
   --radius-lg:    14px;
   --transition:   0.22s ease;

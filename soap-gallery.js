@@ -10,14 +10,12 @@ const SOAP_GALLERY_IMAGES = (typeof SOAPS !== 'undefined' && SOAPS.length > 0)
       alt: s.name
     }))
   : [
-  { src: 'images/soap-rose-clay.png', caption: "Gaia's Rose Collection — Handcrafted Artisan Soaps", alt: "Rose collection soaps" },
-  { src: 'images/soap-rose-clay.png', caption: 'Rose Petal & Pink Clay — Luxurious botanical bar', alt: 'Rose petal clay soap' },
-  { src: 'images/soap-charcoal-mint.png', caption: 'Activated Charcoal & Peppermint — Deep cleansing ritual', alt: 'Charcoal mint soap' },
-  { src: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-hibiscus_6042e55f.jpg', caption: 'Hibiscus & Rose — Antioxidant-rich botanical beauty', alt: 'Hibiscus rose soap' },
-  { src: 'images/soap-frankincense-myrrh.png', caption: 'Frankincense & Myrrh — Sacred ritual bar', alt: 'Frankincense myrrh soap' },
-  { src: 'images/soap-turmeric-glow.png', caption: 'Turmeric Glow — Brightening Ayurvedic bar', alt: 'Turmeric glow soap' },
-  { src: 'images/soap-cedar-sage.png', caption: 'Cedarwood & White Sage — Forest grounding ritual', alt: 'Cedar sage soap' },
-  { src: 'images/soap-lavender-honey.png', caption: "Amber's Apothecary — Full Artisan Soap Collection", alt: 'Soap collection' },
+  { src: 'images/gaias-rose-soap.png', caption: "Gaia's Rose — Romantic rose-clay botanical bar", alt: "Gaia's Rose soap" },
+  { src: 'images/lavender-dream-soap.png', caption: 'Lavender Dream — Calming lavender botanical bar', alt: 'Lavender Dream soap' },
+  { src: 'images/emerald-forest-soap.png', caption: 'Emerald Forest — Grounding woodland botanical bar', alt: 'Emerald Forest soap' },
+  { src: 'images/citrus-grove-soap.png', caption: 'Citrus Grove — Uplifting citrus botanical bar', alt: 'Citrus Grove soap' },
+  { src: 'images/rose-blossom-soap.png', caption: 'Rose Blossom — Soft floral botanical bar', alt: 'Rose Blossom soap' },
+  { src: 'images/ivory-rose-soap.png', caption: 'Ivory Rose — Pure white-rose botanical bar', alt: 'Ivory Rose soap' },
 ];
 
 let galleryState = {
