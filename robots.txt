@@ -3,8 +3,8 @@
 
 User-agent: *
 Allow: /
-Disallow: /netlify/functions/
-Disallow: /*.json$
+Allow: /netlify/functions/
+Allow: /*.json$
 
 # Allow all major crawlers full access to images, assets, and pages
 User-agent: Googlebot
