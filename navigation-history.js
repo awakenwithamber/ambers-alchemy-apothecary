@@ -19,12 +19,29 @@
     SELECTED_SYMPTOMS: 'aa_selectedSymptoms'
   };
 
+  // --- URL ALIAS MAP ---
+  // Bidirectional mapping between URL slugs (what users see in the address bar)
+  // and canonical section IDs (what the DOM actually uses).
+  var SLUG_TO_SECTION = {
+    'articles': 'herbal-wisdom',
+    'botanicals': 'herb-index',
+    'build-a-remedy': 'custom-formula',
+    'custom-remedy': 'custom-formula'
+  };
+  var SECTION_TO_SLUG = {
+    'herbal-wisdom': 'articles',
+    'herb-index': 'botanicals',
+    'custom-formula': 'build-a-remedy'
+  };
+
   // --- HISTORY PUSH HELPER ---
   var isPopping = false;
 
   function pushState(stateObj, title) {
     if (isPopping) return;
-    var url = stateObj.section ? ('/' + (stateObj.section === 'home' ? '' : stateObj.section)) : '/';
+    var slug = stateObj.section;
+    if (slug && SECTION_TO_SLUG[slug]) slug = SECTION_TO_SLUG[slug];
+    var url = slug ? ('/' + (slug === 'home' ? '' : slug)) : '/';
     if (stateObj.product) url += '?product=' + stateObj.product;
     try {
       history.pushState(stateObj, title || '', url);
@@ -236,9 +253,14 @@
 
   // --- INITIAL STATE ---
   // Handle URL-based routing (for Netlify redirects)
-  var validSections = ['home','shop','herbal-wisdom','herbal-library','custom-formula','herb-index','journal','soaps','services','about','faqs','contact','checkout'];
+  var validSections = ['home','shop','herbal-wisdom','herbal-library','custom-formula','herb-index','journal','soaps','services','about','faqs','contact','checkout','articles','botanicals','build-a-remedy','custom-remedy','cart'];
   var initialPath = location.pathname.replace(/^\//, '').replace(/\/$/, '') || 'home';
   var initialSection = validSections.indexOf(initialPath) !== -1 ? initialPath : 'home';
+  // Resolve alias slugs to canonical section IDs
+  if (SLUG_TO_SECTION[initialSection]) initialSection = SLUG_TO_SECTION[initialSection];
+  // /cart is not a full section — open cart drawer on load instead
+  var openCartOnLoad = (initialPath === 'cart');
+  if (openCartOnLoad) initialSection = 'home';
   var urlProduct = (new URLSearchParams(location.search)).get('product');
 
   history.replaceState({ section: initialSection, product: urlProduct }, '', location.pathname + location.search);
@@ -252,6 +274,13 @@
 
   // Restore cart on load
   restoreCart();
+
+  // If the user landed on /cart, open the cart drawer once app.js has wired up openCart.
+  if (openCartOnLoad) {
+    setTimeout(function() {
+      if (typeof window.openCart === 'function') window.openCart();
+    }, 250);
+  }
 
   // Handle URL-based initial routing
   if (initialSection !== 'home') {
@@ -272,7 +301,8 @@
       if (!document.referrer || document.referrer.indexOf(location.hostname) !== -1) {
         setTimeout(function() {
           _baseShowSection(lastSection);
-          history.replaceState({ section: lastSection }, '', '/' + lastSection);
+          var lastSlug = SECTION_TO_SLUG[lastSection] || lastSection;
+          history.replaceState({ section: lastSection }, '', '/' + lastSlug);
           var lastProduct = null;
           try { lastProduct = sessionStorage.getItem(KEYS.LAST_PRODUCT); } catch(e) {}
           if (lastProduct && lastSection === 'shop') {
