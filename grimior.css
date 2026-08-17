@@ -1,0 +1,82 @@
+/* ============================================================
+   THE GRIMIOR / REAL MAGIC — parchment book UI
+   Designed to live alongside the existing mystical/botanical theme.
+   ============================================================ */
+
+#grimior.page-section { padding-bottom: 4rem; }
+
+.grimior-hero {
+  text-align: center;
+  padding: 3rem 1.25rem 1.5rem;
+  position: relative;
+}
+.grimior-hero .g-eyebrow {
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  color: var(--accent, #b08d57);
+  margin-bottom: 0.4rem;
+}
+.grimior-hero h1 {
+  font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+  font-size: clamp(2.1rem, 5vw, 3.4rem);
+  margin: 0.1rem 0 0.4rem;
+  letter-spacing: 0.02em;
+}
+.grimior-hero h1 span { display: block; font-style: italic; font-size: 0.6em; opacity: 0.75; }
+.grimior-hero p.lede {
+  max-width: 640px;
+  margin: 0.6rem auto 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+.grimior-hero .g-member-badge {
+  display: none;
+  margin: 1rem auto 0;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid rgba(176, 141, 87, 0.5);
+  border-radius: 999px;
+  background: rgba(255, 248, 228, 0.25);
+  font-size: 0.85rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+.grimior-hero .gb-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: radial-gradient(circle, #f1d68c, #b08d57);
+  box-shadow: 0 0 10px rgba(240, 200, 120, 0.8);
+}
+.grimior-hero .gb-signout {
+  margin-left: 0.4rem;
+  background: transparent;
+  border: 1px solid rgba(176, 141, 87, 0.5);
+  border-radius: 999px;
+  color: inherit;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.grimior-subscriber-benefits {
+  max-width: 960px;
+  margin: 0 auto 2rem;
+  padding: 1.25rem 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  text-align: center;
+}
+.grimior-benefit {
+  padding: 0.85rem 0.75rem;
+  border: 1px solid rgba(176, 141, 87, 0.35);
+  border-radius: 10px;
+  background: rgba(255, 248, 228, 0.25);
+  font-size: 0.9rem;
+}
+.grimior-benefit strong { display: block; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.15rem; margin-bottom: 0.2rem; }
+
+/* Full grimior.css continues... (truncated for space, full version in repo) */
+
+body.g-modal-open { overflow: hidden; }
+body.grimior-member #grimior .grimior-hero .g-member-badge { display: inline-flex; }

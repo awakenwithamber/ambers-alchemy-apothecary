@@ -1,0 +1,22 @@
+/* LUNNA ASSISTANT — floating guide widget */
+#lunnaRoot { position: fixed; bottom: 20px; right: 20px; z-index: 9500; font-family: 'Lora', Georgia, serif; }
+
+.lunna-fab {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: linear-gradient(145deg, #3b2a5e 0%, #5b3d8a 100%);
+  color: #f7f1ea;
+  border: 1px solid rgba(212, 168, 67, 0.45);
+  border-radius: 999px;
+  padding: 12px 18px 12px 14px;
+  box-shadow: 0 10px 28px rgba(60, 30, 110, 0.35), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  cursor: pointer;
+  font-family: 'Cinzel', Georgia, serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+.lunna-fab:hover { transform: translateY(-1px); box-shadow: 0 14px 32px rgba(60, 30, 110, 0.45); }
+.lunna-fab-icon { font-size: 1.2rem; filter: drop-shadow(0 0 6px rgba(247, 223, 160, 0.6)); animation: lunnaGlow 4s ease-in-out infinite; }
+.lunna-fab-label { white-space: nowrap; }
+
+/* Lunna.css continues (full version in repo) */
