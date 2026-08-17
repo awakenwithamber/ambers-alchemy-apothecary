@@ -1,0 +1,53 @@
+{
+  "build": {
+    "outputDirectory": "."
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ],
+  "redirects": [
+    { "source": "/ingredient-library", "destination": "/herbal-index.html", "permanent": true },
+    { "source": "/ingredient-library.html", "destination": "/herbal-index.html", "permanent": true },
+    { "source": "/herb-encyclopedia", "destination": "/grimoir.html", "permanent": true },
+    { "source": "/herbal-encyclopedia", "destination": "/herbal-index.html", "permanent": true },
+    { "source": "/#herb-encyclopedia", "destination": "/herbal-index.html", "permanent": true },
+    { "source": "/#ingredient-library", "destination": "/herbal-index.html", "permanent": true },
+    { "source": "/grimoire.html", "destination": "/grimoir.html", "permanent": true },
+    { "source": "/herbal-library.html", "destination": "/grimoir.html", "permanent": true },
+    { "source": "/library", "destination": "/grimoir.html", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/grimior", "destination": "/grimior.html" },
+    { "source": "/create-remedy", "destination": "/create-remedy.html" },
+    { "source": "/articles", "destination": "/articles.html" },
+    { "source": "/herbal-index", "destination": "/herbal-index.html" },
+    { "source": "/grimoire", "destination": "/grimoir.html" },
+    { "source": "/herbal-library", "destination": "/grimoir.html" },
+    { "source": "/herbs", "destination": "/grimoir.html" },
+    { "source": "/dream-ease-capsules", "destination": "/#dreamease" },
+    { "source": "/vital-vitality-capsules", "destination": "/#vital-vitality" },
+    { "source": "/immune-at-ease-capsules", "destination": "/#immune-at-ease" },
+    { "source": "/pain-relief-balm", "destination": "/#pain-balm" },
+    { "source": "/age-reversal-beauty-balm", "destination": "/#beauty-balm" },
+    { "source": "/hair-regrowth-serum", "destination": "/#hair-serum" },
+    { "source": "/custom-capsule-builder", "destination": "/#custom-builder" },
+    { "source": "/handmade-botanical-soaps", "destination": "/#soaps" },
+    { "source": "/herbal-tea-apothecary", "destination": "/#herbal-tea" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/unsubscribe", "destination": "/api/unsubscribe" },
+    { "source": "/.netlify/functions/auth-check", "destination": "/api/netlify/auth-check" },
+    { "source": "/.netlify/functions/form-relay", "destination": "/api/netlify/form-relay" },
+    { "source": "/.netlify/functions/reviews", "destination": "/api/netlify/reviews" },
+    { "source": "/.netlify/functions/quiz-lead", "destination": "/api/netlify/quiz-lead" },
+    { "source": "/.netlify/functions/submission-created", "destination": "/api/netlify/submission-created" },
+    { "source": "/.netlify/functions/review-reminders", "destination": "/api/netlify/review-reminders" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

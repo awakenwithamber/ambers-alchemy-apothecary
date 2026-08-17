@@ -1,18 +1,12 @@
 {
   "scripts": {
-    "start": "node server.js"
+    "dev": "npx serve ."
   },
   "dependencies": {
-    "@netlify/blobs": "^10.7.4",
     "@supabase/supabase-js": "^2.108.1",
-    "express": "^5.2.1",
     "jsdom": "^29.0.2",
     "jsonwebtoken": "^9.0.3",
     "resend": "^6.12.4",
-    "stripe": "^22.2.0",
-    "ws": "^8.21.0"
-  },
-  "devDependencies": {
-    "serve": "^14.2.6"
+    "stripe": "^22.2.0"
   }
 }
