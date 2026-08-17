@@ -1,10 +1,45 @@
 // Triggered automatically when a Netlify Form submission is created.
-// Stores order data in Netlify Blobs for record-keeping and queues a polite
-// review request to be sent after the customer has had time with the product.
+// Stores order data in Netlify Blobs for record-keeping, queues a polite
+// review request, and dispatches a dual-recipient admin order email so
+// BOTH configured admin addresses always receive the details.
 
 import { getStore } from "@netlify/blobs";
+import { sendAdminOrderEmail } from "../lib/admin-email.mjs";
 
 const REVIEW_REQUEST_DELAY_DAYS = 10;
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function buildAdminEmail(order) {
+  const subject = `🌿 New Order ${order.orderId} — ${order.customerName || order.email || 'Guest'}`;
+  const html = `<div style="font-family:Georgia,serif;color:#322;max-width:640px;margin:0 auto;padding:20px;">
+    <h2 style="color:#3b2a5e;">New Order via Checkout Form</h2>
+    <p><strong>Order ID:</strong> ${escapeHtml(order.orderId)}</p>
+    <p><strong>Customer:</strong> ${escapeHtml(order.customerName || '(no name)')} &lt;${escapeHtml(order.email || 'no email')}&gt;</p>
+    <p><strong>Phone:</strong> ${escapeHtml(order.phone || '—')}</p>
+    <p><strong>Product:</strong> ${escapeHtml(order.product || '—')}</p>
+    <p><strong>Quantity:</strong> ${escapeHtml(order.quantity || '—')}</p>
+    <p><strong>Total:</strong> ${escapeHtml(order.orderTotal || '—')}</p>
+    <p><strong>Payment:</strong> ${escapeHtml(order.paymentStatus || '—')} (txn ${escapeHtml(order.transactionId || '—')})</p>
+    <p><strong>Ship to:</strong> ${escapeHtml(order.shippingAddress || '—')}</p>
+    ${order.notes ? `<h3>Notes</h3><p>${escapeHtml(order.notes)}</p>` : ''}
+  </div>`;
+  const text = [
+    `New Order ${order.orderId}`,
+    `Customer: ${order.customerName || '(no name)'} <${order.email || 'no email'}>`,
+    `Product: ${order.product} x${order.quantity}`,
+    `Total: ${order.orderTotal}`,
+    `Ship to: ${order.shippingAddress}`,
+  ].join('\n');
+  return { subject, html, text };
+}
 
 export default async (req) => {
   try {
@@ -53,6 +88,22 @@ export default async (req) => {
         reminderSent: false,
         createdAt: now.toISOString(),
       });
+    }
+
+    // Dual-recipient admin notification — MUST be delivered to both
+    // ADMIN_ORDER_EMAIL_1 and ADMIN_ORDER_EMAIL_2. Never short-circuits
+    // on a single-recipient failure and always writes an audit log.
+    try {
+      const mail = buildAdminEmail(order);
+      await sendAdminOrderEmail({
+        subject: mail.subject,
+        html: mail.html,
+        text: mail.text,
+        orderId,
+        submissionId: payload.id || null,
+      });
+    } catch (err) {
+      console.error('admin-email dispatch error:', err && err.message ? err.message : err);
     }
 
     return new Response('OK');
