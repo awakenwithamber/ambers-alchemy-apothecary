@@ -20,6 +20,7 @@ const grimoireAuth = require('./grimoire-auth');
 const stripeApi = require('./stripe');
 const adminApi = require('./admin');
 const emailApi = require('./email');
+const aiApi = require('./ai');
 
 // ── CORS (mirrors server.js) ─────────────────────────────────────────────────
 const ALLOWED_ORIGINS = [
@@ -180,6 +181,11 @@ module.exports = async (req, res) => {
     // vercel.json rewrites "/unsubscribe" → "/api/unsubscribe"
     // ─────────────────────────────────────────────────────────────────────
     if (path === '/api/unsubscribe' && method === 'GET') return run(emailApi.unsubscribe);
+
+    // ─────────────────────────────────────────────────────────────────────
+    // AI herbal advisor (Vercel AI Gateway — VERCEL_OIDC_TOKEN)
+    // ─────────────────────────────────────────────────────────────────────
+    if (path === '/api/ai/chat' && method === 'POST') return run(aiApi.chat);
 
     // ─────────────────────────────────────────────────────────────────────
     // Legacy /.netlify/functions/* routes
