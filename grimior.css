@@ -14,7 +14,7 @@
   letter-spacing: 0.28em;
   text-transform: uppercase;
   font-size: 0.78rem;
-  color: var(--accent, #b08d57);
+  color: var(--accent, #d4af37);
   margin-bottom: 0.4rem;
 }
 .grimior-hero h1 {
@@ -44,7 +44,7 @@
 }
 .grimior-hero .gb-dot {
   width: 8px; height: 8px; border-radius: 50%;
-  background: radial-gradient(circle, #f1d68c, #b08d57);
+  background: radial-gradient(circle, #e6c766, #d4af37);
   box-shadow: 0 0 10px rgba(240, 200, 120, 0.8);
 }
 .grimior-hero .gb-signout {

@@ -8,12 +8,12 @@
   --rv-card-bg-strong: rgba(30, 17, 40, 0.82);
   --rv-border: rgba(184, 148, 90, 0.28);
   --rv-border-strong: rgba(184, 148, 90, 0.55);
-  --rv-brass: #B8945A;
+  --rv-brass: #d4af37;
   --rv-brass-soft: rgba(184, 148, 90, 0.18);
-  --rv-gold: #E7C987;
-  --rv-text: #EDE4D8;
-  --rv-muted: #B8A898;
-  --rv-plum-deep: #1E1128;
+  --rv-gold: #e6c766;
+  --rv-text: #f4e8d0;
+  --rv-muted: #c8b79a;
+  --rv-plum-deep: #1e1148;
   --rv-radius: 16px;
   --rv-shadow: 0 6px 22px rgba(12, 6, 24, 0.35), 0 1px 0 rgba(184, 148, 90, 0.18) inset;
 }
@@ -197,7 +197,7 @@
 .rv-modal {
   position: relative; z-index: 2; max-width: 640px; width: calc(100% - 32px); max-height: calc(100vh - 48px);
   overflow-y: auto; overflow-x: hidden;
-  background: linear-gradient(160deg, #24152e 0%, #170c22 100%);
+  background: linear-gradient(160deg, #2c1454 0%, #110a20 100%);
   border: 1px solid var(--rv-border-strong);
   border-radius: 20px; padding: 32px clamp(20px, 4vw, 36px);
   box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(231, 201, 135, 0.08) inset;
@@ -260,7 +260,7 @@
 /* ------- admin dashboard ------- */
 .rv-admin {
   position: fixed; inset: 0; z-index: 3100;
-  background: #140a1c; color: var(--rv-text); overflow-y: auto;
+  background: #110a20; color: var(--rv-text); overflow-y: auto;
   padding: 24px clamp(16px, 3vw, 36px);
 }
 .rv-admin-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }

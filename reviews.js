@@ -574,7 +574,7 @@
         reviewLink.setAttribute('data-rv-open-type', 'soap');
         reviewLink.setAttribute('data-rv-id', id);
         reviewLink.setAttribute('data-rv-name', name);
-        reviewLink.style.cssText = 'display:inline-block;margin-top:8px;color:var(--brass-lt,#B8945A);font-family:\'Lora\',serif;font-size:0.82rem;text-decoration:none;border:1px solid rgba(184,148,90,0.35);padding:4px 10px;border-radius:999px;';
+        reviewLink.style.cssText = 'display:inline-block;margin-top:8px;color:var(--brass-lt,#d4af37);font-family:\'Lora\',serif;font-size:0.82rem;text-decoration:none;border:1px solid rgba(184,148,90,0.35);padding:4px 10px;border-radius:999px;';
         addBtn.parentElement.insertBefore(reviewLink, addBtn.nextSibling);
       }
     });

@@ -152,7 +152,7 @@
 }
 
 .soap-gallery-thumb.active {
-  border-color: #a78bfa;
+  border-color: #9B72B0;
   box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
 }
 
@@ -163,7 +163,7 @@
   border-radius: 30px;
   padding: 0.6rem 1.5rem;
   font-size: 0.9rem;
-  color: #c084fc;
+  color: #9B72B0;
   cursor: pointer;
   transition: all 0.2s;
   margin: 0.75rem auto;

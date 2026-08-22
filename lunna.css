@@ -3,8 +3,8 @@
 
 .lunna-fab {
   display: inline-flex; align-items: center; gap: 10px;
-  background: linear-gradient(145deg, #3b2a5e 0%, #5b3d8a 100%);
-  color: #f7f1ea;
+  background: linear-gradient(145deg, #2c1454 0%, #6E4B7E 100%);
+  color: #f4e8d0;
   border: 1px solid rgba(212, 168, 67, 0.45);
   border-radius: 999px;
   padding: 12px 18px 12px 14px;

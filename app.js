@@ -646,7 +646,7 @@ function renderProducts(filterCat = 'all') {
         </select>
         <button class="product-add-btn btn-primary" data-id="${p.id}">Order Now ❆</button>
         <div class="product-review-cta" style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
-          <a href="#" class="product-review-link" data-rv-open data-rv-open-type="product" data-rv-id="${p.id}" data-rv-name="${(p.name || '').replace(/"/g, '&quot;')}" style="color:var(--brass-lt,#B8945A);font-family:'Lora',serif;font-size:0.82rem;text-decoration:none;border:1px solid rgba(184,148,90,0.35);padding:4px 10px;border-radius:999px;">✦ Write a Review</a>
+          <a href="#" class="product-review-link" data-rv-open data-rv-open-type="product" data-rv-id="${p.id}" data-rv-name="${(p.name || '').replace(/"/g, '&quot;')}" style="color:var(--brass-lt,#d4af37);font-family:'Lora',serif;font-size:0.82rem;text-decoration:none;border:1px solid rgba(184,148,90,0.35);padding:4px 10px;border-radius:999px;">✦ Write a Review</a>
         </div>
       </div>
     </div>
@@ -1232,7 +1232,7 @@ function renderBestSellers() {
       desc: (soap && (soap.desc || soap.description)) || spec.fallbackDesc
     };
   });
-  soapsGrid.innerHTML = '<h3 style="grid-column:1/-1;text-align:center;color:var(--gold,#d4a843);margin-bottom:0.5rem;">✦ Featured Artisan Soaps ✦</h3>' +
+  soapsGrid.innerHTML = '<h3 style="grid-column:1/-1;text-align:center;color:var(--gold,#d4af37);margin-bottom:0.5rem;">✦ Featured Artisan Soaps ✦</h3>' +
     '<p style="grid-column:1/-1;text-align:center;margin-bottom:1rem;opacity:0.85;">All 5 Bars for <strong>$49.99</strong> &nbsp;|&nbsp; 5 Custom Soaps for <strong>$54.99</strong></p>' +
     soapNames.map(s => `
     <div class="product-card best-seller-card" style="text-align:center;">

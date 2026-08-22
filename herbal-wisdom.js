@@ -85,7 +85,7 @@
     var html = '';
 
     // Emotional hook
-    html += '<div class="product-detail-section"><p style="font-family:Cinzel,serif;color:var(--brass-lt,#B8945A);font-size:1.1rem;font-style:italic;text-align:center;margin-bottom:0">"' + details.hook + '"</p></div>';
+    html += '<div class="product-detail-section"><p style="font-family:Cinzel,serif;color:var(--brass-lt,#d4af37);font-size:1.1rem;font-style:italic;text-align:center;margin-bottom:0">"' + details.hook + '"</p></div>';
 
     // Benefits
     html += '<div class="product-detail-section"><h4>Key Benefits</h4><ul class="product-benefits-list">';
@@ -100,7 +100,7 @@
 
     // Objection killers
     html += '<div class="product-detail-section"><h4>Why Choose This Formula</h4><div class="product-objection-killers">';
-    details.objections.forEach(function(o) { html += '<div class="product-objection-item"><span style="color:var(--brass,#8C6A3B)">✦</span> ' + o + '</div>'; });
+    details.objections.forEach(function(o) { html += '<div class="product-objection-item"><span style="color:var(--brass,#d4af37)">✦</span> ' + o + '</div>'; });
     html += '</div></div>';
 
     // FAQ
