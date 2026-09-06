@@ -1,0 +1,159 @@
+# Task prompts
+
+Paste one at a time into Claude Code, or as a GitHub issue comment starting with
+`@claude` once `.github/workflows/claude.yml` is merged. One task per prompt —
+batching them produces diffs too large to review on a phone.
+
+---
+
+## 0. Install this bundle
+
+```
+Add the backend infrastructure bundle to this repo exactly as provided: .claude/,
+.github/, netlify/functions/, scripts/, supabase/, ops/, CLAUDE.md, package.json,
+.env.example. Do not modify the files. Then run `npm install` and `npm run guards`,
+report which guards fail and why, and open a PR titled "Backend infrastructure and
+CI guards". Do not push to main.
+```
+
+---
+
+## 1. Provision Supabase
+
+```
+Read .claude/skills/supabase-data-layer/SKILL.md. Apply supabase/migrations/0001_init.sql
+to the Supabase project, then verify: every table exists, RLS is enabled on all ten,
+and anon can select from products but not from orders. Report the verification output
+as a table. Do not seed any data yet.
+```
+
+---
+
+## 2. Seed the product catalog
+
+```
+Read .claude/skills/supabase-data-layer/SKILL.md. Write supabase/seed/products.sql that
+inserts the nine signature soap bars and the current apothecary catalog into `products`
+with sku, name, description, price_cents, and active=true, sourced from the existing
+product pages in this repo. Prices in cents, no decimals. Do not invent products or
+prices — if a price is not in the repo, list it as UNKNOWN in the PR body instead of
+guessing.
+```
+
+---
+
+## 3. Wire the front end to PayPal checkout
+
+```
+Read .claude/skills/payments-paypal-only/SKILL.md and .claude/skills/netlify-functions/SKILL.md.
+Replace the current checkout UI with the PayPal JS SDK buttons calling
+/.netlify/functions/paypal-create-order and /.netlify/functions/paypal-capture-order.
+The client sends only { sku, qty } plus customer email and shipping — never prices.
+Show Cash App $AmberPatten92 as a manual option with order-number instructions, and
+render Venmo only when VENMO_ENABLED is true. Verify with `npm run guards` that no
+banned processor was reintroduced.
+```
+
+---
+
+## 4. Grimoire subscription and gating
+
+```
+Read .claude/skills/grimoire-access-control/SKILL.md. Create the $7.77/month PayPal
+subscription plan, wire the subscribe button to it, and rewrite the Grimoire reader so
+pages 8-88 are fetched from /.netlify/functions/grimoire-page with the token from
+/.netlify/functions/grimoire-access. Move page content out of the client bundle into
+netlify/functions/_grimoire/<page>.json. Confirm by loading the page logged out and
+searching the page source for text from page 40 — it must not be there.
+```
+
+---
+
+## 5. Forms and email
+
+```
+Read .claude/skills/netlify-functions/SKILL.md. Point the contact, consultation, soap
+builder, and remedy quiz forms at the existing functions (contact.mjs, subscribe.mjs)
+and add soap-request.mjs and remedy-submit.mjs following the same pattern, writing to
+soap_requests and remedy_submissions. Every form gets the honeypot field. Admin
+notifications go to awaken@consultant.com. This replaces EmailJS and the Zapier Zaps —
+remove the EmailJS scaffolding in the same PR.
+```
+
+---
+
+## 6. Scheduled automation jobs
+
+```
+Read .claude/skills/netlify-functions/SKILL.md and .claude/skills/brand-audio-lock/SKILL.md
+for content ethics. Port the existing automation jobs to Netlify scheduled functions
+against Supabase: social post generator, payment follow-up scheduler (PayPal-led, never
+suggesting a removed processor), weekly newsletter, and the Monday business digest to
+awaken@consultant.com. Use the RFC 8058 unsubscribe path in _lib/email.mjs for anything
+bulk. Declare schedules in netlify.toml.
+```
+
+---
+
+## 7. Pin the audio and prove the spec holds
+
+```
+Read .claude/skills/brand-audio-lock/SKILL.md. Do not touch the MP3. Run
+`npm run pin:audio` to write ops/awaken-ambient.sha256, then confirm the player uses
+oscillators at 333, 444, 777, and 134Hz at gain 0.008 over the file, with the consent
+modal and no autoplay. Fix the player if it drifted; never the guard. Then run
+`node scripts/guard-audio.mjs`.
+```
+
+---
+
+## 8. Turn on the CI and agent workflows
+
+```
+Confirm .github/workflows/ci.yml, deploy.yml, security.yml, and claude.yml are on main.
+Tell me exactly which GitHub secrets to add (names and where each value comes from) and
+which Netlify environment variables are still unset per ops/env.required.json. Set the
+production environment to require manual approval. Do not attempt to add secrets yourself.
+```
+
+---
+
+## 9. Infrastructure audit
+
+```
+Read .claude/skills/deploy-dns-ops/SKILL.md. Verify and report as a checklist: which repo
+Netlify is building from, whether any UI build-command override is shadowing netlify.toml,
+whether an orphan Vercel project is still deploying this site, current Cloudflare records
+(SPF count, DMARC count, apex A record and proxy status), and any stale env vars. Report
+only — change nothing.
+```
+
+---
+
+## 10. Neon decommission
+
+```
+Find every remaining Neon reference in the repo and list it with file and line. Produce a
+migration plan that moves any live data from Neon to Supabase, in order, with a rollback
+step for each. Do not delete the Neon project or run the migration — plan only.
+```
+
+---
+
+## 11. Ambient audio — install in both repos
+
+Run this once per repo (`awakenwithamber/ambers-alchemy-apothecary` and
+`awakenwithamber/awakenagain-com`).
+
+```
+Add public/audio/awaken-ambient.mp3 and public/js/awaken-audio.js from the bundle exactly
+as provided — the MP3 is the approved 128kbps web master and must not be re-encoded,
+trimmed, normalized, or replaced. Do not commit ops/master/awaken-ambient-master.mp3; it is
+reference only. Copy ops/awaken-ambient.sha256 with it. Add
+<script src="/js/awaken-audio.js" defer></script> before </body> on every page, and remove
+any earlier audio player, autoplay attribute, or duplicate oscillator setup you find. Then
+run `node scripts/guard-audio.mjs` and confirm it passes. Open a PR; do not push to main.
+```
+
+Verify by hand after merge: load the site, confirm nothing plays until the green button is
+pressed, let it run past 2:46 to hear the loop, and reload to confirm the choice persists.
