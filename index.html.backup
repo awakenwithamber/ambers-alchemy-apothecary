@@ -3088,7 +3088,5 @@
 <script src="https://js.stripe.com/v3/"></script>
 <script src="/js/form-handlers.js"></script>
     <script src="herbal-ai-chat.js"></script>
-    <!-- Vercel Speed Insights -->
-    <script type="module" src="speed-insights-init.js"></script>
     </body>
 </html>
