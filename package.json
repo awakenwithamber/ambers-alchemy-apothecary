@@ -4,6 +4,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.1",
+    "@vercel/analytics": "^2.0.1",
     "ai": "^6.0.256",
     "jsdom": "^29.0.2",
     "jsonwebtoken": "^9.0.3",
