@@ -1,0 +1,171 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# AwakenAgain.com — starter config.
+# PATHS BELOW ARE PROVISIONAL. Replace them with the repository's real paths
+# after Phase 1 inspection. Delete any path_instructions block whose glob
+# matches nothing — a rule pointed at a nonexistent path is dead weight.
+
+language: "en-US"
+
+tone_instructions: >-
+  You are reviewing a small solo-operated e-commerce site that is the owner's
+  primary income. Prefer concrete, actionable findings over style opinions.
+  Do not suggest framework migrations, dependency upgrades, or refactors that
+  were not asked for.
+
+reviews:
+  profile: "chill"
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: true
+
+  auto_review:
+    enabled: true
+    drafts: false
+
+  path_filters:
+    - "!**/*.min.js"
+    - "!**/package-lock.json"
+    - "!images/**"
+    - "!public/images/**"
+
+  path_instructions:
+    - path: "**/*.{js,mjs,html}"
+      instructions: |
+        This repository has locked constraints that agents repeatedly violate.
+        Flag any change that:
+        - Introduces Stripe, Shopify, Square, Gumroad, Klarna, Afterpay, or the
+          retired Cash App handle $AmberAlchemy. PayPal is the only approved
+          integrated processor; Cash App $AmberPatten92 is a manual backup;
+          Venmo stays behind the VENMO_ENABLED flag.
+        - Removes or alters the brand constants #150b26, #1f1336, #d4af37,
+          "Cinzel Decorative", or "EB Garamond".
+        - Renames or reshapes the cart localStorage key `aa_cart`
+          (shape [{id, qty}]). Renaming it orphans live customer carts.
+        - Alters the ambient audio oscillator frequencies (333, 444, 777, 134 Hz)
+          or gain (0.008), enables autoplay, or removes the opt-in consent modal.
+        - Creates an `/api/` directory. Netlify only deploys `netlify/functions/`.
+        - References drive.google.com, googleusercontent.com, Dropbox, or an
+          absolute https://awakenagain.com/... URL for an image. Product images
+          must be relative /images/products/<handle>.webp paths.
+
+    - path: "netlify/functions/**"
+      instructions: |
+        Server-side code. Treat as high risk.
+        - Order totals, prices, discounts, and shipping must be recalculated
+          server-side from trusted data. Never trust a browser-submitted price,
+          quantity, discount, or membership status.
+        - Creating an order is not confirming payment. Flag any path where an
+          unpaid order can reach fulfillment, or where a client can set payment
+          status.
+        - Flag missing idempotency on payment capture and webhook handlers, and
+          any duplicate-submission path that could double-charge.
+        - Flag order reads not scoped to the requesting user's ownership.
+        - Grimoire access must be validated server-side and return a boolean
+          only. Gated content must never appear in page source or be hidden
+          with CSS.
+        - Flag any secret read from or written to client-reachable code.
+
+    - path: "**/{data.js,products*.json}"
+      instructions: |
+        Customer-facing catalog data, not scratch code.
+        - Flag duplicate handles or IDs, missing or zero prices, and prices
+          stored in more than one authoritative place.
+        - Flag image paths whose filename does not exactly match the product
+          handle, and any casing mismatch (Netlify's edge is case-sensitive).
+        - Flag removal of the FDA disclaimer or the "Contains fish." allergen
+          statement on Wild-Caught Omega-3 Fish Oil.
+        - An Aug 2026 compliance pass retired these terms from customer-facing
+          copy including alt_text. Flag their reappearance: PTSD, bipolar,
+          diabetic/diabetes, blood sugar, parasite cleanse, heavy metal detox,
+          hair regrowth, age reversal, miracle, pain relief, and named-biomarker
+          claims (serotonin, oxytocin, endorphins, insulin).
+        - Flag a renamed product whose redirect was not also updated, and any
+          quiz recommendation pointing at a handle that no longer exists.
+
+    - path: "**/*.{sql,toml}"
+      instructions: |
+        - Flag migrations that drop columns/tables or delete rows without an
+          explicit justification in the PR description.
+        - Flag row-level security policies using USING (true) or
+          WITH CHECK (true) on tables holding customer, order, or member data.
+        - Flag admin/role fields that become writable by non-admin users.
+        - Flag redirect rules removed without a replacement.
+
+  pre_merge_checks:
+    title:
+      mode: "warning"
+      requirements: "Start with a conventional-commit type (feat, fix, chore, docs, refactor) and stay under 72 characters."
+    description:
+      mode: "warning"
+    docstrings:
+      mode: "off"
+
+    # NOTE: custom_checks require the CodeRabbit Pro+ plan or above.
+    # If the account is on a lower tier these are ignored silently — verify
+    # before relying on them, and keep the pre-commit hook as the real guard.
+    custom_checks:
+      - name: "Payment architecture"
+        mode: "warning"
+        instructions: |
+          Fail if the diff adds, restores, or scaffolds Stripe, Shopify, Square,
+          Gumroad, Klarna, Afterpay, or the cashtag $AmberAlchemy in any form,
+          including comments, config, environment variable names, or dependencies.
+          PayPal is the only approved integrated processor. Removing PayPal also
+          fails. Pure deletions of dead references pass.
+
+      - name: "Checkout integrity"
+        mode: "warning"
+        instructions: |
+          Fail if the diff lets browser-supplied data determine an authoritative
+          price, total, discount, shipping cost, or membership status; if a
+          missing or malformed price can fall back to 0; if a client can set
+          payment or fulfillment status; or if a payment capture, webhook
+          handler, or order-creation path loses idempotency.
+
+      - name: "Authorization safety"
+        mode: "warning"
+        instructions: |
+          Fail if a sensitive operation — viewing customers or orders, changing
+          order status, confirming payment, approving members, publishing
+          content, or accessing Grimoire member content — is authorized only by
+          client state, a URL parameter, localStorage, hidden UI, an editable
+          profile field, or a bare email comparison. Trusted server-side or
+          database-side authorization is required.
+
+      - name: "Claims and disclaimer integrity"
+        mode: "warning"
+        instructions: |
+          Fail if the diff adds disease-treatment or unsubstantiated-efficacy
+          language to customer-facing copy (including alt_text, meta
+          descriptions, and quiz results), or removes the FDA disclaimer or the
+          fish allergen statement. Retired terms: PTSD, bipolar, diabetic,
+          diabetes, blood sugar, parasite cleanse, heavy metal detox, hair
+          regrowth, age reversal, miracle, pain relief, serotonin, oxytocin,
+          endorphins, insulin. The disclaimer's own wording ("not intended to
+          diagnose, treat, cure, or prevent any disease") is not a violation.
+
+      - name: "Protected experience"
+        mode: "warning"
+        instructions: |
+          Fail if the diff removes or disables the Herbal Allies Quiz, the
+          Living Grimoire gate, the Soap Builder's step-by-step interactive
+          flow, account/cart persistence, or the consent-gated ambient audio —
+          unless the PR description explicitly states that this is the intent.
+
+  tools:
+    gitleaks:
+      enabled: true
+    eslint:
+      enabled: true
+    yamllint:
+      enabled: true
+    markdownlint:
+      enabled: true
+    shellcheck:
+      enabled: true
+
+chat:
+  auto_reply: true

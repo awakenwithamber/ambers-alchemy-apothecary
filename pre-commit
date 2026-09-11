@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+#
+# AwakenAgain.com — protected-region commit guard
+#
+# Permission rules protect FILES. This protects REGIONS INSIDE files —
+# the theme constants, the cart key, and the banned payment processors that
+# all live inside index.html / app.js alongside code that legitimately changes.
+#
+# Install:  cp pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# Override: AA_ALLOW_PROTECTED=1 git commit ...   (use deliberately, not habitually)
+#
+set -uo pipefail
+
+if [[ "${AA_ALLOW_PROTECTED:-0}" == "1" ]]; then
+  echo "⚠  AA_ALLOW_PROTECTED=1 — protected-region guard bypassed."
+  exit 0
+fi
+
+DIFF="$(git diff --cached -U0)"
+[[ -z "$DIFF" ]] && exit 0
+
+ADDED="$(printf '%s\n' "$DIFF"   | grep -E '^\+' | grep -vE '^\+\+\+')"
+REMOVED="$(printf '%s\n' "$DIFF" | grep -E '^-'  | grep -vE '^---')"
+
+FAIL=0
+flag() { echo ""; echo "  ✖ $1"; FAIL=1; }
+
+# ── 1. Banned payment processors must never be reintroduced ──────────────────
+BANNED='stripe|shopify|squareup|square\.com|gumroad|klarna|afterpay|\$AmberAlchemy'
+HITS="$(printf '%s\n' "$ADDED" | grep -iE "$BANNED" || true)"
+if [[ -n "$HITS" ]]; then
+  flag "Banned payment processor reintroduced (PayPal + Cash App only):"
+  printf '%s\n' "$HITS" | sed 's/^/      /' | head -20
+fi
+
+# ── 2. Brand constants must not be altered ───────────────────────────────────
+BRAND='#150b26|#d4af37|Cinzel Decorative|EB Garamond'
+HITS="$(printf '%s\n' "$REMOVED" | grep -iE "$BRAND" || true)"
+if [[ -n "$HITS" ]]; then
+  flag "Brand constant removed or changed (plum/gold/Cinzel/Garamond are locked):"
+  printf '%s\n' "$HITS" | sed 's/^/      /' | head -20
+fi
+
+# ── 3. Cart storage key must not be renamed ──────────────────────────────────
+HITS="$(printf '%s\n' "$REMOVED" | grep -E "aa_cart" || true)"
+if [[ -n "$HITS" ]]; then
+  flag "Cart key 'aa_cart' removed — existing customer carts would be orphaned:"
+  printf '%s\n' "$HITS" | sed 's/^/      /' | head -10
+fi
+
+# ── 4. Dead /api/ folder must not come back ──────────────────────────────────
+if git diff --cached --name-only | grep -qE '^api/'; then
+  flag "Files staged under /api/ — Netlify only deploys netlify/functions/."
+fi
+
+# ── 5. Secrets must never be staged ──────────────────────────────────────────
+SECRETS="$(git diff --cached --name-only | grep -E '(^|/)\.env($|\.)|^\.replit$|(^|/)secrets/' || true)"
+if [[ -n "$SECRETS" ]]; then
+  flag "Secret file staged — unstage immediately:"
+  printf '%s\n' "$SECRETS" | sed 's/^/      /'
+fi
+
+# ── 6. Disease-claim language ────────────────────────────────────────────────
+CLAIMS="$(printf '%s\n' "$ADDED" | grep -iE '\b(cures?|curing|treats? (your|the)?[a-z ]*(disease|illness|condition|cancer|diabetes|anxiety|depression))\b' || true)"
+if [[ -n "$CLAIMS" ]]; then
+  flag "Possible disease claim added — use \"traditionally used to support…\":"
+  printf '%s\n' "$CLAIMS" | sed 's/^/      /' | head -10
+fi
+
+if [[ "$FAIL" == "1" ]]; then
+  cat <<'EOF'
+
+──────────────────────────────────────────────────────────────
+Commit blocked by the protected-region guard.
+
+Fix the lines above, or if the change is intentional, run:
+    AA_ALLOW_PROTECTED=1 git commit ...
+──────────────────────────────────────────────────────────────
+EOF
+  exit 1
+fi
+
+echo "✔ Protected-region guard passed."
+exit 0

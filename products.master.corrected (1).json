@@ -1,0 +1,2655 @@
+{
+  "catalog_name": "Amber's Alchemy Apothecary — Master Product Catalog (Corrected, Image-Matched, Compliance-Oriented)",
+  "version": "2026-08-27-corrected",
+  "brand": "Amber’s Alchemy Apothecary",
+  "domain": "AwakenAgain.com",
+  "shipping": {
+    "standard": {
+      "name": "Standard Shipping",
+      "price": 7.0
+    },
+    "priority": {
+      "name": "Priority Shipping",
+      "price": 14.0
+    }
+  },
+  "freeGift": {
+    "rule": "Automatically add one free lip balm gift size to every physical-product order. Do not charge item price; only include it in packing slip/customer email.",
+    "sku": "AAA-FREE-LIP-BALM",
+    "price": 0.0
+  },
+  "emails": {
+    "customer_receipt": true,
+    "admin_order_notification": "awaken@consultant.com",
+    "backup_admin_email": "dare2be4ree@gmail.com"
+  },
+  "global_disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, have a medical condition, or are taking medication, consult your healthcare professional before using this product. Keep out of reach of children.",
+  "image_policy": "All live product images use self-hosted /images/products/ assets. No Google Drive hotlinks. Product artwork contains only verified brand/product naming and neutral product type so marketing copy cannot become mismatched with the image.",
+  "product_count": 36,
+  "products": [
+    {
+      "handle": "radiance-renewal-balm",
+      "title": "Radiance Renewal Botanical Balm",
+      "category": "Balms & Skincare",
+      "type": "Topical Balm",
+      "status": "active",
+      "publish": true,
+      "price": "9.99",
+      "compare_at_price": "",
+      "sku": "BALM-AGE-001",
+      "size": "1 oz / 2 oz / 4 oz options",
+      "short_description": "A rich botanical face-and-body balm that moisturizes, softens, and supports a radiant-looking complexion.",
+      "description": "Radiance Renewal Botanical Balm is a silky herb-infused moisturizer crafted to nourish the skin barrier, soften dry-feeling areas, and leave skin looking dewy and luminous.",
+      "benefits": [
+        "Deeply moisturizes",
+        "Supports smoother-looking skin",
+        "Nourishes the skin barrier",
+        "Promotes a radiant appearance"
+      ],
+      "key_botanicals": "Rose, Lavender, Saffron, Hibiscus, Turmeric, Vitamin E, botanical oils",
+      "ingredients": "Coconut oil, beeswax, vitamin E, calendula, gotu kola, frankincense, rose, chamomile, lavender, lemon balm, comfrey, borage, violet leaf, lemon peel, chrysanthemum, hibiscus, nettle, oatstraw, peppermint, spearmint, dandelion, St. John’s wort, wild lettuce, elder flower, peony, mango peel, dragon fruit peel, forget-me-not.",
+      "instructions": "Apply a thin layer to clean skin as needed. Use as a night balm, lip balm, cuticle balm, highlighter balm, or dry-skin rescue. Patch test first for sensitive skin.",
+      "image": "/images/products/radiance-renewal-balm.webp",
+      "image_fallback": "/images/products/radiance-renewal-balm.png",
+      "alt_text": "Amber’s Age Reversal Balm floral botanical jar",
+      "variants": [
+        {
+          "name": "Free Lip Balm Gift Size - auto included with every physical order",
+          "sku": "AAA- MIRACLEBEAUTYBALM-FREEGIFT",
+          "price": 0.0,
+          "currency": "usd",
+          "unit": "lip balm gift size",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Sample Mini Tin",
+          "sku": "AAA- MIRACLEBEAUTYBALM-SAMPLE",
+          "price": 9.99,
+          "currency": "usd",
+          "unit": "sample",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "2 oz",
+          "sku": "AAA- MIRACLEBEAUTYBALM-2OZ",
+          "price": 24.99,
+          "currency": "usd",
+          "unit": "2 oz",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "3 oz",
+          "sku": "AAA- MIRACLEBEAUTYBALM-3OZ",
+          "price": 33.99,
+          "currency": "usd",
+          "unit": "3 oz",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "4 oz",
+          "sku": "AAA- MIRACLEBEAUTYBALM-4OZ",
+          "price": 41.99,
+          "currency": "usd",
+          "unit": "4 oz",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "beauty balm",
+        "skincare",
+        "moisturizing",
+        "glow",
+        "botanical balm"
+      ],
+      "cta": "Melt into the glow",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Radiance Renewal Botanical Balm | Amber's Alchemy Apothecary",
+      "meta_description": "A rich botanical face-and-body balm that moisturizes, softens, and supports a radiant-looking complexion.",
+      "disclaimer": "For external use only. Avoid contact with eyes, mucous membranes, open wounds, and sensitive areas. Patch test before use. Discontinue use if irritation occurs. This cosmetic/topical product is not intended to diagnose, treat, cure, or prevent any disease. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "Reworded to compliance-oriented structure/function or cosmetic appearance language; legacy high-risk claim removed.",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Beauty & Skin",
+      "legacy_handle": "ambers-age-reversal-balm",
+      "compliance_rewrite_applied": true,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "root-scalp-revival-serum",
+      "title": "Root & Scalp Revival Botanical Serum",
+      "category": "Balms & Skincare",
+      "type": "Hair Serum",
+      "status": "active",
+      "publish": true,
+      "price": "24.99",
+      "compare_at_price": "",
+      "sku": "SERUM-HAIRGROWTH-001",
+      "size": "1 oz dropper bottle",
+      "short_description": "A botanical scalp serum for conditioning, shine, and fuller-looking hair.",
+      "description": "Root & Scalp Revival Botanical Serum is a handcrafted botanical oil designed to condition the scalp and hair, support the appearance of fuller-looking strands, and restore healthy-looking shine.",
+      "benefits": [
+        "Conditions scalp and hair",
+        "Supports fuller-looking hair",
+        "Promotes shine",
+        "Supports root-to-tip care"
+      ],
+      "key_botanicals": "Rosemary, Peppermint, Nettle, Fenugreek, Hibiscus, Borage, Castor Oil",
+      "ingredients": "Coconut oil, grapeseed oil, castor oil, olive oil, vitamin E, nettle, gotu kola, calendula, arnica, lavender, peppermint, spearmint, rosemary, bay, eucalyptus, ginger, cinnamon, clove, fenugreek, sage, dill, caraway, cumin, coriander, fennel, lemongrass, lily stem, damiana, mugwort, marjoram, alfalfa, dandelion, rose, lemon balm, chamomile, wild lettuce, chrysanthemum, saffron, sesame, juniper, cedar, hibiscus.",
+      "instructions": "Apply drops directly to scalp and massage for 2–5 minutes. Leave on at least 1 hour or overnight, then wash if desired. Use 3–7 times weekly. Avoid eyes.",
+      "image": "/images/products/root-scalp-revival-serum.webp",
+      "image_fallback": "/images/products/root-scalp-revival-serum.png",
+      "alt_text": "Miracle Hair Regrowth Serum amber dropper bottle",
+      "variants": [
+        {
+          "name": "2 oz",
+          "sku": "AAA- MIRACLEHAIRREGROWT-2OZ",
+          "price": 24.99,
+          "currency": "usd",
+          "unit": "2 oz",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "3 oz",
+          "sku": "AAA- MIRACLEHAIRREGROWT-3OZ",
+          "price": 33.99,
+          "currency": "usd",
+          "unit": "3 oz",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "4 oz",
+          "sku": "AAA- MIRACLEHAIRREGROWT-4OZ",
+          "price": 41.99,
+          "currency": "usd",
+          "unit": "4 oz",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "hair serum",
+        "scalp care",
+        "fuller-looking hair",
+        "shine",
+        "botanical serum"
+      ],
+      "cta": "Revive the roots",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Root & Scalp Revival Botanical Serum | Amber's Alchemy Apothecary",
+      "meta_description": "A botanical scalp serum for conditioning, shine, and fuller-looking hair.",
+      "disclaimer": "For external use only. Avoid contact with eyes, mucous membranes, open wounds, and sensitive areas. Patch test before use. Discontinue use if irritation occurs. This cosmetic/topical product is not intended to diagnose, treat, cure, or prevent any disease. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "Reworded to compliance-oriented structure/function or cosmetic appearance language; legacy high-risk claim removed.",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Hair Care",
+      "legacy_handle": "miracle-hair-regrowth-serum",
+      "compliance_rewrite_applied": true,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "soothe-restore-botanical-balm",
+      "title": "Soothe & Restore Botanical Balm",
+      "category": "Balms & Skincare",
+      "type": "Topical Balm",
+      "status": "active",
+      "publish": true,
+      "price": "9.99",
+      "compare_at_price": "",
+      "sku": "BALM-PAIN-001",
+      "size": "1 oz / 2 oz / 4 oz options",
+      "short_description": "A comforting herbal massage balm for tired muscles and everyday body care.",
+      "description": "Soothe & Restore Botanical Balm is a warming, cooling botanical massage balm crafted for everyday muscle and joint comfort after activity, work, or long days.",
+      "benefits": [
+        "Supports everyday muscle comfort",
+        "Comforting massage ritual",
+        "Warming and cooling botanical feel",
+        "Nourishing topical oils"
+      ],
+      "key_botanicals": "Arnica, Rosemary, Peppermint, Ginger, Cayenne, Comfrey-inspired herbal tradition",
+      "ingredients": "Coconut oil, beeswax, arnica, comfrey, St. John’s wort, cayenne, ginger, peppermint, spearmint, lavender, frankincense, dandelion leaf, marigold, violet leaf, plantain.",
+      "instructions": "Massage a small amount into desired area 1– 3 times daily. Avoid eyes, open wounds, and sensitive areas. Wash hands after use, especially because of cayenne and peppermint.",
+      "image": "/images/products/soothe-restore-botanical-balm.webp",
+      "image_fallback": "/images/products/soothe-restore-botanical-balm.png",
+      "alt_text": "Miracle Pain-Relief Balm jar surrounded by herbs and candle",
+      "variants": [
+        {
+          "name": "Free Lip Balm Gift Size - auto included with every physical order",
+          "sku": "AAA- MIRACLEPAINRELIEVI-FREEGIFT",
+          "price": 0.0,
+          "currency": "usd",
+          "unit": "lip balm gift size",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Sample Mini Tin",
+          "sku": "AAA- MIRACLEPAINRELIEVI-SAMPLE",
+          "price": 9.99,
+          "currency": "usd",
+          "unit": "sample",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "2 oz",
+          "sku": "AAA- MIRACLEPAINRELIEVI-2OZ",
+          "price": 24.99,
+          "currency": "usd",
+          "unit": "2 oz",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "3 oz",
+          "sku": "AAA- MIRACLEPAINRELIEVI-3OZ",
+          "price": 33.99,
+          "currency": "usd",
+          "unit": "3 oz",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "4 oz",
+          "sku": "AAA- MIRACLEPAINRELIEVI-4OZ",
+          "price": 41.99,
+          "currency": "usd",
+          "unit": "4 oz",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "massage balm",
+        "muscle comfort",
+        "joint comfort",
+        "topical",
+        "botanical balm"
+      ],
+      "cta": "Settle into comfort",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Soothe & Restore Botanical Balm | Amber's Alchemy Apothecary",
+      "meta_description": "A comforting herbal massage balm for tired muscles and everyday body care.",
+      "disclaimer": "For external use only. Avoid contact with eyes, mucous membranes, open wounds, and sensitive areas. Patch test before use. Discontinue use if irritation occurs. This cosmetic/topical product is not intended to diagnose, treat, cure, or prevent any disease. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "Reworded to compliance-oriented structure/function or cosmetic appearance language; legacy high-risk claim removed.",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Pain & Inflammation",
+      "legacy_handle": "miracle-pain-relief-balm",
+      "compliance_rewrite_applied": true,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "radiance-support-capsules",
+      "title": "Radiance Support Capsules",
+      "category": "Balms & Skincare",
+      "type": "Herbal Capsules",
+      "status": "active",
+      "publish": true,
+      "price": "27.99",
+      "compare_at_price": "",
+      "sku": "CAP-COLLAGEN-001",
+      "size": "30 hand-filled capsules",
+      "short_description": "A botanical beauty blend supporting skin vitality, hydration, and normal collagen formation.",
+      "description": "Radiance Support Capsules combine vitamin-C-rich and mineral-rich botanicals selected to support skin vitality, hydration, and the body's normal collagen-forming processes.",
+      "benefits": [
+        "Supports skin vitality",
+        "Supports normal collagen formation",
+        "Promotes hydration",
+        "Beauty support from within"
+      ],
+      "key_botanicals": "Collagen-supporting botanicals and skin-nourishing herbs",
+      "ingredients": "Hibiscus, rose hips, nettle, oatstraw, horsetail-style silica herbs where available, vitamin C-rich botanicals, chamomile, lavender, lemon peel, and mineral-rich plants.",
+      "instructions": "Take daily with water and consistent hydration. Best results come with daily use and whole-food nutrition.",
+      "image": "/images/products/radiance-support-capsules.webp",
+      "image_fallback": "/images/products/radiance-support-capsules.png",
+      "alt_text": "Natural Collagen Booster capsules in amber jar",
+      "variants": [
+        {
+          "name": "Two Week Supply - 28 capsules",
+          "sku": "AAA- NATURALCOLLAGENBOO-28CAP",
+          "price": 27.99,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Supply - 60 capsules",
+          "sku": "AAA- NATURALCOLLAGENBOO-60CAP",
+          "price": 49.99,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "skin support",
+        "beauty",
+        "hydration",
+        "collagen formation",
+        "capsules"
+      ],
+      "cta": "Glow from within",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Radiance Support Capsules | Amber's Alchemy Apothecary",
+      "meta_description": "A botanical beauty blend supporting skin vitality, hydration, and normal collagen formation.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "Reworded to compliance-oriented structure/function or cosmetic appearance language; legacy high-risk claim removed.",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Beauty & Skin",
+      "legacy_handle": "natural-collagen-booster-capsules",
+      "compliance_rewrite_applied": true,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "focus-clarity-ritual",
+      "title": "The Focus & Clarity Ritual Bundle",
+      "category": "Bundles",
+      "type": "Ritual Bundle",
+      "status": "active",
+      "publish": true,
+      "price": "27.99",
+      "compare_at_price": "72.00",
+      "sku": "RITUAL-FOCUS-001",
+      "size": "Soap + 10 tea bags + 1 oz balm + 14-day capsules",
+      "short_description": "A crisp, bright ritual for mental fog, scattered energy, and getting your sparkle back online.",
+      "description": "The Focus & Clarity Ritual Bundle supports the feeling of an open window in your mind. With tea, balm, soap, and capsules, this botanical set creates a full sensory routine for clarity, concentration, and steady momentum.",
+      "benefits": [
+        "Supports focus",
+        "Encourages mental clarity",
+        "Full sensory ritual",
+        "Helps cut through mental sluggishness"
+      ],
+      "key_botanicals": "Rosemary, Peppermint, Gotu Kola, Ginkgo, Rhodiola, Green Tea",
+      "ingredients": "Holy basil, lemon balm, rosemary, peppermint, spearmint, gotu kola, saffron, nettle, oatstraw, lavender, and focus-supportive botanicals.",
+      "instructions": "Take in the morning or early afternoon. Avoid late evening if stimulating for you.",
+      "image": "/images/products/focus-clarity-ritual.webp",
+      "image_fallback": "/images/products/focus-clarity-ritual.png",
+      "alt_text": "Focus and Clarity Ritual Bundle with soap tea balm and capsules",
+      "variants": [
+        {
+          "name": "Two Week Supply - 28 capsules",
+          "sku": "AAA- MOODCLARITYFORMULA-28CAP",
+          "price": 27.99,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Supply - 60 capsules",
+          "sku": "AAA- MOODCLARITYFORMULA-60CAP",
+          "price": 49.99,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "bundle",
+        "focus",
+        "clarity",
+        "mental sluggishness",
+        "concentration"
+      ],
+      "cta": "Clear the fog",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "The Focus & Clarity Ritual Bundle | Amber's Alchemy Apothecary",
+      "meta_description": "A crisp, bright ritual for mental fog, scattered energy, and getting your sparkle back online.",
+      "disclaimer": "For educational, spiritual, or informational purposes only. Not medical advice and not intended to diagnose, treat, cure, or prevent any disease. Seek qualified professional care for medical concerns.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Wellness Bundle",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "full-soap-collection",
+      "title": "The Full Soap Collection — All 9 Botanical Bars",
+      "category": "Bundles",
+      "type": "Soap Collection",
+      "status": "active",
+      "publish": true,
+      "price": "99.99",
+      "compare_at_price": "116.91",
+      "sku": "SOAP-COLLECTION-9",
+      "size": "9 x 4 oz bars",
+      "short_description": "One bar for every mood, intention, and season: the complete handmade botanical soap ritual.",
+      "description": "The Full Soap Collection includes all nine signature botanical bars, each made with goat milk, shea butter, castor oil, essential oils, and real botanicals. It is giftable, gorgeous, and dangerously easy to justify.",
+      "benefits": [
+        "Includes all 9 soaps",
+        "Beautiful gift set",
+        "Seasonal ritual rotation",
+        "Best value soap bundle"
+      ],
+      "key_botanicals": "Lavender, Rose, Eucalyptus, Mint, Cinnamon, Orange, Lily, Chamomile, Forest botanicals",
+      "ingredients": "Lavender, Rose, Eucalyptus, Mint, Cinnamon, Orange, Lily, Chamomile, Forest botanicals",
+      "instructions": "",
+      "image": "/images/products/full-soap-collection.webp",
+      "image_fallback": "/images/products/full-soap-collection.png",
+      "alt_text": "Full Soap Collection all nine botanical bars",
+      "variants": [],
+      "tags": [
+        "soap collection",
+        "gift set",
+        "bundle",
+        "handmade soap",
+        "botanical soap"
+      ],
+      "cta": "Collect every mood",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "The Full Soap Collection — All 9 Botanical Bars | Amber's Alchemy Apothecary",
+      "meta_description": "One bar for every mood, intention, and season: the complete handmade botanical soap ritual.",
+      "disclaimer": "For educational, spiritual, or informational purposes only. Not medical advice and not intended to diagnose, treat, cure, or prevent any disease. Seek qualified professional care for medical concerns.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json"
+      ],
+      "subcategory": "Artisan Soap Bundle",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "gentle-detox-ritual",
+      "title": "The Gentle normal elimination Ritual Bundle",
+      "category": "Bundles",
+      "type": "Ritual Bundle",
+      "status": "active",
+      "publish": true,
+      "price": "27.99",
+      "compare_at_price": "72.00",
+      "sku": "RITUAL-DETOX-001",
+      "size": "Soap + 10 tea bags + 1 oz balm + 14-day capsules",
+      "short_description": "A graceful cleanse ritual for a lighter belly, clearer mind, and softer glow.",
+      "description": "The Gentle normal elimination Ritual is a complete apothecary kit for feeling lighter without feeling punished. With soap, tea, balm, and a 14-day capsule course, it wraps digestive and liver-support botanicals into one beautiful reset ritual.",
+      "benefits": [
+        "Supports digestion",
+        "Encourages gentle normal elimination pathways",
+        "Includes full ritual set",
+        "Giftable wellness bundle"
+      ],
+      "key_botanicals": "Dandelion Root, Milk Thistle, Fennel, Ginger, Peppermint, Nettle",
+      "ingredients": "Dandelion root and leaf, nettle, burdock-style cleansing herbs, ginger, turmeric, lemon peel, peppermint, chlorella-style greens if available, and mineral-rich botanicals.",
+      "instructions": "Take with plenty of water. Begin slowly. Do not use as a crash cleanse; support with meals, minerals, and hydration.",
+      "image": "/images/products/gentle-detox-ritual.webp",
+      "image_fallback": "/images/products/gentle-detox-ritual.png",
+      "alt_text": "Gentle Detox Ritual Bundle with soap tea balm and capsules",
+      "variants": [
+        {
+          "name": "Two Week Supply - 28 capsules",
+          "sku": "AAA- DETOXFORMULA-28CAP",
+          "price": 27.99,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Supply - 60 capsules",
+          "sku": "AAA- DETOXFORMULA-60CAP",
+          "price": 49.99,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "bundle",
+        "normal elimination",
+        "cleanse",
+        "digestion",
+        "liver support"
+      ],
+      "cta": "Begin the reset",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "The Gentle normal elimination Ritual Bundle | Amber's Alchemy Apothecary",
+      "meta_description": "A graceful cleanse ritual for a lighter belly, clearer mind, and softer glow.",
+      "disclaimer": "For educational, spiritual, or informational purposes only. Not medical advice and not intended to diagnose, treat, cure, or prevent any disease. Seek qualified professional care for medical concerns.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Wellness Bundle",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "stress-relief-ritual",
+      "title": "The Stress Relief Ritual Bundle",
+      "category": "Bundles",
+      "type": "Ritual Bundle",
+      "status": "active",
+      "publish": true,
+      "price": "49.99",
+      "compare_at_price": "72.00",
+      "sku": "RITUAL-STRESS-001",
+      "size": "Soap + 10 tea bags + 1 oz balm + 14-day capsules",
+      "short_description": "A nervous-system sanctuary in a box: calm tea, soft soap, soothing balm, and serenity capsules.",
+      "description": "The Stress Relief Ritual Bundle is made for the woman holding everything together with a pretty smile and a clenched jaw. This full ritual supports calm, softness, and nervous-system restoration through layered botanical care.",
+      "benefits": [
+        "Supports calm",
+        "Encourages stress resilience",
+        "Full body ritual",
+        "Beautiful self-care gift"
+      ],
+      "key_botanicals": "Ashwagandha, Holy Basil, Lemon Balm, Chamomile, Lavender, Passionflower",
+      "ingredients": "Ashwagandha, Holy Basil, Lemon Balm, Chamomile, Lavender, Passionflower",
+      "instructions": "",
+      "image": "/images/products/stress-relief-ritual.webp",
+      "image_fallback": "/images/products/stress-relief-ritual.png",
+      "alt_text": "Stress Relief Ritual Bundle with soap tea balm and capsules",
+      "variants": [],
+      "tags": [
+        "bundle",
+        "stress relief",
+        "calm",
+        "calm support",
+        "nervous system"
+      ],
+      "cta": "Come back to calm",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "The Stress Relief Ritual Bundle | Amber's Alchemy Apothecary",
+      "meta_description": "A nervous-system sanctuary in a box: calm tea, soft soap, soothing balm, and serenity capsules.",
+      "disclaimer": "For educational, spiritual, or informational purposes only. Not medical advice and not intended to diagnose, treat, cure, or prevent any disease. Seek qualified professional care for medical concerns.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json"
+      ],
+      "subcategory": "Wellness Bundle",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "chill-pill-capsules",
+      "title": "Chill Pill Capsules",
+      "category": "Capsules",
+      "type": "Herbal Capsules",
+      "status": "active",
+      "publish": true,
+      "price": "27.99",
+      "compare_at_price": "",
+      "sku": "CAP-CHILLPILL-001",
+      "size": "30 hand-filled capsules",
+      "short_description": "A calming botanical blend for relaxation, emotional balance, and everyday stress support.",
+      "description": "Chill Pill Capsules are crafted with traditionally calming botanicals and adaptogens to support relaxation, a grounded mood, and a calm response to everyday stress.",
+      "benefits": [
+        "Supports relaxation",
+        "Supports a calm mood",
+        "Encourages emotional balance",
+        "Everyday stress support"
+      ],
+      "key_botanicals": "Ashwagandha, Passionflower, Lemon Balm, Holy Basil, Valerian, Lavender",
+      "ingredients": "Passionflower, holy basil, skullcap, lemon balm, chamomile, lavender, wild lettuce, oatstraw, magnesium-rich herbs, and calming botanicals.",
+      "instructions": "Take with water when stress support is desired. Avoid driving until you know how it affects you.",
+      "image": "/images/products/chill-pill-capsules.webp",
+      "image_fallback": "/images/products/chill-pill-capsules.png",
+      "alt_text": "Chill Pill stress and calm support capsules in amber jar",
+      "variants": [
+        {
+          "name": "Two Week Supply - 28 capsules",
+          "sku": "AAA- CHILLPILLMOODSUPPO-28CAP",
+          "price": 27.99,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Supply - 60 capsules",
+          "sku": "AAA- CHILLPILLMOODSUPPO-60CAP",
+          "price": 49.99,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "calm",
+        "relaxation",
+        "stress support",
+        "nervine",
+        "capsules"
+      ],
+      "cta": "Soften the static",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Chill Pill Capsules | Amber's Alchemy Apothecary",
+      "meta_description": "A calming capsule spell for anxious edges, emotional storms, and overactive minds.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "Reworded to compliance-oriented structure/function or cosmetic appearance language; legacy high-risk claim removed.",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Stress & Calm",
+      "compliance_rewrite_applied": true,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "metabolic-wellness-formula",
+      "title": "Metabolic Wellness Formula",
+      "category": "Capsules",
+      "type": "physical",
+      "status": "active",
+      "publish": true,
+      "price": "27.99",
+      "compare_at_price": "",
+      "sku": "AAA-DIABETIC-SUPPORT-FORMULA",
+      "size": "",
+      "short_description": "A botanical blend supporting normal metabolic wellness and steady everyday energy.",
+      "description": "Metabolic Wellness Formula is designed to complement balanced meals, movement, hydration, and other healthy routines that support normal metabolic function and steady energy.",
+      "benefits": [
+        "Supports normal metabolic function",
+        "Supports steady energy",
+        "Complements balanced meals",
+        "Supports healthy lifestyle routines"
+      ],
+      "key_botanicals": "",
+      "ingredients": "Cinnamon, fenugreek, ginger, turmeric, nettle, dandelion, bitter melon-style herbs where available, flaxseed, and mineral-rich botanicals.",
+      "instructions": "Take with meals. Monitor blood sugar if applicable. Do not combine with glucose-lowering medication without provider guidance.",
+      "image": "/images/products/metabolic-wellness-formula.webp",
+      "image_fallback": "/images/products/metabolic-wellness-formula.png",
+      "alt_text": "Diabetic Support Formula by Amber’s Alchemy Apothecary",
+      "variants": [
+        {
+          "name": "Two Week Supply - 28 capsules",
+          "sku": "AAA- DIABETICSUPPORTFOR-28CAP",
+          "price": 27.99,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Supply - 60 capsules",
+          "sku": "AAA- DIABETICSUPPORTFOR-60CAP",
+          "price": 49.99,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "metabolic wellness",
+        "energy",
+        "healthy routines",
+        "capsules"
+      ],
+      "cta": "Support your daily rhythm",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Metabolic Wellness Formula | Amber's Alchemy Apothecary",
+      "meta_description": "A botanical blend supporting normal metabolic wellness and steady everyday energy.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "Reworded to compliance-oriented structure/function or cosmetic appearance language; legacy high-risk claim removed.",
+      "sources": [
+        "products_json"
+      ],
+      "subcategory": "Wellness Formulas",
+      "legacy_handle": "diabetic-support-formula",
+      "compliance_rewrite_applied": true,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "dreamease-capsules",
+      "title": "DreamEase Capsules",
+      "category": "Capsules",
+      "type": "Herbal Capsules",
+      "status": "active",
+      "publish": true,
+      "price": "27.99",
+      "compare_at_price": "",
+      "sku": "CAP-DREAMEASE-001",
+      "size": "30 hand-filled capsules",
+      "short_description": "A moonlit capsule ritual for deep rest, a quiet mind, and mornings that feel softer.",
+      "description": "DreamEase is crafted for the person whose body is tired but whose mind will not hush. This calming botanical blend supports relaxation, nighttime nervous-system ease, and restorative sleep without the heavy, foggy morning-after feeling. It feels like tucking your nervous system into silk.",
+      "benefits": [
+        "Supports restful sleep",
+        "Promotes relaxation",
+        "Helps calm a racing mind",
+        "Non-habit-forming nightly ritual"
+      ],
+      "key_botanicals": "Valerian Root, Passionflower, Chamomile, Lavender, Lemon Balm, Hops",
+      "ingredients": "Mugwort, lavender, chamomile, tulsi, lemon balm, ashwagandha, passionflower, valerian, turmeric, saffron, peppermint, skullcap, wild lettuce, clove, star anise, marjoram, eucalyptus, rosemary, sage, fenugreek, caraway, ginger, chrysanthemum, hibiscus, rose, alfalfa, nutmeg, reishi, basil, Egyptian licorice.",
+      "instructions": "Take as directed in the evening with water or tea. Start with the lower suggested amount to assess tolerance. Do not combine with sedatives or alcohol.",
+      "image": "/images/products/dreamease-capsules.webp",
+      "image_fallback": "/images/products/dreamease-capsules.png",
+      "alt_text": "DreamEase natural sleep support capsules in amber jar",
+      "variants": [
+        {
+          "name": "Two Week Supply - 28 capsules",
+          "sku": "AAA- DREAMEASECAPSULES-28CAP",
+          "price": 27.99,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Supply - 60 capsules",
+          "sku": "AAA- DREAMEASECAPSULES-60CAP",
+          "price": 49.99,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "sleep",
+        "relaxation",
+        "herbal capsules",
+        "nervous system",
+        "bedtime ritual"
+      ],
+      "cta": "Add to bedtime ritual",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "DreamEase Capsules | Amber's Alchemy Apothecary",
+      "meta_description": "A moonlit capsule ritual for deep rest, a quiet mind, and mornings that feel softer.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Sleep & Nervous System",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "happy-pill-capsules",
+      "title": "Happy Pill Capsules",
+      "category": "Capsules",
+      "type": "Herbal Capsules",
+      "status": "active",
+      "publish": true,
+      "price": "28.99",
+      "compare_at_price": "",
+      "sku": "CAP-HAPPYPILL-001",
+      "size": "30 hand-filled capsules",
+      "short_description": "A feel-good botanical blend for positive mood, emotional resilience, and everyday stress support.",
+      "description": "Happy Pill Capsules combine traditionally uplifting botanicals to support a positive mood, emotional resilience, and a brighter everyday wellness routine without making neurotransmitter or hormone claims.",
+      "benefits": [
+        "Supports positive mood",
+        "Encourages emotional resilience",
+        "Supports everyday stress management",
+        "Uplifting daily ritual"
+      ],
+      "key_botanicals": "St. John’s Wort, Rhodiola, Saffron, Mimosa Bark, Schisandra, Rose",
+      "ingredients": "St. John’s Wort, Rhodiola, Saffron, Mimosa Bark, Schisandra, Rose",
+      "instructions": "",
+      "image": "/images/products/happy-pill-capsules.webp",
+      "image_fallback": "/images/products/happy-pill-capsules.png",
+      "alt_text": "Happy Pill mood boosting herbal capsules in amber jar",
+      "variants": [],
+      "tags": [
+        "mood support",
+        "emotional wellness",
+        "stress support",
+        "capsules"
+      ],
+      "cta": "Invite the sunshine in",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Happy Pill Capsules | Amber's Alchemy Apothecary",
+      "meta_description": "A feel-good botanical blend for brighter days, softer stress, and a little sparkle back in your spirit.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "Reworded to compliance-oriented structure/function or cosmetic appearance language; legacy high-risk claim removed.",
+      "sources": [
+        "automation_json"
+      ],
+      "subcategory": "Mood & Emotional Wellness",
+      "compliance_rewrite_applied": true,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "immune-at-ease-capsules",
+      "title": "Immune-At-Ease Capsules",
+      "category": "Capsules",
+      "type": "Herbal Capsules",
+      "status": "active",
+      "publish": true,
+      "price": "27.99",
+      "compare_at_price": "",
+      "sku": "CAP-IMMUNEEASE-001",
+      "size": "30 hand-filled capsules",
+      "short_description": "A botanical shield for everyday resilience, seasonal support, and deep immune nourishment.",
+      "description": "Immune-At-Ease brings together classic immune-supportive botanicals in one protective daily formula. It is designed for steady resilience, not harsh stimulation, helping the body feel supported through seasonal shifts, stress, and everyday exposure. A little forest guardian in a capsule.",
+      "benefits": [
+        "Supports immune health",
+        "Encourages resilience",
+        "Rich in antioxidant botanicals",
+        "Everyday wellness support"
+      ],
+      "key_botanicals": "Elderberry, Astragalus, Echinacea, Reishi, Andrographis, Oregano",
+      "ingredients": "Elder flower, ginger, garlic, thyme, rosemary, echinacea-style herbs where available, nettle, peppermint, chamomile, lemon peel, and mineral herbs.",
+      "instructions": "Take at first sign of seasonal stress or as directed. Hydrate well and rest.",
+      "image": "/images/products/immune-at-ease-capsules.webp",
+      "image_fallback": "/images/products/immune-at-ease-capsules.png",
+      "alt_text": "Immune-At-Ease immune support capsules in amber jar",
+      "variants": [
+        {
+          "name": "Two Week Supply - 28 capsules",
+          "sku": "AAA- IMMUNEATEASEFORMUL-28CAP",
+          "price": 27.99,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Supply - 60 capsules",
+          "sku": "AAA- IMMUNEATEASEFORMUL-60CAP",
+          "price": 49.99,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "immune support",
+        "elderberry",
+        "echinacea",
+        "reishi",
+        "capsules"
+      ],
+      "cta": "Build your botanical shield",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Immune-At-Ease Capsules | Amber's Alchemy Apothecary",
+      "meta_description": "A botanical shield for everyday resilience, seasonal support, and deep immune nourishment.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Immune Support",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "environmental-wellness-support",
+      "title": "Environmental Wellness Support",
+      "category": "Capsules",
+      "type": "physical",
+      "status": "active",
+      "publish": true,
+      "price": "27.99",
+      "compare_at_price": "",
+      "sku": "AAA-MOLD-HEAVY-METAL-DETOX",
+      "size": "",
+      "short_description": "A botanical blend supporting the body's normal elimination and antioxidant pathways.",
+      "description": "Environmental Wellness Support combines botanicals traditionally used in general wellness routines to support normal liver, digestive, antioxidant, and elimination functions.",
+      "benefits": [
+        "Supports normal elimination pathways",
+        "Supports antioxidant defenses",
+        "Supports liver and digestive wellness",
+        "Pairs with hydration and balanced nutrition"
+      ],
+      "key_botanicals": "",
+      "ingredients": "Dandelion, nettle, cilantro-style greens, chlorella-style greens, burdock-style roots, ginger, turmeric, lemon peel, rosemary, and supportive mineral herbs.",
+      "instructions": "Take away from medications and supplements by at least 2 hours. Hydrate well. Start low and increase slowly.",
+      "image": "/images/products/environmental-wellness-support.webp",
+      "image_fallback": "/images/products/environmental-wellness-support.png",
+      "alt_text": "Mold & Heavy Metal Detox by Amber’s Alchemy Apothecary",
+      "variants": [
+        {
+          "name": "Two Week Supply - 28 capsules",
+          "sku": "AAA- MOLDHEAVYMETALDETO-28CAP",
+          "price": 27.99,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Supply - 60 capsules",
+          "sku": "AAA- MOLDHEAVYMETALDETO-60CAP",
+          "price": 49.99,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "environmental wellness",
+        "antioxidant support",
+        "liver wellness",
+        "digestive wellness",
+        "capsules"
+      ],
+      "cta": "Support your natural pathways",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Environmental Wellness Support | Amber's Alchemy Apothecary",
+      "meta_description": "A botanical blend supporting normal elimination, antioxidant, liver, and digestive wellness pathways.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "Reworded to compliance-oriented structure/function or cosmetic appearance language; legacy high-risk claim removed.",
+      "sources": [
+        "products_json"
+      ],
+      "subcategory": "Wellness Formulas",
+      "legacy_handle": "mold-heavy-metal-detox",
+      "compliance_rewrite_applied": true,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "seasonal-gut-reset",
+      "title": "Seasonal Gut Reset",
+      "category": "Capsules",
+      "type": "physical",
+      "status": "active",
+      "publish": true,
+      "price": "27.99",
+      "compare_at_price": "",
+      "sku": "AAA-PARASITE-CLEANSE-FORMULA",
+      "size": "",
+      "short_description": "A bitter and aromatic botanical blend for short-term digestive wellness routines.",
+      "description": "Seasonal Gut Reset is a short-term bitter and aromatic botanical blend intended to support normal digestion and digestive comfort as part of a seasonal wellness routine.",
+      "benefits": [
+        "Supports normal digestion",
+        "Supports digestive comfort",
+        "Bitter and aromatic botanical profile",
+        "Designed for short-term wellness routines"
+      ],
+      "key_botanicals": "",
+      "ingredients": "Clove, wormwood-style bitter herbs where legally appropriate, black walnut-style herbs where available, garlic, ginger, fennel, oregano, thyme, cinnamon, and digestive support botanicals.",
+      "instructions": "Use as a short-term cleanse only. Avoid during pregnancy or breastfeeding. Check contraindications for strong bitter herbs.",
+      "image": "/images/products/seasonal-gut-reset.webp",
+      "image_fallback": "/images/products/seasonal-gut-reset.png",
+      "alt_text": "Parasite Cleanse Formula by Amber’s Alchemy Apothecary",
+      "variants": [
+        {
+          "name": "Two Week Supply - 28 capsules",
+          "sku": "AAA- PARASITECLEANSEFOR-28CAP",
+          "price": 27.99,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Supply - 60 capsules",
+          "sku": "AAA- PARASITECLEANSEFOR-60CAP",
+          "price": 49.99,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "digestive support",
+        "gut wellness",
+        "bitter herbs",
+        "seasonal routine",
+        "capsules"
+      ],
+      "cta": "Reset the ritual",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Seasonal Gut Reset | Amber's Alchemy Apothecary",
+      "meta_description": "A bitter and aromatic botanical blend for short-term digestive wellness routines.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "Reworded to compliance-oriented structure/function or cosmetic appearance language; legacy high-risk claim removed.",
+      "sources": [
+        "products_json"
+      ],
+      "subcategory": "Wellness Formulas",
+      "legacy_handle": "parasite-cleanse-formula",
+      "compliance_rewrite_applied": true,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "sacred-balance-capsules",
+      "title": "Sacred Balance Capsules",
+      "category": "Capsules",
+      "type": "Herbal Capsules",
+      "status": "active",
+      "publish": true,
+      "price": "27.99",
+      "compare_at_price": "",
+      "sku": "CAP-SACREDBALANCE-001",
+      "size": "30 hand-filled capsules",
+      "short_description": "A botanical blend supporting normal menstrual-cycle wellness, comfort, and steady daily energy.",
+      "description": "Sacred Balance Capsules combine botanicals traditionally used to support normal menstrual-cycle wellness, everyday comfort, and steady energy.",
+      "benefits": [
+        "Supports menstrual-cycle wellness",
+        "Supports everyday comfort",
+        "Supports steady energy",
+        "Botanical wellness ritual"
+      ],
+      "key_botanicals": "Holy Basil, Fenugreek, Nettle, Sage, Chamomile, Dandelion",
+      "ingredients": "Holy basil, fenugreek seed, nettle, sage, chamomile, dandelion, alfalfa, lemon balm, saffron, lavender, and nourishing mineral-rich herbs.",
+      "instructions": "Take daily with food. Do not use during pregnancy unless cleared by a qualified provider. Check with a provider for hormone-sensitive conditions.",
+      "image": "/images/products/sacred-balance-capsules.webp",
+      "image_fallback": "/images/products/sacred-balance-capsules.png",
+      "alt_text": "Sacred Balance hormone support capsules in amber jar",
+      "variants": [
+        {
+          "name": "Two Week Supply - 28 capsules",
+          "sku": "AAA- SACREDBALANCEHORMO-28CAP",
+          "price": 27.99,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Supply - 60 capsules",
+          "sku": "AAA- SACREDBALANCEHORMO-60CAP",
+          "price": 49.99,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "cycle wellness",
+        "women wellness",
+        "daily energy",
+        "capsules"
+      ],
+      "cta": "Honor your rhythm",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Sacred Balance Capsules | Amber's Alchemy Apothecary",
+      "meta_description": "A soft but powerful hormone-support ritual for cycles, energy, and feminine equilibrium.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "Reworded to compliance-oriented structure/function or cosmetic appearance language; legacy high-risk claim removed.",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Women’s Hormone Support",
+      "compliance_rewrite_applied": true,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "vital-connect-capsules",
+      "title": "Vital Connect Capsules",
+      "category": "Capsules",
+      "type": "Herbal Capsules",
+      "status": "active",
+      "publish": true,
+      "price": "28.99",
+      "compare_at_price": "",
+      "sku": "CAP-VITALCONNECT-001",
+      "size": "30 hand-filled capsules",
+      "short_description": "An adaptogenic botanical blend supporting everyday vitality, resilience, and emotional well-being.",
+      "description": "Vital Connect Capsules are crafted with adaptogenic botanicals selected to support everyday vitality, resilience, and emotional well-being.",
+      "benefits": [
+        "Supports everyday vitality",
+        "Supports resilience",
+        "Supports emotional well-being",
+        "Adaptogenic botanical support"
+      ],
+      "key_botanicals": "Maca Root, Vitex, Ashwagandha, Holy Basil, Shatavari",
+      "ingredients": "Maca Root, Vitex, Ashwagandha, Holy Basil, Shatavari",
+      "instructions": "",
+      "image": "/images/products/vital-connect-capsules.webp",
+      "image_fallback": "/images/products/vital-connect-capsules.png",
+      "alt_text": "Vital Connect hormone and mood support capsules in amber jar",
+      "variants": [],
+      "tags": [
+        "vitality",
+        "resilience",
+        "emotional wellness",
+        "adaptogens",
+        "capsules"
+      ],
+      "cta": "Reconnect with your rhythm",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Vital Connect Capsules | Amber's Alchemy Apothecary",
+      "meta_description": "A feminine vitality blend for hormonal harmony, emotional brightness, and steady life-force energy.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "Reworded to compliance-oriented structure/function or cosmetic appearance language; legacy high-risk claim removed.",
+      "sources": [
+        "automation_json"
+      ],
+      "subcategory": "Hormone & Mood Balance",
+      "compliance_rewrite_applied": true,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "vital-flow-capsules",
+      "title": "Vital Flow Capsules",
+      "category": "Capsules",
+      "type": "Herbal Capsules",
+      "status": "active",
+      "publish": true,
+      "price": "27.99",
+      "compare_at_price": "",
+      "sku": "CAP-VITALFLOW-001",
+      "size": "30 hand-filled capsules",
+      "short_description": "A gentle belly-balancing blend for flow, comfort, and feeling lighter after meals.",
+      "description": "Vital Flow supports the digestive rhythm with warming, soothing, and gently moving botanicals. Made for bloating, sluggish digestion, and that heavy stuck feeling, this formula helps bring the belly back into ease so your whole body can exhale.",
+      "benefits": [
+        "Supports healthy digestion",
+        "Helps reduce bloating",
+        "Encourages regularity",
+        "Supports gut comfort"
+      ],
+      "key_botanicals": "Ginger, Fennel, Peppermint, Dandelion Root, Milk Thistle",
+      "ingredients": "Ginger, fennel seed, peppermint, caraway, celery seed, dandelion, lemon balm, chamomile, cinnamon, spearmint, and digestive bitters.",
+      "instructions": "Take with or after meals as needed. Avoid if sensitive to peppermint or if advised to avoid stimulating digestive herbs.",
+      "image": "/images/products/vital-flow-capsules.webp",
+      "image_fallback": "/images/products/vital-flow-capsules.png",
+      "alt_text": "Vital Flow digestion and bloat relief capsules in amber jar",
+      "variants": [
+        {
+          "name": "Two Week Supply - 28 capsules",
+          "sku": "AAA- VITALFLOWDIGESTIVE-28CAP",
+          "price": 27.99,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Supply - 60 capsules",
+          "sku": "AAA- VITALFLOWDIGESTIVE-60CAP",
+          "price": 49.99,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "digestion",
+        "bloating",
+        "gut health",
+        "constipation relief",
+        "capsules"
+      ],
+      "cta": "Feel lighter naturally",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Vital Flow Capsules | Amber's Alchemy Apothecary",
+      "meta_description": "A gentle belly-balancing blend for flow, comfort, and feeling lighter after meals.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Digestion & Bloat Relief",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "vital-vitality-capsules",
+      "title": "Vital Vitality Capsules",
+      "category": "Capsules",
+      "type": "Herbal Capsules",
+      "status": "active",
+      "publish": true,
+      "price": "27.99",
+      "compare_at_price": "",
+      "sku": "CAP-VITALVITALITY-001",
+      "size": "30 hand-filled capsules",
+      "short_description": "Clean, grounded energy for the days you need to feel bright, focused, and fully online.",
+      "description": "Vital Vitality is your no-crash botanical boost for stamina, clarity, and daily momentum. Built with adaptogenic herbs traditionally used for energy resilience and focus, this blend helps you feel awake without feeling wired. Think candle flame, not lightning strike.",
+      "benefits": [
+        "Supports natural energy",
+        "Encourages mental clarity",
+        "Supports stamina",
+        "No jittery caffeine crash"
+      ],
+      "key_botanicals": "Rhodiola, Eleuthero, Ginseng, Maca, Cordyceps, Matcha",
+      "ingredients": "Tulsi, fenugreek, lavender, spearmint, lemongrass, cumin, coriander, fennel, cinnamon, turmeric, black pepper, cayenne, ginger, flaxseed, dandelion, lemon balm, caraway, celery seed, elder flower, rosemary, eucalyptus.",
+      "instructions": "Take in the morning with food. Avoid late day use if energizing.",
+      "image": "/images/products/vital-vitality-capsules.webp",
+      "image_fallback": "/images/products/vital-vitality-capsules.png",
+      "alt_text": "Vital Vitality natural energy and focus capsules in amber jar",
+      "variants": [
+        {
+          "name": "Two Week Supply - 28 capsules",
+          "sku": "AAA- VITALCLARITYFORMUL-28CAP",
+          "price": 27.99,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Supply - 60 capsules",
+          "sku": "AAA- VITALCLARITYFORMUL-60CAP",
+          "price": 49.99,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "energy",
+        "focus",
+        "vitality",
+        "adaptogens",
+        "capsules"
+      ],
+      "cta": "Start the day stronger",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Vital Vitality Capsules | Amber's Alchemy Apothecary",
+      "meta_description": "Clean, grounded energy for the days you need to feel bright, focused, and fully online.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Energy & Vitality",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "wild-caught-omega-3-fish-oil",
+      "title": "Wild-Caught Omega-3 Fish Oil",
+      "category": "Capsules",
+      "type": "Supplement",
+      "status": "active",
+      "publish": true,
+      "price": "24.99",
+      "compare_at_price": "",
+      "sku": "OMEGA3-001",
+      "size": "Bottle",
+      "short_description": "A source of omega-3 fatty acids for general nutritional support.",
+      "description": "Wild-Caught Omega-3 Fish Oil provides omega-3 fatty acids as part of a balanced nutrition routine.",
+      "benefits": [
+        "Provides omega-3 fatty acids",
+        "General nutritional support",
+        "Easy daily routine",
+        "Foundational dietary fat support"
+      ],
+      "key_botanicals": "Wild-caught omega-3 fish oil",
+      "ingredients": "Wild-caught omega-3 fish oil",
+      "instructions": "",
+      "image": "/images/products/wild-caught-omega-3-fish-oil.webp",
+      "image_fallback": "/images/products/wild-caught-omega-3-fish-oil.png",
+      "alt_text": "Wild-Caught Omega-3 Fish Oil supplement bottle",
+      "variants": [],
+      "tags": [
+        "omega 3",
+        "fish oil",
+        "fatty acids",
+        "nutrition"
+      ],
+      "cta": "Nourish the foundation",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Wild-Caught Omega-3 Fish Oil | Amber's Alchemy Apothecary",
+      "meta_description": "Clean foundational support for the brain, heart, joints, and that supple inner glow.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children. Allergen: Contains fish.",
+      "claim_review_required": false,
+      "claim_review_note": "Reworded to compliance-oriented structure/function or cosmetic appearance language; legacy high-risk claim removed.",
+      "sources": [
+        "automation_json"
+      ],
+      "subcategory": "Foundational Wellness",
+      "allergen_statement": "Contains fish.",
+      "compliance_rewrite_applied": true,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "custom-herbal-capsules",
+      "title": "Custom Herbal Capsules",
+      "category": "Custom & Consultations",
+      "type": "Custom Herbal Capsules",
+      "status": "active",
+      "publish": true,
+      "price": "33.33",
+      "compare_at_price": "",
+      "sku": "CUSTOM-CAPSULES-001",
+      "size": "30 custom-filled capsules",
+      "short_description": "A personalized capsule blend crafted around your body, goals, and herbal needs.",
+      "description": "Custom Herbal Capsules are made for the person who does not fit into a generic wellness box. Share your goals, symptoms, and preferences, and Amber hand-selects botanicals from her apothecary inventory to create a small-batch formula just for you.",
+      "benefits": [
+        "Personalized herbal formula",
+        "Hand-filled small batch",
+        "Custom wellness support",
+        "Built around your goals"
+      ],
+      "key_botanicals": "Selected individually from Amber’s apothecary inventory",
+      "ingredients": "Ingredients vary by customer intake form and selected formula goals.",
+      "instructions": "Customer completes intake form. Amber reviews, crafts blend, and sends follow-up details.",
+      "image": "/images/products/custom-herbal-capsules.webp",
+      "image_fallback": "/images/products/custom-herbal-capsules.png",
+      "alt_text": "Custom Herbal Capsules personalized formula in amber jar",
+      "variants": [
+        {
+          "name": "Two Week Custom Blend - 28 capsules",
+          "sku": "AAA- CUSTOMHERBALCAPSUL-28CAP",
+          "price": 33.33,
+          "currency": "usd",
+          "unit": "28 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Full Month Custom Blend - 60 capsules",
+          "sku": "AAA- CUSTOMHERBALCAPSUL-60CAP",
+          "price": 60.0,
+          "currency": "usd",
+          "unit": "60 capsules",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "custom capsules",
+        "personalized herbs",
+        "build your own",
+        "custom formula"
+      ],
+      "cta": "Build my blend",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Custom Herbal Capsules | Amber's Alchemy Apothecary",
+      "meta_description": "A personalized capsule blend crafted around your body, goals, and herbal needs.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Custom Formulas",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "custom-remedy-consultation",
+      "title": "Custom Remedy Consultation",
+      "category": "Custom & Consultations",
+      "type": "service",
+      "status": "active",
+      "publish": true,
+      "price": "33.33",
+      "compare_at_price": "",
+      "sku": "AAA-CUSTOM-REMEDY-CONSULTATI",
+      "size": "",
+      "short_description": "A custom consultation for customers who want a personalized herbal direction, product match, or full apothecary protocol.",
+      "description": "A custom consultation for customers who want a personalized herbal direction, product match, or full apothecary protocol.",
+      "benefits": [
+        "Personalized support",
+        "Helps choose the right products",
+        "Great for complex goals",
+        "Builds trust and repeat visits"
+      ],
+      "key_botanicals": "",
+      "ingredients": "Service only; no ingredients.",
+      "instructions": "Customer books consultation and completes intake before appointment.",
+      "image": "/images/products/custom-remedy-consultation.webp",
+      "image_fallback": "/images/products/custom-remedy-consultation.png",
+      "alt_text": "Custom Remedy Consultation by Amber’s Alchemy Apothecary",
+      "variants": [
+        {
+          "name": "Custom Remedy Consultation",
+          "sku": "AAA- CUSTOMREMEDYCONSUL-CONSULT",
+          "price": 33.33,
+          "currency": "usd",
+          "unit": "consultation",
+          "requiresShipping": false,
+          "fulfillment": "digital"
+        }
+      ],
+      "tags": [],
+      "cta": "Add to cart",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Custom Remedy Consultation | Amber's Alchemy Apothecary",
+      "meta_description": "A custom consultation for customers who want a personalized herbal direction, product match, or full apothecary protocol.",
+      "disclaimer": "For general wellness and educational purposes only. Custom recommendations are not a diagnosis or treatment plan. Review ingredients for allergies, pregnancy, medication interactions, and individual contraindications, and consult a qualified healthcare professional when appropriate.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "products_json"
+      ],
+      "subcategory": "Services",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "personalized-herbal-protocols",
+      "title": "Personalized Herbal Protocols",
+      "category": "Custom & Consultations",
+      "type": "service",
+      "status": "active",
+      "publish": true,
+      "price": "77.77",
+      "compare_at_price": "",
+      "sku": "AAA-PERSONALIZED-HERBAL-PROT",
+      "size": "",
+      "short_description": "A deeper written protocol combining product suggestions, rituals, herbs, lifestyle notes, and an easy follow-through plan.",
+      "description": "A deeper written protocol combining product suggestions, rituals, herbs, lifestyle notes, and an easy follow-through plan.",
+      "benefits": [
+        "Premium personalized support",
+        "Clear step-by-step plan",
+        "Pairs products and rituals",
+        "Excellent high-value offer"
+      ],
+      "key_botanicals": "",
+      "ingredients": "Service only; no ingredients.",
+      "instructions": "Customer completes detailed intake. Amber creates a personalized PDF-style protocol.",
+      "image": "/images/products/personalized-herbal-protocols.webp",
+      "image_fallback": "/images/products/personalized-herbal-protocols.png",
+      "alt_text": "Personalized Herbal Protocols by Amber’s Alchemy Apothecary",
+      "variants": [
+        {
+          "name": "Written Personalized Protocol",
+          "sku": "AAA- PERSONALIZEDHERBAL-PROTOCOL",
+          "price": 77.77,
+          "currency": "usd",
+          "unit": "digital protocol",
+          "requiresShipping": false,
+          "fulfillment": "digital"
+        }
+      ],
+      "tags": [],
+      "cta": "Add to cart",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Personalized Herbal Protocols | Amber's Alchemy Apothecary",
+      "meta_description": "A deeper written protocol combining product suggestions, rituals, herbs, lifestyle notes, and an easy follow-through plan.",
+      "disclaimer": "For general wellness and educational purposes only. Custom recommendations are not a diagnosis or treatment plan. Review ingredients for allergies, pregnancy, medication interactions, and individual contraindications, and consult a qualified healthcare professional when appropriate.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "products_json"
+      ],
+      "subcategory": "Services",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "grimoire-subscription",
+      "title": "Grimoire Subscription",
+      "category": "Grimoire & Digital",
+      "type": "subscription",
+      "status": "active",
+      "publish": true,
+      "price": "7.77",
+      "compare_at_price": "",
+      "sku": "AAA-GRIMOIRE-SUBSCRIPTION",
+      "size": "",
+      "short_description": "Monthly access to the Living Grimoire subscriber library and member benefits.",
+      "description": "Monthly access to subscriber-only Living Grimoire content, member benefits, and ongoing educational/spiritual releases.",
+      "benefits": [
+        "Unlocks exclusive herbal library",
+        "10% off orders",
+        "Weekly recipes and articles",
+        "Creates loyal repeat visitors"
+      ],
+      "key_botanicals": "",
+      "ingredients": "Digital subscription; no ingredients.",
+      "instructions": "Subscribe monthly. Access is unlocked by email. Active subscribers receive ongoing content and discounts.",
+      "image": "/images/products/grimoire-subscription.webp",
+      "image_fallback": "/images/products/grimoire-subscription.png",
+      "alt_text": "Grimoire Subscription by Amber’s Alchemy Apothecary",
+      "variants": [
+        {
+          "name": "Monthly Subscription",
+          "sku": "AAA- GRIMOIRESUBSCRIPTI-MONTHLY",
+          "price": 7.77,
+          "currency": "usd",
+          "unit": "monthly",
+          "requiresShipping": false,
+          "fulfillment": "digital"
+        }
+      ],
+      "tags": [],
+      "cta": "Add to cart",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Grimoire Subscription | Amber's Alchemy Apothecary",
+      "meta_description": "Monthly access to the hidden Grimoire library, weekly recipes, articles, rituals, herbal education, and 10% off orders.",
+      "disclaimer": "For educational, spiritual, or informational purposes only. Not medical advice and not intended to diagnose, treat, cure, or prevent any disease. Seek qualified professional care for medical concerns.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "products_json"
+      ],
+      "subcategory": "Subscriptions",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "tarot-readings",
+      "title": "Tarot Readings",
+      "category": "Grimoire & Digital",
+      "type": "digital",
+      "status": "active",
+      "publish": true,
+      "price": "11.11",
+      "compare_at_price": "",
+      "sku": "AAA-TAROT-READINGS",
+      "size": "",
+      "short_description": "Mystical tarot readings for insight, reflection, and intuitive guidance through the Awaken Again experience.",
+      "description": "Mystical tarot readings for insight, reflection, and intuitive guidance through the Awaken Again experience.",
+      "benefits": [
+        "Digital/intuitive service",
+        "Supports reflection",
+        "Pairs with ritual products",
+        "Great recurring content offer"
+      ],
+      "key_botanicals": "",
+      "ingredients": "Digital service; no ingredients.",
+      "instructions": "Customer selects reading type and submits question or topic.",
+      "image": "/images/products/tarot-readings.webp",
+      "image_fallback": "/images/products/tarot-readings.png",
+      "alt_text": "Tarot Readings by Amber’s Alchemy Apothecary",
+      "variants": [
+        {
+          "name": "Mini Reading",
+          "sku": "AAA- TAROTREADINGS-MINI",
+          "price": 11.11,
+          "currency": "usd",
+          "unit": "digital reading",
+          "requiresShipping": false,
+          "fulfillment": "digital"
+        },
+        {
+          "name": "Full Reading",
+          "sku": "AAA- TAROTREADINGS-FULL",
+          "price": 33.33,
+          "currency": "usd",
+          "unit": "digital reading",
+          "requiresShipping": false,
+          "fulfillment": "digital"
+        }
+      ],
+      "tags": [],
+      "cta": "Add to cart",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Tarot Readings | Amber's Alchemy Apothecary",
+      "meta_description": "Mystical tarot readings for insight, reflection, and intuitive guidance through the Awaken Again experience.",
+      "disclaimer": "For educational, spiritual, or informational purposes only. Not medical advice and not intended to diagnose, treat, cure, or prevent any disease. Seek qualified professional care for medical concerns.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "products_json"
+      ],
+      "subcategory": "Digital Products",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "citrus-goddess-glow-soap",
+      "title": "Citrus Goddess Glow Soap",
+      "category": "Soaps",
+      "type": "Botanical Soap",
+      "status": "active",
+      "publish": true,
+      "price": "11.99",
+      "compare_at_price": "",
+      "sku": "SOAP-CITRUSGLOW-001",
+      "size": "4 oz bar",
+      "short_description": "A bright citrus bar for a refreshed mood and luminous skin ritual.",
+      "description": "Citrus Goddess Glow brings a burst of bright, juicy energy to your shower. It is made for mornings that need a little sparkle and skin that wants to feel clean, soft, and alive.",
+      "benefits": [
+        "Uplifting citrus scent",
+        "Refreshes skin",
+        "Energizing morning ritual",
+        "Handmade botanical soap"
+      ],
+      "key_botanicals": "Citrus botanicals, Goat milk, Shea butter, Castor oil",
+      "ingredients": "Soap base, lemon peel, citrus botanicals, herbs, skin-loving oils, botanical colorants.",
+      "instructions": "Lather and rinse. Avoid eyes.",
+      "image": "/images/products/citrus-goddess-glow-soap.webp",
+      "image_fallback": "/images/products/citrus-goddess-glow-soap.png",
+      "alt_text": "Citrus Goddess Glow handmade botanical soap",
+      "variants": [
+        {
+          "name": "Single Artisan Bar",
+          "sku": "AAA- CITRUSGROVESOAP-BAR",
+          "price": 11.99,
+          "currency": "usd",
+          "unit": "single bar",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Set of 3",
+          "sku": "AAA- CITRUSGROVESOAP-3BAR",
+          "price": 29.99,
+          "currency": "usd",
+          "unit": "3 bars",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Set of 6",
+          "sku": "AAA- CITRUSGROVESOAP-6BAR",
+          "price": 54.99,
+          "currency": "usd",
+          "unit": "6 bars",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "soap",
+        "citrus",
+        "glow",
+        "goddess",
+        "handmade"
+      ],
+      "cta": "Turn on the glow",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Citrus Goddess Glow Soap | Amber's Alchemy Apothecary",
+      "meta_description": "A bright citrus bar for a refreshed mood and luminous skin ritual.",
+      "disclaimer": "For external cleansing use only. Avoid contact with eyes. Discontinue use if irritation occurs. Patch test first if you have sensitive skin. This cosmetic product is not intended to diagnose, treat, cure, or prevent any disease.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Artisan Soap",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "eucalyptus-mint-spa-renewal-soap",
+      "title": "Eucalyptus Mint Spa Renewal Soap",
+      "category": "Soaps",
+      "type": "Botanical Soap",
+      "status": "active",
+      "publish": true,
+      "price": "12.99",
+      "compare_at_price": "",
+      "sku": "SOAP-EUCALYPTUS-001",
+      "size": "4 oz bar",
+      "short_description": "A cool, spa-bright bar that wakes the breath, clears the mood, and refreshes tired skin.",
+      "description": "Eucalyptus Mint Spa Renewal is clean, cooling, and invigorating, like stepping into a mountain spa after a long week. Mint and eucalyptus awaken the senses while goat milk and shea butter keep the skin soft.",
+      "benefits": [
+        "Cooling fresh aroma",
+        "Refreshes tired skin",
+        "Opens the breath",
+        "Deeply moisturizing"
+      ],
+      "key_botanicals": "Eucalyptus, Peppermint, Mint leaves, Spirulina, Goat milk",
+      "ingredients": "Eucalyptus, Peppermint, Mint leaves, Spirulina, Goat milk",
+      "instructions": "",
+      "image": "/images/products/eucalyptus-mint-spa-renewal-soap.webp",
+      "image_fallback": "/images/products/eucalyptus-mint-spa-renewal-soap.png",
+      "alt_text": "Eucalyptus Mint Spa Renewal handmade botanical soap",
+      "variants": [],
+      "tags": [
+        "soap",
+        "eucalyptus",
+        "mint",
+        "spa",
+        "cooling",
+        "clarifying"
+      ],
+      "cta": "Refresh everything",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Eucalyptus Mint Spa Renewal Soap | Amber's Alchemy Apothecary",
+      "meta_description": "A cool, spa-bright bar that wakes the breath, clears the mood, and refreshes tired skin.",
+      "disclaimer": "For external cleansing use only. Avoid contact with eyes. Discontinue use if irritation occurs. Patch test first if you have sensitive skin. This cosmetic product is not intended to diagnose, treat, cure, or prevent any disease.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json"
+      ],
+      "subcategory": "Artisan Soap",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "fresh-mountain-air-soap",
+      "title": "Fresh Mountain Air Soap",
+      "category": "Soaps",
+      "type": "Botanical Soap",
+      "status": "active",
+      "publish": true,
+      "price": "12.99",
+      "compare_at_price": "",
+      "sku": "SOAP-MOUNTAIN-001",
+      "size": "4 oz bar",
+      "short_description": "A crisp minty-herbal bar that feels like the first breath of mountain morning air.",
+      "description": "Fresh Mountain Air is clean, bright, and wildly refreshing. Cool mint and green botanicals awaken tired skin and help your whole mood feel rinsed, reset, and ready.",
+      "benefits": [
+        "Refreshing mint aroma",
+        "Awakens tired skin",
+        "Supports skin clarity",
+        "Clean herbal lather"
+      ],
+      "key_botanicals": "Mint, Herbal greens, Goat milk, Shea butter",
+      "ingredients": "Mint, Herbal greens, Goat milk, Shea butter",
+      "instructions": "",
+      "image": "/images/products/fresh-mountain-air-soap.webp",
+      "image_fallback": "/images/products/fresh-mountain-air-soap.png",
+      "alt_text": "Fresh Mountain Air handmade botanical soap",
+      "variants": [],
+      "tags": [
+        "soap",
+        "mint",
+        "mountain air",
+        "herbal",
+        "refreshing"
+      ],
+      "cta": "Breathe in clean",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Fresh Mountain Air Soap | Amber's Alchemy Apothecary",
+      "meta_description": "A crisp minty-herbal bar that feels like the first breath of mountain morning air.",
+      "disclaimer": "For external cleansing use only. Avoid contact with eyes. Discontinue use if irritation occurs. Patch test first if you have sensitive skin. This cosmetic product is not intended to diagnose, treat, cure, or prevent any disease.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json"
+      ],
+      "subcategory": "Artisan Soap",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "gaias-rose-soap",
+      "title": "Gaia’s Rose Soap",
+      "category": "Soaps",
+      "type": "Botanical Soap",
+      "status": "active",
+      "publish": true,
+      "price": "11.99",
+      "compare_at_price": "",
+      "sku": "SOAP-ROSE-001",
+      "size": "4 oz bar",
+      "short_description": "A romantic rose-and-hibiscus bar for goddess skin and heart-opening showers.",
+      "description": "Gaia’s Rose is a lush floral soap infused with rose petals and hibiscus for a soft, feminine glow. Available in round rose mold or bar shapes, each piece feels like a tiny love letter from the garden.",
+      "benefits": [
+        "Softens skin",
+        "Romantic floral aroma",
+        "Supports a glowing complexion",
+        "Handmade botanical artistry"
+      ],
+      "key_botanicals": "Rose petals, Hibiscus, Goat milk, Shea butter",
+      "ingredients": "Soap base, botanical colorants, rose-inspired botanicals, petals, skin-loving oils, and fragrance/essential oil blend as selected.",
+      "instructions": "Lather with water, cleanse, and rinse. Keep dry between uses.",
+      "image": "/images/products/gaias-rose-soap.webp",
+      "image_fallback": "/images/products/gaias-rose-soap.png",
+      "alt_text": "Gaia’s Rose handmade botanical soap",
+      "variants": [
+        {
+          "name": "Single Artisan Bar",
+          "sku": "AAA- GAIAROSESOAP-BAR",
+          "price": 11.99,
+          "currency": "usd",
+          "unit": "single bar",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Set of 3",
+          "sku": "AAA- GAIAROSESOAP-3BAR",
+          "price": 29.99,
+          "currency": "usd",
+          "unit": "3 bars",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Set of 6",
+          "sku": "AAA- GAIAROSESOAP-6BAR",
+          "price": 54.99,
+          "currency": "usd",
+          "unit": "6 bars",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "soap",
+        "rose",
+        "hibiscus",
+        "floral",
+        "goddess",
+        "handmade"
+      ],
+      "cta": "Open the heart",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Gaia’s Rose Soap | Amber's Alchemy Apothecary",
+      "meta_description": "A romantic rose-and-hibiscus bar for goddess skin and heart-opening showers.",
+      "disclaimer": "For external cleansing use only. Avoid contact with eyes. Discontinue use if irritation occurs. Patch test first if you have sensitive skin. This cosmetic product is not intended to diagnose, treat, cure, or prevent any disease.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Artisan Soap",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "lavender-fairy-dream-soap",
+      "title": "Lavender Fairy Dream Soap",
+      "category": "Soaps",
+      "type": "Botanical Soap",
+      "status": "active",
+      "publish": true,
+      "price": "11.99",
+      "compare_at_price": "",
+      "sku": "SOAP-LAVENDER-001",
+      "size": "4 oz bar",
+      "short_description": "A dreamy lavender bar for soft skin, calmer energy, and fairy-bath luxury.",
+      "description": "Lavender Fairy Dream is a gentle botanical soap made with goat milk, shea butter, castor oil, and calming lavender. It is soft, floral, and enchanted enough to make an ordinary shower feel like a moonlit garden rinse.",
+      "benefits": [
+        "Calming lavender aroma",
+        "Hydrating goat milk and shea butter",
+        "Gentle for sensitive skin",
+        "Dreamy floral ritual"
+      ],
+      "key_botanicals": "Lavender buds, Butterfly pea flower, Goat milk, Shea butter",
+      "ingredients": "Soap base, lavender, calming botanicals, skin-loving oils, botanical colorants.",
+      "instructions": "Use as a body soap. Keep dry between uses.",
+      "image": "/images/products/lavender-fairy-dream-soap.webp",
+      "image_fallback": "/images/products/lavender-fairy-dream-soap.png",
+      "alt_text": "Lavender Fairy Dream handmade botanical soap",
+      "variants": [
+        {
+          "name": "Single Artisan Bar",
+          "sku": "AAA- LAVENDERDREAMSOAP-BAR",
+          "price": 11.99,
+          "currency": "usd",
+          "unit": "single bar",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Set of 3",
+          "sku": "AAA- LAVENDERDREAMSOAP-3BAR",
+          "price": 29.99,
+          "currency": "usd",
+          "unit": "3 bars",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Set of 6",
+          "sku": "AAA- LAVENDERDREAMSOAP-6BAR",
+          "price": 54.99,
+          "currency": "usd",
+          "unit": "6 bars",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "soap",
+        "lavender",
+        "calming",
+        "goat milk",
+        "sensitive skin"
+      ],
+      "cta": "Bathe in moonlight",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Lavender Fairy Dream Soap | Amber's Alchemy Apothecary",
+      "meta_description": "A dreamy lavender bar for soft skin, calmer energy, and fairy-bath luxury.",
+      "disclaimer": "For external cleansing use only. Avoid contact with eyes. Discontinue use if irritation occurs. Patch test first if you have sensitive skin. This cosmetic product is not intended to diagnose, treat, cure, or prevent any disease.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Artisan Soap",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "orange-lily-goddess-soap",
+      "title": "Orange Lily Goddess Soap",
+      "category": "Soaps",
+      "type": "Botanical Soap",
+      "status": "active",
+      "publish": true,
+      "price": "11.99",
+      "compare_at_price": "",
+      "sku": "SOAP-ORANGELILY-001",
+      "size": "4 oz bar",
+      "short_description": "A radiant citrus-floral bar for bright skin, soft confidence, and goddess-level shower energy.",
+      "description": "Orange Lily Goddess is sunshine in soap form. Sweet orange uplifts the mood while lily-inspired florals and botanical oils make the skin feel soft, bright, and ready to be adored.",
+      "benefits": [
+        "Uplifting citrus aroma",
+        "Softens and brightens skin feel",
+        "Feminine floral ritual",
+        "Handmade botanical bar"
+      ],
+      "key_botanicals": "Sweet Orange, Lily-inspired florals, Botanical oils, Goat milk",
+      "ingredients": "Soap base, rose petals, floral botanicals, skin-loving oils, botanical colorants.",
+      "instructions": "Use daily as desired. Keep dry between uses.",
+      "image": "/images/products/orange-lily-goddess-soap.webp",
+      "image_fallback": "/images/products/orange-lily-goddess-soap.png",
+      "alt_text": "Orange Lily Goddess handmade botanical soap",
+      "variants": [
+        {
+          "name": "Single Artisan Bar",
+          "sku": "AAA- ROSEBLOSSOMSOAP-BAR",
+          "price": 11.99,
+          "currency": "usd",
+          "unit": "single bar",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Set of 3",
+          "sku": "AAA- ROSEBLOSSOMSOAP-3BAR",
+          "price": 29.99,
+          "currency": "usd",
+          "unit": "3 bars",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Set of 6",
+          "sku": "AAA- ROSEBLOSSOMSOAP-6BAR",
+          "price": 54.99,
+          "currency": "usd",
+          "unit": "6 bars",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "soap",
+        "orange",
+        "lily",
+        "citrus",
+        "goddess",
+        "floral"
+      ],
+      "cta": "Glow like sunlight",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Orange Lily Goddess Soap | Amber's Alchemy Apothecary",
+      "meta_description": "A radiant citrus-floral bar for bright skin, soft confidence, and goddess-level shower energy.",
+      "disclaimer": "For external cleansing use only. Avoid contact with eyes. Discontinue use if irritation occurs. Patch test first if you have sensitive skin. This cosmetic product is not intended to diagnose, treat, cure, or prevent any disease.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Artisan Soap",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "sacred-forest-ritual-soap",
+      "title": "Sacred Forest Ritual Soap",
+      "category": "Soaps",
+      "type": "Botanical Soap",
+      "status": "active",
+      "publish": true,
+      "price": "11.99",
+      "compare_at_price": "",
+      "sku": "SOAP-FOREST-001",
+      "size": "4 oz bar",
+      "short_description": "An earthy, grounding bar that turns your shower into a forest cleansing ritual.",
+      "description": "Sacred Forest Ritual is made for grounding, clearing, and coming back to yourself. Earthy botanicals and creamy soap base create a sensory reset that feels like stepping barefoot into ancient woods.",
+      "benefits": [
+        "Grounding aroma",
+        "Cleansing ritual feel",
+        "Softens skin",
+        "Earthy apothecary mood"
+      ],
+      "key_botanicals": "Forest-inspired botanicals, Goat milk, Shea butter, Essential oils",
+      "ingredients": "Soap base, rosemary, nettle-style greens, forest botanicals, skin-loving oils, botanical colorants.",
+      "instructions": "Use with water, lather, rinse. Store on a draining soap dish.",
+      "image": "/images/products/sacred-forest-ritual-soap.webp",
+      "image_fallback": "/images/products/sacred-forest-ritual-soap.png",
+      "alt_text": "Sacred Forest Ritual handmade botanical soap",
+      "variants": [
+        {
+          "name": "Single Artisan Bar",
+          "sku": "AAA- EMERALDFORESTSOAP-BAR",
+          "price": 11.99,
+          "currency": "usd",
+          "unit": "single bar",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Set of 3",
+          "sku": "AAA- EMERALDFORESTSOAP-3BAR",
+          "price": 29.99,
+          "currency": "usd",
+          "unit": "3 bars",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Set of 6",
+          "sku": "AAA- EMERALDFORESTSOAP-6BAR",
+          "price": 54.99,
+          "currency": "usd",
+          "unit": "6 bars",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "soap",
+        "forest",
+        "grounding",
+        "ritual",
+        "earthy"
+      ],
+      "cta": "Enter the forest",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Sacred Forest Ritual Soap | Amber's Alchemy Apothecary",
+      "meta_description": "An earthy, grounding bar that turns your shower into a forest cleansing ritual.",
+      "disclaimer": "For external cleansing use only. Avoid contact with eyes. Discontinue use if irritation occurs. Patch test first if you have sensitive skin. This cosmetic product is not intended to diagnose, treat, cure, or prevent any disease.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Artisan Soap",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "sunlit-garden-bloom-soap",
+      "title": "Sunlit Garden Bloom Soap",
+      "category": "Soaps",
+      "type": "Botanical Soap",
+      "status": "active",
+      "publish": true,
+      "price": "11.99",
+      "compare_at_price": "",
+      "sku": "SOAP-GARDEN-001",
+      "size": "4 oz bar",
+      "short_description": "A soft chamomile-and-rose bar for sensitive skin and sunlit feminine softness.",
+      "description": "Sunlit Garden Bloom is gentle, floral, and quietly luxurious. Chamomile and rose bring a tender botanical touch, making this bar perfect for anyone who wants their skin to feel pampered instead of stripped.",
+      "benefits": [
+        "Chamomile soothes sensitive skin",
+        "Rose softens",
+        "Gentle floral scent",
+        "Feminine daily ritual"
+      ],
+      "key_botanicals": "Chamomile, Rose, Goat milk, Shea butter",
+      "ingredients": "Soap base, creamy oils, gentle botanicals, subtle floral blend.",
+      "instructions": "Lather, cleanse, and rinse. Store dry.",
+      "image": "/images/products/sunlit-garden-bloom-soap.webp",
+      "image_fallback": "/images/products/sunlit-garden-bloom-soap.png",
+      "alt_text": "Sunlit Garden Bloom handmade botanical soap",
+      "variants": [
+        {
+          "name": "Single Artisan Bar",
+          "sku": "AAA- IVORYROSESOAP-BAR",
+          "price": 11.99,
+          "currency": "usd",
+          "unit": "single bar",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Set of 3",
+          "sku": "AAA- IVORYROSESOAP-3BAR",
+          "price": 29.99,
+          "currency": "usd",
+          "unit": "3 bars",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Set of 6",
+          "sku": "AAA- IVORYROSESOAP-6BAR",
+          "price": 54.99,
+          "currency": "usd",
+          "unit": "6 bars",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "soap",
+        "chamomile",
+        "rose",
+        "floral",
+        "sensitive skin"
+      ],
+      "cta": "Step into the garden",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Sunlit Garden Bloom Soap | Amber's Alchemy Apothecary",
+      "meta_description": "A soft chamomile-and-rose bar for sensitive skin and sunlit feminine softness.",
+      "disclaimer": "For external cleansing use only. Avoid contact with eyes. Discontinue use if irritation occurs. Patch test first if you have sensitive skin. This cosmetic product is not intended to diagnose, treat, cure, or prevent any disease.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Artisan Soap",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "warm-cinnamon-comfort-soap",
+      "title": "Warm Cinnamon Comfort Soap",
+      "category": "Soaps",
+      "type": "Botanical Soap",
+      "status": "active",
+      "publish": true,
+      "price": "12.99",
+      "compare_at_price": "",
+      "sku": "SOAP-CINNAMON-001",
+      "size": "4 oz bar",
+      "short_description": "A cozy cinnamon bar that wraps the skin in spice, warmth, and comfort.",
+      "description": "Warm Cinnamon Comfort is the soap equivalent of a soft blanket, candlelight, and a perfectly timed compliment. Cinnamon and clove create a grounding, spicy aroma while creamy bases nourish the skin.",
+      "benefits": [
+        "Warm spicy scent",
+        "Encourages a cozy ritual",
+        "Nourishes skin",
+        "Grounding botanical bar"
+      ],
+      "key_botanicals": "Cinnamon, Clove, Goat milk, Shea butter",
+      "ingredients": "Cinnamon, Clove, Goat milk, Shea butter",
+      "instructions": "",
+      "image": "/images/products/warm-cinnamon-comfort-soap.webp",
+      "image_fallback": "/images/products/warm-cinnamon-comfort-soap.png",
+      "alt_text": "Warm Cinnamon Comfort handmade botanical soap",
+      "variants": [],
+      "tags": [
+        "soap",
+        "cinnamon",
+        "spice",
+        "warming",
+        "cozy"
+      ],
+      "cta": "Wrap yourself in warmth",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Warm Cinnamon Comfort Soap | Amber's Alchemy Apothecary",
+      "meta_description": "A cozy cinnamon bar that wraps the skin in spice, warmth, and comfort.",
+      "disclaimer": "For external cleansing use only. Avoid contact with eyes. Discontinue use if irritation occurs. Patch test first if you have sensitive skin. This cosmetic product is not intended to diagnose, treat, cure, or prevent any disease.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json"
+      ],
+      "subcategory": "Artisan Soap",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "alchemy-tea-blend",
+      "title": "Alchemy Tea Blend",
+      "category": "Teas",
+      "type": "Herbal Tea",
+      "status": "active",
+      "publish": true,
+      "price": "11.99",
+      "compare_at_price": "",
+      "sku": "TEA-ALCHEMY-001",
+      "size": "Tea bags / loose-leaf option",
+      "short_description": "A warm cup of botanical magic for body, mind, and spirit.",
+      "description": "Alchemy Tea Blend is a handcrafted herbal infusion for slowing down, sipping deeply, and turning an ordinary moment into a little ceremony. Steep it when you want nourishment, softness, and a reminder that wellness can taste like magic.",
+      "benefits": [
+        "Supports a calming ritual",
+        "Nourishes body and spirit",
+        "Handcrafted small batch",
+        "Cozy daily wellness tea"
+      ],
+      "key_botanicals": "Custom seasonal botanicals from Amber’s apothecary collection",
+      "ingredients": "Custom loose-leaf herbs selected by blend: chamomile, lavender, peppermint, spearmint, lemon balm, hibiscus, rose, ginger, cinnamon, nettle, dandelion, and seasonal botanicals.",
+      "instructions": "Steep 1–2 tsp per 8 oz hot water for 10–15 minutes. Sweeten if desired.",
+      "image": "/images/products/alchemy-tea-blend.webp",
+      "image_fallback": "/images/products/alchemy-tea-blend.png",
+      "alt_text": "Alchemy Tea Blend herbal tea package",
+      "variants": [
+        {
+          "name": "Loose Leaf - 1 oz",
+          "sku": "AAA- ALCHEMYTEABLEND-1OZ",
+          "price": 13.33,
+          "currency": "usd",
+          "unit": "1 oz loose leaf",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Custom Tea Bags - Pack of 20",
+          "sku": "AAA- ALCHEMYTEABLEND-20BAG",
+          "price": 11.99,
+          "currency": "usd",
+          "unit": "20 tea bags",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [
+        "tea",
+        "herbal tea",
+        "botanical tea",
+        "wellness tea",
+        "handmade"
+      ],
+      "cta": "Steep the magic",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Alchemy Tea Blend | Amber's Alchemy Apothecary",
+      "meta_description": "A warm cup of botanical magic for body, mind, and spirit.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "automation_json",
+        "products_json"
+      ],
+      "subcategory": "Herbal Tea",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    },
+    {
+      "handle": "custom-tea-blends",
+      "title": "Custom Tea Blends",
+      "category": "Teas",
+      "type": "physical",
+      "status": "active",
+      "publish": true,
+      "price": "11.99",
+      "compare_at_price": "",
+      "sku": "AAA-CUSTOM-TEA-BLENDS",
+      "size": "",
+      "short_description": "A personalized tea blend crafted around your taste, wellness goals, and preferred ritual: calming, energizing, digestion, glow, or seasonal support.",
+      "description": "A personalized tea blend crafted around your taste, wellness goals, and preferred ritual: calming, energizing, digestion, glow, or seasonal support.",
+      "benefits": [
+        "Personalized herbal support",
+        "Beautiful daily ritual",
+        "Available loose or in tea bags",
+        "Made around customer preferences"
+      ],
+      "key_botanicals": "",
+      "ingredients": "Ingredients vary by customer profile and selected intention.",
+      "instructions": "Loose leaf: steep 1–2 tsp for 10–15 minutes. Tea bags: steep 1 bag for 8–12 minutes.",
+      "image": "/images/products/custom-tea-blends.webp",
+      "image_fallback": "/images/products/custom-tea-blends.png",
+      "alt_text": "Custom Tea Blends by Amber’s Alchemy Apothecary",
+      "variants": [
+        {
+          "name": "Loose Leaf - 1 oz",
+          "sku": "AAA- CUSTOMTEABLENDS-1OZ",
+          "price": 13.33,
+          "currency": "usd",
+          "unit": "1 oz loose leaf",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        },
+        {
+          "name": "Custom Tea Bags - Pack of 20",
+          "sku": "AAA- CUSTOMTEABLENDS-20BAG",
+          "price": 11.99,
+          "currency": "usd",
+          "unit": "20 tea bags",
+          "requiresShipping": true,
+          "fulfillment": "ship"
+        }
+      ],
+      "tags": [],
+      "cta": "Add to cart",
+      "vendor": "Awaken With Amber LLC",
+      "brand": "Amber's Alchemy Apothecary",
+      "seo_title": "Custom Tea Blends | Amber's Alchemy Apothecary",
+      "meta_description": "A personalized tea blend crafted around your taste, wellness goals, and preferred ritual: calming, energizing, digestion, glow, or seasonal support.",
+      "disclaimer": "These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. If you are pregnant, nursing, taking medication, or have a medical condition, consult a qualified healthcare professional before use. Keep out of reach of children.",
+      "claim_review_required": false,
+      "claim_review_note": "",
+      "sources": [
+        "products_json"
+      ],
+      "subcategory": "Tea",
+      "compliance_rewrite_applied": false,
+      "image_verified": true,
+      "image_verification": {
+        "status": "catalog-safe generated fallback",
+        "text_checked": true,
+        "product_name_matches_record": true,
+        "external_hotlink": false,
+        "label_policy": "brand + product name + neutral product type only"
+      }
+    }
+  ],
+  "categories": [
+    "Balms & Skincare",
+    "Bundles",
+    "Capsules",
+    "Custom & Consultations",
+    "Grimoire & Digital",
+    "Soaps",
+    "Teas"
+  ],
+  "compliance_note": "Compliance-oriented editorial cleanup based on FDA structure/function, cosmetic-claim, and allergen-labeling guidance. This file is not legal advice and final physical labels should be reviewed for all applicable federal, state, and product-specific requirements.",
+  "redirects": {
+    "/products/ambers-age-reversal-balm": "/products/radiance-renewal-balm",
+    "/products/miracle-hair-regrowth-serum": "/products/root-scalp-revival-serum",
+    "/products/miracle-pain-relief-balm": "/products/soothe-restore-botanical-balm",
+    "/products/natural-collagen-booster-capsules": "/products/radiance-support-capsules",
+    "/products/diabetic-support-formula": "/products/metabolic-wellness-formula",
+    "/products/mold-heavy-metal-detox": "/products/environmental-wellness-support",
+    "/products/parasite-cleanse-formula": "/products/seasonal-gut-reset"
+  },
+  "compliance_scan": {
+    "scan_date": "2026-08-27",
+    "customer_facing_high_risk_term_scan_passed": true,
+    "all_products_have_disclaimer": true,
+    "fish_allergen_statement_present": true,
+    "note": "Automated claim screening is a safeguard, not a substitute for attorney/regulatory review of final physical labels."
+  }
+}
