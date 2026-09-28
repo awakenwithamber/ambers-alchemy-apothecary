@@ -467,7 +467,7 @@ const BOTANICALS_FULL = [
   { id:'ginseng-american', name:'American Ginseng', latin:'Panax quinquefolius', emoji:'🌿',
     categories:['adaptogen','energy','immune'],
     desc:'American ginseng is a cooling adaptogen — unlike its warming Asian cousin, it supports energy and immunity without overstimulation. Prized by Native Americans and Chinese medicine alike for its gentle yet profound tonic effects.',
-    benefits:['Supports immune function and resistance to infection','Increases energy without overstimulation','Improves cognitive performance and memory','Reduces blood sugar and supports metabolic health','Cooling adaptogen — suitable for hot constitutions'],
+    benefits:['Supports immune function and resistance to infection','Increases energy without overstimulation','Improves cognitive performance and memory','Traditionally used to support metabolic wellness','Cooling adaptogen — suitable for hot constitutions'],
     illustration:'',
     img:'', uses:['tea','capsule'] },
 
@@ -513,7 +513,7 @@ const BOTANICALS_FULL = [
   { id:'cinnamon', name:'Cinnamon Bark', latin:'Cinnamomum verum', emoji:'🟤',
     categories:['digestive','hormonal','immune'],
     desc:'True Ceylon cinnamon is far more than a spice — it is a powerful medicine. Its cinnamaldehyde improves insulin sensitivity, its polyphenols are anti-inflammatory, and its volatile oils are antimicrobial against a broad spectrum of pathogens.',
-    benefits:['Improves insulin sensitivity and blood sugar regulation','Anti-inflammatory and antioxidant','Antimicrobial against bacteria and fungi','Supports cardiovascular health','Warms and stimulates circulation'],
+    benefits:['Traditionally used to support healthy metabolism','Anti-inflammatory and antioxidant','Antimicrobial against bacteria and fungi','Supports cardiovascular health','Warms and stimulates circulation'],
     illustration:'',
     img:'', uses:['tea','capsule'] },
 
@@ -534,7 +534,7 @@ const BOTANICALS_FULL = [
   { id:'black-walnut', name:'Black Walnut Hull', latin:'Juglans nigra', emoji:'🌰',
     categories:['immune','digestive'],
     desc:'Black walnut hull is one of the most potent antiparasitic botanicals known. Its juglone compound is toxic to a wide range of parasites, fungi, and bacteria, while its tannins support digestive health.',
-    benefits:['Antiparasitic — eliminates intestinal parasites','Antifungal for candida and skin fungus','Antibacterial for digestive infections','Supports healthy bowel function','Rich in iodine — supports thyroid health'],
+    benefits:['Traditionally used in digestive cleansing rituals','Antifungal for candida and skin fungus','Antibacterial for digestive infections','Supports healthy bowel function','Rich in iodine — supports thyroid health'],
     illustration:'',
     img:'', uses:['tea','capsule'] },
 
@@ -566,14 +566,14 @@ const BOTANICALS_FULL = [
   { id:'fenugreek', name:'Fenugreek Seed', latin:'Trigonella foenum-graecum', emoji:'🟤',
     categories:['hormonal','digestive'],
     desc:'Fenugreek is one of the oldest cultivated medicinal plants. Its diosgenin supports testosterone and estrogen balance, its galactomannan fiber stabilizes blood sugar, and its phytoestrogens support lactation.',
-    benefits:['Increases breast milk production significantly','Supports testosterone levels in men','Stabilizes blood sugar and insulin sensitivity','Reduces LDL cholesterol','Anti-inflammatory for digestive conditions'],
+    benefits:['Increases breast milk production significantly','Supports testosterone levels in men','Traditionally used to support healthy metabolism','Reduces LDL cholesterol','Anti-inflammatory for digestive conditions'],
     illustration:'',
     img:'', uses:['capsule','tea'] },
 
   { id:'black-seed', name:'Black Seed (Nigella)', latin:'Nigella sativa', emoji:'⚫',
     categories:['immune','hormonal','digestive'],
     desc:'Black seed — habbatus sauda — is called "the cure for everything except death" in Islamic medicine. Its thymoquinone compound is one of the most studied natural compounds, with anti-cancer, anti-inflammatory, and immune-modulating properties.',
-    benefits:['Thymoquinone — powerful anti-inflammatory and antioxidant','Supports immune function and anti-cancer activity','Reduces allergy and asthma symptoms','Supports blood sugar regulation','Antimicrobial against resistant bacteria'],
+    benefits:['Thymoquinone — powerful anti-inflammatory and antioxidant','Supports immune function and anti-cancer activity','Reduces allergy and asthma symptoms','Traditionally used to support healthy metabolism','Antimicrobial against resistant bacteria'],
     illustration:'',
     img:'', uses:['capsule','tea'] },
 
@@ -626,7 +626,7 @@ const BOTANICALS_FULL = [
   { id:'chaga', name:'Chaga Mushroom', latin:'Inonotus obliquus', emoji:'🍄',
     categories:['mushroom','immune','adaptogen'],
     desc:"Chaga is the most antioxidant-rich substance on earth — with an ORAC value 1,300 times higher than blueberries. This parasitic fungus of birch trees concentrates the tree\'s immune compounds into a potent medicinal mass.",
-    benefits:['Highest antioxidant capacity of any known substance','Supports immune function through beta-glucans','Anti-inflammatory for chronic conditions','Supports blood sugar regulation','Antiviral and antimicrobial properties'],
+    benefits:['Highest antioxidant capacity of any known substance','Supports immune function through beta-glucans','Anti-inflammatory for chronic conditions','Traditionally used to support healthy metabolism','Antiviral and antimicrobial properties'],
     illustration:'',
     img:'', uses:['tea','capsule'] },
 
@@ -653,8 +653,8 @@ const BOTANICALS_FULL = [
 
   { id:'maitake', name:'Maitake Mushroom', latin:'Grifola frondosa', emoji:'🍄',
     categories:['mushroom','immune','hormonal'],
-    desc:'Maitake — "dancing mushroom" — is celebrated for its D-fraction polysaccharide, which activates NK cells and macrophages, supports blood sugar regulation, and has shown promise in reducing tumor growth.',
-    benefits:['D-fraction activates NK cells and macrophages','Regulates blood sugar and insulin sensitivity','Supports weight management','Reduces tumor growth in clinical studies','Adaptogenic — supports adrenal function'],
+    desc:'Maitake — "dancing mushroom" — is celebrated for its D-fraction polysaccharide, which activates NK cells and macrophages, supports healthy metabolism, and has shown promise in reducing tumor growth.',
+    benefits:['D-fraction activates NK cells and macrophages','Traditionally used to support healthy metabolism','Supports weight management','Reduces tumor growth in clinical studies','Adaptogenic — supports adrenal function'],
     illustration:'',
     img:'', uses:['tea','capsule'] },
 
@@ -784,8 +784,8 @@ const BOTANICALS_FULL = [
 
   { id:'moringa', name:'Moringa', latin:'Moringa oleifera', emoji:'🌿',
     categories:['energy','immune','beauty'],
-    desc:'Moringa is called the "miracle tree" — its leaves contain more vitamin C than oranges, more calcium than milk, more iron than spinach, and more potassium than bananas. A complete nutritional powerhouse used to fight malnutrition worldwide.',
-    benefits:['Complete nutritional profile — vitamins, minerals, amino acids','Reduces inflammation through isothiocyanates','Supports blood sugar regulation','Antimicrobial and antifungal properties','Supports milk production in nursing mothers'],
+    desc:'Moringa has long been prized in traditional food cultures — its leaves contain more vitamin C than oranges, more calcium than milk, more iron than spinach, and more potassium than bananas. A complete nutritional powerhouse used to fight malnutrition worldwide.',
+    benefits:['Complete nutritional profile — vitamins, minerals, amino acids','Reduces inflammation through isothiocyanates','Traditionally used to support healthy metabolism','Antimicrobial and antifungal properties','Supports milk production in nursing mothers'],
     illustration:'',
     img:'', uses:['tea','capsule'] },
 
@@ -798,7 +798,7 @@ const BOTANICALS_FULL = [
 
   { id:'chlorella', name:'Chlorella', latin:'Chlorella vulgaris', emoji:'🟢',
     categories:['immune','beauty','digestive'],
-    desc:'Chlorella is the most chlorophyll-rich food on earth. Its unique growth factor (CGF) supports cellular regeneration, its chlorophyll detoxifies heavy metals and dioxins, and its cell wall binds and removes toxins from the digestive tract.',
+    desc:'Chlorella is the most chlorophyll-rich food on earth. Its unique growth factor (CGF) supports cellular regeneration, its chlorophyll is prized in traditional green-food rituals, and its cell wall binds and removes toxins from the digestive tract.',
     benefits:['Detoxifies heavy metals — mercury, lead, cadmium','Highest chlorophyll content of any food','Supports cellular regeneration through CGF','Boosts immune function and NK cell activity','Supports healthy gut microbiome'],
     illustration:'',
     img:'', uses:['capsule'] },
@@ -806,7 +806,7 @@ const BOTANICALS_FULL = [
   { id:'neem', name:'Neem', latin:'Azadirachta indica', emoji:'🌿',
     categories:['immune','beauty'],
     desc:'Neem is the sacred tree of India — the "village pharmacy." Every part of the tree is medicinal. Its azadirachtin is a powerful antimicrobial, antiparasitic, and anti-inflammatory compound used for skin, teeth, and immune health.',
-    benefits:['Powerful antimicrobial for skin infections','Antiparasitic — eliminates intestinal and skin parasites','Anti-inflammatory for acne and skin conditions','Supports oral health and prevents cavities','Antifungal for candida and nail fungus'],
+    benefits:['Powerful antimicrobial for skin infections','Traditionally used in cleansing rituals for skin and digestion','Anti-inflammatory for acne and skin conditions','Supports oral health and prevents cavities','Antifungal for candida and nail fungus'],
     illustration:'',
     img:'', uses:['capsule','balm'] },
 
@@ -924,7 +924,7 @@ const BOTANICALS_FULL = [
   { id:'black-seed', name:'Black Seed (Nigella)', latin:'Nigella sativa', emoji:'🌑',
     categories:['immune', 'respiratory', 'digestive'],
     desc:'Called the cure for everything except death in Islamic tradition, black seed has over 1,000 published studies supporting its immune-modulating, anti-inflammatory, and antiviral properties. Its thymoquinone is one of the most studied natural compounds in modern medicine.',
-    benefits:['Potent immune modulator and antiviral', 'Anti-inflammatory for respiratory conditions', 'Supports blood sugar regulation', 'Antimicrobial against resistant bacteria', 'Antioxidant and liver protective'],
+    benefits:['Potent immune modulator and antiviral', 'Anti-inflammatory for respiratory conditions', 'Traditionally used to support healthy metabolism', 'Antimicrobial against resistant bacteria', 'Antioxidant and liver protective'],
     illustration:'',
     img:'', uses:['capsule', 'oil'] },
 
@@ -1036,7 +1036,7 @@ const BOTANICALS_FULL = [
   { id:'chaga-mushroom', name:'Chaga Mushroom', latin:'Inonotus obliquus', emoji:'🍄',
     categories:['immune', 'adaptogen', 'antioxidant'],
     desc:'Chaga is the king of medicinal mushrooms — a slow-growing fungus that absorbs the life force of birch trees over decades. Its betulinic acid, beta-glucans, and melanin pigments are among the most potent antioxidant and immune-modulating compounds in the natural world.',
-    benefits:['Highest ORAC antioxidant score of any natural food', 'Potent immune modulator via beta-glucans', 'Anti-tumor and anti-cancer properties under research', 'Adaptogenic — reduces stress and supports adrenals', 'Supports blood sugar regulation'],
+    benefits:['Highest ORAC antioxidant score of any natural food', 'Potent immune modulator via beta-glucans', 'Anti-tumor and anti-cancer properties under research', 'Adaptogenic — reduces stress and supports adrenals', 'Traditionally used to support healthy metabolism'],
     illustration:'',
     img:'', uses:['tea', 'capsule', 'powder'] },
 
@@ -1050,21 +1050,21 @@ const BOTANICALS_FULL = [
   { id:'chickory-root', name:'Chicory Root', latin:'Cichorium intybus', emoji:'🌿',
     categories:['liver', 'digestive', 'prebiotic'],
     desc:'Chicory root contains the highest concentration of inulin of any plant — a prebiotic fiber that feeds Lactobacillus and Bifidobacterium species in the gut. Its bitter compounds stimulate liver bile production, and its roasted root has been used as a coffee substitute for centuries.',
-    benefits:['Highest inulin content of any plant — powerful prebiotic', 'Stimulates liver bile production and detoxification', 'Reduces blood sugar and insulin resistance', 'Anti-inflammatory for digestive conditions', 'Traditionally used as a coffee substitute'],
+    benefits:['Highest inulin content of any plant — powerful prebiotic', 'Stimulates liver bile production and detoxification', 'Traditionally used to support healthy metabolism', 'Anti-inflammatory for digestive conditions', 'Traditionally used as a coffee substitute'],
     illustration:'',
     img:'', uses:['tea', 'capsule', 'roasted'] },
 
   { id:'cilantro', name:'Cilantro (Coriander)', latin:'Coriandrum sativum', emoji:'🌿',
     categories:['detox', 'digestive', 'heavy-metals'],
-    desc:'Cilantro is one of the few herbs proven to chelate and mobilize heavy metals from body tissues. Its volatile oils bind to mercury, lead, and aluminum, facilitating their removal through the kidneys. It also supports digestive health and carries a bright, clarifying energy.',
+    desc:'Cilantro is a bright, clarifying herb long used in traditional cleansing foods. It is enjoyed for digestive support and carries a fresh, uplifting energy.',
     benefits:['Chelates and mobilizes heavy metals from tissues', 'Supports kidney elimination of toxins', 'Digestive carminative — reduces gas and bloating', 'Antimicrobial against food-borne pathogens', 'Antioxidant and anti-inflammatory'],
     illustration:'',
     img:'', uses:['tea', 'capsule', 'fresh'] },
 
   { id:'cinnamon-bark', name:'Cinnamon Bark', latin:'Cinnamomum verum', emoji:'🌿',
     categories:['blood-sugar', 'circulation', 'digestive'],
-    desc:'True Ceylon cinnamon bark is one of the most powerful blood sugar regulators in the plant kingdom. Its type-A polymers increase insulin sensitivity, its volatile oils warm and stimulate circulation, and its antimicrobial compounds protect against candida and bacterial overgrowth.',
-    benefits:['Increases insulin sensitivity and regulates blood sugar', 'Warming circulatory stimulant', 'Antimicrobial against candida and bacteria', 'Digestive warming carminative', 'Anti-inflammatory and antioxidant'],
+    desc:'True Ceylon cinnamon bark is a treasured warming spice in traditional kitchens and apothecaries. Its type-A polymers increase insulin sensitivity, its volatile oils warm and stimulate circulation, and its antimicrobial compounds protect against candida and bacterial overgrowth.',
+    benefits:['Traditionally used to support healthy metabolism', 'Warming circulatory stimulant', 'Antimicrobial against candida and bacteria', 'Digestive warming carminative', 'Anti-inflammatory and antioxidant'],
     illustration:'',
     img:'', uses:['tea', 'capsule', 'spice'] },
 
@@ -1315,8 +1315,8 @@ const BOTANICALS_FULL = [
 
   { id:'maitake-mushroom', name:'Maitake Mushroom', latin:'Grifola frondosa', emoji:'🍄',
     categories:['immune', 'blood-sugar', 'adaptogen'],
-    desc:'Maitake — the dancing mushroom — is one of the most potent immune-modulating and blood sugar-regulating mushrooms known. Its D-fraction beta-glucans activate natural killer cells and macrophages, while its alpha-glucan compounds improve insulin sensitivity.',
-    benefits:['Potent immune modulator via D-fraction beta-glucans', 'Improves insulin sensitivity and blood sugar regulation', 'Activates natural killer cells against cancer cells', 'Adaptogenic support for stress and fatigue', 'Supports healthy blood pressure and cholesterol'],
+    desc:'Maitake — the dancing mushroom — is one of the most potent immune-modulating and metabolism-supporting mushrooms known. Its D-fraction beta-glucans activate natural killer cells and macrophages, while its alpha-glucan compounds improve insulin sensitivity.',
+    benefits:['Potent immune modulator via D-fraction beta-glucans', 'Traditionally used to support healthy metabolism', 'Activates natural killer cells against cancer cells', 'Adaptogenic support for stress and fatigue', 'Supports healthy blood pressure and cholesterol'],
     illustration:'',
     img:'', uses:['capsule', 'powder', 'tea'] },
 
@@ -1343,8 +1343,8 @@ const BOTANICALS_FULL = [
 
   { id:'moringa', name:'Moringa Leaf', latin:'Moringa oleifera', emoji:'🌿',
     categories:['nutritive', 'energy', 'anti-inflammatory'],
-    desc:'Moringa is called the miracle tree — gram for gram it contains more vitamin C than oranges, more calcium than milk, more iron than spinach, and more potassium than bananas. Its isothiocyanates are powerfully anti-inflammatory, and it is one of the most complete nutritive herbs known.',
-    benefits:['Most nutrient-dense plant food known', 'Anti-inflammatory isothiocyanates', 'Supports blood sugar regulation', 'Antioxidant and liver protective', 'Supports energy and reduces fatigue'],
+    desc:'Moringa has long been prized as a nutritive food — gram for gram it contains more vitamin C than oranges, more calcium than milk, more iron than spinach, and more potassium than bananas. Its isothiocyanates are powerfully anti-inflammatory, and it is one of the most complete nutritive herbs known.',
+    benefits:['Most nutrient-dense plant food known', 'Anti-inflammatory isothiocyanates', 'Traditionally used to support healthy metabolism', 'Antioxidant and liver protective', 'Supports energy and reduces fatigue'],
     illustration:'',
     img:'', uses:['capsule', 'powder', 'tea'] },
 
@@ -1393,7 +1393,7 @@ const BOTANICALS_FULL = [
   { id:'oregano', name:'Oregano', latin:'Origanum vulgare', emoji:'🌿',
     categories:['antimicrobial', 'respiratory', 'digestive'],
     desc:'Oregano oil is one of the most potent natural antimicrobials known — its carvacrol and thymol compounds are effective against antibiotic-resistant bacteria including MRSA, antifungal against candida, antiviral against multiple strains, and antiparasitic. It is a complete natural antibiotic.',
-    benefits:['Effective against antibiotic-resistant bacteria including MRSA', 'Antifungal against candida and yeast overgrowth', 'Antiviral against multiple viral strains', 'Antiparasitic for intestinal parasites', 'Powerful antioxidant and anti-inflammatory'],
+    benefits:['Effective against antibiotic-resistant bacteria including MRSA', 'Antifungal against candida and yeast overgrowth', 'Antiviral against multiple viral strains', 'Traditionally used for digestive support', 'Powerful antioxidant and anti-inflammatory'],
     illustration:'',
     img:'', uses:['capsule', 'oil', 'tea'] },
 

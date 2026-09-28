@@ -7,17 +7,18 @@
 const PRODUCTS = [
   {
     id: 'beauty-balm',
-    name: "Amber's Age Reversal Beauty Balm",
+    name: "Amber's Beauty Balm",
     emoji: '✨',
     img: 'images/age-reversal-balm.png',
-    benefit: 'Visibly firms, hydrates & restores radiance naturally',
-    shortDesc: 'Visibly firms, hydrates, and restores radiance with botanical power.',
+    benefit: 'A rich botanical balm for soft, hydrated, radiant-looking skin',
+    shortDesc: 'A rich botanical balm for soft, hydrated, radiant-looking skin.',
     keyHerbs: ['Rose Hip', 'Frankincense', 'Sea Buckthorn', 'Neroli'],
     desc: 'A luminous botanical balm created to soften, restore, and renew. Saffron, rose, and lavender offer antioxidant beauty support while rich oils deeply hydrate and encourage a smoother, more radiant glow.',
     sizes: [
-      { label: '2oz — $24.99', price: 24.99 },
-      { label: '3oz — $33.99', price: 33.99 },
-      { label: '4oz — $41.99', price: 41.99 },
+      { label: '1oz — $11.77', price: 11.77 },
+      { label: '2oz — $23.54', price: 23.54 },
+      { label: '3oz — $35.31', price: 35.31 },
+      { label: '4oz — $47.08', price: 47.08 },
     ],
     sampleNote: 'FREE sample size included with any purchase',
     categories: ['beauty']
@@ -27,14 +28,15 @@ const PRODUCTS = [
     name: 'Ultimate Pain Relieving Balm',
     emoji: '🌿',
     img: 'images/pain-relief-balm.png',
-    benefit: 'Deep natural relief for muscles, joints & chronic pain',
-    shortDesc: 'Deep natural relief for muscles, joints, and chronic pain.',
+    benefit: 'A warming herbal balm for tired muscles and joints',
+    shortDesc: 'A warming herbal balm massaged into tired muscles and joints.',
     keyHerbs: ['Arnica', 'Cayenne', 'Wintergreen', 'Comfrey'],
     desc: 'A powerful herbal balm made to warm, soothe, and comfort the body. Turmeric, cayenne, peppermint, comfrey, and arnica help support circulation and ease tension in tired muscles and joints.',
     sizes: [
-      { label: '2oz — $24.99', price: 24.99 },
-      { label: '3oz — $33.99', price: 33.99 },
-      { label: '4oz — $41.99', price: 41.99 },
+      { label: '1oz — $11.77', price: 11.77 },
+      { label: '2oz — $23.54', price: 23.54 },
+      { label: '3oz — $35.31', price: 35.31 },
+      { label: '4oz — $47.08', price: 47.08 },
     ],
     sampleNote: 'FREE sample size included with any purchase',
     categories: ['pain']
@@ -69,17 +71,18 @@ const PRODUCTS = [
   },
   {
     id: 'hair-serum',
-    name: 'Miracle Hair Regrowth Serum',
+    name: 'Botanical Hair & Scalp Serum',
     emoji: '💫',
     img: 'images/hair-regrowth-serum.png',
-    benefit: 'Visibly thicker, healthier hair with botanical power',
-    shortDesc: 'Visibly thicker, healthier hair with botanical power.',
+    benefit: 'A nourishing botanical oil for scalp care and healthy-looking hair',
+    shortDesc: 'A nourishing botanical oil for scalp care and healthy-looking hair.',
     keyHerbs: ['Rosemary', 'Peppermint', 'Castor Oil', 'Saw Palmetto'],
-    desc: 'A sacred botanical scalp elixir designed to awaken roots and restore vitality. Rosemary, fenugreek, and plant oils help stimulate circulation, nourish follicles, and encourage fuller, healthier-looking hair.',
+    desc: 'A sacred botanical scalp elixir. Rosemary, fenugreek, and plant oils are massaged into the scalp as a nourishing ritual for soft, healthy-looking hair.',
     sizes: [
-      { label: '2oz — $24.99', price: 24.99 },
-      { label: '3oz — $33.99', price: 33.99 },
-      { label: '4oz — $41.99', price: 41.99 },
+      { label: '1oz — $11.77', price: 11.77 },
+      { label: '2oz — $23.54', price: 23.54 },
+      { label: '3oz — $35.31', price: 35.31 },
+      { label: '4oz — $47.08', price: 47.08 },
     ],
     categories: ['beauty']
   },
@@ -93,7 +96,7 @@ const PRODUCTS = [
     keyHerbs: ['Mugwort', 'Blue Lotus', 'Valerian', 'Passionflower'],
     desc: 'A sacred blend of mugwort, blue lotus, valerian, and passionflower. Brewed before sleep to deepen dream states and invite visionary clarity.',
     sizes: [
-      { label: '20 Tea Bags — $11.99', price: 11.99 },
+      { label: '20 Tea Bags — $12.99', price: 12.99 },
       { label: '1oz Loose Leaf — $9.99', price: 9.99 },
     ],
     categories: ['sleep']
@@ -206,7 +209,7 @@ const PRODUCTS = [
     keyHerbs: ['Chamomile', 'Lemon Balm', 'Hibiscus', 'Rose Petals'],
     desc: 'A handcrafted loose-leaf herbal tea blend designed for full-body nourishment and balance. Steep 10-15 minutes for a rich, restorative botanical experience.',
     sizes: [
-      { label: '1oz Loose Leaf — $13.33', price: 13.33 },
+      { label: '1oz Loose Leaf — $12.99', price: 12.99 },
       { label: '2oz Loose Leaf — $22.99', price: 22.99 },
     ],
     categories: ['sleep']
@@ -275,7 +278,7 @@ const PRODUCTS = [
     benefit: 'Supports healthy blood sugar already in normal range',
     shortDesc: 'Botanical support for healthy blood sugar already within a normal range.',
     keyHerbs: ['Berberine', 'Cinnamon', 'Gymnema', 'Bitter Melon'],
-    desc: 'A balancing botanical blend crafted to support healthy blood sugar metabolism already within a normal range. Berberine, cinnamon, and gymnema support glucose balance and steady daily energy.',
+    desc: 'A balancing botanical blend crafted to support healthy metabolism as part of a balanced lifestyle. Berberine, cinnamon, and gymnema support glucose balance and steady daily energy.',
     sizes: [
       { label: '30-Day Supply — $34.00', price: 34 },
     ],
@@ -296,6 +299,14 @@ const PRODUCTS = [
     categories: ['wellness']
   }
 ];
+
+// Products whose names/claims use retired terms (heavy metal detox, parasite
+// cleanse, diabetic) are withheld from the shop until Amber approves a
+// compliant name, ingredients and price. Entries stay above for her review.
+const RETIRED_PRODUCT_IDS = ['mold-metal-detox', 'parasite-cleanse', 'diabetic-support'];
+for (let i = PRODUCTS.length - 1; i >= 0; i--) {
+  if (RETIRED_PRODUCT_IDS.includes(PRODUCTS[i].id)) PRODUCTS.splice(i, 1);
+}
 
 // ---- SOAPS (9 Signature Scents) ----
 const SOAPS = [
@@ -472,7 +483,7 @@ const BOTANICALS = [
     price: 0.29},
   { id: 'schisandra', name: 'Schisandra Berry', latin: 'Schisandra chinensis', emoji: '🍒', img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&q=70', desc: 'The five-flavor berry of Chinese medicine. Schisandra supports liver health, mental clarity, and adaptogenic stress response.', categories: ['energy', 'adaptogen'], uses: ['capsule', 'serum', 'tea'] , benefits: ['Adaptogen for liver protection and detox', 'Sharpens focus and mental clarity', 'Supports adrenal function and stamina'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-schisandra_42a665c7.jpg',
     price: 0.39},
-  { id: 'moringa', name: 'Moringa', latin: 'Moringa oleifera', emoji: '🌿', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'The "miracle tree." Moringa is extraordinarily nutrient-dense, supporting energy, inflammation reduction, and overall vitality.', categories: ['energy', 'immune'], uses: ['capsule', 'tea'] , benefits: ['Boosts natural energy and vitality', 'Supports mental clarity and focus', 'Enhances physical endurance'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-moringa_ae1eb89d.jpg',
+  { id: 'moringa', name: 'Moringa', latin: 'Moringa oleifera', emoji: '🌿', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'The "drumstick tree." Moringa is extraordinarily nutrient-dense, supporting energy, inflammation reduction, and overall vitality.', categories: ['energy', 'immune'], uses: ['capsule', 'tea'] , benefits: ['Boosts natural energy and vitality', 'Supports mental clarity and focus', 'Enhances physical endurance'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-moringa_ae1eb89d.jpg',
     price: 0.39},
   { id: 'green-tea', name: 'Green Tea', latin: 'Camellia sinensis', emoji: '🍵', img: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=70', desc: 'Rich in L-theanine and antioxidants. Green tea provides calm, focused energy and powerful cellular protection.', categories: ['energy', 'beauty'], uses: ['tea', 'serum'] , benefits: ['Rich in antioxidants for cellular protection', 'Provides calm, focused energy via L-theanine', 'Supports metabolism and fat oxidation'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-green-tea_6e958824.jpg',
     price: 0.17},
@@ -588,7 +599,7 @@ const BOTANICALS = [
     price: 0.23},
   { id: 'kava', name: 'Kava Kava', latin: 'Piper methysticum', emoji: '🌿', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'A sacred ceremonial plant of the Pacific Islands. Kava induces deep relaxation, social ease, and mild euphoria.', categories: ['spiritual', 'sleep'], uses: ['tea', 'serum'] , benefits: ['Powerful anxiety relief without sedation', 'Promotes social ease and calm', 'Supports muscle relaxation'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-kava-kava_b7eb58e2.jpg',
     price: 0.39},
-  { id: 'holy-basil', name: 'Holy Basil (Tulsi)', latin: 'Ocimum tenuiflorum', emoji: '🌿', img: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=300&q=70', desc: 'Sacred to Hinduism and revered in Ayurveda. Tulsi is an adaptogen that elevates the spirit, calms the mind, and supports immune health.', categories: ['spiritual', 'adaptogen', 'immune'], uses: ['tea', 'capsule'] , benefits: ['Adaptogenic stress relief and cortisol balance', 'Supports blood sugar regulation', 'Anti-inflammatory and immune-modulating'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-holy-basil_f690ec1e.jpg',
+  { id: 'holy-basil', name: 'Holy Basil (Tulsi)', latin: 'Ocimum tenuiflorum', emoji: '🌿', img: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=300&q=70', desc: 'Sacred to Hinduism and revered in Ayurveda. Tulsi is an adaptogen that elevates the spirit, calms the mind, and supports immune health.', categories: ['spiritual', 'adaptogen', 'immune'], uses: ['tea', 'capsule'] , benefits: ['Adaptogenic stress relief and cortisol balance', 'Traditionally used to support healthy metabolism', 'Anti-inflammatory and immune-modulating'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-holy-basil_f690ec1e.jpg',
     price: 0.39},
   { id: 'rose', name: 'Rose Petals', latin: 'Rosa damascena', emoji: '🌹', img: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=300&q=70', desc: 'The flower of love and the heart. Rose opens the heart chakra, soothes grief, and brings beauty to any blend.', categories: ['spiritual', 'beauty', 'sleep'], uses: ['tea', 'serum', 'balm'] , benefits: ['Hydrates and tones all skin types', 'Anti-inflammatory for redness and rosacea', 'Uplifts mood and supports emotional healing'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-rose-hip_c140d24a.jpg',
     price: 0.29},
@@ -604,7 +615,7 @@ const BOTANICALS = [
     price: 0.39},
   { id: 'lions-mane', name: "Lion's Mane Mushroom", latin: 'Hericium erinaceus', emoji: '🦁', img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&q=70', desc: 'The brain mushroom. Lion\'s Mane stimulates nerve growth factor (NGF), supporting cognitive function, memory, and neurological health.', categories: ['mushroom', 'energy'], uses: ['capsule', 'tea'] , benefits: ['Stimulates nerve growth factor (NGF) for brain health', 'Supports cognitive function and memory', 'Immune-modulating and gut-supportive'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-lions-mane_dc0cc9ac.jpg',
     price: 0.39},
-  { id: 'chaga', name: 'Chaga Mushroom', latin: 'Inonotus obliquus', emoji: '🍄', img: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=70', desc: 'The "king of mushrooms." Chaga is extraordinarily rich in antioxidants and supports immune health, inflammation reduction, and cellular protection.', categories: ['mushroom', 'immune', 'energy'], uses: ['tea', 'capsule'] , benefits: ['Highest antioxidant content of any food source', 'Immune activation and anti-tumor properties', 'Supports blood sugar regulation'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-reishi_238dd3d3.jpg',
+  { id: 'chaga', name: 'Chaga Mushroom', latin: 'Inonotus obliquus', emoji: '🍄', img: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=70', desc: 'The "king of mushrooms." Chaga is extraordinarily rich in antioxidants and supports immune health, inflammation reduction, and cellular protection.', categories: ['mushroom', 'immune', 'energy'], uses: ['tea', 'capsule'] , benefits: ['Highest antioxidant content of any food source', 'Immune activation and anti-tumor properties', 'Traditionally used to support healthy metabolism'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-reishi_238dd3d3.jpg',
     price: 0.39},
   { id: 'cordyceps', name: 'Cordyceps Mushroom', latin: 'Cordyceps militaris', emoji: '🍄', img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&q=70', desc: 'The athlete\'s mushroom. Cordyceps increases ATP production, supports oxygen utilization, and enhances endurance and vitality.', categories: ['mushroom', 'energy', 'adaptogen'], uses: ['capsule', 'tea'] , benefits: ['Increases cellular energy production (ATP)', 'Enhances oxygen utilization during exercise', 'Supports kidney and lung vitality'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-cordyceps_caba8906.jpg',
     price: 0.39},
@@ -612,7 +623,7 @@ const BOTANICALS = [
     price: 0.39},
   { id: 'shiitake', name: 'Shiitake Mushroom', latin: 'Lentinula edodes', emoji: '🍄', img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&q=70', desc: 'A culinary and medicinal mushroom rich in lentinan, a beta-glucan that supports immune function and cardiovascular health.', categories: ['mushroom', 'immune'], uses: ['capsule', 'tea'] , benefits: ['Strengthens immune defense naturally', 'Provides antioxidant protection', 'Supports recovery from illness'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-shiitake_a1dc0bf1.jpg',
     price: 0.39},
-  { id: 'maitake', name: 'Maitake Mushroom', latin: 'Grifola frondosa', emoji: '🍄', img: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=70', desc: 'The "dancing mushroom." Maitake supports blood sugar balance, immune function, and healthy weight management.', categories: ['mushroom', 'immune'], uses: ['capsule', 'tea'] , benefits: ['Strengthens immune defense naturally', 'Provides antioxidant protection', 'Supports recovery from illness'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-maitake_6f95a88d.jpg',
+  { id: 'maitake', name: 'Maitake Mushroom', latin: 'Grifola frondosa', emoji: '🍄', img: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=70', desc: 'The "dancing mushroom." Maitake supports healthy metabolism, immune function, and healthy weight management.', categories: ['mushroom', 'immune'], uses: ['capsule', 'tea'] , benefits: ['Strengthens immune defense naturally', 'Provides antioxidant protection', 'Supports recovery from illness'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-maitake_6f95a88d.jpg',
     price: 0.39},
 
   // ADDITIONAL ADAPTOGENS
@@ -630,7 +641,7 @@ const BOTANICALS = [
   // MORE HERBS (to reach 200+)
   { id: 'spearmint', name: 'Spearmint', latin: 'Mentha spicata', emoji: '🌿', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'Milder than peppermint. Spearmint aids digestion, freshens breath, and has mild anti-androgen properties for hormonal balance.', categories: ['digestive', 'hormonal'], uses: ['tea'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-spearmint_298c2766.jpg',
     price: 0.29},
-  { id: 'cinnamon', name: 'Cinnamon Bark', latin: 'Cinnamomum verum', emoji: '🟤', img: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=70', desc: 'A warming, aromatic spice that supports blood sugar balance, circulation, and antimicrobial defense.', categories: ['digestive', 'immune', 'energy'], uses: ['tea', 'capsule'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-cinnamon_059b75c1.jpg',
+  { id: 'cinnamon', name: 'Cinnamon Bark', latin: 'Cinnamomum verum', emoji: '🟤', img: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=70', desc: 'A warming, aromatic spice that supports healthy metabolism, circulation, and antimicrobial defense.', categories: ['digestive', 'immune', 'energy'], uses: ['tea', 'capsule'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-cinnamon_059b75c1.jpg',
     price: 0.29},
   { id: 'hawthorn', name: 'Hawthorn Berry', latin: 'Crataegus monogyna', emoji: '🍒', img: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=300&q=70', desc: 'The premier heart herb. Hawthorn strengthens the cardiovascular system, supports healthy blood pressure, and opens the heart emotionally.', categories: ['spiritual', 'pain'], uses: ['tea', 'capsule'] , benefits: ['Deepens meditation and spiritual awareness', 'Supports dream work and intuition', 'Promotes emotional healing and clarity'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-hawthorn_42ef1742.jpg',
     price: 0.39},
@@ -650,7 +661,7 @@ const BOTANICALS = [
     price: 0.29},
   { id: 'black-seed', name: 'Black Seed (Nigella)', latin: 'Nigella sativa', emoji: '⚫', img: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=300&q=70', desc: '"A cure for everything except death" — Islamic tradition. Black seed supports immune function, respiratory health, and inflammation.', categories: ['immune', 'pain'], uses: ['capsule', 'serum'] , benefits: ['Strengthens immune defense naturally', 'Provides antioxidant protection', 'Supports recovery from illness'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-black-seed_c1aeb2d6.jpg',
     price: 0.39},
-  { id: 'fenugreek', name: 'Fenugreek', latin: 'Trigonella foenum-graecum', emoji: '🌿', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'Supports blood sugar balance, lactation, testosterone levels, and digestive health. A versatile Ayurvedic herb.', categories: ['hormonal', 'digestive'], uses: ['capsule', 'tea'] , benefits: ['Supports hormonal balance and regulation', 'Eases menstrual and menopausal symptoms', 'Nourishes the reproductive system'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-fenugreek_25193285.jpg',
+  { id: 'fenugreek', name: 'Fenugreek', latin: 'Trigonella foenum-graecum', emoji: '🌿', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'Supports healthy metabolism, lactation, testosterone levels, and digestive health. A versatile Ayurvedic herb.', categories: ['hormonal', 'digestive'], uses: ['capsule', 'tea'] , benefits: ['Supports hormonal balance and regulation', 'Eases menstrual and menopausal symptoms', 'Nourishes the reproductive system'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-fenugreek_25193285.jpg',
     price: 0.29},
   { id: 'black-pepper', name: 'Black Pepper', latin: 'Piper nigrum', emoji: '⚫', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=70', desc: 'Piperine dramatically increases the bioavailability of other herbs and nutrients. A key synergist in any formula.', categories: ['digestive', 'energy'], uses: ['capsule'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-black-pepper_c4f5955b.jpg',
     price: 0.29},
@@ -658,7 +669,7 @@ const BOTANICALS = [
     price: 0.23},
   { id: 'spirulina', name: 'Spirulina', latin: 'Arthrospira platensis', emoji: '🟢', img: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=300&q=70', desc: 'A blue-green algae superfood with extraordinary protein, iron, and antioxidant content. Supports energy and detoxification.', categories: ['energy', 'immune', 'beauty'], uses: ['capsule'] , benefits: ['Boosts natural energy and vitality', 'Supports mental clarity and focus', 'Enhances physical endurance'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-spirulina_b9322fb6.jpg',
     price: 0.17},
-  { id: 'chlorella', name: 'Chlorella', latin: 'Chlorella vulgaris', emoji: '🟢', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=70', desc: 'A powerful detoxifying algae that binds heavy metals, supports gut health, and provides dense nutrition.', categories: ['energy', 'digestive'], uses: ['capsule'] , benefits: ['Boosts natural energy and vitality', 'Supports mental clarity and focus', 'Enhances physical endurance'], illustration: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/VVtrrhffSKCbbWFF.jpg',
+  { id: 'chlorella', name: 'Chlorella', latin: 'Chlorella vulgaris', emoji: '🟢', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=70', desc: 'A nutrient-dense green algae traditionally enjoyed for gut support and dense nutrition.', categories: ['energy', 'digestive'], uses: ['capsule'] , benefits: ['Boosts natural energy and vitality', 'Supports mental clarity and focus', 'Enhances physical endurance'], illustration: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/VVtrrhffSKCbbWFF.jpg',
     price: 0.17},
   { id: 'neem', name: 'Neem', latin: 'Azadirachta indica', emoji: '🌿', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'The "village pharmacy" of India. Neem is powerfully antimicrobial, supports skin health, and purifies the blood.', categories: ['beauty', 'immune'], uses: ['capsule', 'serum', 'balm'] , benefits: ['Nourishes and rejuvenates skin cells', 'Provides antioxidant protection against aging', 'Supports collagen production and elasticity'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-neem_16d714d2.jpg',
     price: 0.23},
@@ -672,9 +683,9 @@ const BOTANICALS = [
     price: 0.39},
   { id: 'pine-bark', name: 'Pine Bark Extract', latin: 'Pinus pinaster', emoji: '🌲', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'Rich in OPCs, the most potent antioxidant compounds known. Pine bark supports cardiovascular health, skin, and circulation.', categories: ['beauty', 'energy', 'immune'], uses: ['capsule', 'serum'] , benefits: ['Nourishes and rejuvenates skin cells', 'Provides antioxidant protection against aging', 'Supports collagen production and elasticity'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-pine-bark_118261a3.jpg',
     price: 0.29},
-  { id: 'berberine', name: 'Berberine (Goldenseal)', latin: 'Hydrastis canadensis', emoji: '🟡', img: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=300&q=70', desc: 'A powerful alkaloid from goldenseal and barberry. Berberine supports blood sugar balance, gut health, and antimicrobial defense.', categories: ['digestive', 'immune'], uses: ['capsule'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/wkLsQOVMIwITKlqd.jpg',
+  { id: 'berberine', name: 'Berberine (Goldenseal)', latin: 'Hydrastis canadensis', emoji: '🟡', img: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=300&q=70', desc: 'A powerful alkaloid from goldenseal and barberry. Berberine supports healthy metabolism, gut health, and antimicrobial defense.', categories: ['digestive', 'immune'], uses: ['capsule'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/wkLsQOVMIwITKlqd.jpg',
     price: 0.23},
-  { id: 'holy-basil-2', name: 'Lemon Verbena', latin: 'Aloysia citrodora', emoji: '🍋', img: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=300&q=70', desc: 'A bright, lemony herb that reduces anxiety, supports weight management, and has powerful antioxidant properties.', categories: ['sleep', 'digestive'], uses: ['tea'] , benefits: ['Adaptogenic stress relief and cortisol balance', 'Supports blood sugar regulation', 'Anti-inflammatory and immune-modulating'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-holy-basil_f690ec1e.jpg',
+  { id: 'holy-basil-2', name: 'Lemon Verbena', latin: 'Aloysia citrodora', emoji: '🍋', img: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=300&q=70', desc: 'A bright, lemony herb that reduces anxiety, supports weight management, and has powerful antioxidant properties.', categories: ['sleep', 'digestive'], uses: ['tea'] , benefits: ['Adaptogenic stress relief and cortisol balance', 'Traditionally used to support healthy metabolism', 'Anti-inflammatory and immune-modulating'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-holy-basil_f690ec1e.jpg',
     price: 0.39},
   { id: 'wood-sorrel', name: 'Wood Sorrel', latin: 'Oxalis acetosella', emoji: '🌿', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=70', desc: 'A delicate woodland herb with a pleasant sour taste. Used traditionally to cool fevers and support digestive health.', categories: ['digestive', 'immune'], uses: ['tea'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/fYTvYbcCSuYQYTBZ.jpg',
     price: 0.17},
@@ -814,7 +825,7 @@ const BOTANICALS = [
     price: 0.29},
   { id: 'sweet-annie', name: 'Sweet Annie (Artemisia)', latin: 'Artemisia annua', emoji: '🌿', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=70', desc: 'Contains artemisinin, a powerful antimalarial compound. Sweet Annie supports immune function and has broad antimicrobial properties.', categories: ['immune'], uses: ['capsule'] , benefits: ['Strengthens immune defense naturally', 'Provides antioxidant protection', 'Supports recovery from illness'], illustration: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/tGeJpqVHhRiLJreL.jpg',
     price: 0.23},
-  { id: 'berberis', name: 'Barberry Root', latin: 'Berberis vulgaris', emoji: '🍒', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'Rich in berberine. Barberry supports liver health, gut microbiome balance, blood sugar regulation, and immune function.', categories: ['digestive', 'immune'], uses: ['capsule'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-barberry_aafbce32.jpg',
+  { id: 'berberis', name: 'Barberry Root', latin: 'Berberis vulgaris', emoji: '🍒', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'Rich in berberine. Barberry supports liver health, gut microbiome balance, healthy metabolism, and immune function.', categories: ['digestive', 'immune'], uses: ['capsule'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-barberry_aafbce32.jpg',
     price: 0.23},
   { id: 'coptis', name: 'Coptis (Huang Lian)', latin: 'Coptis chinensis', emoji: '🌿', img: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=300&q=70', desc: 'One of the most bitter herbs in Chinese medicine. Coptis clears heat, reduces inflammation, and has powerful antimicrobial properties.', categories: ['digestive', 'immune'], uses: ['capsule'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-goldenseal_1a90e9dd.jpg',
     price: 0.23},
@@ -828,7 +839,7 @@ const BOTANICALS = [
     price: 0.29},
   { id: 'eyebright', name: 'Eyebright', latin: 'Euphrasia officinalis', emoji: '👁️', img: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=300&q=70', desc: 'The traditional herb for eye health. Eyebright reduces eye inflammation, supports vision, and relieves hay fever symptoms.', categories: ['immune', 'beauty'], uses: ['tea', 'serum'] , benefits: ['Strengthens immune defense naturally', 'Provides antioxidant protection', 'Supports recovery from illness'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-eyebright_4bba5e2e.jpg',
     price: 0.23},
-  { id: 'bilberry', name: 'Bilberry', latin: 'Vaccinium myrtillus', emoji: '🫐', img: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=300&q=70', desc: 'Rich in anthocyanins that support eye health, circulation, and blood sugar balance. Used by WWII pilots to improve night vision.', categories: ['beauty', 'energy'], uses: ['capsule', 'serum'] , benefits: ['Nourishes and rejuvenates skin cells', 'Provides antioxidant protection against aging', 'Supports collagen production and elasticity'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-bilberry_e35587e9.jpg',
+  { id: 'bilberry', name: 'Bilberry', latin: 'Vaccinium myrtillus', emoji: '🫐', img: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=300&q=70', desc: 'Rich in anthocyanins that support eye health, circulation, and healthy metabolism. Used by WWII pilots to improve night vision.', categories: ['beauty', 'energy'], uses: ['capsule', 'serum'] , benefits: ['Nourishes and rejuvenates skin cells', 'Provides antioxidant protection against aging', 'Supports collagen production and elasticity'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-bilberry_e35587e9.jpg',
     price: 0.39},
   { id: 'grape-seed', name: 'Grape Seed Extract', latin: 'Vitis vinifera', emoji: '🍇', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'Extraordinarily rich in OPCs (oligomeric proanthocyanidins). Grape seed extract supports cardiovascular health, skin, and antioxidant protection.', categories: ['beauty', 'immune', 'energy'], uses: ['capsule', 'serum'] , benefits: ['Nourishes and rejuvenates skin cells', 'Provides antioxidant protection against aging', 'Supports collagen production and elasticity'], illustration: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/WZYzYrwSGpTqmTCq.jpg',
     price: 0.23},
@@ -904,7 +915,7 @@ const BOTANICALS = [
     price: 0.23},
   { id: 'coq10', name: 'CoQ10 (Ubiquinol)', latin: 'Coenzyme Q10', emoji: '⚡', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=70', desc: 'The cellular energy molecule. CoQ10 powers mitochondria, supports cardiovascular health, and has powerful anti-aging properties.', categories: ['energy', 'beauty'], uses: ['capsule', 'serum'] , benefits: ['Boosts natural energy and vitality', 'Supports mental clarity and focus', 'Enhances physical endurance'], illustration: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/QUMKdjjXdRFQuTyJ.jpg',
     price: 0.23},
-  { id: 'alpha-lipoic', name: 'Alpha Lipoic Acid (ALA)', latin: 'Thioctic acid', emoji: '🌿', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'A universal antioxidant that works in both water and fat-soluble environments. ALA supports blood sugar balance and cellular energy.', categories: ['energy', 'beauty'], uses: ['capsule'] , benefits: ['Boosts natural energy and vitality', 'Supports mental clarity and focus', 'Enhances physical endurance'], illustration: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/HfenBRbUPoXOQQmg.jpg',
+  { id: 'alpha-lipoic', name: 'Alpha Lipoic Acid (ALA)', latin: 'Thioctic acid', emoji: '🌿', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'A universal antioxidant that works in both water and fat-soluble environments. ALA supports healthy metabolism and cellular energy.', categories: ['energy', 'beauty'], uses: ['capsule'] , benefits: ['Boosts natural energy and vitality', 'Supports mental clarity and focus', 'Enhances physical endurance'], illustration: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/HfenBRbUPoXOQQmg.jpg',
     price: 0.23},
   { id: 'n-acetyl-cysteine', name: 'N-Acetyl Cysteine (NAC)', latin: 'N-acetylcysteine', emoji: '🌿', img: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=300&q=70', desc: 'A precursor to glutathione, the master antioxidant. NAC supports liver detoxification, respiratory health, and mental clarity.', categories: ['immune', 'energy'], uses: ['capsule'] , benefits: ['Strengthens immune defense naturally', 'Provides antioxidant protection', 'Supports recovery from illness'], illustration: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/zjJiwJRNbuEOlIyy.jpg',
     price: 0.23},
@@ -926,7 +937,7 @@ const BOTANICALS = [
     price: 0.23},
   { id: 'prebiotic', name: 'Prebiotic Fiber (Inulin)', latin: 'Chicory inulin', emoji: '🌿', img: 'https://images.unsplash.com/photo-1515694346937-94d85e41e6f0?w=300&q=70', desc: 'Feeds beneficial gut bacteria. Inulin supports microbiome diversity, bowel regularity, and mineral absorption.', categories: ['digestive'], uses: ['capsule', 'tea'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663508836609/NQMpuGxdKaglMcum.jpg',
     price: 0.23},
-  { id: 'psyllium', name: 'Psyllium Husk', latin: 'Plantago ovata', emoji: '🌾', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=70', desc: 'A soluble fiber that supports bowel regularity, cholesterol balance, and blood sugar management.', categories: ['digestive'], uses: ['capsule'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-psyllium_55be73d6.jpg',
+  { id: 'psyllium', name: 'Psyllium Husk', latin: 'Plantago ovata', emoji: '🌾', img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=70', desc: 'A soluble fiber that supports bowel regularity, cholesterol balance, and metabolic wellness.', categories: ['digestive'], uses: ['capsule'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-psyllium_55be73d6.jpg',
     price: 0.23},
   { id: 'flaxseed', name: 'Flaxseed', latin: 'Linum usitatissimum', emoji: '🌾', img: 'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=300&q=70', desc: 'Rich in omega-3 ALA, lignans, and fiber. Flaxseed supports hormonal balance, cardiovascular health, and digestive function.', categories: ['digestive', 'hormonal'], uses: ['capsule', 'tea'] , benefits: ['Soothes and heals the digestive tract', 'Supports healthy gut microbiome', 'Reduces bloating and digestive discomfort'], illustration: 'https://d2xsxph8kpxj0f.cloudfront.net/310519663508836609/VDHw29YgzjByjwgsGHGQ8W/herb-flaxseed_a9076919.jpg',
     price: 0.17},
@@ -1080,7 +1091,7 @@ const BOTANICALS = [
     keyHerbs: ['Dandelion Root', 'Milk Thistle', 'Fennel', 'Ginger', 'Peppermint', 'Nettle'],
     sizes: [{ label: 'Complete Ritual', price: 47.99, default: true }],
     categories: ['digestive', 'detox', 'bundle'],
-    badge: 'Customer Favorite'
+    badge: 'Ritual Bundle'
   },
   {
     id: 'stress-relief-ritual',
@@ -1092,7 +1103,7 @@ const BOTANICALS = [
     keyHerbs: ['Ashwagandha', 'Holy Basil', 'Lemon Balm', 'Chamomile', 'Lavender', 'Passionflower'],
     sizes: [{ label: 'Complete Ritual', price: 49.99, default: true }],
     categories: ['stress', 'bundle'],
-    badge: 'Best Seller'
+    badge: 'Ritual Bundle'
   },
   {
     id: 'focus-clarity-ritual',
@@ -1104,7 +1115,7 @@ const BOTANICALS = [
     keyHerbs: ['Rosemary', 'Peppermint', "Lion's Mane", 'Gotu Kola', 'Ginkgo', 'Bacopa'],
     sizes: [{ label: 'Complete Ritual', price: 49.99, default: true }],
     categories: ['focus', 'cognitive', 'bundle'],
-    badge: 'Newly Loved'
+    badge: 'Ritual Bundle'
   },
   {
     id: 'happy-calm-ritual',
@@ -1128,6 +1139,6 @@ const BOTANICALS = [
     keyHerbs: ['Rhodiola', 'Eleuthero', 'Ginseng', 'Maca', 'Cordyceps', 'Matcha'],
     sizes: [{ label: 'Complete Ritual', price: 52.99, default: true }],
     categories: ['energy', 'bundle'],
-    badge: 'Most Reordered'
+    badge: 'Ritual Bundle'
   }
 ];

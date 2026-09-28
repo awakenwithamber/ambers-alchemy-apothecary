@@ -148,7 +148,8 @@
 
   // ── Checkout Manual Order Form (Cash App / Venmo) ───────────
   function wireOrderForm() {
-    const form = document.querySelector('#checkout-form, [data-form="order"], form[id*="checkout"]');
+    // Not the main #checkoutForm — app.js + /api/checkout own that flow.
+    const form = document.querySelector('#checkout-form, [data-form="order"]');
     const btn  = form?.querySelector('button[type="submit"], [data-submit], .form-submit');
     if (!form || !btn || btn.dataset.wired) return;
 

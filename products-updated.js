@@ -83,7 +83,7 @@ const SOAPS_EXTENDED = {
     shortDesc: 'Soft floral, calming, and dreamy — a gentle twilight bar that quiets the mind and softens the skin.',
     expandedDesc: 'A gentle floral escape inspired by twilight gardens. Calming lavender helps soothe the mind while nourishing goat milk and shea butter soften and hydrate the skin, leaving you wrapped in peaceful botanical comfort. This double-layered artisan bar begins with a creamy goat milk base, rich in lactic acid and skin-loving proteins, then rises into a clear glycerin and castor oil top layer tinted with natural lavender botanicals and shimmering butterfly pea flower. Base scent crafted from geranium and a citrus blend.',
     benefits: ['Soothes sensitive and irritated skin', 'Calming lavender aroma supports relaxation', 'Goat milk gently exfoliates and nourishes', 'Glycerin top layer seals in moisture beautifully'],
-    sizes: ['Small Rose 1oz — $4.99', 'Medium Bar 2oz — $6.99', 'Medium Rose 2oz — $7.99', 'Large Bar 3oz — $10.99', 'Large Round 4oz — $11.99'],
+    sizes: ['Small Rose 2oz — $4.77', 'Medium Rose 3oz — $8.44', 'Plain Rectangular 3oz — $7.44', 'Large Rectangular with Waves 4oz — $11.77', 'Large Circular with Flowers 4oz — $11.77'],
     botanicals: 'Lavender buds + Butterfly pea flower',
     scentProfile: 'Soft floral \u2022 calming \u2022 dreamy'
   },
@@ -91,7 +91,7 @@ const SOAPS_EXTENDED = {
     shortDesc: 'Romantic, floral, and heart-opening — rose petals soften skin and lift the heart.',
     expandedDesc: 'A romantic bar inspired by nature\'s sacred bloom. Rose petals are cherished for their skin-softening and heart-lifting qualities, while creamy shea butter and goat milk restore moisture and leave skin glowing and refreshed. The creamy goat milk base is infused with French pink clay, while the clear glycerin top layer is scattered with dried rose petals and vibrant hibiscus that bloom against the skin with every wash.',
     benefits: ['Rose and hibiscus gently clarify and refine pores', 'Rose hip oil supports skin radiance and tone', 'Dried petals add a sensory botanical experience', 'Suitable for all skin types, especially combination'],
-    sizes: ['Small Rose 1oz — $4.99', 'Medium Bar 2oz — $6.99', 'Medium Rose 2oz — $7.99', 'Large Bar 3oz — $10.99', 'Large Round 4oz — $11.99'],
+    sizes: ['Small Rose 2oz — $4.77', 'Medium Rose 3oz — $8.44', 'Plain Rectangular 3oz — $7.44', 'Large Rectangular with Waves 4oz — $11.77', 'Large Circular with Flowers 4oz — $11.77'],
     botanicals: 'Rose petals + Hibiscus',
     scentProfile: 'Romantic \u2022 floral \u2022 heart-opening'
   },
@@ -99,7 +99,7 @@ const SOAPS_EXTENDED = {
     shortDesc: 'Fresh, cooling, and clean — cooling eucalyptus and mint awaken the senses and refresh tired skin.',
     expandedDesc: 'A bright, invigorating blend that awakens the senses. Cooling eucalyptus and mint help refresh tired skin and open the breath, while deeply moisturizing goat milk and shea butter leave the body feeling clean, energized, and renewed. This spa-inspired bar features vibrant spirulina green in the goat milk base, rising into a clear glycerin layer shimmering with crushed mint leaves for a truly revitalizing experience.',
     benefits: ['Mint and spirulina deeply purify and refresh', 'Peppermint provides an invigorating, cooling sensation', 'Spirulina supports clear, balanced skin', 'Ideal for oily, combination, or tired skin'],
-    sizes: ['Small Rose 1oz — $4.99', 'Medium Bar 2oz — $6.99', 'Medium Rose 2oz — $7.99', 'Large Bar 3oz — $10.99', 'Large Round 4oz — $11.99'],
+    sizes: ['Small Rose 2oz — $4.77', 'Medium Rose 3oz — $8.44', 'Plain Rectangular 3oz — $7.44', 'Large Rectangular with Waves 4oz — $11.77', 'Large Circular with Flowers 4oz — $11.77'],
     botanicals: 'Mint leaves + Spirulina',
     scentProfile: 'Fresh \u2022 cooling \u2022 clean'
   },
@@ -107,7 +107,7 @@ const SOAPS_EXTENDED = {
     shortDesc: 'Cozy, spicy, and grounding — cinnamon warmth encourages circulation with rich nourishment.',
     expandedDesc: 'A cozy, grounding soap infused with the warmth of cinnamon and spice. Cinnamon\'s natural stimulating properties encourage circulation while creamy shea butter and goat milk provide rich nourishment for soft, healthy skin. This warming bar features golden cinnamon tones in the goat milk base with subtle clove accents, creating a deep, spicy lather that feels like a warm blanket for the skin.',
     benefits: ['Cinnamon encourages healthy circulation', 'Clove adds deep antimicrobial warmth', 'Creamy shea butter and goat milk nourish deeply', 'Cozy, grounding warmth for soft, healthy skin'],
-    sizes: ['Small Rose 1oz — $4.99', 'Medium Bar 2oz — $6.99', 'Medium Rose 2oz — $7.99', 'Large Bar 3oz — $10.99', 'Large Round 4oz — $11.99'],
+    sizes: ['Small Rose 2oz — $4.77', 'Medium Rose 3oz — $8.44', 'Plain Rectangular 3oz — $7.44', 'Large Rectangular with Waves 4oz — $11.77', 'Large Circular with Flowers 4oz — $11.77'],
     botanicals: 'Cinnamon + Clove',
     scentProfile: 'Cozy \u2022 spicy \u2022 grounding'
   },
@@ -115,7 +115,7 @@ const SOAPS_EXTENDED = {
     shortDesc: 'Bright, citrus, and radiant — sweet orange uplifts the mood while botanicals brighten and soften.',
     expandedDesc: 'A radiant citrus floral blend inspired by sunlight and blooming gardens. Sweet orange uplifts the mood while botanical oils help brighten and soften the skin, leaving a fresh glow and a gentle aura of natural sweetness. The goat milk base is rich with golden calendula petals while the clear glycerin top layer carries crushed orange peel that releases bright, joyful energy with every wash.',
     benefits: ['Calendula supports healing and reduces inflammation', 'Orange peel provides vitamin C and brightening', 'Ultra-radiant formula for a natural glow', 'Uplifting citrus aroma for mood and spirit'],
-    sizes: ['Small Rose 1oz — $4.99', 'Medium Bar 2oz — $6.99', 'Medium Rose 2oz — $7.99', 'Large Bar 3oz — $10.99', 'Large Round 4oz — $11.99'],
+    sizes: ['Small Rose 2oz — $4.77', 'Medium Rose 3oz — $8.44', 'Plain Rectangular 3oz — $7.44', 'Large Rectangular with Waves 4oz — $11.77', 'Large Circular with Flowers 4oz — $11.77'],
     botanicals: 'Calendula + Orange peel',
     scentProfile: 'Bright \u2022 citrus \u2022 radiant'
   },
@@ -123,7 +123,7 @@ const SOAPS_EXTENDED = {
     shortDesc: 'Sweet citrus, uplifting, and energizing — a radiant glow bar that brightens and lifts the spirit.',
     expandedDesc: 'There is a moment in the morning when the shower shifts from obligation to pleasure — when the fragrance of something bright and alive cuts through the fog of sleep. Citrus Goddess Glow was made for exactly that moment. The goat milk base is light and refreshing with crushed orange peel throughout; the clear glycerin top layer carries golden calendula petals in a fragrance that is simultaneously uplifting, clarifying, and deeply joyful. This is the bar that makes you glad to be awake.',
     benefits: ['Citrus oils are brightening and antioxidant-rich', 'Uplifts mood and supports emotional balance', 'Light, refreshing formula suitable for daily use', 'Energizing morning fragrance that lingers on the skin'],
-    sizes: ['Small Rose 1oz — $4.99', 'Medium Bar 2oz — $6.99', 'Medium Rose 2oz — $7.99', 'Large Bar 3oz — $10.99', 'Large Round 4oz — $11.99'],
+    sizes: ['Small Rose 2oz — $4.77', 'Medium Rose 3oz — $8.44', 'Plain Rectangular 3oz — $7.44', 'Large Rectangular with Waves 4oz — $11.77', 'Large Circular with Flowers 4oz — $11.77'],
     botanicals: 'Orange peel + Calendula',
     scentProfile: 'Sweet citrus \u2022 uplifting \u2022 energizing'
   },
@@ -131,7 +131,7 @@ const SOAPS_EXTENDED = {
     shortDesc: 'Earthy, resinous, and grounding — for those who need to come back to themselves.',
     expandedDesc: 'Close your eyes and imagine a forest after rain — the deep, resinous scent of ancient trees, the mineral richness of the earth beneath your feet. Sacred Forest Ritual soap brings that experience into your shower. The creamy goat milk base is infused with mineral-rich nettle leaf powder for deep green earthiness, while resin-inspired tones in the glycerin top layer create a fragrance that is grounding, clarifying, and deeply calming. This is the bar for those who need to come back to themselves.',
     benefits: ['Nettle is mineral-rich and supports skin clarity', 'Grounding earthy aroma for meditation and ritual', 'Resinous tones purify body and energy field', 'Earthy, forest-like aroma for stress relief'],
-    sizes: ['Small Rose 1oz — $4.99', 'Medium Bar 2oz — $6.99', 'Medium Rose 2oz — $7.99', 'Large Bar 3oz — $10.99', 'Large Round 4oz — $11.99'],
+    sizes: ['Small Rose 2oz — $4.77', 'Medium Rose 3oz — $8.44', 'Plain Rectangular 3oz — $7.44', 'Large Rectangular with Waves 4oz — $11.77', 'Large Circular with Flowers 4oz — $11.77'],
     botanicals: 'Nettle + Resin-inspired tones',
     scentProfile: 'Earthy \u2022 resinous \u2022 grounding'
   },
@@ -139,7 +139,7 @@ const SOAPS_EXTENDED = {
     shortDesc: 'Clean, herbal, and awakening — like the first breath of crisp mountain morning air.',
     expandedDesc: 'Some mornings call for something sharp and alive — the kind of clean that feels like altitude, like cold water on the face, like the first deep breath at a mountain summit. Fresh Mountain Air soap was made for that feeling. Cool mint and light green herbal botanicals create a crisp, awakening lather in the goat milk base, while the clear glycerin top layer carries the clean herbal fragrance that clears the mind and invigorates the body with every wash.',
     benefits: ['Clean herbal aroma clears and refreshes the mind', 'Mint awakens and invigorates tired skin', 'Light botanical greens support skin clarity', 'Ideal for morning showers and fresh starts'],
-    sizes: ['Small Rose 1oz — $4.99', 'Medium Bar 2oz — $6.99', 'Medium Rose 2oz — $7.99', 'Large Bar 3oz — $10.99', 'Large Round 4oz — $11.99'],
+    sizes: ['Small Rose 2oz — $4.77', 'Medium Rose 3oz — $8.44', 'Plain Rectangular 3oz — $7.44', 'Large Rectangular with Waves 4oz — $11.77', 'Large Circular with Flowers 4oz — $11.77'],
     botanicals: 'Mint + Light green herbs',
     scentProfile: 'Clean \u2022 herbal \u2022 awakening'
   },
@@ -147,7 +147,7 @@ const SOAPS_EXTENDED = {
     shortDesc: 'Floral, soft, and feminine — like being wrapped in sun-drenched petals from a gentle garden.',
     expandedDesc: 'There is a softness to a garden at midday — the way light filters through petals, the way chamomile and rose lean toward the sun. Sunlit Garden Bloom captures that quiet beauty in every wash. Soothing chamomile flowers and delicate rose petals create a gentle, feminine lather in the goat milk base, while the clear glycerin top layer blooms with scattered botanical petals that soften, calm, and wrap sensitive skin in warm, sun-kissed comfort.',
     benefits: ['Chamomile soothes and calms sensitive skin', 'Rose petals soften and add botanical beauty', 'Ultra-gentle formula for all skin types', 'Soft, feminine floral aroma uplifts the soul'],
-    sizes: ['Small Rose 1oz — $4.99', 'Medium Bar 2oz — $6.99', 'Medium Rose 2oz — $7.99', 'Large Bar 3oz — $10.99', 'Large Round 4oz — $11.99'],
+    sizes: ['Small Rose 2oz — $4.77', 'Medium Rose 3oz — $8.44', 'Plain Rectangular 3oz — $7.44', 'Large Rectangular with Waves 4oz — $11.77', 'Large Circular with Flowers 4oz — $11.77'],
     botanicals: 'Chamomile + Rose mix',
     scentProfile: 'Floral \u2022 soft \u2022 feminine'
   }

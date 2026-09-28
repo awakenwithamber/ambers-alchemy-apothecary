@@ -149,43 +149,9 @@
   }
 
   // --- CART PERSISTENCE ---
-  function persistCart() {
-    try {
-      if (typeof cart !== 'undefined') {
-        sessionStorage.setItem(KEYS.CART, JSON.stringify(cart));
-      }
-    } catch(e) {}
-  }
-
-  function restoreCart() {
-    try {
-      var saved = sessionStorage.getItem(KEYS.CART);
-      if (saved && typeof cart !== 'undefined') {
-        var items = JSON.parse(saved);
-        if (Array.isArray(items) && items.length > 0 && cart.length === 0) {
-          items.forEach(function(item) { cart.push(item); });
-          if (typeof renderCart === 'function') renderCart();
-        }
-      }
-    } catch(e) {}
-  }
-
-  // Persist cart on changes
-  var origAddToCart = window.addToCart;
-  if (typeof origAddToCart === 'function') {
-    window.addToCart = function(name, price) {
-      origAddToCart(name, price);
-      persistCart();
-    };
-  }
-
-  var origAddItemToCart = window.addItemToCart;
-  if (typeof origAddItemToCart === 'function') {
-    window.addItemToCart = function(item) {
-      origAddItemToCart(item);
-      persistCart();
-    };
-  }
+  // app.js persists the canonical cart to localStorage itself; the old
+  // sessionStorage copy here could resurrect removed items, so it is retired.
+  function restoreCart() {}
 
   // --- QUIZ/BUILDER STATE PERSISTENCE ---
   window.persistQuizStep = function(step, data) {

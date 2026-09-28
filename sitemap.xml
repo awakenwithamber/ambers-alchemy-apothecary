@@ -8,7 +8,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://awakenagain.com/</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -30,7 +30,7 @@
   <!-- Primary Collection / Shop -->
   <url>
     <loc>https://awakenagain.com/shop</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
@@ -38,7 +38,7 @@
   <!-- Custom Formula Builder -->
   <url>
     <loc>https://awakenagain.com/custom-formula</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -46,7 +46,7 @@
   <!-- Artisan Soaps Collection -->
   <url>
     <loc>https://awakenagain.com/soaps</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image>
@@ -62,7 +62,7 @@
   <!-- Articles & Guides -->
   <url>
     <loc>https://awakenagain.com/herbal-wisdom</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -70,7 +70,7 @@
   <!-- Herb Encyclopedia / Living Grimoire -->
   <url>
     <loc>https://awakenagain.com/herbal-library</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -78,7 +78,7 @@
   <!-- Ingredient Library -->
   <url>
     <loc>https://awakenagain.com/herb-index</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -86,7 +86,7 @@
   <!-- Services -->
   <url>
     <loc>https://awakenagain.com/services</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
@@ -94,7 +94,7 @@
   <!-- About Amber -->
   <url>
     <loc>https://awakenagain.com/about</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -102,7 +102,7 @@
   <!-- FAQs -->
   <url>
     <loc>https://awakenagain.com/faqs</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -110,77 +110,15 @@
   <!-- Contact -->
   <url>
     <loc>https://awakenagain.com/contact</loc>
-    <lastmod>2026-04-17</lastmod>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
 
-  <!-- Article deep-links (hash anchors on homepage) -->
+  <!-- Living Grimoire (pages 1-7 free) -->
   <url>
-    <loc>https://awakenagain.com/#hw-stress</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://awakenagain.com/#hw-sleep</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://awakenagain.com/#hw-digestion</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://awakenagain.com/#hw-hormones</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://awakenagain.com/#hw-adaptogens</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://awakenagain.com/#hw-teas-vs-capsules</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.65</priority>
-  </url>
-  <url>
-    <loc>https://awakenagain.com/#hw-custom-remedy</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Apothecary Journal deep-links -->
-  <url>
-    <loc>https://awakenagain.com/#journal</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://awakenagain.com/#services</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-  </url>
-  <url>
-    <loc>https://awakenagain.com/#bundles</loc>
-    <lastmod>2026-04-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://awakenagain.com/#soaps</loc>
-    <lastmod>2026-04-17</lastmod>
+    <loc>https://awakenagain.com/grimior</loc>
+    <lastmod>2026-09-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
