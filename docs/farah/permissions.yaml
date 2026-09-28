@@ -1,0 +1,45 @@
+version: 1
+owner_approval_required:
+  - production_database_migrations
+  - delete_user_account
+  - bulk_delete
+  - payment_or_refund_over_limit
+  - modify_auth_or_roles
+  - publish_legal_language
+  - publish_health_claims
+  - change_domain_dns
+  - change_production_secrets
+  - merge_security_sensitive_code
+  - deploy_breaking_change
+  - send_bulk_marketing_campaign
+
+autonomous_allowed:
+  - research
+  - draft_content
+  - draft_email
+  - create_feature_branch
+  - write_tests
+  - run_tests
+  - fix_low_risk_bugs_in_branch
+  - prepare_pull_request
+  - update_internal_docs
+  - generate_sop
+  - classify_support_ticket
+  - answer_faq_from_approved_knowledge
+  - create_seo_recommendation
+  - monitor_errors
+  - create_issue
+
+customer_service:
+  refund_limit_without_owner_approval: 0
+  never_claim_human_identity: true
+  disclose_ai_when_reasonably_relevant: true
+  escalate_if:
+    - legal_threat
+    - chargeback
+    - safety_crisis
+    - harassment_or_abuse
+    - account_security_issue
+    - medical_emergency
+    - refund_request
+    - uncertainty_about_policy

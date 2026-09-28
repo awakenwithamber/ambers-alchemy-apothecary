@@ -1,4 +1,11 @@
 [build]
+  # netlify.toml is the build source of truth and overrides the UI settings:
+  # - base: the UI "Base directory" ("Main") does not exist, which made the
+  #   CLI fail to resolve the project on deploy ("Project not found").
+  # - command: the static site has no build step; the empty value cancels a
+  #   stale UI build command ("remix vite:build") that has no Remix app to build.
+  base = "."
+  command = ""
   publish = "."
   functions = "netlify/functions"
 
@@ -17,136 +24,333 @@
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
     Access-Control-Allow-Headers = "Content-Type"
 
-# ── Page redirects ──────────────────────────────────────────
+# ── Canonical clean paths ───────────────────────────────────
+# The site is a single-page app: every section lives in index.html and
+# navigation-history.js maps the path to a section. Canonical section paths:
+#   /shop /soaps /services /custom-formula /herbal-wisdom (Facts & Articles)
+#   /herbal-library (Herb & Ingredient Library) /herb-index /about /faqs
+#   /contact /search. The Living Grimoire is /grimior (grimior.html).
+# Earlier rules here pointed at files that do not exist (herbal-index.html,
+# grimoir.html, articles.html, create-remedy.html) and returned 404s.
+
 [[redirects]]
   from = "/grimior"
   to = "/grimior.html"
   status = 200
 
 [[redirects]]
+  from = "/grimoire"
+  to = "/grimior"
+  status = 301
+
+[[redirects]]
+  from = "/grimoire.html"
+  to = "/grimior"
+  status = 301
+
+[[redirects]]
+  from = "/living-grimoire"
+  to = "/grimior"
+  status = 301
+
+[[redirects]]
+  from = "/grimoir.html"
+  to = "/grimior"
+  status = 301
+
+# Legacy / friendly aliases → canonical section paths
+[[redirects]]
   from = "/ingredient-library"
-  to = "/herbal-index.html"
+  to = "/herb-index"
   status = 301
 
 [[redirects]]
   from = "/ingredient-library.html"
-  to = "/herbal-index.html"
+  to = "/herb-index"
+  status = 301
+
+[[redirects]]
+  from = "/herbal-index"
+  to = "/herb-index"
+  status = 301
+
+[[redirects]]
+  from = "/herbal-index.html"
+  to = "/herb-index"
   status = 301
 
 [[redirects]]
   from = "/herb-encyclopedia"
-  to = "/grimoir.html"
+  to = "/herbal-library"
   status = 301
 
 [[redirects]]
   from = "/herbal-encyclopedia"
-  to = "/herbal-index.html"
+  to = "/herbal-library"
   status = 301
-
-[[redirects]]
-  from = "/create-remedy"
-  to = "/create-remedy.html"
-  status = 200
-
-[[redirects]]
-  from = "/articles"
-  to = "/articles.html"
-  status = 200
-
-[[redirects]]
-  from = "/herbal-index"
-  to = "/herbal-index.html"
-  status = 200
-
-# ── Old anchor → new page redirects ─────────────────────────
-[[redirects]]
-  from = "/#herb-encyclopedia"
-  to = "/herbal-index.html"
-  status = 301
-
-[[redirects]]
-  from = "/#ingredient-library"
-  to = "/herbal-index.html"
-  status = 301
-
-# ── Grimoire route aliases ──────────────────────────────────────
-[[redirects]]
-  from = "/grimoire"
-  to = "/grimoir.html"
-  status = 200
-
-[[redirects]]
-  from = "/grimoire.html"
-  to = "/grimoir.html"
-  status = 301
-
-[[redirects]]
-  from = "/herbal-library"
-  to = "/grimoir.html"
-  status = 200
 
 [[redirects]]
   from = "/herbal-library.html"
-  to = "/grimoir.html"
+  to = "/herbal-library"
   status = 301
 
 [[redirects]]
   from = "/herbs"
-  to = "/grimoir.html"
-  status = 200
+  to = "/herbal-library"
+  status = 301
 
 [[redirects]]
   from = "/library"
-  to = "/grimoir.html"
+  to = "/herbal-library"
   status = 301
 
-# ── SEO product page aliases ────────────────────────────────────
+[[redirects]]
+  from = "/articles"
+  to = "/herbal-wisdom"
+  status = 301
+
+[[redirects]]
+  from = "/articles.html"
+  to = "/herbal-wisdom"
+  status = 301
+
+[[redirects]]
+  from = "/facts-and-articles"
+  to = "/herbal-wisdom"
+  status = 301
+
+[[redirects]]
+  from = "/create-remedy"
+  to = "/custom-formula"
+  status = 301
+
+[[redirects]]
+  from = "/create-remedy.html"
+  to = "/custom-formula"
+  status = 301
+
+[[redirects]]
+  from = "/build-a-remedy"
+  to = "/custom-formula"
+  status = 301
+
+[[redirects]]
+  from = "/checkout"
+  to = "/shop"
+  status = 302
+
+# ── SEO product aliases → shop deep links ───────────────────
+# (A "/#fragment" rewrite target never reached the product; the shop
+# deep link ?product=<id> does.)
 [[redirects]]
   from = "/dream-ease-capsules"
-  to = "/#dreamease"
-  status = 200
+  to = "/shop?product=dreamease-capsules"
+  status = 301
 
 [[redirects]]
   from = "/vital-vitality-capsules"
-  to = "/#vital-vitality"
-  status = 200
+  to = "/shop?product=vital-vitality"
+  status = 301
 
 [[redirects]]
   from = "/immune-at-ease-capsules"
-  to = "/#immune-at-ease"
-  status = 200
+  to = "/shop?product=immune-at-ease"
+  status = 301
 
 [[redirects]]
   from = "/pain-relief-balm"
-  to = "/#pain-balm"
-  status = 200
+  to = "/shop?product=pain-balm"
+  status = 301
 
+# Retired-term URLs: permanently moved to the renamed products.
 [[redirects]]
   from = "/age-reversal-beauty-balm"
-  to = "/#beauty-balm"
-  status = 200
+  to = "/shop?product=beauty-balm"
+  status = 301
 
 [[redirects]]
   from = "/hair-regrowth-serum"
-  to = "/#hair-serum"
-  status = 200
+  to = "/shop?product=hair-serum"
+  status = 301
 
 [[redirects]]
   from = "/custom-capsule-builder"
-  to = "/#custom-builder"
-  status = 200
+  to = "/custom-formula"
+  status = 301
 
 [[redirects]]
   from = "/handmade-botanical-soaps"
-  to = "/#soaps"
-  status = 200
+  to = "/soaps"
+  status = 301
 
 [[redirects]]
   from = "/herbal-tea-apothecary"
-  to = "/#herbal-tea"
-  status = 200
+  to = "/shop?product=alchemy-tea"
+  status = 301
+
+# ── Server source is not public ────────────────────────────────
+# publish = "." uploads the whole repo, so these server-side folders and files
+# would otherwise be downloadable. Netlify matches functions with a
+# `config.path` (all /api/* endpoints) BEFORE any redirect, so these rules
+# never shadow a function; they only turn stray source paths — and unknown
+# /api/* URLs — into a real 404 instead of the file or the SPA page.
+[[redirects]]
+  from = "/api/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/lib/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/docs/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/scripts/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/node_modules/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/server.js"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/index.mjs"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/test.js"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/vercel.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# Repo-only docs, tests, agent definitions, uploaded source material and the
+# project export zip are not part of the site either.
+[[redirects]]
+  from = "/tests/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/data/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/supabase/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.claude/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/attached_assets/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/exports/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/updates/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/CLAUDE.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/threat_model.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/SETUP.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/VERCEL_DEPLOY.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/CONSOLIDATION_AUDIT.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/deno.lock"
+  to = "/404.html"
+  status = 404
+  force = true
 
 # ── SPA catch-all (must be last) ───────────────────────────────
+# Netlify's request order is: functions with `config.path` → redirects →
+# static files. /api/* endpoints (checkout, checkout-config, stripe-webhook,
+# order-status, lunna, form-submit, reviews) therefore always win over this
+# rule; nothing here needs `force` or a per-function exception.
 [[redirects]]
   from = "/*"
   to = "/index.html"

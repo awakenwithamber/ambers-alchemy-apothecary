@@ -164,7 +164,7 @@ const HERB_SEO_DATA = {
     plantFamily: 'Lamiaceae',
     partsUsed: ['Leaves', 'Essential oil'],
     traditionalUses: 'Rosemary has been associated with memory and remembrance since ancient Greece, where students wore garlands of it during exams. In medieval Europe, it was burned as incense to purify the air during illness, used in wedding ceremonies as a symbol of fidelity, and placed on graves as a token of remembrance. Traditional herbalists used it for headaches, poor circulation, hair loss, and as a digestive tonic.',
-    modernApplications: 'Modern research has confirmed rosemary\'s traditional reputation for cognitive support — studies show rosemary aroma can improve memory and concentration. Topically, rosemary oil has been shown in clinical trials to support hair regrowth, with one study finding it comparable to minoxidil for androgenetic alopecia. It is also used for scalp circulation, digestive support, and as an antioxidant.',
+    modernApplications: 'Modern research has confirmed rosemary\'s traditional reputation for cognitive support — studies show rosemary aroma can improve memory and concentration. Topically, rosemary oil is a beloved scalp-massage ingredient in hair-care rituals. It is also used for scalp circulation, digestive support, and as an antioxidant.',
     preparationMethods: ['Essential oil (scalp massage — diluted in carrier oil)', 'Tea (fresh or dried leaves)', 'Tincture', 'Infused oil (for hair and scalp)', 'Culinary use (fresh or dried)'],
     safetyNotes: 'Safe at culinary doses. Essential oil should be diluted before topical use. Avoid therapeutic doses during pregnancy. High doses may cause seizures in rare cases. May interact with blood thinners and ACE inhibitors.',
     faq: [

@@ -115,7 +115,7 @@ async function publishableKey(req, res) {
 }
 
 // POST /api/grimoire-subscribe
-// On-site $3.33/month Grimoire subscription via Stripe Elements (no redirect).
+// On-site $7.77/month Grimoire (canonical price per Master Source of Truth, Sept 2026) subscription via Stripe Elements (no redirect).
 // Body: { email, paymentMethodId }
 // Returns { subscriptionId, clientSecret } so the client can confirm on-site.
 async function grimoireSubscribe(req, res) {
@@ -146,13 +146,13 @@ async function grimoireSubscribe(req, res) {
     let price;
     const prices = await stripe.prices.list({ active: true, limit: 100, expand: ['data.product'] });
     price = prices.data.find(
-      (p) => p.recurring && p.unit_amount === 333 && p.currency === 'usd' &&
+      (p) => p.recurring && p.unit_amount === 777 && p.currency === 'usd' &&
         p.product && p.product.name === productName
     );
     if (!price) {
       price = await stripe.prices.create({
         currency: 'usd',
-        unit_amount: 333,
+        unit_amount: 777,
         recurring: { interval: 'month' },
         product_data: { name: productName },
       });

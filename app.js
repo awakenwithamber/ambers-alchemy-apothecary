@@ -4,7 +4,13 @@
 // ============================================================
 
 // ---- STATE ----
-let cart = [];
+// Canonical cart (see CART section); restored from localStorage.
+let cart = (function() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('aa_cart_main') || '[]');
+    return Array.isArray(saved) ? saved.filter(i => i && i.name && i.qty > 0) : [];
+  } catch (e) { return []; }
+})();
 let selectedHerbs = [];
 let teaSelectedHerbs = [];
 
@@ -17,6 +23,9 @@ function showToast(msg) {
 }
 
 function formatPrice(n) { return '$' + n.toFixed(2); }
+function escapeHtml(str) {
+  return String(str == null ? '' : str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
 
 // ---- NAVIGATION ----
 function showSection(id) {
@@ -94,8 +103,47 @@ function getStartVolume() {
   return 0.07;
 }
 
+// Soft tone layer (333, 444, 777 and 134 Hz sine tones) mixed under the
+// ambient track. Web Audio only starts after the visitor chooses
+// "Enter With Sound"; combined gain is fixed at 0.008.
+const TONE_FREQUENCIES = [333, 444, 777, 134];
+const TONE_GAIN = 0.008;
+let toneCtx = null, toneGain = null;
+
+function startTones() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return;
+  try {
+    if (!toneCtx) {
+      toneCtx = new AC();
+      toneGain = toneCtx.createGain();
+      toneGain.gain.value = 0;
+      toneGain.connect(toneCtx.destination);
+      TONE_FREQUENCIES.forEach(function(f) {
+        const osc = toneCtx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = f;
+        osc.connect(toneGain);
+        osc.start();
+      });
+    }
+    if (toneCtx.state === 'suspended') toneCtx.resume();
+    toneGain.gain.cancelScheduledValues(toneCtx.currentTime);
+    toneGain.gain.setTargetAtTime(TONE_GAIN, toneCtx.currentTime, 1.2);
+  } catch (e) {}
+}
+
+function stopTones() {
+  if (!toneCtx || !toneGain) return;
+  try {
+    toneGain.gain.cancelScheduledValues(toneCtx.currentTime);
+    toneGain.gain.setTargetAtTime(0, toneCtx.currentTime, 0.3);
+  } catch (e) {}
+}
+
 function setMusicUI(playing) {
   musicPlaying = playing;
+  if (playing) startTones(); else stopTones();
   if (playing) {
     musicToggleBtn.innerHTML = '&#9834; ON';
     musicToggleBtn.classList.add('playing');
@@ -112,7 +160,7 @@ function dismissModal() {
   setTimeout(function() { musicModal.style.display = 'none'; }, 400);
 }
 
-// "Get the Full Experience" — fade in music gently and dismiss
+// "Enter With Sound" — fade in music gently and dismiss
 musicYesBtn.addEventListener('click', function() {
   dismissModal();
   var target = getStartVolume();
@@ -127,7 +175,7 @@ musicYesBtn.addEventListener('click', function() {
   });
 });
 
-// "Browse without Music" — just dismiss
+// "Continue Without Sound" — just dismiss
 musicNoBtn.addEventListener('click', function() {
   dismissModal();
   setMusicUI(false);
@@ -277,8 +325,19 @@ window.addEventListener('beforeunload', function() {
 })();
 
 // ---- CART ----
+// The one canonical cart. Persisted to localStorage so it survives reloads.
+// Prices stored here are for display only — /api/cart/quote and
+// /api/checkout recompute every total from the server catalog.
 const cartDrawer = document.getElementById('cartDrawer');
 const cartOverlay = document.getElementById('cartOverlay');
+const CART_STORAGE_KEY = 'aa_cart_main';
+let cartPromoCode = '';
+let lastQuote = null;
+let quoteTimer = null;
+
+function saveCart() {
+  try { localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart)); } catch (e) {}
+}
 
 function openCart() { cartDrawer.classList.add('open'); cartOverlay.classList.add('visible'); }
 function closeCartFn() { cartDrawer.classList.remove('open'); cartOverlay.classList.remove('visible'); }
@@ -287,18 +346,69 @@ document.getElementById('cartBtn').addEventListener('click', openCart);
 document.getElementById('closeCart').addEventListener('click', closeCartFn);
 cartOverlay.addEventListener('click', closeCartFn);
 
+function cartPayload() {
+  return cart.map(i => ({ name: i.name, qty: i.qty, customForm: i.customForm || '', herbCount: i.herbCount || 0 }));
+}
+
+// Local estimate shown instantly; replaced by the server quote when it lands.
+function estimateTotals() {
+  const subtotal = cart.reduce((s, i) => s + (Number(i.price) || 0) * i.qty, 0);
+  const shipping = subtotal === 0 || subtotal >= 100 ? 0 : 6.99;
+  return { subtotal, discount: 0, shipping, tax: 0, total: subtotal + shipping };
+}
+
+function paintTotals(prefix, t) {
+  const set = (id, text) => { const el = document.getElementById(prefix + id); if (el) el.textContent = text; };
+  set('Subtotal', formatPrice(t.subtotal));
+  set('Shipping', t.shipping === 0 && t.subtotal > 0 ? 'FREE' : formatPrice(t.shipping));
+  set('Discount', '−' + formatPrice(t.discount || 0));
+  set('Tax', formatPrice(t.tax || 0));
+  set('Total', formatPrice(t.total));
+  const discountRow = document.getElementById(prefix + 'DiscountRow');
+  if (discountRow) discountRow.hidden = !(t.discount > 0);
+  const taxRow = document.getElementById(prefix + 'TaxRow');
+  if (taxRow) taxRow.hidden = !(t.tax > 0);
+}
+
 function calcCartTotals() {
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal === 0 ? 0 : (subtotal >= 75 ? 0 : 6.99);
-  const taxRate = 0.08;
-  const tax = subtotal * taxRate;
-  const total = subtotal + shipping + tax;
-  document.getElementById('cartSubtotal').textContent = formatPrice(subtotal);
-  document.getElementById('cartShipping').textContent = shipping === 0 && subtotal > 0 ? 'FREE' : formatPrice(shipping);
-  document.getElementById('cartTax').textContent = formatPrice(tax);
-  document.getElementById('cartTotal').textContent = formatPrice(total);
+  const t = lastQuote || estimateTotals();
+  paintTotals('cart', t);
   document.getElementById('cartCount').textContent = cart.reduce((s, i) => s + i.qty, 0);
-  return { subtotal, shipping, tax, total };
+  return t;
+}
+
+async function refreshQuote() {
+  const note = document.getElementById('cartQuoteNote');
+  if (cart.length === 0) { lastQuote = null; calcCartTotals(); if (note) note.textContent = ''; return null; }
+  try {
+    const res = await fetch('/api/cart/quote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: cartPayload(), promoCode: cartPromoCode }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Quote unavailable');
+    lastQuote = data;
+    if (note) note.textContent = '';
+    const msg = document.getElementById('cartPromoMsg');
+    if (msg && cartPromoCode) {
+      msg.textContent = data.promoRejected ? 'That code isn’t valid.' : '✦ Code applied.';
+      if (data.promoRejected) cartPromoCode = '';
+    }
+  } catch (err) {
+    lastQuote = null;
+    if (note) note.textContent = /Unrecognised item/.test(err.message)
+      ? 'One item in your cart is no longer available. Please remove it to check out.'
+      : 'Totals shown are an estimate; final totals are confirmed at checkout.';
+  }
+  calcCartTotals();
+  return lastQuote;
+}
+
+function scheduleQuote() {
+  lastQuote = null;
+  clearTimeout(quoteTimer);
+  quoteTimer = setTimeout(refreshQuote, 250);
 }
 
 function renderCart() {
@@ -309,42 +419,56 @@ function renderCart() {
     el.innerHTML = cart.map((item, idx) => `
       <div class="cart-item">
         <div class="cart-item-info">
-          <div class="cart-item-name">${item.name}</div>
-          ${item.form ? `<div class="cart-item-detail"><span class="cart-detail-label">Form:</span> ${item.form}</div>` : ''}
-          ${item.symptoms ? `<div class="cart-item-detail"><span class="cart-detail-label">Symptoms:</span> ${item.symptoms}</div>` : ''}
-          ${item.herbs ? `<div class="cart-item-detail"><span class="cart-detail-label">Herbs:</span> ${item.herbs}</div>` : ''}
-          ${item.size ? `<div class="cart-item-detail"><span class="cart-detail-label">Size:</span> ${item.size}</div>` : ''}
-          <div class="cart-item-price">${formatPrice(item.price)} \u00D7 ${item.qty}</div>
+          <div class="cart-item-name">${escapeHtml(item.name)}</div>
+          ${item.form ? `<div class="cart-item-detail"><span class="cart-detail-label">Form:</span> ${escapeHtml(item.form)}</div>` : ''}
+          ${item.symptoms ? `<div class="cart-item-detail"><span class="cart-detail-label">Focus:</span> ${escapeHtml(item.symptoms)}</div>` : ''}
+          ${item.herbs ? `<div class="cart-item-detail"><span class="cart-detail-label">Herbs:</span> ${escapeHtml(item.herbs)}</div>` : ''}
+          ${item.size ? `<div class="cart-item-detail"><span class="cart-detail-label">Size:</span> ${escapeHtml(item.size)}</div>` : ''}
+          <div class="cart-item-price">${formatPrice(item.price)} × ${item.qty}</div>
         </div>
         <div class="cart-item-controls">
           <div class="cart-qty-controls">
-            <button class="cart-qty-btn" data-idx="${idx}" data-dir="-1">\u2212</button>
+            <button class="cart-qty-btn" data-idx="${idx}" data-dir="-1" aria-label="Decrease quantity">−</button>
             <span class="cart-qty-display">${item.qty}</span>
-            <button class="cart-qty-btn" data-idx="${idx}" data-dir="1">+</button>
+            <button class="cart-qty-btn" data-idx="${idx}" data-dir="1" aria-label="Increase quantity">+</button>
           </div>
-          <button class="cart-item-remove" data-idx="${idx}">\u2715</button>
+          <button class="cart-item-remove" data-idx="${idx}" aria-label="Remove ${escapeHtml(item.name)}">✕</button>
         </div>
       </div>
     `).join('');
     el.querySelectorAll('.cart-item-remove').forEach(btn => {
-      btn.addEventListener('click', () => {
-        cart.splice(parseInt(btn.dataset.idx), 1);
-        renderCart(); calcCartTotals();
-      });
+      btn.addEventListener('click', () => removeCartItem(parseInt(btn.dataset.idx)));
     });
     el.querySelectorAll('.cart-qty-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const idx = parseInt(btn.dataset.idx);
         const dir = parseInt(btn.dataset.dir);
         if (cart[idx]) {
-          cart[idx].qty = Math.max(1, cart[idx].qty + dir);
-          renderCart(); calcCartTotals();
+          cart[idx].qty = Math.min(99, Math.max(1, cart[idx].qty + dir));
+          renderCart();
         }
       });
     });
   }
+  saveCart();
+  scheduleQuote();
   calcCartTotals();
 }
+
+function removeCartItem(idx) {
+  if (idx >= 0 && idx < cart.length) cart.splice(idx, 1);
+  renderCart();
+}
+
+function clearCart() {
+  cart = [];
+  cartPromoCode = '';
+  renderCart();
+}
+
+window.getCartItems = function() { return cart.slice(); };
+window.removeCartItem = removeCartItem;
+window.clearCart = clearCart;
 
 function addToCart(name, price, qty = 1) {
   const existing = cart.find(i => i.name === name);
@@ -356,98 +480,112 @@ function addToCart(name, price, qty = 1) {
   try { window.AAA && window.AAA.addToCart && window.AAA.addToCart({ name: name, price: price, quantity: qty }, qty); } catch (e) {}
 }
 
-// Email checkout — now redirects to secure checkout page
+// Promo codes are validated only on the server; none are published here.
+document.getElementById('cartPromoForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const input = document.getElementById('cartPromoInput');
+  cartPromoCode = (input.value || '').trim();
+  const msg = document.getElementById('cartPromoMsg');
+  if (!cartPromoCode) { if (msg) msg.textContent = ''; scheduleQuote(); return; }
+  if (msg) msg.textContent = 'Checking…';
+  refreshQuote();
+});
+
 document.getElementById('proceedToCheckoutBtn').addEventListener('click', () => {
-  const name = document.getElementById('cartName').value.trim();
-  const email = document.getElementById('cartEmail').value.trim();
-  const address = document.getElementById('cartAddress').value.trim();
-  const cityState = document.getElementById('cartCityState').value.trim();
-  const notes = document.getElementById('cartNotes').value.trim();
-  if (!name || !email || !address) { showToast('Please fill in your name, email, and address.'); return; }
   if (cart.length === 0) { showToast('Your cart is empty!'); return; }
-
-  // Pre-fill checkout form with cart info
-  document.getElementById('checkoutCustomerName').value = name;
-  document.getElementById('checkoutEmail').value = email;
-  document.getElementById('checkoutAddress').value = address;
-  document.getElementById('checkoutCityStateZip').value = cityState;
-  document.getElementById('checkoutNotes').value = notes;
-  document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-  document.getElementById('checkoutQuantity').value = cart.reduce((s, i) => s + i.qty, 0);
-
-  const cartTotal = cart.reduce((s, i) => s + (parseFloat(i.price) || 0) * i.qty, 0);
-  try { window.AAA && window.AAA.beginCheckout && window.AAA.beginCheckout(cart, cartTotal); } catch (e) {}
-
+  const t = lastQuote || estimateTotals();
+  try { window.AAA && window.AAA.beginCheckout && window.AAA.beginCheckout(cart, t.total); } catch (e) {}
   closeCartFn();
   showSection('checkout');
+  resetCheckoutView();
   renderCheckoutSummary();
-  initStripe();
+  loadCheckoutConfig();
 });
 
-// Venmo/CashApp dynamic total — accepts debit & credit cards
-function getOrderNote() {
-  const name = document.getElementById('cartName').value.trim();
-  const items = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-  let note = "Amber's Alchemy Order";
-  if (name) note += ` - ${name}`;
-  if (items) note += ` | ${items}`;
-  return note;
+// ---- CHECKOUT (Card via Stripe · Cash App · Venmo) ----
+let stripe, cardElement, stripeReady = false, checkoutConfig = null, checkoutIdempotencyKey = null;
+
+function newIdempotencyKey() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'k' + Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
-document.getElementById('venmoPayBtn').addEventListener('click', function(e) {
-  const { total } = calcCartTotals();
-  if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  const note = getOrderNote();
-  this.href = `https://venmo.com/code?user_id=3573264899114195665&created=1781193245`;
-});
-document.getElementById('cashAppPayBtn').addEventListener('click', function(e) {
-  const { total } = calcCartTotals();
-  if (cart.length === 0) { e.preventDefault(); showToast('Your cart is empty!'); return; }
-  this.href = `https://cash.app/$AmberPatten92/${total.toFixed(2)}`;
-});
+function resetCheckoutView() {
+  const container = document.querySelector('.checkout-container');
+  if (container) container.style.display = '';
+  const conf = document.getElementById('checkoutConfirmation');
+  if (conf) conf.style.display = 'none';
+  checkoutIdempotencyKey = newIdempotencyKey();
+}
 
-// ---- SECURE CHECKOUT (Stripe) ----
-let stripe, cardElement, stripeReady = false;
-
-function renderCheckoutSummary() {
+async function renderCheckoutSummary() {
   const el = document.getElementById('checkoutItems');
   if (cart.length === 0) {
     el.innerHTML = '<p class="empty-cart">No items in cart.</p>';
+    paintTotals('checkout', { subtotal: 0, discount: 0, shipping: 0, tax: 0, total: 0 });
     return;
   }
-  el.innerHTML = cart.map(i => `
+  const q = (await refreshQuote()) || null;
+  const lines = q ? q.lineItems.map(li => ({ name: li.description, qty: li.qty, total: li.lineTotal }))
+                  : cart.map(i => ({ name: i.name, qty: i.qty, total: i.price * i.qty }));
+  el.innerHTML = lines.map(i => `
     <div class="checkout-item">
-      <span>${i.name} x${i.qty}</span>
-      <span class="checkout-item-price">${formatPrice(i.price * i.qty)}</span>
+      <span>${escapeHtml(i.name)} x${i.qty}</span>
+      <span class="checkout-item-price">${formatPrice(i.total)}</span>
     </div>
   `).join('');
-
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
-  document.getElementById('checkoutSubtotal').textContent = formatPrice(subtotal);
-  document.getElementById('checkoutShipping').textContent = shipping === 0 ? 'FREE' : formatPrice(shipping);
-  document.getElementById('checkoutTax').textContent = formatPrice(tax);
-  document.getElementById('checkoutTotal').textContent = formatPrice(total);
-  document.getElementById('orderTotalField').value = formatPrice(total);
+  paintTotals('checkout', q || estimateTotals());
+  const orderTotal = document.getElementById('orderTotalField');
+  if (orderTotal) orderTotal.value = formatPrice((q || estimateTotals()).total);
+  document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
+  document.getElementById('checkoutQuantity').value = cart.reduce((s, i) => s + i.qty, 0);
 }
 
-async function initStripe() {
-  if (stripeReady) return;
+function selectedPaymentMethod() {
+  const r = document.querySelector('input[name="payment-method"]:checked');
+  return r ? r.value : '';
+}
+
+function updatePaymentUI() {
+  const method = selectedPaymentMethod();
+  document.getElementById('stripe-card-wrap').hidden = method !== 'card';
+  document.getElementById('manualPayNote').hidden = !(method === 'cashapp' || method === 'venmo');
+  const label = { card: '💳 Pay by Card', cashapp: '✦ Place Order — Pay with Cash App', venmo: '✦ Place Order — Pay with Venmo' }[method] || '✦ Place Order';
+  document.getElementById('payBtnText').textContent = label;
+  if (method === 'card') initStripe();
+}
+
+document.querySelectorAll('input[name="payment-method"]').forEach(r => r.addEventListener('change', updatePaymentUI));
+
+async function loadCheckoutConfig() {
+  if (!checkoutConfig) {
+    try {
+      const res = await fetch('/api/checkout/config');
+      checkoutConfig = res.ok ? await res.json() : { cardEnabled: false };
+    } catch (e) {
+      checkoutConfig = { cardEnabled: false };
+    }
+  }
+  const cardInput = document.querySelector('input[name="payment-method"][value="card"]');
+  const cardOption = document.getElementById('payOptionCard');
+  if (cardInput) cardInput.disabled = !checkoutConfig.cardEnabled;
+  if (cardOption) cardOption.classList.toggle('is-disabled', !checkoutConfig.cardEnabled);
+  document.getElementById('cardUnavailableNote').hidden = !!checkoutConfig.cardEnabled;
+  if (!checkoutConfig.cardEnabled && cardInput && cardInput.checked) cardInput.checked = false;
+  updatePaymentUI();
+}
+
+function initStripe() {
+  if (stripeReady || !checkoutConfig || !checkoutConfig.publishableKey || typeof Stripe === 'undefined') return;
   try {
-    const res = await fetch('/api/stripe-publishable-key');
-    if (!res.ok) { console.warn('[Stripe] Key endpoint unavailable'); return; }
-    const { key } = await res.json();
-    if (!key) { console.warn('[Stripe] No publishable key returned'); return; }
-    stripe = Stripe(key);
+    stripe = Stripe(checkoutConfig.publishableKey);
     const elements = stripe.elements();
     cardElement = elements.create('card', {
       style: {
         base: {
           color: '#f0e9d6',
-          fontFamily: '"Crimson Text", Georgia, serif',
-          fontSize: '16px',
+          fontFamily: '"EB Garamond", Georgia, serif',
+          fontSize: '17px',
           '::placeholder': { color: 'rgba(240,233,214,0.4)' },
         },
         invalid: { color: '#ff6b6b' },
@@ -459,7 +597,6 @@ async function initStripe() {
       if (errEl) errEl.textContent = e.error ? e.error.message : '';
     });
     stripeReady = true;
-    console.log('[Stripe] Card element mounted');
   } catch (err) {
     console.warn('[Stripe] Init failed:', err.message);
   }
@@ -475,133 +612,168 @@ if (_checkoutFormEl) _checkoutFormEl.addEventListener('submit', async function(e
   const spinner = document.getElementById('payBtnSpinner');
   const errEl = document.getElementById('card-errors');
 
-  // Validate required fields
-  const name = document.getElementById('checkoutCustomerName').value.trim();
-  const email = document.getElementById('checkoutEmail').value.trim();
-  const address = document.getElementById('checkoutAddress').value.trim();
-  const cityZip = document.getElementById('checkoutCityStateZip').value.trim();
-  if (!name || !email || !address || !cityZip) {
+  const customer = {
+    name: document.getElementById('checkoutCustomerName').value.trim(),
+    email: document.getElementById('checkoutEmail').value.trim(),
+    phone: document.getElementById('checkoutPhone').value.trim(),
+    address: document.getElementById('checkoutAddress').value.trim(),
+    cityStateZip: document.getElementById('checkoutCityStateZip').value.trim(),
+  };
+  const method = selectedPaymentMethod();
+  if (!customer.name || !customer.email || !customer.address || !customer.cityStateZip) {
     errEl.textContent = 'Please fill in all required fields.';
     return;
   }
+  if (!method) { errEl.textContent = 'Please choose Card, Cash App, or Venmo.'; return; }
   if (cart.length === 0) { errEl.textContent = 'Your cart is empty.'; return; }
+  if (method === 'card' && (!stripe || !cardElement)) { errEl.textContent = 'Card checkout is still loading. Please try again in a moment.'; return; }
 
-  // Calculate display total from cart (used for the Venmo/CashApp pending flow and initial display).
-  // For Stripe card payments the authoritative total is computed server-side (see below).
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
-
-  // Set initial display value; overwritten with server-authoritative total after PI creation.
-  document.getElementById('orderTotalField').value = formatPrice(total);
-
+  const originalLabel = btnText.textContent;
   payBtn.disabled = true;
   btnText.textContent = 'Processing...';
   spinner.style.display = 'inline-block';
   errEl.textContent = '';
+  let orderStatus = null;
+  try { window.AAA && window.AAA.addPaymentInfo && window.AAA.addPaymentInfo(cart, (lastQuote && lastQuote.total) || 0, method); } catch (e) {}
 
   try {
-    // If Stripe is not initialized, submit form as order (payment via Venmo/CashApp)
-    if (!stripe || !cardElement) {
-      document.getElementById('transactionId').value = 'PENDING-' + Date.now();
-      document.getElementById('paymentStatus').value = 'pending-external-payment';
-      document.getElementById('checkoutProduct').value = cart.map(i => `${i.name} x${i.qty}`).join(', ');
-      await submitNetlifyForm();
-      showConfirmation('PENDING — Complete payment via Venmo or Cash App in the cart', 'pending');
-      return;
-    }
-
-    // Create PaymentIntent on server — amount is computed server-side from the catalog.
-    // We send item names + quantities, plus a trusted customForm key + herbCount
-    // for custom items so the server can price them authoritatively. The server
-    // ignores any client-supplied price entirely.
-    const piResponse = await fetch('/api/create-payment-intent', {
+    const res = await fetch('/api/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        cartItems: cart.map(i => ({ name: i.name, qty: i.qty, customForm: i.customForm || '', herbCount: i.herbCount || 0 })),
-        currency: 'usd',
-        description: `Order from ${name} — Amber's Alchemy Apothecary`,
-        customerName: name,
-        email: email,
+        items: cartPayload(),
+        customer,
+        notes: document.getElementById('checkoutNotes').value.trim(),
+        paymentMethod: method,
+        promoCode: cartPromoCode,
+        idempotencyKey: checkoutIdempotencyKey,
+        website: (_checkoutFormEl.querySelector('[name="bot-field"]') || {}).value || '',
       }),
     });
+    const order = await res.json();
+    if (!res.ok) throw new Error(order.error || 'We couldn’t place your order. Please try again.');
 
-    const piData = await piResponse.json();
-    if (piData.error) { throw new Error(piData.error); }
-
-    // Update the order total field with the server-authoritative total
-    if (piData.serverTotal) {
-      document.getElementById('orderTotalField').value = formatPrice(piData.serverTotal);
-    }
-
-    // Confirm payment with Stripe
-    const { error, paymentIntent } = await stripe.confirmCardPayment(piData.clientSecret, {
-      payment_method: {
-        card: cardElement,
-        billing_details: {
-          name: name,
-          email: email,
-          address: { postal_code: cityZip.split(/\s+/).pop() || '' },
+    if (method === 'card') {
+      const { error, paymentIntent } = await stripe.confirmCardPayment(order.stripe.clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            name: customer.name,
+            email: customer.email,
+            address: { postal_code: customer.cityStateZip.split(/\s+/).pop() || '' },
+          },
         },
-      },
-    });
-
-    if (error) { throw new Error(error.message); }
-
-    if (paymentIntent.status === 'succeeded') {
-      // Set transaction info and submit Netlify Form
-      document.getElementById('transactionId').value = paymentIntent.id;
-      document.getElementById('paymentStatus').value = 'paid';
-      await submitNetlifyForm();
-      showConfirmation(paymentIntent.id, 'paid');
+      });
+      if (error) throw new Error(error.message);
+      // Stripe accepted the card, but the order is only marked paid once the
+      // signed webhook reaches the server. Ask the server for the real status.
+      orderStatus = paymentIntent && paymentIntent.status === 'succeeded'
+        ? await pollOrderStatus(order.orderNumber, customer.email)
+        : null;
+      showConfirmation(order, customer, orderStatus);
+    } else {
+      showConfirmation(order, customer, null);
+    }
+    recordOrderForReviews(order, customer, method);
+    try { window.AAA && window.AAA.track && window.AAA.track('order_submitted', { method: method, value: order.totals.total }); } catch (e2) {}
+    // `purchase` fires only for server-verified payments (card via webhook).
+    // Cash App / Venmo orders are verified later by Amber, outside the browser.
+    if (orderStatus && orderStatus.status === 'payment_verified') {
+      try {
+        const items = (order.lineItems || []).map(li => ({ name: li.description, price: li.unitPrice, quantity: li.qty }));
+        window.AAA && window.AAA.purchase && window.AAA.purchase(order.orderNumber, items, order.totals.total);
+      } catch (e3) {}
     }
   } catch (err) {
     errEl.textContent = err.message || 'Payment failed. Please try again.';
     payBtn.disabled = false;
-    btnText.textContent = 'Pay Now';
+    btnText.textContent = originalLabel;
     spinner.style.display = 'none';
   }
 });
 
-async function submitNetlifyForm() {
-  const form = document.getElementById('checkoutForm');
-  const formData = new FormData(form);
-  const data = {};
-  formData.forEach((value, key) => { data[key] = value; });
-  await fetch('/api/submission-created', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data }),
-  });
+async function pollOrderStatus(orderNumber, email) {
+  for (let attempt = 0; attempt < 6; attempt++) {
+    try {
+      const res = await fetch(`/api/order-status?order=${encodeURIComponent(orderNumber)}&email=${encodeURIComponent(email)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status !== 'awaiting_payment') return data;
+      }
+    } catch (e) {}
+    await new Promise(r => setTimeout(r, 2000));
+  }
+  return null;
 }
 
-function showConfirmation(transactionId, status) {
-  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 75 ? 0 : 6.99;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shipping + tax;
-  const name = document.getElementById('checkoutCustomerName').value.trim();
-  const email = document.getElementById('checkoutEmail').value.trim();
+// Keeps the existing Netlify Forms "checkout-order" submission, which drives
+// the review-reminder email (netlify/functions/submission-created.mjs).
+function recordOrderForReviews(order, customer, method) {
+  const form = document.getElementById('checkoutForm');
+  if (!form) return;
+  document.getElementById('transactionId').value = order.orderNumber;
+  document.getElementById('paymentStatus').value = 'awaiting_payment (' + method + ')';
+  document.getElementById('orderTotalField').value = formatPrice(order.totals.total);
+  const params = new URLSearchParams();
+  new FormData(form).forEach((value, key) => { if (key !== 'payment-method') params.append(key, value); });
+  fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: params.toString() }).catch(() => {});
+}
 
+function showConfirmation(order, customer, statusInfo) {
+  const manual = order.manual;
+  let statusText = 'Awaiting payment';
+  // Only mention an email when the server says the provider accepted it.
+  let lede = order.emailSent === true
+    ? 'A confirmation has been sent to your email.'
+    : 'Please save your order number below. Amber will follow up by email.';
+  if (order.paymentMethod === 'card') {
+    if (statusInfo && statusInfo.status === 'payment_verified') {
+      statusText = 'Payment verified';
+      lede = 'Your card payment is verified. Amber will begin preparing your order.';
+    } else if (statusInfo && statusInfo.status === 'payment_exception') {
+      statusText = 'Payment needs review';
+      lede = 'Your payment went through but needs a quick review. Amber will email you.';
+    } else {
+      statusText = 'Payment received — confirming';
+      lede = 'Stripe accepted your card. We’ll email you as soon as the payment is confirmed.';
+    }
+  }
+
+  let manualHtml = '';
+  if (manual) {
+    lede = `Your order is saved and awaiting payment. Please send ${formatPrice(Number(manual.amount))} by ${manual.label} with your order number in the payment note.`;
+    manualHtml = `
+      <div class="manual-pay-box">
+        <p><strong>Pay:</strong> ${formatPrice(Number(manual.amount))} ${manual.handle ? 'to <strong>' + escapeHtml(manual.handle) + '</strong>' : ''}</p>
+        <p><strong>Payment note:</strong> <code class="order-number-code">${escapeHtml(manual.note)}</code>
+          <button type="button" class="btn-secondary copy-order-btn" data-copy="${escapeHtml(manual.note)}">Copy</button></p>
+        <a class="pay-btn ${manual.method === 'cashapp' ? 'cashapp-btn' : 'venmo-btn'}" href="${escapeHtml(manual.url)}" target="_blank" rel="noopener">Open ${manual.label}</a>
+        <p class="payment-note">Your order stays <em>awaiting payment</em> until Amber matches your payment to this order number.</p>
+      </div>`;
+  }
+
+  document.getElementById('confirmationLede').textContent = lede;
   document.getElementById('confirmationDetails').innerHTML = `
-    <p><strong>Order for:</strong> ${name}</p>
-    <p><strong>Email:</strong> ${email}</p>
-    <p><strong>Items:</strong> ${cart.map(i => `${i.name} x${i.qty}`).join(', ')}</p>
-    <p><strong>Total:</strong> ${formatPrice(total)}</p>
-    <p><strong>Transaction ID:</strong> ${transactionId}</p>
-    <p><strong>Status:</strong> ${status === 'paid' ? 'Payment Confirmed' : 'Awaiting Payment'}</p>
+    <p><strong>Order number:</strong> ${escapeHtml(order.orderNumber)}</p>
+    <p><strong>Order for:</strong> ${escapeHtml(customer.name)} (${escapeHtml(customer.email)})</p>
+    <p><strong>Items:</strong> ${order.lineItems.map(li => escapeHtml(li.description) + ' x' + li.qty).join(', ')}</p>
+    <p><strong>Total:</strong> ${formatPrice(order.totals.total)}</p>
+    <p><strong>Status:</strong> ${escapeHtml(statusText)}</p>
+    ${manualHtml}
   `;
+  const copyBtn = document.querySelector('.copy-order-btn');
+  if (copyBtn) copyBtn.addEventListener('click', () => {
+    try { navigator.clipboard.writeText(copyBtn.dataset.copy); copyBtn.textContent = 'Copied'; } catch (e) {}
+  });
 
-  // Show confirmation, hide form
   document.querySelector('.checkout-container').style.display = 'none';
   document.getElementById('checkoutConfirmation').style.display = 'block';
+  const payBtn = document.getElementById('checkoutPayBtn');
+  payBtn.disabled = false;
+  document.getElementById('payBtnSpinner').style.display = 'none';
 
-  // Clear cart
-  cart = [];
-  renderCart();
-  showToast('Order submitted successfully!');
+  clearCart();
+  showToast('Order submitted — ' + order.orderNumber);
 }
 
 // ---- RENDER PRODUCTS (with category filter) ----
@@ -794,8 +966,12 @@ function renderServices() {
     </div>
   `).join('');
   grid.querySelectorAll('.product-add-btn').forEach(btn => {
+    const price = parseFloat(btn.dataset.price);
+    // Complimentary services can't go through checkout; send them to Contact.
+    if (!(price > 0)) btn.textContent = 'Request This Service \u2726';
     btn.addEventListener('click', () => {
-      addToCart(btn.dataset.name, parseFloat(btn.dataset.price));
+      if (price > 0) addToCart(btn.dataset.name, price);
+      else showSection('contact');
     });
   });
 }
@@ -917,40 +1093,124 @@ function filterTeaHerbs() {}
 function toggleTeaHerb() {}
 function updateTeaSelected() {}
 
-// ---- CUSTOM FORMULA FORM ----
-// Handled by custom-creations.js bindFormulaForm() — no duplicate listener needed here.
+// ---- CUSTOM FORMULA (CONSULTATION) FORM ----
+// custom-creations.js is not part of this site, so the consultation request
+// is bound here and saved through /api/form-submit (see postSiteForm below).
+(function bindFormulaForm() {
+  const btn = document.getElementById('formulaSubmitBtn');
+  if (!btn) return;
+  const val = (id) => ((document.getElementById(id) || {}).value || '').trim();
+  btn.addEventListener('click', async () => {
+    const name = val('formulaName');
+    const email = val('formulaEmail');
+    const symptoms = val('formulaSymptoms');
+    if (!name || !email || !symptoms) { showToast('Please add your name, email, and what you are experiencing.'); return; }
+    if (!(document.getElementById('formulaInteractionCheck') || {}).checked ||
+        !(document.getElementById('formulaAgeConfirm') || {}).checked) {
+      showToast('Please confirm both safety checkboxes before sending.');
+      return;
+    }
+    const fields = {
+      'Remedy type': val('formulaType'),
+      'Medications': val('formulaMeds'),
+      'Supplements': val('formulaSupplements'),
+      'Allergies': val('formulaAllergies'),
+      'Pregnancy/breastfeeding': val('formulaPregnancy'),
+      'Notes': val('formulaNotes'),
+    };
+    btn.disabled = true;
+    const result = await postSiteForm({ formType: 'consultation', name, email, message: symptoms, fields });
+    btn.disabled = false;
+    if (result.ok) {
+      showToast('✦ Consultation request received! Amber will reply by email.');
+      ['formulaSymptoms', 'formulaMeds', 'formulaSupplements', 'formulaAllergies', 'formulaNotes']
+        .forEach((id) => { const el = document.getElementById(id); if (el) el.value = ''; });
+    } else if (result.retryable) {
+      const lines = Object.entries(fields).map(([k, v]) => k + ': ' + (v || 'Not provided')).join('\n');
+      const body = encodeURIComponent('Consultation request\n\nName: ' + name + '\nEmail: ' + email + '\n\nSymptoms: ' + symptoms + '\n' + lines);
+      window.location.href = 'mailto:awaken@consultant.com?subject=' + encodeURIComponent('Consultation request from ' + name) + '&body=' + body;
+      showToast('Opening your email app to send the request...');
+    } else {
+      showToast(result.error || 'Please check the form and try again.');
+    }
+  });
+})();
 
 // ---- SOAP FORM ----
 // Handled by the DOMContentLoaded listener below — no duplicate needed here.
 
-// ---- CONTACT FORM ----
-document.getElementById('contactSubmitBtn').addEventListener('click', () => {
+// ---- CONTACT + NEWSLETTER FORMS ----
+// Both post to /api/form-submit, which saves the message in the database
+// and notifies Amber. If the request fails, fall back to the visitor's
+// email app so the message is never silently lost.
+async function postSiteForm(payload) {
+  try {
+    const res = await fetch('/api/form-submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.ok) return { ok: true };
+    return { ok: false, error: data.error, retryable: res.status >= 500 || res.status === 404 };
+  } catch (e) {
+    return { ok: false, retryable: true };
+  }
+}
+
+document.getElementById('contactSubmitBtn').addEventListener('click', async (e) => {
+  const btn = e.currentTarget;
   const name = document.getElementById('contactName').value.trim();
   const email = document.getElementById('contactEmail').value.trim();
   const subject = document.getElementById('contactSubject').value;
   const message = document.getElementById('contactMessage').value.trim();
   if (!name || !email || !message) { showToast('Please fill in all fields.'); return; }
-  const body = encodeURIComponent(`From: ${name} (${email})\n\n${message}`);
-  try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
-  showToast('Opening email client...');
+  try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e2) {}
+  btn.disabled = true;
+  const result = await postSiteForm({ formType: 'contact', name, email, subject, message });
+  btn.disabled = false;
+  if (result.ok) {
+    showToast('✦ Message received! Amber will reply within 1–2 business days.');
+    document.getElementById('contactName').value = '';
+    document.getElementById('contactEmail').value = '';
+    document.getElementById('contactMessage').value = '';
+  } else if (result.retryable) {
+    const body = encodeURIComponent(`From: ${name} (${email})\n\n${message}`);
+    window.location.href = `mailto:awaken@consultant.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
+    showToast('Opening your email app to send the message...');
+  } else {
+    showToast(result.error || 'Please check the form and try again.');
+  }
 });
 
-// ---- NEWSLETTER FORM ----
-document.getElementById('nlSubmitBtn').addEventListener('click', () => {
+document.getElementById('nlSubmitBtn').addEventListener('click', async (e) => {
+  const btn = e.currentTarget;
   const name = document.getElementById('nlName').value.trim();
   const email = document.getElementById('nlEmail').value.trim();
   if (!email) { showToast('Please enter your email address.'); return; }
-  const body = encodeURIComponent(
-    `New Newsletter Subscriber — Amber's Alchemy Apothecary\n\n` +
-    `Name: ${name || 'Not provided'}\nEmail: ${email}\n\n` +
-    `Please add this subscriber to the mailing list and send the Free Herbal Healing Guide.`
-  );
-  try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?subject=${encodeURIComponent('New Subscriber — ' + (name || email))}&body=${body}`;
-  showToast('✦ Thank you! Check your email for the Herbal Healing Guide.');
-  document.getElementById('nlName').value = '';
-  document.getElementById('nlEmail').value = '';
+  try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e2) {}
+  btn.disabled = true;
+  const result = await postSiteForm({
+    formType: 'guide', name, email,
+    subject: 'Newsletter signup + Free Herbal Healing Guide',
+    message: 'Please add this subscriber to the mailing list and send the Free Herbal Healing Guide.',
+  });
+  btn.disabled = false;
+  if (result.ok) {
+    showToast('✦ Thank you! Amber will email you the Herbal Healing Guide.');
+    document.getElementById('nlName').value = '';
+    document.getElementById('nlEmail').value = '';
+  } else if (result.retryable) {
+    const body = encodeURIComponent(
+      `New Newsletter Subscriber — Amber's Alchemy Apothecary\n\n` +
+      `Name: ${name || 'Not provided'}\nEmail: ${email}\n\n` +
+      `Please add this subscriber to the mailing list and send the Free Herbal Healing Guide.`
+    );
+    window.location.href = `mailto:awaken@consultant.com?subject=${encodeURIComponent('New Subscriber — ' + (name || email))}&body=${body}`;
+    showToast('Opening your email app to finish signing up...');
+  } else {
+    showToast(result.error || 'Please check your email address and try again.');
+  }
 });
 
 // ---- FAQS ----
@@ -1181,7 +1441,7 @@ function renderBestSellers() {
     }).join('');
     return `
       <div class="product-card best-seller-card" data-categories="${(p.categories||[]).join(',')}">
-        <div class="best-seller-badge-wrap"><span class="best-seller-badge">✦ Best Seller</span></div>
+        <div class="best-seller-badge-wrap"><span class="best-seller-badge">✦ Featured</span></div>
         <div class="product-img">
           <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=img-placeholder>${p.emoji}</div>'" />
         </div>
@@ -1214,9 +1474,9 @@ function renderBestSellers() {
   const soapsGrid = document.getElementById('bestSellersSoapsGrid');
   if (!soapsGrid) return;
   const featuredSoapSpecs = [
-    { name: "Gaia's Rose", displayName: "Gaia's Rose Garden", img: 'images/soap-rose-clay.png', emoji: '🌹', price: 12.99, fallbackDesc: 'A romantic bar inspired by nature\'s sacred bloom. Rose petals soften skin while creamy shea butter and goat milk restore moisture and leave skin glowing.' },
+    { name: "Gaia's Rose", img: 'images/soap-rose-clay.png', emoji: '🌹', price: 12.99, fallbackDesc: 'A romantic bar inspired by nature\'s sacred bloom. Rose petals soften skin while creamy shea butter and goat milk restore moisture and leave skin glowing.' },
     { name: "Lavender Fairy Dream", img: 'images/soap-lavender-honey.png', emoji: '💜', price: 12.99, fallbackDesc: 'A gentle floral escape inspired by twilight gardens. Calming lavender soothes the mind while goat milk and shea butter soften and hydrate the skin.' },
-    { name: "Eucalyptus Mint Spa Renewal", displayName: "Eucalyptus Mint Renewal", img: 'images/soap-charcoal-mint.png', emoji: '🌿', price: 12.99, fallbackDesc: 'A bright, invigorating blend that awakens the senses. Cooling eucalyptus and mint refresh tired skin while goat milk and shea butter deeply moisturize.' },
+    { name: "Eucalyptus Mint Spa Renewal", img: 'images/soap-charcoal-mint.png', emoji: '🌿', price: 12.99, fallbackDesc: 'A bright, invigorating blend that awakens the senses. Cooling eucalyptus and mint refresh tired skin while goat milk and shea butter deeply moisturize.' },
     { name: "Orange Lily Goddess", img: 'images/soap-calendula-oat.png', emoji: '🌺', price: 12.99, fallbackDesc: 'A radiant citrus floral blend inspired by sunlight. Sweet orange uplifts the mood while botanical oils brighten and soften the skin for a fresh glow.' },
     { name: "Warm Cinnamon Comfort", img: 'images/soap-frankincense-myrrh.png', emoji: '🔥', price: 12.99, fallbackDesc: 'A cozy, grounding soap infused with the warmth of cinnamon and spice. Cinnamon encourages circulation while shea butter and goat milk nourish deeply.' }
   ];
@@ -1236,7 +1496,7 @@ function renderBestSellers() {
     '<p style="grid-column:1/-1;text-align:center;margin-bottom:1rem;opacity:0.85;">All 5 Bars for <strong>$49.99</strong> &nbsp;|&nbsp; 5 Custom Soaps for <strong>$54.99</strong></p>' +
     soapNames.map(s => `
     <div class="product-card best-seller-card" style="text-align:center;">
-      <div class="best-seller-badge-wrap"><span class="best-seller-badge">✦ Best Seller</span></div>
+      <div class="best-seller-badge-wrap"><span class="best-seller-badge">✦ Featured</span></div>
       <div class="product-img">
         <img src="${s.img}" alt="${s.name}" loading="lazy" onerror="this.parentElement.innerHTML='<div class=img-placeholder>${s.emoji}</div>'" />
       </div>
@@ -1244,8 +1504,8 @@ function renderBestSellers() {
         <div class="product-badge">Artisan Soap</div>
         <div class="product-name">${s.emoji} ${s.name}</div>
         <p class="soap-desc bs-soap-desc" style="font-family:'Lora',serif;font-size:0.88rem;opacity:0.9;margin:0.4rem 0 0.6rem;line-height:1.5;text-align:left;">${s.desc}</p>
-        <div class="product-benefit">$${s.price.toFixed(2)} &nbsp;|&nbsp; 4 oz bar</div>
-        <button class="product-add-btn btn-primary" onclick="addSoapToCart('${s.cartName.replace(/'/g, "\\'")}', ${s.price}, this)">Add to Cart ✦</button>
+        <div class="product-benefit">${soapVariantSelectHTML()}</div>
+        <button class="product-add-btn btn-primary" onclick="addSoapToCart('${s.cartName.replace(/'/g, "\\'")}', null, this)">Add to Cart ✦</button>
       </div>
     </div>
   `).join('') +
@@ -1264,7 +1524,16 @@ function init() {
   filterHerbs();
   filterTeaHerbs();
   renderFAQs();
-  calcCartTotals();
+  renderCart();
+  paintHerbCount();
+}
+
+// Herb counts are computed from the library data, never hardcoded.
+function paintHerbCount() {
+  const src = typeof BOTANICALS_FULL !== 'undefined' ? BOTANICALS_FULL : (typeof BOTANICALS !== 'undefined' ? BOTANICALS : []);
+  const count = new Set(src.map(h => (h.name || '').toLowerCase())).size;
+  if (!count) return;
+  document.querySelectorAll('[data-herb-count]').forEach(el => { el.textContent = String(count); });
 }
 
 // Ensure data.js is fully loaded before init
@@ -1277,8 +1546,34 @@ if (typeof BOTANICALS !== 'undefined') {
 // ============================================================
 // SOAP CART INTEGRATION
 // ============================================================
+// Soap sizes/shapes (Amber, 23 Sept 2026). The server catalog
+// (lib/catalog.js) holds the authoritative prices; these mirror it for display.
+// Declared as a function (hoisted) because init() renders soap cards before
+// this point in the file executes.
+function soapVariants() { return [
+  { label: 'Small Rose \u00B7 2 oz', price: 4.77 },
+  { label: 'Medium Rose \u00B7 3 oz', price: 8.44 },
+  { label: 'Plain Rectangular \u00B7 3 oz', price: 7.44 },
+  { label: 'Large Rectangular with Waves \u00B7 4 oz', price: 11.77 },
+  { label: 'Large Circular with Flowers \u00B7 4 oz', price: 11.77 },
+]; }
+function soapVariantSelectHTML() {
+  return '<label class="soap-size-label">Size &amp; shape <select class="soap-variant-select" aria-label="Soap size and shape">' +
+    soapVariants().map(v => `<option value="${v.price}" data-label="${v.label}">${v.label} \u2014 $${v.price.toFixed(2)}</option>`).join('') +
+    '</select></label>';
+}
+
+// price === null means "individual bar": read the size/shape select in the
+// same card and add "<Soap> (<variant>)" so the server can price it.
 function addSoapToCart(name, price, btnEl) {
-  // Use the main addToCart function which handles cart state, toast, and drawer
+  if (price === null || price === undefined) {
+    const card = btnEl && (btnEl.closest('.soap-card') || btnEl.closest('.product-card'));
+    const sel = card && card.querySelector('.soap-variant-select');
+    const opt = sel && sel.options[sel.selectedIndex];
+    if (!opt) return;
+    name = `${name} (${opt.dataset.label})`;
+    price = parseFloat(opt.value);
+  }
   addToCart(name, price);
   // Visual feedback on the button
   if (btnEl) {
@@ -1298,35 +1593,38 @@ window.addSoapToCart = addSoapToCart;
   function bindSoapForm() {
     const soapSubmitBtn = document.getElementById('soapSubmitBtn');
     if (!soapSubmitBtn) return;
-    soapSubmitBtn.addEventListener('click', function() {
+    soapSubmitBtn.addEventListener('click', async function() {
       const name = (document.getElementById('soapName') || {}).value?.trim() || '';
       const email = (document.getElementById('soapEmail') || {}).value?.trim() || '';
       if (!name || !email) {
         showToast('Please enter your name and email to submit a custom soap request.');
         return;
       }
-      const scent = (document.getElementById('soapScent') || {}).value || 'Not specified';
-      const color = (document.getElementById('soapColor') || {}).value || 'Not specified';
-      const shape = (document.getElementById('soapShape') || {}).value || 'Not specified';
-      const botanical = (document.getElementById('soapBotanical') || {}).value || 'Not specified';
-      const quantity = (document.getElementById('soapQuantity') || {}).value || 'Not specified';
-      const notes = (document.getElementById('soapNotes') || {}).value?.trim() || '';
-      const subject = encodeURIComponent('Custom Soap Order from ' + name);
-      const body = encodeURIComponent(
-        'Custom Soap Order Request\n\n' +
-        'Name: ' + name + '\n' +
-        'Email: ' + email + '\n' +
-        'Scent: ' + scent + '\n' +
-        'Color: ' + color + '\n' +
-        'Shape: ' + shape + '\n' +
-        'Botanical: ' + botanical + '\n' +
-        'Quantity: ' + quantity + '\n' +
-        'Notes: ' + notes
-      );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
-      showToast('✦ Opening email to send your custom soap request...');
-      soapSubmitBtn.textContent = '✓ Request Sent!';
-      setTimeout(() => { soapSubmitBtn.textContent = 'Send My Custom Soap Request ✦'; }, 3000);
+      const fields = {
+        Scent: (document.getElementById('soapScent') || {}).value || 'Not specified',
+        Color: (document.getElementById('soapColor') || {}).value || 'Not specified',
+        Shape: (document.getElementById('soapShape') || {}).value || 'Not specified',
+        Botanical: (document.getElementById('soapBotanical') || {}).value || 'Not specified',
+        Quantity: (document.getElementById('soapQuantity') || {}).value || 'Not specified',
+        Notes: (document.getElementById('soapNotes') || {}).value?.trim() || '',
+      };
+      soapSubmitBtn.disabled = true;
+      const result = await postSiteForm({ formType: 'soap', name, email, subject: 'Custom soap request', fields });
+      soapSubmitBtn.disabled = false;
+      if (result.ok) {
+        showToast('✦ Custom soap request received! Amber will confirm details by email.');
+        soapSubmitBtn.textContent = '✓ Request Sent!';
+        setTimeout(() => { soapSubmitBtn.textContent = 'Send My Custom Soap Request ✦'; }, 3000);
+      } else if (result.retryable) {
+        const body = encodeURIComponent(
+          'Custom Soap Order Request\n\nName: ' + name + '\nEmail: ' + email + '\n' +
+          Object.entries(fields).map(([k, v]) => k + ': ' + v).join('\n')
+        );
+        window.location.href = 'mailto:awaken@consultant.com?subject=' + encodeURIComponent('Custom Soap Order from ' + name) + '&body=' + body;
+        showToast('✦ Opening email to send your custom soap request...');
+      } else {
+        showToast(result.error || 'Please check the form and try again.');
+      }
     });
   }
   if (document.readyState === 'loading') {

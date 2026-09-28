@@ -1,0 +1,18 @@
+{
+  "_about": "Approved marketing/benefit claims for AwakenAgain.com. Add an entry only after Amber approves the exact wording and the compliance-reviewer agent has passed it. Never invent entries.",
+  "version": 1,
+  "updated": "2026-09-28",
+  "claims": [],
+  "_entry_shape": {
+    "id": "kebab-case",
+    "claim": "exact approved wording",
+    "applies_to": [
+      "product or page ids"
+    ],
+    "category": "supplement | cosmetic | spiritual | marketing",
+    "approved_by": "Amber",
+    "approved_on": "YYYY-MM-DD",
+    "review_date": "YYYY-MM-DD",
+    "evidence": "source Amber supplied"
+  }
+}
