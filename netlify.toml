@@ -1,4 +1,11 @@
 [build]
+  # netlify.toml is the build source of truth and overrides the UI settings:
+  # - base: the UI "Base directory" ("Main") does not exist, which made the
+  #   CLI fail to resolve the project on deploy ("Project not found").
+  # - command: the static site has no build step; the empty value cancels a
+  #   stale UI build command ("remix vite:build") that has no Remix app to build.
+  base = "."
+  command = ""
   publish = "."
   functions = "netlify/functions"
 
@@ -181,9 +188,89 @@
   to = "/shop?product=alchemy-tea"
   status = 301
 
+# ── Server source is not public ────────────────────────────────
+# publish = "." uploads the whole repo, so these server-side folders and files
+# would otherwise be downloadable. Netlify matches functions with a
+# `config.path` (all /api/* endpoints) BEFORE any redirect, so these rules
+# never shadow a function; they only turn stray source paths — and unknown
+# /api/* URLs — into a real 404 instead of the file or the SPA page.
+[[redirects]]
+  from = "/api/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/lib/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/docs/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/scripts/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/node_modules/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/server.js"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/index.mjs"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/test.js"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/vercel.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
 # ── SPA catch-all (must be last) ───────────────────────────────
-# /api/* routes are Netlify Functions with `config.path`; they are matched
-# before this rule.
+# Netlify's request order is: functions with `config.path` → redirects →
+# static files. /api/* endpoints (checkout, checkout-config, stripe-webhook,
+# order-status, lunna, form-submit, reviews) therefore always win over this
+# rule; nothing here needs `force` or a per-function exception.
 [[redirects]]
   from = "/*"
   to = "/index.html"

@@ -11,6 +11,7 @@ const LABELS = {
   processing: "Processing",
   shipped: "Shipped",
   cancelled: "Cancelled",
+  refunded: "Refunded",
   payment_exception: "Payment needs review",
 };
 

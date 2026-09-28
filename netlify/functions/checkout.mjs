@@ -16,23 +16,17 @@ import Stripe from "stripe";
 import mailer from "../../lib/mailer.js";
 import {
   json, clean, isEmail, sanitizeItems, quote, newOrderNumber, toCents, splitLineName,
-  manualPaymentInstructions, audit, PAYMENT_METHODS, ORDER_NOTIFY_EMAIL,
+  manualPaymentInstructions, audit, PAYMENT_METHODS, env, orderNotifyEmail, stripeConfigured, escapeHtml,
 } from "../../lib/orders.mjs";
 
-function cardConfigured() {
-  return Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_PUBLISHABLE_KEY && process.env.STRIPE_WEBHOOK_SECRET);
-}
-
-function escapeHtml(s) {
-  return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-}
-
+// Returns true only when the customer confirmation email was accepted by the
+// email provider, so the browser never claims an email that wasn't sent.
 async function notify(order, totals, method) {
   const lines = totals.lineItems.map((li) => `${li.description} × ${li.qty} — $${li.lineTotal.toFixed(2)}`);
   const methodLabel = { card: "Card (Stripe)", cashapp: "Cash App", venmo: "Venmo" }[method];
   try {
     await mailer.sendMail({
-      to: ORDER_NOTIFY_EMAIL,
+      to: orderNotifyEmail(),
       subject: `New order ${order.order_number} — ${methodLabel} — awaiting payment`,
       text: [
         `Order ${order.order_number} (${methodLabel})`,
@@ -44,7 +38,7 @@ async function notify(order, totals, method) {
       ].join("\n"),
     });
     const manual = method !== "card";
-    await mailer.sendMail({
+    const sent = await mailer.sendMail({
       to: order.customer_email,
       subject: `Your order ${order.order_number} — Amber's Alchemy Apothecary`,
       html: `<p>Thank you, ${escapeHtml(order.customer_name)}.</p>
@@ -55,8 +49,10 @@ async function notify(order, totals, method) {
           ? `Status: <strong>awaiting payment</strong>. Please send $${totals.total.toFixed(2)} by ${methodLabel} and put <strong>${escapeHtml(order.order_number)}</strong> in the payment note. Amber confirms every payment by hand before your order is prepared.`
           : "We'll email you once your card payment is confirmed."}</p>`,
     });
+    return Boolean(sent && sent.ok);
   } catch (err) {
     console.error("[checkout] notification failed:", err.message);
+    return false;
   }
 }
 
@@ -75,7 +71,7 @@ export default async (req) => {
 
   const method = clean(body.paymentMethod, 20);
   if (!PAYMENT_METHODS.includes(method)) return json({ error: "Please choose Card, Cash App, or Venmo." }, 400);
-  if (method === "card" && !cardConfigured()) {
+  if (method === "card" && !stripeConfigured()) {
     return json({ error: "Card payments aren't available yet. Please choose Cash App or Venmo." }, 503);
   }
 
@@ -114,7 +110,10 @@ export default async (req) => {
       if (existing.total_cents !== totals.amountCents || existing.payment_method !== method) {
         return json({ error: "Your cart changed. Please refresh and try again." }, 409);
       }
-      return respond(existing.order_number, existing.stripe_payment_intent_id);
+      if (method === "card" && !existing.stripe_payment_intent_id) {
+        return json({ error: "Card payment couldn't be started for this order. Please refresh and try again, or choose Cash App or Venmo." }, 409);
+      }
+      return respond(existing.order_number, existing.stripe_payment_intent_id, null);
     }
   }
 
@@ -161,7 +160,7 @@ export default async (req) => {
   let paymentIntentId = null;
   if (method === "card") {
     try {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+      const stripe = new Stripe(env("STRIPE_SECRET_KEY"));
       const pi = await stripe.paymentIntents.create(
         {
           amount: totals.amountCents,
@@ -186,11 +185,13 @@ export default async (req) => {
   await audit(db, "order.created", orderNumber, {
     method, total_cents: totals.amountCents, items: totals.lineItems.length, promo: promo ? promo.code : null,
   }, "customer");
-  await notify(order, totals, method);
+  const emailSent = await notify(order, totals, method);
 
-  return respond(orderNumber, paymentIntentId);
+  return respond(orderNumber, paymentIntentId, emailSent);
 
-  async function respond(number, piId) {
+  // emailSent is null for a retried submit (the email went out, or not, the
+  // first time).
+  async function respond(number, piId, emailSent) {
     const base = {
       orderNumber: number,
       status: "awaiting_payment",
@@ -200,9 +201,10 @@ export default async (req) => {
         tax: totals.tax, total: totals.total,
       },
       lineItems: totals.lineItems,
+      emailSent,
     };
     if (method === "card") {
-      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+      const stripe = new Stripe(env("STRIPE_SECRET_KEY"));
       const pi = await stripe.paymentIntents.retrieve(piId);
       return json({ ...base, stripe: { clientSecret: pi.client_secret } });
     }

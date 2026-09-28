@@ -15,9 +15,11 @@
 import { createHash } from "node:crypto";
 import { getDatabase } from "@netlify/database";
 import catalog from "../../lib/catalog.js";
-import { json, clean } from "../../lib/orders.mjs";
+import { json, clean, env } from "../../lib/orders.mjs";
 
-const MODEL = "claude-haiku-4-5";
+// LUNNA_MODEL can switch models without a code change; the default is a
+// small, low-cost model available through Netlify AI Gateway.
+const DEFAULT_MODEL = "claude-haiku-4-5";
 const WINDOW_MINUTES = 10;
 const MAX_REQUESTS_PER_WINDOW = 20;
 const CONTACT = "the Contact page or awaken@consultant.com";
@@ -54,6 +56,26 @@ const SYSTEM_PROMPT = `You are Lunna, the AI guide for Amber's Alchemy Apothecar
 - Order problems, refunds and anything you can't answer go to ${CONTACT}.
 
 ${knowledge()}`;
+
+// Netlify AI Gateway credentials are injected at runtime. Outside Netlify
+// (or if Amber adds her own key) the standard Anthropic variables work too,
+// so Lunna isn't tied to one host.
+function aiProvider() {
+  const gatewayUrl = env("NETLIFY_AI_GATEWAY_BASE_URL");
+  const gatewayKey = env("NETLIFY_AI_GATEWAY_KEY");
+  if (gatewayUrl && gatewayKey) {
+    return {
+      url: `${gatewayUrl.replace(/\/$/, "")}/anthropic/v1/messages`,
+      headers: { Authorization: `Bearer ${gatewayKey}` },
+    };
+  }
+  const key = env("ANTHROPIC_API_KEY");
+  if (key) {
+    const base = (env("ANTHROPIC_BASE_URL") || "https://api.anthropic.com").replace(/\/$/, "");
+    return { url: `${base}/v1/messages`, headers: { "x-api-key": key } };
+  }
+  return null;
+}
 
 function clientBucket(req, context) {
   const ip = (context && context.ip) || req.headers.get("x-nf-client-connection-ip") || "unknown";
@@ -111,9 +133,11 @@ export default async (req, context) => {
     return json({ error: "Lunna needs a short rest. Please try again in a few minutes." }, 429);
   }
 
-  const baseUrl = process.env.NETLIFY_AI_GATEWAY_BASE_URL;
-  const key = process.env.NETLIFY_AI_GATEWAY_KEY;
-  if (!baseUrl || !key) return json({ error: "Lunna isn't available right now." }, 503);
+  const provider = aiProvider();
+  if (!provider) {
+    console.error("[lunna] no AI credentials available (AI Gateway activates after the first production deploy)");
+    return json({ error: "Lunna isn't available right now. Please use the Contact page." }, 503);
+  }
 
   const history = Array.isArray(body.history) ? body.history.slice(-8) : [];
   const messages = history
@@ -124,18 +148,16 @@ export default async (req, context) => {
   messages.push({ role: "user", content: message });
 
   try {
-    const res = await fetch(`${baseUrl.replace(/\/$/, "")}/anthropic/v1/messages`, {
+    const res = await fetch(provider.url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({ model: MODEL, max_tokens: 600, system: SYSTEM_PROMPT, messages }),
+      headers: { "Content-Type": "application/json", "anthropic-version": "2023-06-01", ...provider.headers },
+      body: JSON.stringify({ model: env("LUNNA_MODEL") || DEFAULT_MODEL, max_tokens: 600, system: SYSTEM_PROMPT, messages }),
+      signal: AbortSignal.timeout(25000),
     });
     if (!res.ok) {
-      console.error("[lunna] gateway error", res.status);
-      return json({ error: "Lunna couldn't answer just now. Please try again." }, 502);
+      console.error("[lunna] AI provider error", res.status);
+      const busy = res.status === 429 || res.status === 529;
+      return json({ error: busy ? "Lunna is helping a lot of seekers right now. Please try again in a minute." : "Lunna couldn't answer just now. Please try again." }, busy ? 503 : 502);
     }
     const data = await res.json();
     const reply = (data.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();

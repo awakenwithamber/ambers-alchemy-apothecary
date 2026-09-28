@@ -3,7 +3,7 @@
 // Stale-while-revalidate for static assets, network-first for pages
 // ============================================================
 
-var CACHE_NAME = 'awaken-v2026-09-28';
+var CACHE_NAME = 'awaken-v2026-09-28b';
 var STATIC_ASSETS = [
   '/',
   '/index.html',

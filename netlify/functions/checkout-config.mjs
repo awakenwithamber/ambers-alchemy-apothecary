@@ -2,11 +2,11 @@
 // The Stripe *publishable* key is public by design; the secret key never
 // leaves the server.
 
-import { json } from "../../lib/orders.mjs";
+import { json, env, stripeConfigured } from "../../lib/orders.mjs";
 
 export default async () => {
-  const publishableKey = process.env.STRIPE_PUBLISHABLE_KEY || "";
-  const cardEnabled = Boolean(process.env.STRIPE_SECRET_KEY && publishableKey && process.env.STRIPE_WEBHOOK_SECRET);
+  const cardEnabled = stripeConfigured();
+  const publishableKey = env("STRIPE_PUBLISHABLE_KEY");
   return json({
     cardEnabled,
     publishableKey: cardEnabled ? publishableKey : null,

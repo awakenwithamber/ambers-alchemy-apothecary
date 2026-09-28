@@ -1,11 +1,15 @@
 // js/form-handlers.js
-// Wires all site forms to POST to /.netlify/functions/form-relay
-// which forwards to the correct Zapier webhook
+// Generic fallback wiring for forms marked up as real <form> elements.
+// Posts to /api/form-submit (netlify/functions/form-submit.mjs), which saves
+// the submission in the database and notifies Amber. The homepage contact,
+// consultation, soap and newsletter forms are bound in app.js; buttons that
+// app.js already handles are skipped here so nothing is sent twice.
 
 (function () {
   'use strict';
 
-  const RELAY_URL = '/api/form-submit'; // stores submissions in Supabase (admin dashboard)
+  const RELAY_URL = '/api/form-submit';
+  const APP_BOUND = ['contactSubmitBtn', 'formulaSubmitBtn', 'soapSubmitBtn', 'nlSubmitBtn'];
 
   // ── Generic form submitter ───────────────────────────────────
   async function submitForm(formType, data, btn, successMessage) {
@@ -20,7 +24,9 @@
         body: JSON.stringify({ formType, ...data }),
       });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      // Require the function's JSON reply, so an HTML page is never mistaken for success.
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok || !result.ok) throw new Error(result.error || `HTTP ${res.status}`);
 
       showSuccess(btn, successMessage);
       return true;
@@ -96,7 +102,7 @@
   function wireContactForm() {
     const form = document.querySelector('#contact-form, [data-form="contact"], form[id*="contact"]');
     const btn  = form?.querySelector('button[type="submit"], [data-submit], .form-submit');
-    if (!form || !btn || btn.dataset.wired) return;
+    if (!form || !btn || btn.dataset.wired || APP_BOUND.includes(btn.id)) return;
 
     btn.dataset.wired = 'true';
     btn.dataset.originalText = btn.innerHTML;
@@ -114,7 +120,7 @@
   function wireConsultationForm() {
     const form = document.querySelector('#consultation-form, [data-form="consultation"], form[id*="consult"]');
     const btn  = form?.querySelector('button[type="submit"], [data-submit], .form-submit');
-    if (!form || !btn || btn.dataset.wired) return;
+    if (!form || !btn || btn.dataset.wired || APP_BOUND.includes(btn.id)) return;
 
     btn.dataset.wired = 'true';
     btn.dataset.originalText = btn.innerHTML;
@@ -123,7 +129,7 @@
       e.preventDefault();
       const data = getFormData(form);
       const ok = await submitForm('consultation', data, btn,
-        '✦ Consultation request sent! Amber will respond within 24–48 hours with your personalized formula.');
+        '✦ Consultation request received! Amber will reply by email.');
       if (ok) form.reset();
     });
   }
@@ -132,7 +138,7 @@
   function wireSoapOrderForm() {
     const form = document.querySelector('#soap-order-form, [data-form="soap-order"], form[id*="soap"]');
     const btn  = form?.querySelector('button[type="submit"], [data-submit], .form-submit');
-    if (!form || !btn || btn.dataset.wired) return;
+    if (!form || !btn || btn.dataset.wired || APP_BOUND.includes(btn.id)) return;
 
     btn.dataset.wired = 'true';
     btn.dataset.originalText = btn.innerHTML;
@@ -140,50 +146,21 @@
     btn.addEventListener('click', async (e) => {
       e.preventDefault();
       const data = getFormData(form);
-      const ok = await submitForm('soap-order', data, btn,
-        '✦ Custom soap order received! Amber will confirm details before crafting your bar. Ships within 7–10 business days.');
+      const ok = await submitForm('soap', data, btn,
+        '✦ Custom soap request received! Amber will confirm details by email before crafting your bar.');
       if (ok) form.reset();
     });
   }
 
-  // ── Checkout Manual Order Form (Cash App / Venmo) ───────────
-  function wireOrderForm() {
-    // Not the main #checkoutForm — app.js + /api/checkout own that flow.
-    const form = document.querySelector('#checkout-form, [data-form="order"]');
-    const btn  = form?.querySelector('button[type="submit"], [data-submit], .form-submit');
-    if (!form || !btn || btn.dataset.wired) return;
-
-    btn.dataset.wired = 'true';
-    btn.dataset.originalText = btn.innerHTML;
-
-    btn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const data = getFormData(form);
-
-      // Attach cart contents
-      if (window.AACart) {
-        data.cartItems = AACart.getItems();
-        data.orderTotal = AACart.getTotal().toFixed(2);
-      }
-
-      const ok = await submitForm('order', data, btn,
-        '✦ Order received! Amber will begin preparing your items. Confirmation sent to your email.');
-      if (ok) {
-        form.reset();
-        // Show the thank-you section if it exists
-        const thankYou = document.querySelector('#order-thank-you, .order-thank-you');
-        if (thankYou) thankYou.style.display = '';
-        // Clear cart
-        window.AACart && AACart.clear();
-      }
-    });
-  }
+  // Orders (card, Cash App, Venmo) go only through #checkoutForm in app.js
+  // and /api/checkout, which stores them in the database. No form here
+  // creates orders or claims a confirmation email was sent.
 
   // ── Email Capture (Free Guide) ───────────────────────────────
   function wireEmailCapture() {
     document.querySelectorAll('form[id*="email"], form[id*="guide"], [data-form="email-capture"]').forEach(form => {
       const btn = form.querySelector('button[type="submit"], [data-submit]');
-      if (!btn || btn.dataset.wired) return;
+      if (!btn || btn.dataset.wired || APP_BOUND.includes(btn.id)) return;
       btn.dataset.wired = 'true';
 
       btn.addEventListener('click', async (e) => {
@@ -193,12 +170,12 @@
           emailEl?.focus();
           return;
         }
-        await submitForm('email-capture', {
+        await submitForm('guide', {
           name: 'Guide Request',
           email: emailEl.value,
           subject: 'Free Herbal Guide Request',
           message: 'User requested the free Beginner\'s Guide to Herbal Healing.',
-        }, btn, '✦ Your guide is on its way! Check your inbox.');
+        }, btn, '✦ Thank you! Amber will email you the free guide.');
         form.reset();
       });
     });
@@ -209,7 +186,6 @@
     wireContactForm();
     wireConsultationForm();
     wireSoapOrderForm();
-    wireOrderForm();
     wireEmailCapture();
 
     // Re-wire after dynamic loads
@@ -217,8 +193,7 @@
       wireContactForm();
       wireConsultationForm();
       wireSoapOrderForm();
-      wireOrderForm();
-    }, 1500);
+      }, 1500);
   });
 
 })();

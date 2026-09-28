@@ -722,7 +722,10 @@ function recordOrderForReviews(order, customer, method) {
 function showConfirmation(order, customer, statusInfo) {
   const manual = order.manual;
   let statusText = 'Awaiting payment';
-  let lede = 'A confirmation has been sent to your email.';
+  // Only mention an email when the server says the provider accepted it.
+  let lede = order.emailSent === true
+    ? 'A confirmation has been sent to your email.'
+    : 'Please save your order number below. Amber will follow up by email.';
   if (order.paymentMethod === 'card') {
     if (statusInfo && statusInfo.status === 'payment_verified') {
       statusText = 'Payment verified';
@@ -1090,40 +1093,124 @@ function filterTeaHerbs() {}
 function toggleTeaHerb() {}
 function updateTeaSelected() {}
 
-// ---- CUSTOM FORMULA FORM ----
-// Handled by custom-creations.js bindFormulaForm() — no duplicate listener needed here.
+// ---- CUSTOM FORMULA (CONSULTATION) FORM ----
+// custom-creations.js is not part of this site, so the consultation request
+// is bound here and saved through /api/form-submit (see postSiteForm below).
+(function bindFormulaForm() {
+  const btn = document.getElementById('formulaSubmitBtn');
+  if (!btn) return;
+  const val = (id) => ((document.getElementById(id) || {}).value || '').trim();
+  btn.addEventListener('click', async () => {
+    const name = val('formulaName');
+    const email = val('formulaEmail');
+    const symptoms = val('formulaSymptoms');
+    if (!name || !email || !symptoms) { showToast('Please add your name, email, and what you are experiencing.'); return; }
+    if (!(document.getElementById('formulaInteractionCheck') || {}).checked ||
+        !(document.getElementById('formulaAgeConfirm') || {}).checked) {
+      showToast('Please confirm both safety checkboxes before sending.');
+      return;
+    }
+    const fields = {
+      'Remedy type': val('formulaType'),
+      'Medications': val('formulaMeds'),
+      'Supplements': val('formulaSupplements'),
+      'Allergies': val('formulaAllergies'),
+      'Pregnancy/breastfeeding': val('formulaPregnancy'),
+      'Notes': val('formulaNotes'),
+    };
+    btn.disabled = true;
+    const result = await postSiteForm({ formType: 'consultation', name, email, message: symptoms, fields });
+    btn.disabled = false;
+    if (result.ok) {
+      showToast('✦ Consultation request received! Amber will reply by email.');
+      ['formulaSymptoms', 'formulaMeds', 'formulaSupplements', 'formulaAllergies', 'formulaNotes']
+        .forEach((id) => { const el = document.getElementById(id); if (el) el.value = ''; });
+    } else if (result.retryable) {
+      const lines = Object.entries(fields).map(([k, v]) => k + ': ' + (v || 'Not provided')).join('\n');
+      const body = encodeURIComponent('Consultation request\n\nName: ' + name + '\nEmail: ' + email + '\n\nSymptoms: ' + symptoms + '\n' + lines);
+      window.location.href = 'mailto:awaken@consultant.com?subject=' + encodeURIComponent('Consultation request from ' + name) + '&body=' + body;
+      showToast('Opening your email app to send the request...');
+    } else {
+      showToast(result.error || 'Please check the form and try again.');
+    }
+  });
+})();
 
 // ---- SOAP FORM ----
 // Handled by the DOMContentLoaded listener below — no duplicate needed here.
 
-// ---- CONTACT FORM ----
-document.getElementById('contactSubmitBtn').addEventListener('click', () => {
+// ---- CONTACT + NEWSLETTER FORMS ----
+// Both post to /api/form-submit, which saves the message in the database
+// and notifies Amber. If the request fails, fall back to the visitor's
+// email app so the message is never silently lost.
+async function postSiteForm(payload) {
+  try {
+    const res = await fetch('/api/form-submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.ok) return { ok: true };
+    return { ok: false, error: data.error, retryable: res.status >= 500 || res.status === 404 };
+  } catch (e) {
+    return { ok: false, retryable: true };
+  }
+}
+
+document.getElementById('contactSubmitBtn').addEventListener('click', async (e) => {
+  const btn = e.currentTarget;
   const name = document.getElementById('contactName').value.trim();
   const email = document.getElementById('contactEmail').value.trim();
   const subject = document.getElementById('contactSubject').value;
   const message = document.getElementById('contactMessage').value.trim();
   if (!name || !email || !message) { showToast('Please fill in all fields.'); return; }
-  const body = encodeURIComponent(`From: ${name} (${email})\n\n${message}`);
-  try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
-  showToast('Opening email client...');
+  try { window.AAA && window.AAA.contactFormSubmit && window.AAA.contactFormSubmit(subject); } catch (e2) {}
+  btn.disabled = true;
+  const result = await postSiteForm({ formType: 'contact', name, email, subject, message });
+  btn.disabled = false;
+  if (result.ok) {
+    showToast('✦ Message received! Amber will reply within 1–2 business days.');
+    document.getElementById('contactName').value = '';
+    document.getElementById('contactEmail').value = '';
+    document.getElementById('contactMessage').value = '';
+  } else if (result.retryable) {
+    const body = encodeURIComponent(`From: ${name} (${email})\n\n${message}`);
+    window.location.href = `mailto:awaken@consultant.com?cc=${encodeURIComponent(email)}&subject=${encodeURIComponent(subject + ' — Amber\'s Alchemy')}&body=${body}`;
+    showToast('Opening your email app to send the message...');
+  } else {
+    showToast(result.error || 'Please check the form and try again.');
+  }
 });
 
-// ---- NEWSLETTER FORM ----
-document.getElementById('nlSubmitBtn').addEventListener('click', () => {
+document.getElementById('nlSubmitBtn').addEventListener('click', async (e) => {
+  const btn = e.currentTarget;
   const name = document.getElementById('nlName').value.trim();
   const email = document.getElementById('nlEmail').value.trim();
   if (!email) { showToast('Please enter your email address.'); return; }
-  const body = encodeURIComponent(
-    `New Newsletter Subscriber — Amber's Alchemy Apothecary\n\n` +
-    `Name: ${name || 'Not provided'}\nEmail: ${email}\n\n` +
-    `Please add this subscriber to the mailing list and send the Free Herbal Healing Guide.`
-  );
-  try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e) {}
-  window.location.href = `mailto:awaken@consultant.com?subject=${encodeURIComponent('New Subscriber — ' + (name || email))}&body=${body}`;
-  showToast('✦ Thank you! Check your email for the Herbal Healing Guide.');
-  document.getElementById('nlName').value = '';
-  document.getElementById('nlEmail').value = '';
+  try { window.AAA && window.AAA.newsletterSignup && window.AAA.newsletterSignup('homepage'); } catch (e2) {}
+  btn.disabled = true;
+  const result = await postSiteForm({
+    formType: 'guide', name, email,
+    subject: 'Newsletter signup + Free Herbal Healing Guide',
+    message: 'Please add this subscriber to the mailing list and send the Free Herbal Healing Guide.',
+  });
+  btn.disabled = false;
+  if (result.ok) {
+    showToast('✦ Thank you! Amber will email you the Herbal Healing Guide.');
+    document.getElementById('nlName').value = '';
+    document.getElementById('nlEmail').value = '';
+  } else if (result.retryable) {
+    const body = encodeURIComponent(
+      `New Newsletter Subscriber — Amber's Alchemy Apothecary\n\n` +
+      `Name: ${name || 'Not provided'}\nEmail: ${email}\n\n` +
+      `Please add this subscriber to the mailing list and send the Free Herbal Healing Guide.`
+    );
+    window.location.href = `mailto:awaken@consultant.com?subject=${encodeURIComponent('New Subscriber — ' + (name || email))}&body=${body}`;
+    showToast('Opening your email app to finish signing up...');
+  } else {
+    showToast(result.error || 'Please check your email address and try again.');
+  }
 });
 
 // ---- FAQS ----
@@ -1506,35 +1593,38 @@ window.addSoapToCart = addSoapToCart;
   function bindSoapForm() {
     const soapSubmitBtn = document.getElementById('soapSubmitBtn');
     if (!soapSubmitBtn) return;
-    soapSubmitBtn.addEventListener('click', function() {
+    soapSubmitBtn.addEventListener('click', async function() {
       const name = (document.getElementById('soapName') || {}).value?.trim() || '';
       const email = (document.getElementById('soapEmail') || {}).value?.trim() || '';
       if (!name || !email) {
         showToast('Please enter your name and email to submit a custom soap request.');
         return;
       }
-      const scent = (document.getElementById('soapScent') || {}).value || 'Not specified';
-      const color = (document.getElementById('soapColor') || {}).value || 'Not specified';
-      const shape = (document.getElementById('soapShape') || {}).value || 'Not specified';
-      const botanical = (document.getElementById('soapBotanical') || {}).value || 'Not specified';
-      const quantity = (document.getElementById('soapQuantity') || {}).value || 'Not specified';
-      const notes = (document.getElementById('soapNotes') || {}).value?.trim() || '';
-      const subject = encodeURIComponent('Custom Soap Order from ' + name);
-      const body = encodeURIComponent(
-        'Custom Soap Order Request\n\n' +
-        'Name: ' + name + '\n' +
-        'Email: ' + email + '\n' +
-        'Scent: ' + scent + '\n' +
-        'Color: ' + color + '\n' +
-        'Shape: ' + shape + '\n' +
-        'Botanical: ' + botanical + '\n' +
-        'Quantity: ' + quantity + '\n' +
-        'Notes: ' + notes
-      );
-      window.location.href = 'mailto:awaken@consultant.com?subject=' + subject + '&body=' + body;
-      showToast('✦ Opening email to send your custom soap request...');
-      soapSubmitBtn.textContent = '✓ Request Sent!';
-      setTimeout(() => { soapSubmitBtn.textContent = 'Send My Custom Soap Request ✦'; }, 3000);
+      const fields = {
+        Scent: (document.getElementById('soapScent') || {}).value || 'Not specified',
+        Color: (document.getElementById('soapColor') || {}).value || 'Not specified',
+        Shape: (document.getElementById('soapShape') || {}).value || 'Not specified',
+        Botanical: (document.getElementById('soapBotanical') || {}).value || 'Not specified',
+        Quantity: (document.getElementById('soapQuantity') || {}).value || 'Not specified',
+        Notes: (document.getElementById('soapNotes') || {}).value?.trim() || '',
+      };
+      soapSubmitBtn.disabled = true;
+      const result = await postSiteForm({ formType: 'soap', name, email, subject: 'Custom soap request', fields });
+      soapSubmitBtn.disabled = false;
+      if (result.ok) {
+        showToast('✦ Custom soap request received! Amber will confirm details by email.');
+        soapSubmitBtn.textContent = '✓ Request Sent!';
+        setTimeout(() => { soapSubmitBtn.textContent = 'Send My Custom Soap Request ✦'; }, 3000);
+      } else if (result.retryable) {
+        const body = encodeURIComponent(
+          'Custom Soap Order Request\n\nName: ' + name + '\nEmail: ' + email + '\n' +
+          Object.entries(fields).map(([k, v]) => k + ': ' + v).join('\n')
+        );
+        window.location.href = 'mailto:awaken@consultant.com?subject=' + encodeURIComponent('Custom Soap Order from ' + name) + '&body=' + body;
+        showToast('✦ Opening email to send your custom soap request...');
+      } else {
+        showToast(result.error || 'Please check the form and try again.');
+      }
     });
   }
   if (document.readyState === 'loading') {
