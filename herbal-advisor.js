@@ -469,7 +469,7 @@ function renderLeadCapture() {
       '</label>' +
       '<label class="lead-field">' +
         '<span class="lead-field-label">Mobile <span class="lead-optional">(optional \u2014 for order and restock texts)</span></span>' +
-        '<input type="tel" id="lead-sms" autocomplete="tel" inputmode="tel" placeholder="(555) 123-4567" value="' + (advisorState.leadSms || '') + '">' +
+        '<input type="tel" id="lead-sms" autocomplete="tel" inputmode="tel" placeholder="(801) 414-8984" value="' + (advisorState.leadSms || '') + '">' +
       '</label>' +
       '<label class="lead-consent">' +
         '<input type="checkbox" id="lead-sms-optin" ' + (advisorState.leadSmsOptIn ? 'checked' : '') + '>' +
